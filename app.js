@@ -74,6 +74,19 @@ function renderCard(card) {
     el.appendChild(link);
   }
 
+  if (card.createdAt) {
+    const dateRow = document.createElement('div');
+    dateRow.className = 'card-date-row';
+    const added = new Date(card.createdAt);
+    const dateStr = added.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    const timeStr = added.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    dateRow.innerHTML = `
+      <span class="card-date"><i data-lucide="calendar"></i>${dateStr}</span>
+      <span class="card-date"><i data-lucide="clock"></i>${timeStr}</span>
+    `;
+    el.appendChild(dateRow);
+  }
+
   el.addEventListener('click', () => openModal('edit', card));
 
   el.addEventListener('dragstart', () => {

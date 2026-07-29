@@ -411,6 +411,22 @@ body {
 
 .card-link:hover { text-decoration: underline; }
 
+.card-date-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.card-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 .card-empty {
   font-size: 12px;
   color: var(--text-muted);
