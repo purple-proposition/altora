@@ -408,8 +408,8 @@ body {
 }
 
 .card-company {
-  font-weight: 500;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: var(--text);
 }
 
 .card-link {
