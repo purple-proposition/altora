@@ -104,8 +104,6 @@ function renderStats() {
 // --- Summary digest (time-scoped: today / this week / this month) ---
 
 const PERIOD_LABELS = { today: "aujourd'hui", week: 'cette semaine', month: 'ce mois-ci' };
-const PERIOD_CAPTIONS = { today: null, week: null, month: '30 derniers jours' };
-const DAY_LETTERS = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Date#getDay(): 0 = Sunday
 
 let currentPeriod = 'today';
 
@@ -115,23 +113,17 @@ function startOfDay(date) {
   return d;
 }
 
-function getPeriodBuckets(period) {
+function getPeriodStart(period) {
   const days = period === 'today' ? 1 : period === 'week' ? 7 : 30;
-  const today = startOfDay(new Date());
-  const buckets = [];
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    buckets.push(d);
-  }
-  return buckets;
+  const start = startOfDay(new Date());
+  start.setDate(start.getDate() - (days - 1));
+  return start;
 }
 
 function renderSummaryDigest(period) {
   currentPeriod = period;
 
-  const buckets = getPeriodBuckets(period);
-  const startTime = buckets[0].getTime();
+  const startTime = getPeriodStart(period).getTime();
   const inRange = cards.filter(c => c.createdAt >= startTime);
 
   const todo = inRange.filter(c => c.status === 'todo').length;
@@ -143,51 +135,55 @@ function renderSummaryDigest(period) {
   animateValue(document.getElementById('summary-sent'), sent);
   animateValue(document.getElementById('summary-interview'), interview);
   animateValue(document.getElementById('summary-rejected'), rejected);
-  document.getElementById('period-label').textContent = PERIOD_LABELS[period];
+  crossfadeText(document.getElementById('period-label'), PERIOD_LABELS[period]);
 
-  const counts = buckets.map(day => {
-    const key = day.toDateString();
-    return inRange.filter(c => new Date(c.createdAt).toDateString() === key).length;
-  });
-  renderChart(buckets, counts);
-
-  document.querySelectorAll('.period-btn').forEach(btn => {
+  document.querySelectorAll('.period-option').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.period === period);
   });
 }
 
-function renderChart(buckets, counts) {
-  const chartEl = document.getElementById('progress-chart');
-  const captionEl = document.getElementById('chart-caption');
-  const max = Math.max(1, ...counts);
-  const showLabels = counts.length <= 7;
-
-  chartEl.innerHTML = '';
-  counts.forEach((count, i) => {
-    const col = document.createElement('div');
-    col.className = 'chart-bar-col';
-
-    const bar = document.createElement('div');
-    bar.className = 'chart-bar';
-    bar.style.height = `${Math.max(4, Math.round((count / max) * 100))}%`;
-    bar.title = `${count} le ${buckets[i].toLocaleDateString('fr-FR')}`;
-    col.appendChild(bar);
-
-    if (showLabels) {
-      const label = document.createElement('span');
-      label.className = 'chart-bar-label';
-      label.textContent = DAY_LETTERS[buckets[i].getDay()];
-      col.appendChild(label);
-    }
-
-    chartEl.appendChild(col);
-  });
-
-  captionEl.textContent = PERIOD_CAPTIONS[currentPeriod] || '';
+// Fades text out, swaps it, then fades back in — used whenever the main
+// container's copy changes, so it never just snaps to the new value.
+function crossfadeText(el, newText, duration = 200) {
+  if (el.textContent === newText) return;
+  el.style.transition = `opacity ${duration}ms ease`;
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = newText;
+    el.style.opacity = '1';
+  }, duration);
 }
 
-document.querySelectorAll('.period-btn').forEach(btn => {
-  btn.addEventListener('click', () => renderSummaryDigest(btn.dataset.period));
+// --- Period popup (Apple-style: scale/opacity spring in, fade out) ---
+
+const periodTrigger = document.getElementById('period-trigger');
+const periodPopup = document.getElementById('period-popup');
+
+function openPeriodPopup() {
+  periodPopup.classList.remove('hidden');
+  requestAnimationFrame(() => periodPopup.classList.add('visible'));
+}
+
+function closePeriodPopup() {
+  periodPopup.classList.remove('visible');
+  setTimeout(() => periodPopup.classList.add('hidden'), 300);
+}
+
+periodTrigger.addEventListener('click', e => {
+  e.stopPropagation();
+  periodPopup.classList.contains('visible') ? closePeriodPopup() : openPeriodPopup();
+});
+
+document.querySelectorAll('.period-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    renderSummaryDigest(btn.dataset.period);
+    closePeriodPopup();
+  });
+});
+
+document.addEventListener('click', e => {
+  if (!periodPopup.classList.contains('visible')) return;
+  if (!e.target.closest('.period-trigger-wrap')) closePeriodPopup();
 });
 
 // Counts up or down from the currently displayed number to the new one

@@ -6,7 +6,7 @@
 <title>Altora</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=BBH+Hegarty&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=BBH+Hegarty&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,20 +19,20 @@
 
   <section class="summary-card">
     <p class="summary-text">
-      <span id="greeting">Bonjour</span> <img class="avatar" src="avatar.jpg" alt="Jesse"> Jesse, <span id="period-label">aujourd'hui</span> tu as <span class="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> candidatures à faire,
+      <span id="greeting">Bonjour</span> <img class="avatar" src="avatar.jpg" alt="Jesse"> Jesse, <span class="period-trigger-wrap">
+        <button type="button" class="period-trigger" id="period-trigger">
+          <i data-lucide="calendar"></i><span id="period-label">aujourd'hui</span><i data-lucide="chevron-down"></i>
+        </button>
+        <span class="period-popup hidden" id="period-popup">
+          <button type="button" class="period-option active" data-period="today">Aujourd'hui</button>
+          <button type="button" class="period-option" data-period="week">Cette semaine</button>
+          <button type="button" class="period-option" data-period="month">Ce mois-ci</button>
+        </span>
+      </span> tu as <span class="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> candidatures à faire,
       <span class="inline-pill inline-pill--amber"><i data-lucide="hourglass"></i><span id="summary-sent">0</span></span> envoyées,
       <span class="inline-pill inline-pill--green"><i data-lucide="target"></i><span id="summary-interview">0</span></span> entretiens planifiés et
       <span class="inline-pill inline-pill--rose"><i data-lucide="folder-x"></i><span id="summary-rejected">0</span></span> refus reçus.
     </p>
-
-    <div class="period-picker" id="period-picker">
-      <button type="button" class="period-btn active" data-period="today">Aujourd'hui</button>
-      <button type="button" class="period-btn" data-period="week">Cette semaine</button>
-      <button type="button" class="period-btn" data-period="month">Ce mois-ci</button>
-    </div>
-
-    <div class="chart-bars" id="progress-chart"></div>
-    <div class="chart-caption" id="chart-caption"></div>
   </section>
 
   <main class="board" id="board">
@@ -135,6 +135,6 @@
 <div class="grid-overlay" id="grid-overlay"></div>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

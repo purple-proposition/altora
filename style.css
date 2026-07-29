@@ -39,20 +39,24 @@
 
 body {
   margin: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-weight: 600;
   background: var(--bg);
   color: var(--text);
 }
 
 .app {
-  /* 2 of the 12 reference grid columns on each side (16.6667% = 2/12) */
-  margin: 0 16.6667%;
+  /* Same 12-column/24px-gap grid as the reference overlay, so "2 columns
+     of margin" lines up pixel-for-pixel instead of an approximate % */
+  grid-column: 3 / 11;
   padding: 32px 0 120px;
 }
 
 .topbar h1 {
-  font-family: "BBH Hegarty", "Inter", sans-serif;
+  font-family: "BBH Hegarty", "DM Sans", sans-serif;
   font-size: 28px;
   font-weight: 800;
   margin: 0 0 24px;
@@ -95,71 +99,80 @@ body {
   margin: 0 2px;
 }
 
-.period-picker {
-  display: flex;
-  gap: 8px;
-  margin-top: 20px;
+.period-trigger-wrap {
+  position: relative;
+  display: inline-block;
 }
 
-.period-btn {
-  padding: 8px 16px;
+.period-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: var(--radius-pill);
-  border: 1.5px solid var(--border);
-  background: var(--card-bg);
-  color: var(--text-muted);
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
-}
-
-.period-btn:hover { background: var(--bg); }
-
-.period-btn.active {
+  border: none;
   background: var(--indigo-tint);
   color: var(--indigo);
-  border-color: var(--indigo-fill);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.55em;
+  cursor: pointer;
+  transition: filter 0.15s ease;
 }
 
-.chart-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 4px;
-  height: 96px;
-  margin-top: 20px;
-}
+.period-trigger:hover { filter: brightness(0.96); }
+.period-trigger .lucide { width: 1em; height: 1em; }
 
-.chart-bar-col {
-  flex: 1;
+.period-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 180px;
+  background: var(--card-bg);
+  border-radius: var(--radius-inner);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+  padding: 6px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100%;
-  gap: 8px;
+  gap: 2px;
+  z-index: 50;
+  transform-origin: top left;
+  opacity: 0;
+  transform: scale(0.85) translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.chart-bar {
+.period-popup.hidden { display: none; }
+
+.period-popup.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+.period-option {
+  display: block;
   width: 100%;
-  min-height: 4px;
-  border-radius: 6px 6px 2px 2px;
-  background: var(--indigo-fill);
-  transition: height 0.3s ease;
-}
-
-.chart-bar-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.chart-caption {
-  font-size: 12px;
+  text-align: left;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
   font-weight: 600;
-  color: var(--text-muted);
-  text-align: center;
-  margin-top: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.period-option:hover { background: var(--bg); }
+
+.period-option.active {
+  background: var(--indigo-tint);
+  color: var(--indigo);
+  font-weight: 700;
 }
 
 .inline-pill {
@@ -394,20 +407,20 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.35);
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
 }
 
 .modal-overlay.hidden { display: none; }
 
 .modal {
+  /* Exactly 4 of the 12 reference grid columns, centered (cols 5-8) */
+  grid-column: 5 / 9;
   background: var(--card-bg);
   border-radius: var(--radius-card);
   padding: 28px;
-  width: 100%;
-  max-width: 420px;
   box-shadow: var(--shadow);
 }
 
@@ -522,13 +535,13 @@ body {
 
 /* Tablet */
 @media (max-width: 1000px) {
-  .app { margin: 0 40px; }
+  .app { grid-column: 2 / 12; }
   .board { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Mobile */
 @media (max-width: 640px) {
-  .app { margin: 0; padding: 20px 16px 100px; }
+  .app { grid-column: 1 / 13; padding: 20px 16px 100px; }
 
   .topbar h1 { font-size: 24px; }
 
@@ -542,7 +555,10 @@ body {
 
   .fab { right: 20px; bottom: 20px; width: 52px; height: 52px; }
 
-  .modal { padding: 24px; }
+  /* The 12-col/24px-gap grid gets too cramped at this width for a
+     4-column span, so the modal falls back to a simple centered box. */
+  .modal-overlay { display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal { grid-column: auto; width: 100%; max-width: 420px; padding: 24px; }
 }
 
 /* --- Grid overlay (toggle with "G") --- */
