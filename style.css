@@ -282,7 +282,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: 16px;
   color: var(--indigo);
   text-decoration: none;
 }
