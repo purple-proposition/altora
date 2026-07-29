@@ -170,7 +170,9 @@ function measureTextWidth(el, text) {
   const probe = document.createElement('span');
   probe.style.cssText = 'position:absolute; visibility:hidden; white-space:nowrap; top:-9999px;';
   probe.className = el.className;
-  probe.style.font = getComputedStyle(el).font;
+  const computed = getComputedStyle(el);
+  probe.style.font = computed.font;
+  probe.style.letterSpacing = computed.letterSpacing;
   probe.textContent = text;
   document.body.appendChild(probe);
   const width = probe.offsetWidth;

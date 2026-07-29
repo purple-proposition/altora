@@ -164,7 +164,9 @@ body {
 .period-trigger:hover,
 .period-trigger.active { opacity: 0.65; }
 
-.period-trigger .lucide { width: 0.7em; height: 0.7em; color: var(--text-muted); }
+.period-trigger .lucide { width: 0.7em; height: 0.7em; color: var(--text); }
+
+#period-label { letter-spacing: inherit; white-space: nowrap; }
 
 .period-popup {
   position: absolute;
