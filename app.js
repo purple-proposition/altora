@@ -390,7 +390,7 @@ STATUSES.forEach(status => {
       const toColumn = list.closest('.column');
       card.status = status;
       saveCards();
-      animateColumnHeights([fromColumn, toColumn], render);
+      animateHeightChange([fromColumn, toColumn], render);
     }
   });
 });
@@ -399,7 +399,7 @@ STATUSES.forEach(status => {
 // counts changed grow/shrink smoothly instead of snapping.
 let columnAnimTick = 0;
 
-function animateColumnHeights(columns, mutate, duration = 400) {
+function animateHeightChange(columns, mutate, duration = 400) {
   const startHeights = columns.map(col => col.getBoundingClientRect().height);
   mutate();
   columns.forEach((col, i) => {
@@ -471,7 +471,7 @@ function openCardContextMenu(card, x, y) {
       const toColumn = document.querySelector(`.column[data-status="${status}"]`);
       card.status = status;
       saveCards();
-      animateColumnHeights([fromColumn, toColumn], render);
+      animateHeightChange([fromColumn, toColumn], render);
     });
     moveRow.appendChild(btn);
   });
@@ -586,7 +586,7 @@ function renderContactsList() {
     removeBtn.innerHTML = '<i data-lucide="x"></i>';
     removeBtn.addEventListener('click', () => {
       formContacts.splice(i, 1);
-      renderContactsList();
+      animateHeightChange([contactsList], renderContactsList);
     });
 
     nameRow.appendChild(firstName);
@@ -637,7 +637,7 @@ function renderContactsList() {
 
 btnAddContact.addEventListener('click', () => {
   formContacts.push({ firstName: '', lastName: '', type: 'email', value: '' });
-  renderContactsList();
+  animateHeightChange([contactsList], renderContactsList);
 });
 
 function setStatusPicker(status) {
