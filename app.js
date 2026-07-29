@@ -227,6 +227,7 @@ function rollNumber(el, to, duration = 450) {
   }
   const risingValue = to > from;
   const startWidth = el.offsetWidth;
+  const startHeight = el.offsetHeight;
   const endWidth = measureTextWidth(el, String(to));
 
   el.innerHTML = '';
@@ -234,7 +235,7 @@ function rollNumber(el, to, duration = 450) {
   el.style.display = 'inline-block';
   el.style.overflow = 'hidden';
   el.style.verticalAlign = 'bottom';
-  el.style.height = '1em';
+  el.style.height = `${startHeight}px`;
   el.style.width = `${startWidth}px`;
 
   const oldSpan = document.createElement('span');
