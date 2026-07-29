@@ -459,6 +459,8 @@ body {
 
 .card-deadline--overdue { color: var(--rose); }
 
+.card-contact-block { margin-bottom: 4px; }
+
 .card-contact {
   display: flex;
   align-items: center;
@@ -466,7 +468,6 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
-  margin-bottom: 4px;
 }
 
 .card-contact .lucide { width: 13px; height: 13px; }
@@ -721,41 +722,48 @@ body {
   font-weight: 700;
 }
 
-.contact-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto 1.4fr auto;
-  gap: 8px;
-  align-items: center;
+.contact-block {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
   margin-bottom: 8px;
 }
 
-.contact-row input {
-  margin-top: 0 !important;
+.contact-name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
 }
 
-.contact-type-toggle {
-  display: flex;
-  border-radius: var(--radius-input);
-  border: 1px solid var(--border);
-  overflow: hidden;
+.contact-detail-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.contact-block input {
+  margin-top: 0 !important;
 }
 
 .contact-type-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
+  width: 44px;
   height: 44px;
-  border: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
   background: transparent;
-  color: var(--text-muted);
+  color: var(--indigo);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background 0.15s ease;
 }
 
-.contact-type-btn .lucide { width: 15px; height: 15px; }
+.contact-type-btn .lucide { width: 16px; height: 16px; }
 .contact-type-btn:hover { background: var(--bg); }
-.contact-type-btn.active { background: var(--indigo-tint); color: var(--indigo); }
 
 .contact-remove-btn {
   display: flex;

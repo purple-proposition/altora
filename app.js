@@ -95,11 +95,16 @@ function renderCard(card) {
     card.contacts.forEach(contact => {
       const name = [contact.firstName, contact.lastName].filter(Boolean).join(' ');
       if (!name && !contact.value) return;
-      const contactRow = document.createElement('div');
-      contactRow.className = 'card-contact';
-      const icon = contact.type === 'phone' ? 'phone' : 'mail';
-      contactRow.innerHTML = `<i data-lucide="${icon}"></i>${[name, contact.value].filter(Boolean).join(' · ')}`;
-      el.appendChild(contactRow);
+      const block = document.createElement('div');
+      block.className = 'card-contact-block';
+      if (name) {
+        block.innerHTML += `<div class="card-contact"><i data-lucide="user"></i>${name}</div>`;
+      }
+      if (contact.value) {
+        const icon = contact.type === 'phone' ? 'phone' : 'mail';
+        block.innerHTML += `<div class="card-contact"><i data-lucide="${icon}"></i>${contact.value}</div>`;
+      }
+      el.appendChild(block);
     });
   }
 
@@ -548,11 +553,20 @@ let currentStatus = 'todo';
 let currentStage = null;
 let formContacts = [];
 
+// Groups digits by 2 ("06 06 95 41 26") as the user types a phone number.
+function formatPhone(raw) {
+  const digits = raw.replace(/\D/g, '').slice(0, 15);
+  return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+}
+
 function renderContactsList() {
   contactsList.innerHTML = '';
   formContacts.forEach((contact, i) => {
-    const row = document.createElement('div');
-    row.className = 'contact-row';
+    const block = document.createElement('div');
+    block.className = 'contact-block';
+
+    const nameRow = document.createElement('div');
+    nameRow.className = 'contact-name-row';
 
     const firstName = document.createElement('input');
     firstName.type = 'text';
@@ -566,37 +580,6 @@ function renderContactsList() {
     lastName.value = contact.lastName || '';
     lastName.addEventListener('input', () => { contact.lastName = lastName.value; });
 
-    const typeToggle = document.createElement('div');
-    typeToggle.className = 'contact-type-toggle';
-    const emailBtn = document.createElement('button');
-    emailBtn.type = 'button';
-    emailBtn.className = 'contact-type-btn';
-    emailBtn.innerHTML = '<i data-lucide="mail"></i>';
-    emailBtn.title = 'Email';
-    const phoneBtn = document.createElement('button');
-    phoneBtn.type = 'button';
-    phoneBtn.className = 'contact-type-btn';
-    phoneBtn.innerHTML = '<i data-lucide="phone"></i>';
-    phoneBtn.title = 'Téléphone';
-
-    const valueInput = document.createElement('input');
-    valueInput.value = contact.value || '';
-    valueInput.addEventListener('input', () => { contact.value = valueInput.value; });
-
-    function setType(type) {
-      contact.type = type;
-      emailBtn.classList.toggle('active', type === 'email');
-      phoneBtn.classList.toggle('active', type === 'phone');
-      valueInput.type = type === 'phone' ? 'tel' : 'email';
-      valueInput.placeholder = type === 'phone' ? '06 12 34 56 78' : 'email@exemple.com';
-    }
-    emailBtn.addEventListener('click', () => setType('email'));
-    phoneBtn.addEventListener('click', () => setType('phone'));
-    setType(contact.type || 'email');
-
-    typeToggle.appendChild(emailBtn);
-    typeToggle.appendChild(phoneBtn);
-
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.className = 'contact-remove-btn';
@@ -606,12 +589,48 @@ function renderContactsList() {
       renderContactsList();
     });
 
-    row.appendChild(firstName);
-    row.appendChild(lastName);
-    row.appendChild(typeToggle);
-    row.appendChild(valueInput);
-    row.appendChild(removeBtn);
-    contactsList.appendChild(row);
+    nameRow.appendChild(firstName);
+    nameRow.appendChild(lastName);
+    nameRow.appendChild(removeBtn);
+
+    const detailRow = document.createElement('div');
+    detailRow.className = 'contact-detail-row';
+
+    const typeBtn = document.createElement('button');
+    typeBtn.type = 'button';
+    typeBtn.className = 'contact-type-btn';
+
+    const valueInput = document.createElement('input');
+    valueInput.value = contact.value || '';
+
+    function setType(type) {
+      contact.type = type;
+      typeBtn.innerHTML = `<i data-lucide="${type === 'phone' ? 'phone' : 'mail'}"></i>`;
+      typeBtn.title = type === 'phone' ? 'Téléphone (cliquer pour passer en email)' : 'Email (cliquer pour passer en téléphone)';
+      valueInput.type = 'text';
+      valueInput.placeholder = type === 'phone' ? '06 12 34 56 78' : 'email@exemple.com';
+      valueInput.value = type === 'phone' ? formatPhone(contact.value || '') : (contact.value || '').toLowerCase();
+      contact.value = valueInput.value;
+      lucide.createIcons();
+    }
+
+    typeBtn.addEventListener('click', () => setType(contact.type === 'phone' ? 'email' : 'phone'));
+
+    valueInput.addEventListener('input', () => {
+      const caretAtEnd = valueInput.selectionEnd === valueInput.value.length;
+      valueInput.value = contact.type === 'phone' ? formatPhone(valueInput.value) : valueInput.value.toLowerCase();
+      contact.value = valueInput.value;
+      if (caretAtEnd) valueInput.setSelectionRange(valueInput.value.length, valueInput.value.length);
+    });
+
+    setType(contact.type || 'email');
+
+    detailRow.appendChild(typeBtn);
+    detailRow.appendChild(valueInput);
+
+    block.appendChild(nameRow);
+    block.appendChild(detailRow);
+    contactsList.appendChild(block);
   });
   lucide.createIcons();
 }
