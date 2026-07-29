@@ -99,10 +99,29 @@ function renderStats() {
   setStat('interview', interview, total ? Math.round((interview / total) * 100) : 0);
   setStat('rejected', rejected, total ? Math.round((rejected / total) * 100) : 0);
 
-  document.getElementById('summary-todo').textContent = todo;
-  document.getElementById('summary-sent').textContent = sent;
-  document.getElementById('summary-interview').textContent = interview;
-  document.getElementById('summary-rejected').textContent = rejected;
+  animateValue(document.getElementById('summary-todo'), todo);
+  animateValue(document.getElementById('summary-sent'), sent);
+  animateValue(document.getElementById('summary-interview'), interview);
+  animateValue(document.getElementById('summary-rejected'), rejected);
+}
+
+// Counts up or down from the currently displayed number to the new one
+// (standard behaviour: rises when the value increases, falls when it drops).
+function animateValue(el, to, duration = 400) {
+  const from = parseInt(el.textContent, 10) || 0;
+  if (from === to) {
+    el.textContent = to;
+    return;
+  }
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(from + (to - from) * eased);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = to;
+  }
+  requestAnimationFrame(step);
 }
 
 function setStat(key, value, pct) {
@@ -113,7 +132,7 @@ function setStat(key, value, pct) {
 
   const changed = valueEl.textContent !== String(value);
 
-  valueEl.textContent = value;
+  animateValue(valueEl, value);
   barEl.style.width = `${pct}%`;
   pctEl.textContent = `${pct}%`;
 
