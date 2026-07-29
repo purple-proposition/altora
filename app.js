@@ -51,17 +51,25 @@ function renderCard(card) {
   el.draggable = true;
   el.dataset.id = card.id;
 
-  const title = document.createElement('div');
+  const heading = document.createElement('div');
+  heading.className = 'card-heading';
+  const title = document.createElement('span');
   title.className = 'card-title';
   title.textContent = card.title || 'Offre sans titre';
-  el.appendChild(title);
+  heading.appendChild(title);
 
   if (card.company) {
-    const company = document.createElement('div');
+    const sep = document.createElement('span');
+    sep.className = 'card-heading-sep';
+    sep.textContent = ' chez ';
+    heading.appendChild(sep);
+
+    const company = document.createElement('span');
     company.className = 'card-company';
     company.textContent = card.company;
-    el.appendChild(company);
+    heading.appendChild(company);
   }
+  el.appendChild(heading);
 
   if (card.url) {
     const link = document.createElement('a');
@@ -144,27 +152,120 @@ function renderSummaryDigest(period) {
   const interview = inRange.filter(c => c.status === 'interview').length;
   const rejected = inRange.filter(c => c.status === 'rejected').length;
 
-  animateValue(document.getElementById('summary-todo'), todo);
-  animateValue(document.getElementById('summary-sent'), sent);
-  animateValue(document.getElementById('summary-interview'), interview);
-  animateValue(document.getElementById('summary-rejected'), rejected);
-  crossfadeText(document.getElementById('period-label'), PERIOD_LABELS[period]);
+  rollNumber(document.getElementById('summary-todo'), todo);
+  rollNumber(document.getElementById('summary-sent'), sent);
+  rollNumber(document.getElementById('summary-interview'), interview);
+  rollNumber(document.getElementById('summary-rejected'), rejected);
+  animateLabelSwap(document.getElementById('period-label'), PERIOD_LABELS[period]);
 
   document.querySelectorAll('.period-option').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.period === period);
   });
 }
 
-// Fades text out, swaps it, then fades back in — used whenever the main
-// container's copy changes, so it never just snaps to the new value.
-function crossfadeText(el, newText, duration = 200) {
+const PREMIUM_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)'; // smooth decelerate, no overshoot jank
+
+// Measures how wide `text` would render inside `el` without touching the DOM.
+function measureTextWidth(el, text) {
+  const probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute; visibility:hidden; white-space:nowrap; top:-9999px;';
+  probe.className = el.className;
+  probe.style.font = getComputedStyle(el).font;
+  probe.textContent = text;
+  document.body.appendChild(probe);
+  const width = probe.offsetWidth;
+  document.body.removeChild(probe);
+  return width;
+}
+
+// Fades a text swap (e.g. "aujourd'hui" -> "cette semaine") while easing the
+// element's width, so the rest of the sentence reflows smoothly instead of
+// jumping to the new length.
+function animateLabelSwap(el, newText, duration = 280) {
   if (el.textContent === newText) return;
-  el.style.transition = `opacity ${duration}ms ease`;
-  el.style.opacity = '0';
+  const startWidth = el.offsetWidth;
+  const endWidth = measureTextWidth(el, newText);
+
+  el.style.display = 'inline-block';
+  el.style.overflow = 'hidden';
+  el.style.verticalAlign = 'bottom';
+  el.style.width = `${startWidth}px`;
+  el.style.opacity = '1';
+
+  requestAnimationFrame(() => {
+    el.style.transition = `opacity 130ms ease`;
+    el.style.opacity = '0';
+  });
+
   setTimeout(() => {
     el.textContent = newText;
+    el.style.transition = `width ${duration}ms ${PREMIUM_EASE}, opacity 150ms ease`;
+    el.style.width = `${endWidth}px`;
     el.style.opacity = '1';
-  }, duration);
+  }, 140);
+
+  setTimeout(() => {
+    el.style.width = '';
+    el.style.overflow = '';
+    el.style.display = '';
+    el.style.verticalAlign = '';
+    el.style.transition = '';
+  }, 140 + duration + 20);
+}
+
+// Odometer-style roll: the old number slides fully out (up if the value rose,
+// down if it fell) while the new one slides in from the opposite edge —
+// "comes from the top or bottom like a counter" — plus an eased width tween
+// so the surrounding sentence reflows smoothly instead of jumping.
+function rollNumber(el, to, duration = 450) {
+  const from = parseInt(el.textContent, 10) || 0;
+  if (from === to) {
+    el.textContent = to;
+    return;
+  }
+  const risingValue = to > from;
+  const startWidth = el.offsetWidth;
+  const endWidth = measureTextWidth(el, String(to));
+
+  el.innerHTML = '';
+  el.style.position = 'relative';
+  el.style.display = 'inline-block';
+  el.style.overflow = 'hidden';
+  el.style.verticalAlign = 'bottom';
+  el.style.height = '1em';
+  el.style.width = `${startWidth}px`;
+
+  const oldSpan = document.createElement('span');
+  oldSpan.textContent = from;
+  oldSpan.style.cssText = 'position:absolute; inset:0; display:flex; align-items:center;';
+
+  const newSpan = document.createElement('span');
+  newSpan.textContent = to;
+  newSpan.style.cssText = `position:absolute; inset:0; display:flex; align-items:center; transform: translateY(${risingValue ? '100%' : '-100%'});`;
+
+  el.appendChild(oldSpan);
+  el.appendChild(newSpan);
+
+  requestAnimationFrame(() => {
+    const t = `transform ${duration}ms ${PREMIUM_EASE}`;
+    oldSpan.style.transition = t;
+    newSpan.style.transition = t;
+    el.style.transition = `width ${duration}ms ${PREMIUM_EASE}`;
+    oldSpan.style.transform = `translateY(${risingValue ? '-100%' : '100%'})`;
+    newSpan.style.transform = 'translateY(0)';
+    el.style.width = `${endWidth}px`;
+  });
+
+  setTimeout(() => {
+    el.textContent = to;
+    el.style.position = '';
+    el.style.display = '';
+    el.style.overflow = '';
+    el.style.height = '';
+    el.style.width = '';
+    el.style.verticalAlign = '';
+    el.style.transition = '';
+  }, duration + 30);
 }
 
 // --- Period popup (Apple-style: scale/opacity spring in, fade out) ---
@@ -175,11 +276,13 @@ const periodPopup = document.getElementById('period-popup');
 function openPeriodPopup() {
   periodPopup.classList.remove('hidden');
   requestAnimationFrame(() => periodPopup.classList.add('visible'));
+  periodTrigger.classList.add('active');
 }
 
 function closePeriodPopup() {
   periodPopup.classList.remove('visible');
   setTimeout(() => periodPopup.classList.add('hidden'), 300);
+  periodTrigger.classList.remove('active');
 }
 
 periodTrigger.addEventListener('click', e => {
@@ -199,25 +302,6 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.period-trigger-wrap')) closePeriodPopup();
 });
 
-// Counts up or down from the currently displayed number to the new one
-// (standard behaviour: rises when the value increases, falls when it drops).
-function animateValue(el, to, duration = 400) {
-  const from = parseInt(el.textContent, 10) || 0;
-  if (from === to) {
-    el.textContent = to;
-    return;
-  }
-  const start = performance.now();
-  function step(now) {
-    const progress = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.round(from + (to - from) * eased);
-    if (progress < 1) requestAnimationFrame(step);
-    else el.textContent = to;
-  }
-  requestAnimationFrame(step);
-}
-
 function setStat(key, value, pct) {
   const valueEl = document.getElementById(`stat-${key}`);
   const barEl = document.getElementById(`bar-${key}`);
@@ -226,7 +310,7 @@ function setStat(key, value, pct) {
 
   const changed = valueEl.textContent !== String(value);
 
-  animateValue(valueEl, value);
+  rollNumber(valueEl, value);
   barEl.style.width = `${pct}%`;
   pctEl.textContent = `${pct}%`;
 
@@ -521,11 +605,13 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'system');
 function openThemePopup() {
   themePopup.classList.remove('hidden');
   requestAnimationFrame(() => themePopup.classList.add('visible'));
+  settingsBtn.classList.add('active');
 }
 
 function closeThemePopup() {
   themePopup.classList.remove('visible');
   setTimeout(() => themePopup.classList.add('hidden'), 300);
+  settingsBtn.classList.remove('active');
 }
 
 settingsBtn.addEventListener('click', e => {
