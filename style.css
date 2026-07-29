@@ -156,6 +156,7 @@ body {
   font-family: inherit;
   font-weight: inherit;
   font-size: 1em;
+  letter-spacing: inherit;
   cursor: pointer;
   border-radius: 8px;
   transition: opacity 0.15s ease;
