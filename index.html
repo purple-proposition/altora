@@ -113,12 +113,14 @@
         <label>Lien de l'offre
           <input type="url" id="field-url" placeholder="https://...">
         </label>
-        <label>Poste <span class="field-required">*</span>
-          <input type="text" id="field-title" placeholder="Intitulé du poste">
-        </label>
-        <label>Entreprise
-          <input type="text" id="field-company" placeholder="Nom de l'entreprise">
-        </label>
+        <div class="field-row">
+          <label>Poste <span class="field-required">*</span>
+            <input type="text" id="field-title" placeholder="Intitulé du poste">
+          </label>
+          <label>Entreprise
+            <input type="text" id="field-company" placeholder="Nom de l'entreprise">
+          </label>
+        </div>
         <div class="field-group">
           <span class="field-label">Statut</span>
           <div class="status-picker" id="status-picker">
@@ -163,6 +165,6 @@
 <div class="grid-overlay" id="grid-overlay"></div>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="app.js?v=20"></script>
+<script src="app.js?v=21"></script>
 </body>
 </html>
