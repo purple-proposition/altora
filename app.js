@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'job-tracker-cards';
 const STATUSES = ['todo', 'sent', 'interview', 'rejected'];
+const STAGE_LABELS = { '1': '1er entretien', '2': '2e entretien', final: 'Entretien final' };
 
 let cards = loadCards();
 let editingId = null;
@@ -70,6 +71,23 @@ function renderCard(card) {
     heading.appendChild(company);
   }
   el.appendChild(heading);
+
+  if (card.status === 'interview' && card.interviewStage) {
+    const stageTag = document.createElement('div');
+    stageTag.className = 'card-stage-tag';
+    stageTag.textContent = STAGE_LABELS[card.interviewStage] || '';
+    el.appendChild(stageTag);
+  }
+
+  if (card.deadline) {
+    const isOverdue = new Date(card.deadline + 'T00:00:00') < startOfDay(new Date());
+    const deadlineRow = document.createElement('div');
+    deadlineRow.className = 'card-deadline' + (isOverdue ? ' card-deadline--overdue' : '');
+    const d = new Date(card.deadline + 'T00:00:00');
+    const dStr = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    deadlineRow.innerHTML = `<i data-lucide="alarm-clock"></i> Sans réponse après le ${dStr}`;
+    el.appendChild(deadlineRow);
+  }
 
   if (card.url) {
     const link = document.createElement('a');
@@ -362,19 +380,37 @@ const fieldUrl = document.getElementById('field-url');
 const fieldTitle = document.getElementById('field-title');
 const fieldCompany = document.getElementById('field-company');
 const fieldNotes = document.getElementById('field-notes');
+const fieldDeadline = document.getElementById('field-deadline');
 const statusPicker = document.getElementById('status-picker');
 const statusButtons = statusPicker.querySelectorAll('.status-btn');
+const interviewStageGroup = document.getElementById('interview-stage-group');
+const interviewStagePicker = document.getElementById('interview-stage-picker');
+const stageButtons = interviewStagePicker.querySelectorAll('.stage-btn');
 let currentStatus = 'todo';
+let currentStage = null;
 
 function setStatusPicker(status) {
   currentStatus = status;
   statusButtons.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.status === status);
   });
+  interviewStageGroup.classList.toggle('hidden', status !== 'interview');
+  if (status !== 'interview') setInterviewStage(null);
+}
+
+function setInterviewStage(stage) {
+  currentStage = stage;
+  stageButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.stage === stage);
+  });
 }
 
 statusButtons.forEach(btn => {
   btn.addEventListener('click', () => setStatusPicker(btn.dataset.status));
+});
+
+stageButtons.forEach(btn => {
+  btn.addEventListener('click', () => setInterviewStage(currentStage === btn.dataset.stage ? null : btn.dataset.stage));
 });
 
 // --- Best-effort guess of job title / company from the URL itself ---
@@ -479,6 +515,7 @@ function openModal(mode, card, presetStatus) {
   editingId = null;
   lastAutoTitle = '';
   lastAutoCompany = '';
+  setInterviewStage(null);
   btnDelete.classList.add('hidden');
   modalHint.classList.add('hidden');
 
@@ -489,7 +526,9 @@ function openModal(mode, card, presetStatus) {
     fieldTitle.value = card.title || '';
     fieldCompany.value = card.company || '';
     setStatusPicker(card.status);
+    setInterviewStage(card.interviewStage || null);
     fieldNotes.value = card.notes || '';
+    fieldDeadline.value = card.deadline || '';
     btnDelete.classList.remove('hidden');
   } else if (mode === 'import') {
     modalTitle.textContent = 'Importer une offre';
@@ -525,6 +564,8 @@ form.addEventListener('submit', e => {
     title: fieldTitle.value.trim() || (fieldUrl.value.trim() ? 'Nouvelle offre (à compléter)' : ''),
     company: fieldCompany.value.trim(),
     status: currentStatus,
+    interviewStage: currentStatus === 'interview' ? currentStage : null,
+    deadline: fieldDeadline.value || null,
     notes: fieldNotes.value.trim(),
   };
 

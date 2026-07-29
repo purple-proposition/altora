@@ -128,6 +128,17 @@
             <button type="button" class="status-btn status-btn--rose" data-status="rejected"><i data-lucide="folder-x"></i>Refus</button>
           </div>
         </div>
+        <div class="field-group hidden" id="interview-stage-group">
+          <span class="field-label">Étape de l'entretien</span>
+          <div class="interview-stage-picker" id="interview-stage-picker">
+            <button type="button" class="stage-btn" data-stage="1">1er entretien</button>
+            <button type="button" class="stage-btn" data-stage="2">2e entretien</button>
+            <button type="button" class="stage-btn" data-stage="final">Entretien final</button>
+          </div>
+        </div>
+        <label>Sans réponse après le <span class="field-hint">(optionnel)</span>
+          <input type="date" id="field-deadline">
+        </label>
         <label>Notes
           <textarea id="field-notes" rows="3" placeholder="Contact, prochaine étape..."></textarea>
         </label>
@@ -147,6 +158,6 @@
 <div class="grid-overlay" id="grid-overlay"></div>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="app.js?v=11"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>
