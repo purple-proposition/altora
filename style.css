@@ -388,7 +388,7 @@ body {
 
 .card-heading {
   font-size: 16px;
-  margin-bottom: 4px;
+  margin-bottom: 12px;
 }
 
 .card-title {
@@ -420,7 +420,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 4px;
+  margin-top: 12px;
 }
 
 .card-date {
@@ -442,7 +442,7 @@ body {
   background: var(--green-tint);
   padding: 3px 10px;
   border-radius: var(--radius-pill);
-  margin-bottom: 4px;
+  margin-bottom: 12px;
 }
 
 .card-deadline {
@@ -452,14 +452,19 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 12px;
 }
 
 .card-deadline .lucide { width: 13px; height: 13px; }
 
 .card-deadline--overdue { color: var(--rose); }
 
-.card-contact-block { margin-bottom: 4px; }
+.card-contact-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
 
 .card-contact {
   display: flex;
