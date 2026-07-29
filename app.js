@@ -501,11 +501,13 @@ function openModal(mode, card, presetStatus) {
   }
 
   overlay.classList.remove('hidden');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
   (mode === 'import' ? fieldUrl : fieldTitle).focus();
 }
 
 function closeModal() {
-  overlay.classList.add('hidden');
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.add('hidden'), 300);
   editingId = null;
 }
 

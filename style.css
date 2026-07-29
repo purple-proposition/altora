@@ -333,12 +333,6 @@ body {
   box-shadow: var(--shadow);
   padding: 16px;
   min-height: 200px;
-  transition: box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.column:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 16px 32px rgba(0,0,0,0.08);
-  transform: translateY(-2px);
 }
 
 .column-top {
@@ -538,14 +532,23 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0);
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 24px;
   align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: background 0.2s ease, opacity 0.2s ease;
 }
 
 .modal-overlay.hidden { display: none; }
+
+.modal-overlay.visible {
+  background: rgba(0,0,0,0.35);
+  opacity: 1;
+  pointer-events: auto;
+}
 
 .modal {
   /* Exactly 4 of the 12 reference grid columns, centered (cols 5-8) */
@@ -555,6 +558,13 @@ body {
   border-radius: var(--radius-card);
   padding: 28px;
   box-shadow: var(--shadow);
+  transform-origin: center;
+  transform: scale(0.9) translateY(8px);
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.visible .modal {
+  transform: scale(1) translateY(0);
 }
 
 .modal-close {
