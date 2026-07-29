@@ -89,12 +89,24 @@
     </div>
   </main>
 
+  <div class="settings-trigger-wrap">
+    <button class="fab settings-fab" id="settings-btn" title="Réglages">
+      <i data-lucide="settings"></i>
+    </button>
+    <div class="theme-popup hidden" id="theme-popup">
+      <button type="button" class="theme-option" data-theme="system"><i data-lucide="monitor"></i>Système</button>
+      <button type="button" class="theme-option" data-theme="light"><i data-lucide="sun"></i>Clair</button>
+      <button type="button" class="theme-option" data-theme="dark"><i data-lucide="moon"></i>Sombre</button>
+    </div>
+  </div>
+
   <button class="fab" id="fab-import" title="Importer une offre">
     <i data-lucide="plus"></i>
   </button>
 
   <div class="modal-overlay hidden" id="modal-overlay">
     <div class="modal">
+      <button type="button" class="modal-close" id="btn-close" title="Fermer"><i data-lucide="x"></i></button>
       <h3 id="modal-title">Nouvelle offre</h3>
       <p class="modal-hint hidden" id="modal-hint">Colle le lien de l'offre — tu pourras compléter les détails juste après.</p>
       <form id="card-form">
@@ -135,6 +147,6 @@
 <div class="grid-overlay" id="grid-overlay"></div>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

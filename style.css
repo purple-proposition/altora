@@ -35,6 +35,46 @@
   --radius-pill: 999px;  /* every pill/button/badge */
 }
 
+/* Dark mode: follows the OS by default ("system"); [data-theme] on <html>
+   forces an explicit choice made via the settings popup. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #18181b;
+    --card-bg: #27272a;
+    --text: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --border: #3f3f46;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 10px 24px rgba(0,0,0,0.35);
+
+    --indigo-tint: #312e81;
+    --indigo-track: #3730a3;
+    --amber-tint: #451a03;
+    --amber-track: #78350f;
+    --green-tint: #052e2b;
+    --green-track: #065f46;
+    --rose-tint: #4c0519;
+    --rose-track: #881337;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #18181b;
+  --card-bg: #27272a;
+  --text: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --border: #3f3f46;
+  --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 10px 24px rgba(0,0,0,0.35);
+
+  --indigo-tint: #312e81;
+  --indigo-track: #3730a3;
+  --amber-tint: #451a03;
+  --amber-track: #78350f;
+  --green-tint: #052e2b;
+  --green-track: #065f46;
+  --rose-tint: #4c0519;
+  --rose-track: #881337;
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -46,6 +86,7 @@ body {
   font-weight: 600;
   background: var(--bg);
   color: var(--text);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .app {
@@ -307,7 +348,7 @@ body {
   align-items: center;
   justify-content: center;
   border: none;
-  background: #ffffff;
+  background: var(--card-bg);
   color: var(--text);
   width: 28px;
   height: 28px;
@@ -388,7 +429,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: var(--card-bg);
   color: var(--text);
   border: none;
   border-radius: 20px;
@@ -400,6 +441,68 @@ body {
 .fab:hover { transform: translateY(-2px); background: var(--border); }
 
 .fab .lucide { width: 24px; height: 24px; stroke-width: 2.2; }
+
+.settings-trigger-wrap {
+  position: fixed;
+  right: 96px;
+  bottom: 28px;
+  z-index: 40;
+}
+
+.settings-fab { position: static; }
+
+.theme-popup {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  min-width: 180px;
+  background: var(--card-bg);
+  border-radius: var(--radius-inner);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 50;
+  transform-origin: bottom right;
+  opacity: 0;
+  transform: scale(0.85) translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-popup.hidden { display: none; }
+
+.theme-popup.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.theme-option:hover { background: var(--bg); }
+
+.theme-option.active {
+  background: var(--indigo-tint);
+  color: var(--indigo);
+  font-weight: 700;
+}
 
 /* --- Modal --- */
 
@@ -418,13 +521,33 @@ body {
 .modal {
   /* Exactly 4 of the 12 reference grid columns, centered (cols 5-8) */
   grid-column: 5 / 9;
+  position: relative;
   background: var(--card-bg);
   border-radius: var(--radius-card);
   padding: 28px;
   box-shadow: var(--shadow);
 }
 
-.modal h3 { margin: 0 0 8px; font-size: 20px; }
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.modal-close:hover { background: var(--border); color: var(--text); }
+
+.modal h3 { margin: 0 24px 8px 0; font-size: 20px; }
 
 .modal-hint {
   font-size: 12px;
@@ -554,6 +677,7 @@ body {
   .summary-text { font-size: 32px; line-height: 1.4; }
 
   .fab { right: 20px; bottom: 20px; width: 52px; height: 52px; }
+  .settings-trigger-wrap { right: 84px; bottom: 20px; }
 
   /* The 12-col/24px-gap grid gets too cramped at this width for a
      4-column span, so the modal falls back to a simple centered box. */

@@ -410,6 +410,7 @@ function closeModal() {
 }
 
 document.getElementById('btn-cancel').addEventListener('click', closeModal);
+document.getElementById('btn-close').addEventListener('click', closeModal);
 overlay.addEventListener('click', e => {
   if (e.target === overlay) closeModal();
 });
@@ -483,5 +484,49 @@ document.addEventListener('keydown', e => {
 
 const hour = new Date().getHours();
 document.getElementById('greeting').textContent = (hour >= 5 && hour < 18) ? 'Bonjour' : 'Bonsoir';
+
+// --- Theme (system / light / dark) ---
+
+const THEME_KEY = 'altora-theme';
+const settingsBtn = document.getElementById('settings-btn');
+const themePopup = document.getElementById('theme-popup');
+
+function applyTheme(theme) {
+  if (theme === 'dark' || theme === 'light') {
+    document.documentElement.setAttribute('data-theme', theme);
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  localStorage.setItem(THEME_KEY, theme);
+  document.querySelectorAll('.theme-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === theme);
+  });
+}
+
+applyTheme(localStorage.getItem(THEME_KEY) || 'system');
+
+function openThemePopup() {
+  themePopup.classList.remove('hidden');
+  requestAnimationFrame(() => themePopup.classList.add('visible'));
+}
+
+function closeThemePopup() {
+  themePopup.classList.remove('visible');
+  setTimeout(() => themePopup.classList.add('hidden'), 300);
+}
+
+settingsBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  themePopup.classList.contains('visible') ? closeThemePopup() : openThemePopup();
+});
+
+document.querySelectorAll('.theme-option').forEach(btn => {
+  btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+});
+
+document.addEventListener('click', e => {
+  if (!themePopup.classList.contains('visible')) return;
+  if (!e.target.closest('.settings-trigger-wrap')) closeThemePopup();
+});
 
 render();
