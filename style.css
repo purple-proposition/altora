@@ -537,6 +537,7 @@ body {
   grid-template-columns: repeat(12, 1fr);
   gap: 24px;
   align-items: center;
+  z-index: 60;
   opacity: 0;
   pointer-events: none;
   transition: background 0.2s ease, opacity 0.2s ease;
