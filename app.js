@@ -41,6 +41,7 @@ function render() {
   });
 
   renderStats();
+  renderSummaryDigest(currentPeriod);
   lucide.createIcons();
 }
 
@@ -98,12 +99,96 @@ function renderStats() {
   setStat('sent', sent, total ? Math.round((sent / total) * 100) : 0);
   setStat('interview', interview, total ? Math.round((interview / total) * 100) : 0);
   setStat('rejected', rejected, total ? Math.round((rejected / total) * 100) : 0);
+}
+
+// --- Summary digest (time-scoped: today / this week / this month) ---
+
+const PERIOD_LABELS = { today: "aujourd'hui", week: 'cette semaine', month: 'ce mois-ci' };
+const PERIOD_CAPTIONS = { today: null, week: null, month: '30 derniers jours' };
+const DAY_LETTERS = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Date#getDay(): 0 = Sunday
+
+let currentPeriod = 'today';
+
+function startOfDay(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getPeriodBuckets(period) {
+  const days = period === 'today' ? 1 : period === 'week' ? 7 : 30;
+  const today = startOfDay(new Date());
+  const buckets = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    buckets.push(d);
+  }
+  return buckets;
+}
+
+function renderSummaryDigest(period) {
+  currentPeriod = period;
+
+  const buckets = getPeriodBuckets(period);
+  const startTime = buckets[0].getTime();
+  const inRange = cards.filter(c => c.createdAt >= startTime);
+
+  const todo = inRange.filter(c => c.status === 'todo').length;
+  const sent = inRange.filter(c => c.status === 'sent').length;
+  const interview = inRange.filter(c => c.status === 'interview').length;
+  const rejected = inRange.filter(c => c.status === 'rejected').length;
 
   animateValue(document.getElementById('summary-todo'), todo);
   animateValue(document.getElementById('summary-sent'), sent);
   animateValue(document.getElementById('summary-interview'), interview);
   animateValue(document.getElementById('summary-rejected'), rejected);
+  document.getElementById('period-label').textContent = PERIOD_LABELS[period];
+
+  const counts = buckets.map(day => {
+    const key = day.toDateString();
+    return inRange.filter(c => new Date(c.createdAt).toDateString() === key).length;
+  });
+  renderChart(buckets, counts);
+
+  document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.period === period);
+  });
 }
+
+function renderChart(buckets, counts) {
+  const chartEl = document.getElementById('progress-chart');
+  const captionEl = document.getElementById('chart-caption');
+  const max = Math.max(1, ...counts);
+  const showLabels = counts.length <= 7;
+
+  chartEl.innerHTML = '';
+  counts.forEach((count, i) => {
+    const col = document.createElement('div');
+    col.className = 'chart-bar-col';
+
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.style.height = `${Math.max(4, Math.round((count / max) * 100))}%`;
+    bar.title = `${count} le ${buckets[i].toLocaleDateString('fr-FR')}`;
+    col.appendChild(bar);
+
+    if (showLabels) {
+      const label = document.createElement('span');
+      label.className = 'chart-bar-label';
+      label.textContent = DAY_LETTERS[buckets[i].getDay()];
+      col.appendChild(label);
+    }
+
+    chartEl.appendChild(col);
+  });
+
+  captionEl.textContent = PERIOD_CAPTIONS[currentPeriod] || '';
+}
+
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', () => renderSummaryDigest(btn.dataset.period));
+});
 
 // Counts up or down from the currently displayed number to the new one
 // (standard behaviour: rises when the value increases, falls when it drops).
