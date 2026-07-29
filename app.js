@@ -91,11 +91,16 @@ function renderCard(card) {
     el.appendChild(deadlineRow);
   }
 
-  if (card.contactName || card.contactInfo) {
-    const contactRow = document.createElement('div');
-    contactRow.className = 'card-contact';
-    contactRow.innerHTML = `<i data-lucide="user"></i>${[card.contactName, card.contactInfo].filter(Boolean).join(' · ')}`;
-    el.appendChild(contactRow);
+  if (card.contacts && card.contacts.length) {
+    card.contacts.forEach(contact => {
+      const name = [contact.firstName, contact.lastName].filter(Boolean).join(' ');
+      if (!name && !contact.value) return;
+      const contactRow = document.createElement('div');
+      contactRow.className = 'card-contact';
+      const icon = contact.type === 'phone' ? 'phone' : 'mail';
+      contactRow.innerHTML = `<i data-lucide="${icon}"></i>${[name, contact.value].filter(Boolean).join(' · ')}`;
+      el.appendChild(contactRow);
+    });
   }
 
   if (card.url) {
@@ -387,25 +392,43 @@ STATUSES.forEach(status => {
 
 // FLIP-style height ease: measure before/after so the columns whose card
 // counts changed grow/shrink smoothly instead of snapping.
-function animateColumnHeights(columns, mutate) {
+let columnAnimTick = 0;
+
+function animateColumnHeights(columns, mutate, duration = 400) {
   const startHeights = columns.map(col => col.getBoundingClientRect().height);
   mutate();
   columns.forEach((col, i) => {
     const endHeight = col.getBoundingClientRect().height;
+    // Tags this run so a stale cleanup/transition from an earlier, still-pending
+    // animation on the same column (e.g. two quick consecutive drags) can't
+    // clobber a newer one mid-flight.
+    const myTick = ++columnAnimTick;
+    col.dataset.animTick = myTick;
     col.style.height = `${startHeights[i]}px`;
     col.style.overflow = 'hidden';
     col.getBoundingClientRect(); // force layout so the browser registers the start height first
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        col.style.transition = `height 0.4s ${PREMIUM_EASE}`;
-        col.style.height = `${endHeight}px`;
-      });
-    });
-    setTimeout(() => {
+    const cleanup = () => {
+      if (Number(col.dataset.animTick) !== myTick) return;
       col.style.height = '';
       col.style.overflow = '';
       col.style.transition = '';
-    }, 420);
+      delete col.dataset.animTick;
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (Number(col.dataset.animTick) !== myTick) return;
+        col.style.transition = `height ${duration}ms ${PREMIUM_EASE}`;
+        col.style.height = `${endHeight}px`;
+        col.addEventListener('transitionend', function onEnd(e) {
+          if (e.propertyName !== 'height') return;
+          col.removeEventListener('transitionend', onEnd);
+          cleanup();
+        });
+      });
+    });
+    // Safety net in case the height didn't actually change (no transition fires).
+    setTimeout(cleanup, duration + 60);
   });
 }
 
@@ -514,8 +537,8 @@ const fieldTitle = document.getElementById('field-title');
 const fieldCompany = document.getElementById('field-company');
 const fieldNotes = document.getElementById('field-notes');
 const fieldDeadline = document.getElementById('field-deadline');
-const fieldContactName = document.getElementById('field-contact-name');
-const fieldContactInfo = document.getElementById('field-contact-info');
+const contactsList = document.getElementById('contacts-list');
+const btnAddContact = document.getElementById('btn-add-contact');
 const statusPicker = document.getElementById('status-picker');
 const statusButtons = statusPicker.querySelectorAll('.status-btn');
 const interviewStageGroup = document.getElementById('interview-stage-group');
@@ -523,6 +546,80 @@ const interviewStagePicker = document.getElementById('interview-stage-picker');
 const stageButtons = interviewStagePicker.querySelectorAll('.stage-btn');
 let currentStatus = 'todo';
 let currentStage = null;
+let formContacts = [];
+
+function renderContactsList() {
+  contactsList.innerHTML = '';
+  formContacts.forEach((contact, i) => {
+    const row = document.createElement('div');
+    row.className = 'contact-row';
+
+    const firstName = document.createElement('input');
+    firstName.type = 'text';
+    firstName.placeholder = 'Prénom';
+    firstName.value = contact.firstName || '';
+    firstName.addEventListener('input', () => { contact.firstName = firstName.value; });
+
+    const lastName = document.createElement('input');
+    lastName.type = 'text';
+    lastName.placeholder = 'Nom';
+    lastName.value = contact.lastName || '';
+    lastName.addEventListener('input', () => { contact.lastName = lastName.value; });
+
+    const typeToggle = document.createElement('div');
+    typeToggle.className = 'contact-type-toggle';
+    const emailBtn = document.createElement('button');
+    emailBtn.type = 'button';
+    emailBtn.className = 'contact-type-btn';
+    emailBtn.innerHTML = '<i data-lucide="mail"></i>';
+    emailBtn.title = 'Email';
+    const phoneBtn = document.createElement('button');
+    phoneBtn.type = 'button';
+    phoneBtn.className = 'contact-type-btn';
+    phoneBtn.innerHTML = '<i data-lucide="phone"></i>';
+    phoneBtn.title = 'Téléphone';
+
+    const valueInput = document.createElement('input');
+    valueInput.value = contact.value || '';
+    valueInput.addEventListener('input', () => { contact.value = valueInput.value; });
+
+    function setType(type) {
+      contact.type = type;
+      emailBtn.classList.toggle('active', type === 'email');
+      phoneBtn.classList.toggle('active', type === 'phone');
+      valueInput.type = type === 'phone' ? 'tel' : 'email';
+      valueInput.placeholder = type === 'phone' ? '06 12 34 56 78' : 'email@exemple.com';
+    }
+    emailBtn.addEventListener('click', () => setType('email'));
+    phoneBtn.addEventListener('click', () => setType('phone'));
+    setType(contact.type || 'email');
+
+    typeToggle.appendChild(emailBtn);
+    typeToggle.appendChild(phoneBtn);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'contact-remove-btn';
+    removeBtn.innerHTML = '<i data-lucide="x"></i>';
+    removeBtn.addEventListener('click', () => {
+      formContacts.splice(i, 1);
+      renderContactsList();
+    });
+
+    row.appendChild(firstName);
+    row.appendChild(lastName);
+    row.appendChild(typeToggle);
+    row.appendChild(valueInput);
+    row.appendChild(removeBtn);
+    contactsList.appendChild(row);
+  });
+  lucide.createIcons();
+}
+
+btnAddContact.addEventListener('click', () => {
+  formContacts.push({ firstName: '', lastName: '', type: 'email', value: '' });
+  renderContactsList();
+});
 
 function setStatusPicker(status) {
   currentStatus = status;
@@ -651,6 +748,7 @@ function openModal(mode, card, presetStatus) {
   lastAutoTitle = '';
   lastAutoCompany = '';
   setInterviewStage(null);
+  formContacts = [];
   btnDelete.classList.add('hidden');
   modalHint.classList.add('hidden');
 
@@ -664,8 +762,7 @@ function openModal(mode, card, presetStatus) {
     setInterviewStage(card.interviewStage || null);
     fieldNotes.value = card.notes || '';
     fieldDeadline.value = card.deadline || '';
-    fieldContactName.value = card.contactName || '';
-    fieldContactInfo.value = card.contactInfo || '';
+    formContacts = card.contacts ? card.contacts.map(c => ({ ...c })) : [];
     btnDelete.classList.remove('hidden');
   } else if (mode === 'import') {
     modalTitle.textContent = 'Importer une offre';
@@ -676,6 +773,7 @@ function openModal(mode, card, presetStatus) {
     setStatusPicker(presetStatus || 'todo');
   }
 
+  renderContactsList();
   overlay.classList.remove('hidden');
   requestAnimationFrame(() => overlay.classList.add('visible'));
   (mode === 'import' ? fieldUrl : fieldTitle).focus();
@@ -703,8 +801,9 @@ form.addEventListener('submit', e => {
     status: currentStatus,
     interviewStage: currentStatus === 'interview' ? currentStage : null,
     deadline: fieldDeadline.value || null,
-    contactName: fieldContactName.value.trim(),
-    contactInfo: fieldContactInfo.value.trim(),
+    contacts: formContacts
+      .map(c => ({ ...c, firstName: c.firstName.trim(), lastName: c.lastName.trim(), value: c.value.trim() }))
+      .filter(c => c.firstName || c.lastName || c.value),
     notes: fieldNotes.value.trim(),
   };
 

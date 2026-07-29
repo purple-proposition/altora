@@ -113,7 +113,7 @@
         <label>Lien de l'offre
           <input type="url" id="field-url" placeholder="https://...">
         </label>
-        <label>Poste
+        <label>Poste <span class="field-required">*</span>
           <input type="text" id="field-title" placeholder="Intitulé du poste">
         </label>
         <label>Entreprise
@@ -136,16 +136,13 @@
             <button type="button" class="stage-btn" data-stage="final">Entretien final</button>
           </div>
         </div>
-        <label>Sans réponse après le <span class="field-hint">(optionnel)</span>
+        <label>Sans réponse après le
           <input type="date" id="field-deadline">
         </label>
-        <div class="field-row">
-          <label>Contact <span class="field-hint">(optionnel)</span>
-            <input type="text" id="field-contact-name" placeholder="Prénom Nom">
-          </label>
-          <label>&nbsp;
-            <input type="text" id="field-contact-info" placeholder="Téléphone ou email">
-          </label>
+        <div class="field-group">
+          <span class="field-label">Contact</span>
+          <div id="contacts-list"></div>
+          <button type="button" id="btn-add-contact" class="btn-add-contact"><i data-lucide="plus"></i>Ajouter un contact</button>
         </div>
         <label>Notes
           <textarea id="field-notes" rows="3" placeholder="Contact, prochaine étape..."></textarea>
@@ -166,6 +163,6 @@
 <div class="grid-overlay" id="grid-overlay"></div>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="app.js?v=15"></script>
+<script src="app.js?v=18"></script>
 </body>
 </html>
