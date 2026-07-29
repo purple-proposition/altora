@@ -1,6 +1,8 @@
 const STORAGE_KEY = 'job-tracker-cards';
 const STATUSES = ['todo', 'sent', 'interview', 'rejected'];
 const STAGE_LABELS = { '1': '1er entretien', '2': '2e entretien', final: 'Entretien final' };
+const STATUS_LABELS = { todo: 'À postuler', sent: 'Envoyé', interview: 'Entretien', rejected: 'Refus' };
+const STATUS_ICONS = { todo: 'circle-dashed', sent: 'hourglass', interview: 'target', rejected: 'folder-x' };
 
 let cards = loadCards();
 let editingId = null;
@@ -89,6 +91,13 @@ function renderCard(card) {
     el.appendChild(deadlineRow);
   }
 
+  if (card.contactName || card.contactInfo) {
+    const contactRow = document.createElement('div');
+    contactRow.className = 'card-contact';
+    contactRow.innerHTML = `<i data-lucide="user"></i>${[card.contactName, card.contactInfo].filter(Boolean).join(' · ')}`;
+    el.appendChild(contactRow);
+  }
+
   if (card.url) {
     const link = document.createElement('a');
     link.className = 'card-link';
@@ -114,6 +123,11 @@ function renderCard(card) {
   }
 
   el.addEventListener('click', () => openModal('edit', card));
+
+  el.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    openCardContextMenu(card, e.clientX, e.clientY);
+  });
 
   el.addEventListener('dragstart', () => {
     draggingId = card.id;
@@ -362,11 +376,130 @@ STATUSES.forEach(status => {
     if (!draggingId) return;
     const card = cards.find(c => c.id === draggingId);
     if (card && card.status !== status) {
+      const fromColumn = document.querySelector(`.column[data-status="${card.status}"]`);
+      const toColumn = list.closest('.column');
       card.status = status;
       saveCards();
-      render();
+      animateColumnHeights([fromColumn, toColumn], render);
     }
   });
+});
+
+// FLIP-style height ease: measure before/after so the columns whose card
+// counts changed grow/shrink smoothly instead of snapping.
+function animateColumnHeights(columns, mutate) {
+  const startHeights = columns.map(col => col.getBoundingClientRect().height);
+  mutate();
+  columns.forEach((col, i) => {
+    const endHeight = col.getBoundingClientRect().height;
+    col.style.height = `${startHeights[i]}px`;
+    col.style.overflow = 'hidden';
+    col.getBoundingClientRect(); // force layout so the browser registers the start height first
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        col.style.transition = `height 0.4s ${PREMIUM_EASE}`;
+        col.style.height = `${endHeight}px`;
+      });
+    });
+    setTimeout(() => {
+      col.style.height = '';
+      col.style.overflow = '';
+      col.style.transition = '';
+    }, 420);
+  });
+}
+
+// --- Card context menu (right-click) ---
+
+const contextMenu = document.createElement('div');
+contextMenu.className = 'context-menu hidden';
+document.body.appendChild(contextMenu);
+
+function closeContextMenu() {
+  contextMenu.classList.remove('visible');
+  setTimeout(() => contextMenu.classList.add('hidden'), 200);
+}
+
+function openCardContextMenu(card, x, y) {
+  contextMenu.innerHTML = '';
+
+  const editBtn = document.createElement('button');
+  editBtn.type = 'button';
+  editBtn.className = 'context-item';
+  editBtn.innerHTML = '<i data-lucide="pencil"></i>Modifier';
+  editBtn.addEventListener('click', () => { closeContextMenu(); openModal('edit', card); });
+  contextMenu.appendChild(editBtn);
+
+  const moveRow = document.createElement('div');
+  moveRow.className = 'context-move-row';
+  STATUSES.filter(s => s !== card.status).forEach(status => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `context-move-btn status-btn--${{todo:'slate',sent:'amber',interview:'green',rejected:'rose'}[status]}`;
+    btn.innerHTML = `<i data-lucide="${STATUS_ICONS[status]}"></i>${STATUS_LABELS[status]}`;
+    btn.addEventListener('click', () => {
+      closeContextMenu();
+      const fromColumn = document.querySelector(`.column[data-status="${card.status}"]`);
+      const toColumn = document.querySelector(`.column[data-status="${status}"]`);
+      card.status = status;
+      saveCards();
+      animateColumnHeights([fromColumn, toColumn], render);
+    });
+    moveRow.appendChild(btn);
+  });
+  const moveLabel = document.createElement('div');
+  moveLabel.className = 'context-label';
+  moveLabel.textContent = 'Déplacer vers';
+  contextMenu.appendChild(moveLabel);
+  contextMenu.appendChild(moveRow);
+
+  if (card.url) {
+    const openBtn = document.createElement('button');
+    openBtn.type = 'button';
+    openBtn.className = 'context-item';
+    openBtn.innerHTML = '<i data-lucide="external-link"></i>Ouvrir l\'offre';
+    openBtn.addEventListener('click', () => { closeContextMenu(); window.open(card.url, '_blank', 'noopener'); });
+    contextMenu.appendChild(openBtn);
+  }
+
+  const divider = document.createElement('div');
+  divider.className = 'context-divider';
+  contextMenu.appendChild(divider);
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'context-item context-item--danger';
+  deleteBtn.innerHTML = '<i data-lucide="trash-2"></i>Supprimer';
+  deleteBtn.addEventListener('click', () => {
+    closeContextMenu();
+    cards = cards.filter(c => c.id !== card.id);
+    saveCards();
+    render();
+  });
+  contextMenu.appendChild(deleteBtn);
+
+  contextMenu.classList.remove('hidden');
+  contextMenu.style.left = '0px';
+  contextMenu.style.top = '0px';
+  lucide.createIcons();
+
+  const rect = contextMenu.getBoundingClientRect();
+  const clampedX = Math.min(x, window.innerWidth - rect.width - 12);
+  const clampedY = Math.min(y, window.innerHeight - rect.height - 12);
+  contextMenu.style.left = `${Math.max(12, clampedX)}px`;
+  contextMenu.style.top = `${Math.max(12, clampedY)}px`;
+
+  requestAnimationFrame(() => contextMenu.classList.add('visible'));
+}
+
+document.addEventListener('click', e => {
+  if (!contextMenu.contains(e.target)) closeContextMenu();
+});
+document.addEventListener('contextmenu', e => {
+  if (!e.target.closest('.card')) closeContextMenu();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeContextMenu();
 });
 
 // --- Modal ---
@@ -381,6 +514,8 @@ const fieldTitle = document.getElementById('field-title');
 const fieldCompany = document.getElementById('field-company');
 const fieldNotes = document.getElementById('field-notes');
 const fieldDeadline = document.getElementById('field-deadline');
+const fieldContactName = document.getElementById('field-contact-name');
+const fieldContactInfo = document.getElementById('field-contact-info');
 const statusPicker = document.getElementById('status-picker');
 const statusButtons = statusPicker.querySelectorAll('.status-btn');
 const interviewStageGroup = document.getElementById('interview-stage-group');
@@ -529,6 +664,8 @@ function openModal(mode, card, presetStatus) {
     setInterviewStage(card.interviewStage || null);
     fieldNotes.value = card.notes || '';
     fieldDeadline.value = card.deadline || '';
+    fieldContactName.value = card.contactName || '';
+    fieldContactInfo.value = card.contactInfo || '';
     btnDelete.classList.remove('hidden');
   } else if (mode === 'import') {
     modalTitle.textContent = 'Importer une offre';
@@ -566,6 +703,8 @@ form.addEventListener('submit', e => {
     status: currentStatus,
     interviewStage: currentStatus === 'interview' ? currentStage : null,
     deadline: fieldDeadline.value || null,
+    contactName: fieldContactName.value.trim(),
+    contactInfo: fieldContactInfo.value.trim(),
     notes: fieldNotes.value.trim(),
   };
 
