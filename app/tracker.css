@@ -465,6 +465,34 @@ body {
   color: var(--text-muted);
 }
 
+.card-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.card-meta-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.card-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.card-meta-item .lucide { width: 13px; height: 13px; }
+
 .card-stage-tag {
   display: inline-flex;
   align-items: center;
@@ -789,6 +817,35 @@ body {
 .status-btn.active.status-btn--amber  { border-color: var(--amber-fill); }
 .status-btn.active.status-btn--green  { border-color: var(--green-fill); }
 .status-btn.active.status-btn--rose   { border-color: var(--rose-fill); }
+
+.contract-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.contract-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid transparent;
+  background: var(--bg);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, filter 0.15s ease;
+}
+
+.contract-btn:hover { filter: brightness(0.96); }
+
+.contract-btn.active {
+  background: var(--indigo-tint);
+  color: var(--indigo);
+  border-color: var(--indigo);
+}
 
 .field-hint {
   font-weight: 400;

@@ -154,6 +154,24 @@ export default async function TrackerPage() {
                   <input type="text" id="field-company" placeholder="Nom de l'entreprise" />
                 </label>
               </div>
+              <div className="field-row">
+                <label>Lieu
+                  <input type="text" id="field-location" placeholder="Paris, télétravail…" />
+                </label>
+                <label>Rémunération
+                  <input type="text" id="field-salary" placeholder="35-40k€, selon profil…" />
+                </label>
+              </div>
+              <div className="field-group">
+                <span className="field-label">Type de contrat</span>
+                <div className="contract-picker" id="contract-picker">
+                  <button type="button" className="contract-btn" data-contract="CDI">CDI</button>
+                  <button type="button" className="contract-btn" data-contract="CDD">CDD</button>
+                  <button type="button" className="contract-btn" data-contract="Alternance">Alternance</button>
+                  <button type="button" className="contract-btn" data-contract="Stage">Stage</button>
+                  <button type="button" className="contract-btn" data-contract="Freelance">Freelance</button>
+                </div>
+              </div>
               <div className="field-group">
                 <span className="field-label">Statut</span>
                 <div className="status-picker" id="status-picker">

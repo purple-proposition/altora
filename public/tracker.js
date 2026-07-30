@@ -99,6 +99,30 @@ function renderCard(card) {
   }
   el.appendChild(heading);
 
+  if (card.location || card.salary || card.contractType) {
+    const metaRow = document.createElement('div');
+    metaRow.className = 'card-meta-row';
+    if (card.contractType) {
+      const tag = document.createElement('span');
+      tag.className = 'card-meta-tag';
+      tag.textContent = card.contractType;
+      metaRow.appendChild(tag);
+    }
+    if (card.location) {
+      const loc = document.createElement('span');
+      loc.className = 'card-meta-item';
+      loc.innerHTML = `<i data-lucide="map-pin"></i>${card.location}`;
+      metaRow.appendChild(loc);
+    }
+    if (card.salary) {
+      const sal = document.createElement('span');
+      sal.className = 'card-meta-item';
+      sal.innerHTML = `<i data-lucide="banknote"></i>${card.salary}`;
+      metaRow.appendChild(sal);
+    }
+    el.appendChild(metaRow);
+  }
+
   if (card.status === 'interview' && card.interviewStage) {
     const stageTag = document.createElement('div');
     stageTag.className = 'card-stage-tag';
@@ -591,6 +615,8 @@ const fieldTitle = document.getElementById('field-title');
 const fieldCompany = document.getElementById('field-company');
 const fieldNotes = document.getElementById('field-notes');
 const fieldDeadline = document.getElementById('field-deadline');
+const fieldLocation = document.getElementById('field-location');
+const fieldSalary = document.getElementById('field-salary');
 const contactsList = document.getElementById('contacts-list');
 const btnAddContact = document.getElementById('btn-add-contact');
 const statusPicker = document.getElementById('status-picker');
@@ -598,9 +624,23 @@ const statusButtons = statusPicker.querySelectorAll('.status-btn');
 const interviewStageGroup = document.getElementById('interview-stage-group');
 const interviewStagePicker = document.getElementById('interview-stage-picker');
 const stageButtons = interviewStagePicker.querySelectorAll('.stage-btn');
+const contractPicker = document.getElementById('contract-picker');
+const contractButtons = contractPicker.querySelectorAll('.contract-btn');
 let currentStatus = 'todo';
 let currentStage = null;
+let currentContract = null;
 let formContacts = [];
+
+function setContractType(contract) {
+  currentContract = contract;
+  contractButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.contract === contract);
+  });
+}
+
+contractButtons.forEach(btn => {
+  btn.addEventListener('click', () => setContractType(currentContract === btn.dataset.contract ? null : btn.dataset.contract));
+});
 
 // Groups digits by 2 ("06 06 95 41 26") as the user types a phone number.
 function formatPhone(raw) {
@@ -816,6 +856,7 @@ function openModal(mode, card, presetStatus) {
   lastAutoTitle = '';
   lastAutoCompany = '';
   setInterviewStage(null);
+  setContractType(null);
   formContacts = [];
   btnDelete.classList.add('hidden');
   modalHint.classList.add('hidden');
@@ -826,8 +867,11 @@ function openModal(mode, card, presetStatus) {
     fieldUrl.value = card.url || '';
     fieldTitle.value = card.title || '';
     fieldCompany.value = card.company || '';
+    fieldLocation.value = card.location || '';
+    fieldSalary.value = card.salary || '';
     setStatusPicker(card.status);
     setInterviewStage(card.interviewStage || null);
+    setContractType(card.contractType || null);
     fieldNotes.value = card.notes || '';
     fieldDeadline.value = card.deadline || '';
     formContacts = card.contacts ? card.contacts.map(c => ({ ...c })) : [];
@@ -866,6 +910,9 @@ form.addEventListener('submit', e => {
     url: fieldUrl.value.trim(),
     title: fieldTitle.value.trim() || (fieldUrl.value.trim() ? 'Nouvelle offre (à compléter)' : ''),
     company: fieldCompany.value.trim(),
+    location: fieldLocation.value.trim(),
+    salary: fieldSalary.value.trim(),
+    contractType: currentContract,
     status: currentStatus,
     interviewStage: currentStatus === 'interview' ? currentStage : null,
     deadline: fieldDeadline.value || null,
