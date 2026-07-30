@@ -22,9 +22,10 @@ export default async function TrackerPage() {
 
   return (
     <>
+      <div className="app-shell">
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <span className="sidebar-logo"><i data-lucide="rocket"></i></span>
+          <img className="sidebar-logo" src="/rocket-school-logo.jpg" alt="Rocket School" />
           <span className="sidebar-brand-name">Rocket School</span>
         </div>
 
@@ -278,6 +279,7 @@ export default async function TrackerPage() {
             </form>
           </div>
         </div>
+      </div>
       </div>
 
       <div className="grid-overlay" id="grid-overlay"></div>
