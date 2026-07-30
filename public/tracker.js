@@ -1163,33 +1163,178 @@ document.querySelectorAll('.sidebar-subitem').forEach(btn => {
   });
 });
 
-// --- Home / Mes tâches view toggle ---
+// --- Home / Mes tâches / Calendrier view toggle ---
 
 const sidebarHomeBtn = document.getElementById('sidebar-home-btn');
+const sidebarCalendarBtn = document.getElementById('sidebar-calendar-btn');
 const viewHome = document.getElementById('view-home');
+const viewCalendar = document.getElementById('view-calendar');
 const board = document.getElementById('board');
 const topbarToolbar = document.getElementById('topbar-toolbar');
 const breadcrumbActiveLabel = document.getElementById('breadcrumb-active-label');
 
-function showHomeView() {
-  viewHome.classList.remove('hidden');
+function deactivateAllViews() {
+  viewHome.classList.add('hidden');
+  viewCalendar.classList.add('hidden');
   board.classList.add('hidden');
   topbarToolbar.classList.add('hidden');
-  sidebarHomeBtn.classList.add('sidebar-item--active');
+  sidebarHomeBtn.classList.remove('sidebar-item--active');
   sidebarSuiviToggle.classList.remove('sidebar-item--active');
-  breadcrumbActiveLabel.textContent = 'Home';
+  sidebarCalendarBtn.classList.remove('sidebar-item--active');
+}
+
+function showHomeView() {
+  deactivateAllViews();
+  viewHome.classList.remove('hidden');
+  sidebarHomeBtn.classList.add('sidebar-item--active');
+  breadcrumbActiveLabel.textContent = 'Accueil';
 }
 
 function showTasksView() {
-  viewHome.classList.add('hidden');
+  deactivateAllViews();
   board.classList.remove('hidden');
   topbarToolbar.classList.remove('hidden');
-  sidebarHomeBtn.classList.remove('sidebar-item--active');
   sidebarSuiviToggle.classList.add('sidebar-item--active');
   breadcrumbActiveLabel.textContent = 'Mes tâches';
 }
 
+function showCalendarView() {
+  deactivateAllViews();
+  viewCalendar.classList.remove('hidden');
+  sidebarCalendarBtn.classList.add('sidebar-item--active');
+  breadcrumbActiveLabel.textContent = 'Calendrier';
+  renderCalendarMonth();
+}
+
 sidebarHomeBtn.addEventListener('click', showHomeView);
+sidebarCalendarBtn.addEventListener('click', showCalendarView);
+
+// --- Calendrier : planning de formation en alternance ---
+// Données extraites du planning "Apollo 160 DBD - B3 : REC // ALT - LYON"
+// (Rocket School), du 27/10/2025 au 25/09/2026. Par défaut, un jour de
+// semaine dans la plage est une "semaine en entreprise", sauf exception
+// listée ci-dessous.
+
+const CALENDAR_EVENT_LABELS = {
+  formation: 'Journée de formation',
+  conges: 'Congés pédagogique',
+  examen: 'Examens écrit/oral',
+  examen_oral: 'Examen oral (convocation)',
+  ferie: 'Jour férié',
+};
+
+const CALENDAR_SCHOOL_EVENTS = {
+  '2025-10-27': 'formation', '2025-10-28': 'formation', '2025-10-29': 'formation',
+  '2025-10-30': 'formation', '2025-10-31': 'formation',
+  '2025-11-10': 'formation', '2025-11-11': 'ferie', '2025-11-12': 'formation',
+  '2025-11-13': 'formation', '2025-11-14': 'formation', '2025-11-17': 'formation',
+  '2025-12-15': 'formation', '2025-12-16': 'formation', '2025-12-17': 'formation',
+  '2025-12-18': 'formation', '2025-12-19': 'formation',
+  '2025-12-22': 'conges', '2025-12-23': 'conges', '2025-12-25': 'ferie',
+  '2025-12-26': 'examen_oral', '2025-12-29': 'conges',
+  '2026-01-01': 'ferie',
+  '2026-01-26': 'formation', '2026-01-27': 'formation', '2026-01-28': 'formation',
+  '2026-01-29': 'formation', '2026-01-30': 'formation',
+  '2026-04-06': 'ferie',
+  '2026-04-20': 'formation', '2026-04-21': 'formation', '2026-04-22': 'formation',
+  '2026-04-23': 'formation', '2026-04-24': 'formation',
+  '2026-05-01': 'ferie', '2026-05-08': 'ferie', '2026-05-14': 'ferie',
+  '2026-05-25': 'ferie',
+  '2026-05-26': 'formation', '2026-05-27': 'formation', '2026-05-28': 'formation',
+  '2026-05-29': 'formation',
+  '2026-06-01': 'formation',
+  '2026-06-08': 'formation', '2026-06-09': 'formation', '2026-06-10': 'formation',
+  '2026-06-11': 'formation', '2026-06-12': 'formation',
+  '2026-06-22': 'formation', '2026-06-23': 'formation',
+  '2026-06-24': 'examen', '2026-06-25': 'examen', '2026-06-26': 'examen',
+  '2026-07-14': 'ferie',
+  '2026-07-27': 'formation', '2026-07-28': 'formation', '2026-07-29': 'formation',
+  '2026-07-30': 'formation', '2026-07-31': 'formation',
+  '2026-08-03': 'examen', '2026-08-04': 'examen', '2026-08-05': 'examen',
+  '2026-08-06': 'examen', '2026-08-07': 'examen',
+  '2026-08-10': 'conges', '2026-08-11': 'conges', '2026-08-12': 'conges',
+  '2026-08-13': 'conges', '2026-08-14': 'conges', '2026-08-15': 'examen',
+  '2026-08-17': 'formation', '2026-08-18': 'formation', '2026-08-19': 'formation',
+  '2026-08-20': 'formation', '2026-08-21': 'formation',
+  '2026-09-21': 'examen_oral',
+  '2026-09-22': 'formation', '2026-09-23': 'formation', '2026-09-24': 'formation',
+  '2026-09-25': 'formation',
+};
+
+const CALENDAR_RANGE_START = '2025-10-07';
+const CALENDAR_RANGE_END = '2026-09-30';
+const CALENDAR_MONTH_LABELS = [
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+];
+
+const today = new Date();
+let calendarCursor = { year: today.getFullYear(), month: today.getMonth() };
+
+function calendarDateKey(y, m, d) {
+  return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+
+function calendarEventFor(key) {
+  if (key < CALENDAR_RANGE_START || key > CALENDAR_RANGE_END) return null;
+  const dow = new Date(key + 'T00:00:00').getDay();
+  if (dow === 0 || dow === 6) return null;
+  const type = CALENDAR_SCHOOL_EVENTS[key];
+  if (type) return { type, label: CALENDAR_EVENT_LABELS[type] };
+  return { type: 'entreprise', label: 'Semaine en entreprise' };
+}
+
+function renderCalendarMonth() {
+  const { year, month } = calendarCursor;
+  document.getElementById('calendar-title').textContent = `${CALENDAR_MONTH_LABELS[month]} ${year}`;
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startOffset = (firstDay.getDay() + 6) % 7;
+  const totalCells = Math.ceil((startOffset + lastDay.getDate()) / 7) * 7;
+  const todayKey = calendarDateKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+  const weeksEl = document.getElementById('calendar-weeks');
+  weeksEl.innerHTML = '';
+  const cursor = new Date(year, month, 1 - startOffset);
+
+  for (let w = 0; w < totalCells / 7; w++) {
+    const weekEl = document.createElement('div');
+    weekEl.className = 'calendar-week';
+    for (let d = 0; d < 7; d++) {
+      const y = cursor.getFullYear(), m = cursor.getMonth(), day = cursor.getDate();
+      const key = calendarDateKey(y, m, day);
+      const inMonth = m === month;
+      const dow = (cursor.getDay() + 6) % 7;
+      const isWeekend = dow >= 5;
+      const ev = calendarEventFor(key);
+
+      const dayEl = document.createElement('div');
+      dayEl.className = 'calendar-day' + (!inMonth ? ' calendar-day--muted' : '') + (isWeekend ? ' calendar-day--weekend' : '') + (key === todayKey ? ' calendar-day--today' : '');
+      dayEl.innerHTML = `<span class="calendar-day-number">${day}</span>${ev ? `<span class="calendar-event calendar-event--${ev.type}">${ev.label}</span>` : ''}`;
+      weekEl.appendChild(dayEl);
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    weeksEl.appendChild(weekEl);
+  }
+}
+
+document.getElementById('calendar-prev').addEventListener('click', () => {
+  calendarCursor = calendarCursor.month === 0
+    ? { year: calendarCursor.year - 1, month: 11 }
+    : { year: calendarCursor.year, month: calendarCursor.month - 1 };
+  renderCalendarMonth();
+});
+document.getElementById('calendar-next').addEventListener('click', () => {
+  calendarCursor = calendarCursor.month === 11
+    ? { year: calendarCursor.year + 1, month: 0 }
+    : { year: calendarCursor.year, month: calendarCursor.month + 1 };
+  renderCalendarMonth();
+});
+document.getElementById('calendar-today').addEventListener('click', () => {
+  calendarCursor = { year: today.getFullYear(), month: today.getMonth() };
+  renderCalendarMonth();
+});
 
 // --- CV upload + inline preview ---
 

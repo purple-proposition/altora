@@ -38,7 +38,7 @@ export default async function TrackerPage() {
           <span className="sidebar-nav-label">Menu</span>
           <button type="button" className="sidebar-item sidebar-item--active" id="sidebar-home-btn">
             <i data-lucide="home"></i>
-            <span className="sidebar-item-label">Home</span>
+            <span className="sidebar-item-label">Accueil</span>
           </button>
           <div className="sidebar-item-group">
             <button type="button" className="sidebar-item" id="sidebar-suivi-toggle">
@@ -54,7 +54,10 @@ export default async function TrackerPage() {
             </div>
           </div>
           <a href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></a>
-          <a href="/calendar" className="sidebar-item"><i data-lucide="calendar"></i><span className="sidebar-item-label">Calendrier</span></a>
+          <button type="button" className="sidebar-item" id="sidebar-calendar-btn">
+            <i data-lucide="calendar"></i>
+            <span className="sidebar-item-label">Calendrier</span>
+          </button>
           <a href="/documents" className="sidebar-item"><i data-lucide="folder"></i><span className="sidebar-item-label">Mes documents</span></a>
         </nav>
 
@@ -75,7 +78,7 @@ export default async function TrackerPage() {
           <div className="topbar-breadcrumb">
             <span className="breadcrumb-item"><i data-lucide="home"></i>Rocket School</span>
             <span className="breadcrumb-sep">/</span>
-            <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i><span id="breadcrumb-active-label">Home</span></span>
+            <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i><span id="breadcrumb-active-label">Accueil</span></span>
             <button type="button" className="topbar-bell" title="Notifications"><i data-lucide="bell"></i></button>
           </div>
 
@@ -157,6 +160,41 @@ export default async function TrackerPage() {
             <button type="button" className="add-card-dashed" data-status="rejected">+ Ajouter une nouvelle tâche</button>
           </div>
         </main>
+
+        <section className="calendar-view hidden" id="view-calendar">
+          <div className="calendar-header">
+            <div className="calendar-title-row">
+              <h2 className="calendar-title" id="calendar-title"></h2>
+              <div className="calendar-nav">
+                <button type="button" className="calendar-nav-btn" id="calendar-prev" aria-label="Mois précédent"><i data-lucide="chevron-left"></i></button>
+                <button type="button" className="calendar-nav-btn" id="calendar-today" aria-label="Aujourd&apos;hui"><i data-lucide="dot"></i></button>
+                <button type="button" className="calendar-nav-btn" id="calendar-next" aria-label="Mois suivant"><i data-lucide="chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div className="calendar-legend">
+            <span className="calendar-legend-item calendar-event--entreprise"><span className="calendar-legend-dot" style={{ background: 'var(--text-muted)' }}></span>Semaine en entreprise</span>
+            <span className="calendar-legend-item calendar-event--formation"><span className="calendar-legend-dot" style={{ background: 'var(--indigo)' }}></span>Journée de formation</span>
+            <span className="calendar-legend-item calendar-event--conges"><span className="calendar-legend-dot" style={{ background: 'var(--amber)' }}></span>Congés pédagogique</span>
+            <span className="calendar-legend-item calendar-event--examen"><span className="calendar-legend-dot" style={{ background: 'var(--green)' }}></span>Examens écrit/oral</span>
+            <span className="calendar-legend-item calendar-event--examen_oral"><span className="calendar-legend-dot" style={{ background: 'var(--violet)' }}></span>Examen oral (convocation)</span>
+            <span className="calendar-legend-item calendar-event--ferie"><span className="calendar-legend-dot" style={{ background: 'var(--rose)' }}></span>Jour férié</span>
+          </div>
+
+          <div className="calendar-grid">
+            <div className="calendar-weekdays">
+              <div className="calendar-weekday">Lun</div>
+              <div className="calendar-weekday">Mar</div>
+              <div className="calendar-weekday">Mer</div>
+              <div className="calendar-weekday">Jeu</div>
+              <div className="calendar-weekday">Ven</div>
+              <div className="calendar-weekday">Sam</div>
+              <div className="calendar-weekday">Dim</div>
+            </div>
+            <div className="calendar-weeks" id="calendar-weeks"></div>
+          </div>
+        </section>
 
         <div className="modal-overlay hidden" id="profile-overlay">
           <div className="modal profile-modal">

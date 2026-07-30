@@ -1707,6 +1707,8 @@ body {
 .calendar-day--weekend { background: var(--bg); }
 .calendar-day-number { font-size: 13px; font-weight: 500; color: var(--text); }
 .calendar-day--muted .calendar-day-number { color: var(--text-muted); }
+.calendar-day--today { box-shadow: inset 0 0 0 2px var(--indigo); border-radius: var(--radius-input); }
+.calendar-day--today .calendar-day-number { color: var(--indigo); font-weight: 600; }
 
 .calendar-event {
   display: block;
