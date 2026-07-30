@@ -118,7 +118,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 20px;
   overflow-y: auto;
-  padding: 32px 40px 60px;
+  padding: 24px;
 }
 
 /* --- Sidebar --- */
@@ -321,8 +321,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
-  margin: -32px -40px 0;
-  padding: 24px 40px 0;
+  margin: -24px -24px 0;
+  padding: 24px 24px 0;
   background: color-mix(in srgb, var(--card-bg) 82%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -333,7 +333,7 @@ body {
   align-items: center;
   gap: 10px;
   padding-bottom: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   border-bottom: 1px solid var(--border);
   font-size: 13px;
   font-weight: 500;
@@ -1610,7 +1610,6 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 24px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
