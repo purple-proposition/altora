@@ -941,7 +941,8 @@ document.getElementById('greeting').textContent = (hour >= 5 && hour < 18) ? 'Bo
 
 const THEME_KEY = 'altora-theme';
 const settingsBtn = document.getElementById('settings-btn');
-const themePopup = document.getElementById('theme-popup');
+const profileOverlay = document.getElementById('profile-overlay');
+const profileClose = document.getElementById('profile-close');
 
 function applyTheme(theme) {
   if (theme === 'dark' || theme === 'light') {
@@ -957,30 +958,26 @@ function applyTheme(theme) {
 
 applyTheme(localStorage.getItem(THEME_KEY) || 'system');
 
-function openThemePopup() {
-  themePopup.classList.remove('hidden');
-  requestAnimationFrame(() => themePopup.classList.add('visible'));
+function openProfileModal() {
+  profileOverlay.classList.remove('hidden');
+  requestAnimationFrame(() => profileOverlay.classList.add('visible'));
   settingsBtn.classList.add('active');
 }
 
-function closeThemePopup() {
-  themePopup.classList.remove('visible');
-  setTimeout(() => themePopup.classList.add('hidden'), 300);
+function closeProfileModal() {
+  profileOverlay.classList.remove('visible');
+  setTimeout(() => profileOverlay.classList.add('hidden'), 300);
   settingsBtn.classList.remove('active');
 }
 
-settingsBtn.addEventListener('click', e => {
-  e.stopPropagation();
-  themePopup.classList.contains('visible') ? closeThemePopup() : openThemePopup();
+settingsBtn.addEventListener('click', () => openProfileModal());
+profileClose.addEventListener('click', () => closeProfileModal());
+profileOverlay.addEventListener('click', e => {
+  if (e.target === profileOverlay) closeProfileModal();
 });
 
 document.querySelectorAll('.theme-option').forEach(btn => {
   btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
-});
-
-document.addEventListener('click', e => {
-  if (!themePopup.classList.contains('visible')) return;
-  if (!e.target.closest('.settings-trigger-wrap')) closeThemePopup();
 });
 
 (async () => {

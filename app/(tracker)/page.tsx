@@ -3,7 +3,9 @@ import { auth, signOut } from '@/auth';
 
 export default async function TrackerPage() {
   const session = await auth();
-  const firstName = session?.user?.name?.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
+  const fullName = session?.user?.name || '';
+  const firstName = fullName.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
+  const email = session?.user?.email || '';
 
   return (
     <>
@@ -97,10 +99,37 @@ export default async function TrackerPage() {
           <button className="fab settings-fab" id="settings-btn" title="Réglages">
             <i data-lucide="settings"></i>
           </button>
-          <div className="theme-popup hidden" id="theme-popup">
-            <button type="button" className="theme-option" data-theme="system"><i data-lucide="monitor"></i>Système</button>
-            <button type="button" className="theme-option" data-theme="light"><i data-lucide="sun"></i>Clair</button>
-            <button type="button" className="theme-option" data-theme="dark"><i data-lucide="moon"></i>Sombre</button>
+        </div>
+
+        <div className="modal-overlay hidden" id="profile-overlay">
+          <div className="modal profile-modal">
+            <button type="button" className="modal-close" id="profile-close" title="Fermer"><i data-lucide="x"></i></button>
+            <h3>Profil</h3>
+
+            <div className="profile-header">
+              <img className="profile-avatar" src="/avatar.jpg" alt={firstName} />
+              <div>
+                <div className="profile-name-row">
+                  <span className="profile-name">{fullName || firstName}</span>
+                  <span className="pill-pro">Compte pro</span>
+                </div>
+                <div className="profile-email">{email}</div>
+              </div>
+            </div>
+
+            <div className="field-group">
+              <span className="field-label">École</span>
+              <div className="profile-static-value">Rocket School</div>
+            </div>
+
+            <div className="field-group">
+              <span className="field-label">Thème</span>
+              <div className="theme-picker-inline" id="theme-picker-inline">
+                <button type="button" className="theme-option" data-theme="system"><i data-lucide="monitor"></i>Système</button>
+                <button type="button" className="theme-option" data-theme="light"><i data-lucide="sun"></i>Clair</button>
+                <button type="button" className="theme-option" data-theme="dark"><i data-lucide="moon"></i>Sombre</button>
+              </div>
+            </div>
           </div>
         </div>
 
