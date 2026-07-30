@@ -171,13 +171,15 @@ function renderCard(card) {
     linkRow.appendChild(link);
   }
 
-  const genLink = document.createElement('a');
-  genLink.className = 'card-link card-link--generate';
-  const jobParam = card.url || [card.title, card.company].filter(Boolean).join(' chez ');
-  genLink.href = `/generate?job=${encodeURIComponent(jobParam)}&cardId=${encodeURIComponent(card.id)}`;
-  genLink.innerHTML = '<i data-lucide="sparkles"></i> Générer CV';
-  genLink.addEventListener('click', e => e.stopPropagation());
-  linkRow.appendChild(genLink);
+  if (card.status === 'todo') {
+    const genLink = document.createElement('a');
+    genLink.className = 'card-link card-link--generate';
+    const jobParam = card.url || [card.title, card.company].filter(Boolean).join(' chez ');
+    genLink.href = `/generate?job=${encodeURIComponent(jobParam)}&cardId=${encodeURIComponent(card.id)}`;
+    genLink.innerHTML = '<i data-lucide="sparkles"></i> Générer CV';
+    genLink.addEventListener('click', e => e.stopPropagation());
+    linkRow.appendChild(genLink);
+  }
 
   el.appendChild(linkRow);
 
@@ -245,6 +247,13 @@ function getPeriodStart(period) {
   return start;
 }
 
+const SUMMARY_LABELS = {
+  todo: { singular: 'offre à postuler', plural: 'offres à postuler' },
+  sent: { singular: 'candidature envoyée', plural: 'candidatures envoyées' },
+  interview: { singular: 'entretien planifié', plural: 'entretiens planifiés' },
+  rejected: { singular: 'refus reçu', plural: 'refus reçus' },
+};
+
 function renderSummaryDigest(period) {
   currentPeriod = period;
 
@@ -261,6 +270,15 @@ function renderSummaryDigest(period) {
   rollNumber(document.getElementById('summary-interview'), interview);
   rollNumber(document.getElementById('summary-rejected'), rejected);
   animateLabelSwap(document.getElementById('period-label'), PERIOD_LABELS[period]);
+
+  // Plain textContent swap (not animateLabelSwap) — that helper fades the
+  // whole sentence container, and four of these can fire at once here
+  // (they'd all fight over the same container's opacity/height).
+  const counts = { todo, sent, interview, rejected };
+  Object.keys(SUMMARY_LABELS).forEach(key => {
+    const forms = SUMMARY_LABELS[key];
+    document.getElementById(`label-${key}`).textContent = counts[key] === 1 ? forms.singular : forms.plural;
+  });
 
   document.querySelectorAll('.period-option').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.period === period);
@@ -1018,6 +1036,7 @@ function closeProfileModal() {
 }
 
 settingsBtn.addEventListener('click', () => openProfileModal());
+document.getElementById('greeting-name-btn').addEventListener('click', () => openProfileModal());
 profileClose.addEventListener('click', () => closeProfileModal());
 profileOverlay.addEventListener('click', e => {
   if (e.target === profileOverlay) closeProfileModal();

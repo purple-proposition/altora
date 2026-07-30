@@ -153,6 +153,21 @@ body {
   margin: 0;
 }
 
+.greeting-name-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: opacity 0.15s ease;
+}
+
+.greeting-name-btn:hover { opacity: 0.65; }
+
 .avatar {
   width: 1em;
   height: 1em;

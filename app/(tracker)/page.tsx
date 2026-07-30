@@ -24,7 +24,7 @@ export default async function TrackerPage() {
 
         <section className="summary-card">
           <p className="summary-text">
-            <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> {firstName},{' '}
+            <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,{' '}
             <span className="period-trigger-wrap">
               <button type="button" className="period-trigger" id="period-trigger">
                 <span id="period-label">aujourd&apos;hui</span><i data-lucide="chevron-down"></i>
@@ -34,10 +34,10 @@ export default async function TrackerPage() {
                 <button type="button" className="period-option" data-period="week">Cette semaine</button>
                 <button type="button" className="period-option" data-period="month">Ce mois-ci</button>
               </span>
-            </span> tu as <span className="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> offres à postuler,
-            <span className="inline-pill inline-pill--amber"><i data-lucide="hourglass"></i><span id="summary-sent">0</span></span> candidatures envoyées,
-            <span className="inline-pill inline-pill--green"><i data-lucide="target"></i><span id="summary-interview">0</span></span> entretiens planifiés et
-            <span className="inline-pill inline-pill--rose"><i data-lucide="folder-x"></i><span id="summary-rejected">0</span></span> refus reçus.
+            </span> tu as <span className="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> <span id="label-todo">offres à postuler</span>,
+            <span className="inline-pill inline-pill--amber"><i data-lucide="hourglass"></i><span id="summary-sent">0</span></span> <span id="label-sent">candidatures envoyées</span>,
+            <span className="inline-pill inline-pill--green"><i data-lucide="target"></i><span id="summary-interview">0</span></span> <span id="label-interview">entretiens planifiés</span> et
+            <span className="inline-pill inline-pill--rose"><i data-lucide="folder-x"></i><span id="summary-rejected">0</span></span> <span id="label-rejected">refus reçus</span>.
           </p>
         </section>
 
