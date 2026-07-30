@@ -50,6 +50,7 @@ export default async function TrackerPage() {
             </div>
           </div>
           <a href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></a>
+          <a href="/calendar" className="sidebar-item"><i data-lucide="calendar"></i><span className="sidebar-item-label">Calendrier</span></a>
         </nav>
 
         <div className="sidebar-bottom">
