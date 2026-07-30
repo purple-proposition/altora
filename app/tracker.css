@@ -1610,6 +1610,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  margin-top: 24px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
