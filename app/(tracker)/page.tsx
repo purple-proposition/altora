@@ -68,7 +68,7 @@ export default async function TrackerPage() {
         <section className="summary-card">
           <div className="summary-date">{todayLabel}</div>
           <h2 className="summary-greeting">
-            <span id="greeting">Bonjour</span>, <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,
+            <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,
           </h2>
           <p className="summary-subtitle">
             <span className="period-trigger-wrap">
@@ -89,43 +89,43 @@ export default async function TrackerPage() {
 
         <main className="board" id="board">
           <div className="column" data-status="todo">
-            <div className="column-top">
-              <span className="stat-pill stat-pill--slate"><i data-lucide="circle-dashed"></i>À postuler</span>
-              <button className="add-card-btn" data-status="todo" title="Ajouter une candidature"><i data-lucide="plus"></i></button>
+            <div className="column-header column-header--slate">
+              <i data-lucide="circle-dashed"></i>
+              <span className="column-header-label">À postuler</span>
+              <span className="column-header-count" id="count-todo">0</span>
             </div>
-            <div className="column-divider"></div>
-            <div className="card-list" id="list-todo"></div>
             <button type="button" className="add-card-dashed" data-status="todo">+ Ajouter une nouvelle tâche</button>
+            <div className="card-list" id="list-todo"></div>
           </div>
 
           <div className="column" data-status="sent">
-            <div className="column-top">
-              <span className="stat-pill stat-pill--amber"><i data-lucide="hourglass"></i>Envoyé</span>
-              <button className="add-card-btn" data-status="sent" title="Ajouter une candidature"><i data-lucide="plus"></i></button>
+            <div className="column-header column-header--amber">
+              <i data-lucide="hourglass"></i>
+              <span className="column-header-label">Envoyé</span>
+              <span className="column-header-count" id="count-sent">0</span>
             </div>
-            <div className="column-divider"></div>
-            <div className="card-list" id="list-sent"></div>
             <button type="button" className="add-card-dashed" data-status="sent">+ Ajouter une nouvelle tâche</button>
+            <div className="card-list" id="list-sent"></div>
           </div>
 
           <div className="column" data-status="interview">
-            <div className="column-top">
-              <span className="stat-pill stat-pill--green"><i data-lucide="target"></i>Entretien</span>
-              <button className="add-card-btn" data-status="interview" title="Ajouter une candidature"><i data-lucide="plus"></i></button>
+            <div className="column-header column-header--green">
+              <i data-lucide="target"></i>
+              <span className="column-header-label">Entretien</span>
+              <span className="column-header-count" id="count-interview">0</span>
             </div>
-            <div className="column-divider"></div>
-            <div className="card-list" id="list-interview"></div>
             <button type="button" className="add-card-dashed" data-status="interview">+ Ajouter une nouvelle tâche</button>
+            <div className="card-list" id="list-interview"></div>
           </div>
 
           <div className="column" data-status="rejected">
-            <div className="column-top">
-              <span className="stat-pill stat-pill--rose"><i data-lucide="folder-x"></i>Refus</span>
-              <button className="add-card-btn" data-status="rejected" title="Ajouter une candidature"><i data-lucide="plus"></i></button>
+            <div className="column-header column-header--rose">
+              <i data-lucide="folder-x"></i>
+              <span className="column-header-label">Refus</span>
+              <span className="column-header-count" id="count-rejected">0</span>
             </div>
-            <div className="column-divider"></div>
-            <div className="card-list" id="list-rejected"></div>
             <button type="button" className="add-card-dashed" data-status="rejected">+ Ajouter une nouvelle tâche</button>
+            <div className="card-list" id="list-rejected"></div>
           </div>
         </main>
 

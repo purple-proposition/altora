@@ -44,6 +44,8 @@ function renderColumnList(status) {
   const list = document.getElementById(`list-${status}`);
   const items = cards.filter(c => c.status === status);
 
+  document.getElementById(`count-${status}`).textContent = items.length;
+
   list.innerHTML = '';
   if (items.length === 0) {
     const empty = document.createElement('div');
