@@ -26,22 +26,33 @@ function uid() {
 
 // --- Rendering ---
 
+function renderColumnList(status) {
+  const list = document.getElementById(`list-${status}`);
+  const items = cards.filter(c => c.status === status);
+
+  list.innerHTML = '';
+  if (items.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'card-empty';
+    empty.textContent = 'Aucune candidature ici';
+    list.appendChild(empty);
+    return;
+  }
+
+  items.forEach(card => list.appendChild(renderCard(card)));
+}
+
+// Rebuilds only the given columns' card lists (cheaper than a full render —
+// used when a drag only touches one or two statuses) then refreshes stats/digest.
+function renderPartial(statuses) {
+  statuses.forEach(renderColumnList);
+  renderStats();
+  renderSummaryDigest(currentPeriod);
+  lucide.createIcons();
+}
+
 function render() {
-  STATUSES.forEach(status => {
-    const list = document.getElementById(`list-${status}`);
-    const items = cards.filter(c => c.status === status);
-
-    list.innerHTML = '';
-    if (items.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'card-empty';
-      empty.textContent = 'Aucune candidature ici';
-      list.appendChild(empty);
-      return;
-    }
-
-    items.forEach(card => list.appendChild(renderCard(card)));
-  });
+  STATUSES.forEach(renderColumnList);
 
   renderStats();
   renderSummaryDigest(currentPeriod);
@@ -388,9 +399,10 @@ STATUSES.forEach(status => {
     if (card && card.status !== status) {
       const fromColumn = document.querySelector(`.column[data-status="${card.status}"]`);
       const toColumn = list.closest('.column');
+      const fromStatus = card.status;
       card.status = status;
       saveCards();
-      animateHeightChange([fromColumn, toColumn], render);
+      animateHeightChange([fromColumn, toColumn], () => renderPartial([fromStatus, status]));
     }
   });
 });
@@ -399,7 +411,7 @@ STATUSES.forEach(status => {
 // counts changed grow/shrink smoothly instead of snapping.
 let columnAnimTick = 0;
 
-function animateHeightChange(columns, mutate, duration = 400) {
+function animateHeightChange(columns, mutate, duration = 320) {
   const startHeights = columns.map(col => col.getBoundingClientRect().height);
   mutate();
   columns.forEach((col, i) => {
@@ -469,9 +481,10 @@ function openCardContextMenu(card, x, y) {
       closeContextMenu();
       const fromColumn = document.querySelector(`.column[data-status="${card.status}"]`);
       const toColumn = document.querySelector(`.column[data-status="${status}"]`);
+      const fromStatus = card.status;
       card.status = status;
       saveCards();
-      animateHeightChange([fromColumn, toColumn], render);
+      animateHeightChange([fromColumn, toColumn], () => renderPartial([fromStatus, status]));
     });
     moveRow.appendChild(btn);
   });

@@ -379,10 +379,11 @@ body {
   border-radius: var(--radius-inner);
   padding: 12px 16px;
   cursor: grab;
-  transition: box-shadow 0.15s ease;
+  border: 1px solid transparent;
+  transition: border-color 0.15s ease;
 }
 
-.card:hover { box-shadow: var(--shadow); }
+.card:hover { border-color: var(--text-muted); }
 .card:active { cursor: grabbing; }
 .card.dragging { opacity: 0.4; }
 
@@ -511,7 +512,7 @@ body {
 
 .settings-trigger-wrap {
   position: fixed;
-  right: 96px;
+  right: 108px;
   bottom: 28px;
   z-index: 40;
 }
@@ -660,6 +661,7 @@ body {
   padding: 12px;
   border-radius: var(--radius-input);
   border: 1px solid var(--border);
+  background: var(--card-bg);
   font-size: 16px;
   font-family: inherit;
   color: var(--text);
