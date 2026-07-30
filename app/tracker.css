@@ -28,6 +28,11 @@
   --rose-tint: #fff1f2;    /* rose-50 */
   --rose-track: #ffe4e6;   /* rose-100 */
 
+  --violet: #7c3aed;        /* violet-600 */
+  --violet-fill: #8b5cf6;   /* violet-500 */
+  --violet-tint: #f5f3ff;   /* violet-50 */
+  --violet-track: #ede9fe;  /* violet-100 */
+
   /* Unified radius scale (4px grid) */
   --radius-card: 20px;   /* summary-card, stat-card, column, modal */
   --radius-inner: 16px;  /* job card, drag-over outline */
@@ -54,6 +59,8 @@
     --green-track: #065f46;
     --rose-tint: #4c0519;
     --rose-track: #881337;
+    --violet-tint: #2e1065;
+    --violet-track: #4c1d95;
   }
 }
 
@@ -73,6 +80,8 @@
   --green-track: #065f46;
   --rose-tint: #4c0519;
   --rose-track: #881337;
+  --violet-tint: #2e1065;
+  --violet-track: #4c1d95;
 }
 
 * { box-sizing: border-box; }
@@ -367,7 +376,7 @@ body {
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -1586,3 +1595,132 @@ body {
 
 .context-subitem .lucide { width: 14px; height: 14px; }
 .context-subitem:hover { background: var(--bg); color: var(--text); }
+
+/* --- Calendrier (page /calendar) --- */
+
+.calendar-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  padding: 32px 40px 60px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.calendar-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.calendar-back:hover { color: var(--text); }
+
+.calendar-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.calendar-title { font-size: 22px; font-weight: 500; margin: 0; text-transform: capitalize; }
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.calendar-nav-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.calendar-nav-btn:hover { background: var(--bg); color: var(--text); }
+.calendar-nav-btn .lucide { width: 16px; height: 16px; }
+
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.calendar-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+}
+.calendar-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.calendar-grid {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  overflow: hidden;
+}
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.calendar-weekday {
+  padding: 10px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: center;
+}
+.calendar-weeks { display: flex; flex-direction: column; }
+.calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.calendar-week:last-child { border-bottom: none; }
+.calendar-day {
+  min-height: 92px;
+  padding: 8px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.calendar-day:last-child { border-right: none; }
+.calendar-day--muted { background: var(--bg); }
+.calendar-day--weekend { background: var(--bg); }
+.calendar-day-number { font-size: 13px; font-weight: 500; color: var(--text); }
+.calendar-day--muted .calendar-day-number { color: var(--text-muted); }
+
+.calendar-event {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 7px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.calendar-event--entreprise { background: var(--bg); color: var(--text-muted); }
+.calendar-event--formation { background: var(--indigo-tint); color: var(--indigo); }
+.calendar-event--conges { background: var(--amber-tint); color: var(--amber); }
+.calendar-event--examen { background: var(--green-tint); color: var(--green); }
+.calendar-event--examen_oral { background: var(--violet-tint); color: var(--violet); }
+.calendar-event--ferie { background: var(--rose-tint); color: var(--rose); }

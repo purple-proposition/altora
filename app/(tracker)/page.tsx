@@ -168,10 +168,8 @@ export default async function TrackerPage() {
               <div>
                 <div className="profile-name-row">
                   <span className="profile-name">{fullName || firstName}</span>
-                  <span className="pill-pro">Compte pro</span>
                 </div>
                 <div className="profile-email">{email}</div>
-                <div className="profile-promotion">{promotion || '—'}</div>
               </div>
             </div>
 
