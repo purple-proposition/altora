@@ -471,7 +471,6 @@ body {
 
 .column {
   background: var(--card-bg);
-  border: 1px solid var(--border);
   border-radius: var(--radius-card);
   padding: 12px;
   min-height: 200px;

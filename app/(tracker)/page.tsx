@@ -260,7 +260,7 @@ export default async function TrackerPage() {
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{ __html: `window.__ALTORA_CV__ = ${JSON.stringify({ url: cvUrl, filename: cvFilename })};` }}
       />
-      <Script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" strategy="afterInteractive" />
+      <Script src="/lucide.js" strategy="beforeInteractive" />
       <Script src="/tracker.js" strategy="afterInteractive" />
     </>
   );
