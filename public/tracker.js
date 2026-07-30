@@ -1037,6 +1037,7 @@ function closeProfileModal() {
 
 settingsBtn.addEventListener('click', () => openProfileModal());
 document.getElementById('greeting-name-btn').addEventListener('click', () => openProfileModal());
+document.getElementById('sidebar-profile-btn').addEventListener('click', () => openProfileModal());
 profileClose.addEventListener('click', () => closeProfileModal());
 profileOverlay.addEventListener('click', e => {
   if (e.target === profileOverlay) closeProfileModal();
@@ -1044,6 +1045,21 @@ profileOverlay.addEventListener('click', e => {
 
 document.querySelectorAll('.theme-option').forEach(btn => {
   btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+});
+
+// --- Sidebar: Suivi submenu toggle + scroll-to-column ---
+
+const sidebarSuiviToggle = document.getElementById('sidebar-suivi-toggle');
+sidebarSuiviToggle.addEventListener('click', () => {
+  sidebarSuiviToggle.closest('.sidebar-item-group').classList.toggle('expanded');
+});
+sidebarSuiviToggle.closest('.sidebar-item-group').classList.add('expanded');
+
+document.querySelectorAll('.sidebar-subitem').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const list = document.getElementById(btn.dataset.scrollTo);
+    list?.closest('.column')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 });
 
 // --- CV upload + inline preview ---

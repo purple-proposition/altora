@@ -22,19 +22,54 @@ export default async function TrackerPage() {
 
   return (
     <>
-      <div className="app">
-        <header className="topbar">
-          <h1>Altora</h1>
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <span className="sidebar-logo"><i data-lucide="rocket"></i></span>
+          <span className="sidebar-brand-name">Rocket School</span>
+        </div>
+
+        <nav className="sidebar-nav">
+          <span className="sidebar-nav-label">Menu</span>
+          <div className="sidebar-item-group">
+            <button type="button" className="sidebar-item sidebar-item--active" id="sidebar-suivi-toggle">
+              <i data-lucide="layout-dashboard"></i>
+              <span className="sidebar-item-label">Suivi des candidatures</span>
+              <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+            </button>
+            <div className="sidebar-submenu" id="sidebar-submenu">
+              <button type="button" className="sidebar-subitem" data-scroll-to="list-todo"><i data-lucide="circle-dashed"></i>À postuler</button>
+              <button type="button" className="sidebar-subitem" data-scroll-to="list-sent"><i data-lucide="hourglass"></i>Envoyé</button>
+              <button type="button" className="sidebar-subitem" data-scroll-to="list-interview"><i data-lucide="target"></i>Entretien</button>
+              <button type="button" className="sidebar-subitem" data-scroll-to="list-rejected"><i data-lucide="folder-x"></i>Refus</button>
+            </div>
+          </div>
+          <a href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></a>
+        </nav>
+
+        <div className="sidebar-bottom">
+          <button type="button" className="sidebar-item" id="settings-btn">
+            <i data-lucide="settings"></i><span className="sidebar-item-label">Configuration</span>
+          </button>
+          <button type="button" className="sidebar-user" id="sidebar-profile-btn">
+            <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
+            <span className="sidebar-user-text">
+              <span className="sidebar-user-name">{firstName}</span>
+              <span className="sidebar-user-email">Étudiant{promotion ? ` · ${promotion}` : ''}</span>
+            </span>
+            <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>
+          </button>
           <form
             action={async () => {
               'use server';
               await signOut({ redirectTo: '/login' });
             }}
           >
-            <button type="submit" className="logout-btn">Se déconnecter</button>
+            <button type="submit" className="sidebar-logout">Se déconnecter</button>
           </form>
-        </header>
+        </div>
+      </aside>
 
+      <div className="app">
         <section className="summary-card">
           <p className="summary-text">
             <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,{' '}
@@ -107,12 +142,6 @@ export default async function TrackerPage() {
             <div className="card-list" id="list-rejected"></div>
           </div>
         </main>
-
-        <div className="settings-trigger-wrap">
-          <button className="fab settings-fab" id="settings-btn" title="Réglages">
-            <i data-lucide="settings"></i>
-          </button>
-        </div>
 
         <div className="modal-overlay hidden" id="profile-overlay">
           <div className="modal profile-modal">
