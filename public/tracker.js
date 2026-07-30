@@ -1005,7 +1005,7 @@ document.getElementById('greeting').textContent = (hour >= 5 && hour < 18) ? 'Bo
 // --- Theme (system / light / dark) ---
 
 const THEME_KEY = 'altora-theme';
-const settingsBtn = document.getElementById('settings-btn');
+const sidebarProfileBtn = document.getElementById('sidebar-profile-btn');
 const profileOverlay = document.getElementById('profile-overlay');
 const profileClose = document.getElementById('profile-close');
 
@@ -1026,18 +1026,17 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'system');
 function openProfileModal() {
   profileOverlay.classList.remove('hidden');
   requestAnimationFrame(() => profileOverlay.classList.add('visible'));
-  settingsBtn.classList.add('active');
+  sidebarProfileBtn.classList.add('active');
 }
 
 function closeProfileModal() {
   profileOverlay.classList.remove('visible');
   setTimeout(() => profileOverlay.classList.add('hidden'), 300);
-  settingsBtn.classList.remove('active');
+  sidebarProfileBtn.classList.remove('active');
 }
 
-settingsBtn.addEventListener('click', () => openProfileModal());
 document.getElementById('greeting-name-btn').addEventListener('click', () => openProfileModal());
-document.getElementById('sidebar-profile-btn').addEventListener('click', () => openProfileModal());
+sidebarProfileBtn.addEventListener('click', () => openProfileModal());
 profileClose.addEventListener('click', () => closeProfileModal());
 profileOverlay.addEventListener('click', e => {
   if (e.target === profileOverlay) closeProfileModal();

@@ -48,9 +48,6 @@ export default async function TrackerPage() {
         </nav>
 
         <div className="sidebar-bottom">
-          <button type="button" className="sidebar-item" id="settings-btn">
-            <i data-lucide="settings"></i><span className="sidebar-item-label">Configuration</span>
-          </button>
           <button type="button" className="sidebar-user" id="sidebar-profile-btn">
             <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
             <span className="sidebar-user-text">
