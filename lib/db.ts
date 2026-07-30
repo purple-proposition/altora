@@ -9,9 +9,17 @@ export async function ensureSchema() {
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
       name TEXT,
+      school TEXT,
+      promotion TEXT,
+      cv_url TEXT,
+      cv_filename TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS school TEXT`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS promotion TEXT`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_url TEXT`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_filename TEXT`;
   await sql`
     CREATE TABLE IF NOT EXISTS cards (
       id TEXT PRIMARY KEY,

@@ -1,11 +1,24 @@
 import Script from 'next/script';
 import { auth, signOut } from '@/auth';
+import { sql, ensureSchema } from '@/lib/db';
 
 export default async function TrackerPage() {
   const session = await auth();
   const fullName = session?.user?.name || '';
   const firstName = fullName.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
   const email = session?.user?.email || '';
+  const userExtra = session?.user as { school?: string | null; promotion?: string | null } | undefined;
+  const school = userExtra?.school || '';
+  const promotion = userExtra?.promotion || '';
+
+  let cvUrl = '';
+  let cvFilename = '';
+  if (session?.user?.id) {
+    await ensureSchema();
+    const rows = await sql`SELECT cv_url, cv_filename FROM users WHERE id = ${session.user.id}`;
+    cvUrl = rows[0]?.cv_url || '';
+    cvFilename = rows[0]?.cv_filename || '';
+  }
 
   return (
     <>
@@ -117,9 +130,27 @@ export default async function TrackerPage() {
               </div>
             </div>
 
+            <div className="field-row">
+              <div className="field-group">
+                <span className="field-label">École</span>
+                <div className="profile-static-value">{school || '—'}</div>
+              </div>
+              <div className="field-group">
+                <span className="field-label">Promotion</span>
+                <div className="profile-static-value">{promotion || '—'}</div>
+              </div>
+            </div>
+
             <div className="field-group">
-              <span className="field-label">École</span>
-              <div className="profile-static-value">Rocket School</div>
+              <span className="field-label">Ton CV</span>
+              <div className="cv-upload-row">
+                <input type="file" id="cv-file-input" accept=".pdf,.doc,.docx" hidden />
+                <button type="button" className="btn-add-contact" id="cv-import-btn"><i data-lucide="upload"></i>Importer</button>
+                <button type="button" className="cv-filename-btn hidden" id="cv-filename-btn">
+                  <i data-lucide="file-text"></i>
+                  <span id="cv-filename-text"></span>
+                </button>
+              </div>
             </div>
 
             <div className="field-group">
@@ -130,6 +161,14 @@ export default async function TrackerPage() {
                 <button type="button" className="theme-option" data-theme="dark"><i data-lucide="moon"></i>Sombre</button>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="modal-overlay hidden" id="cv-preview-overlay">
+          <div className="modal cv-preview-modal">
+            <button type="button" className="modal-close" id="cv-preview-close" title="Fermer"><i data-lucide="x"></i></button>
+            <h3 id="cv-preview-title">Ton CV</h3>
+            <iframe id="cv-preview-frame" className="cv-preview-frame" title="Aperçu du CV"></iframe>
           </div>
         </div>
 
@@ -214,6 +253,11 @@ export default async function TrackerPage() {
 
       <div className="grid-overlay" id="grid-overlay"></div>
 
+      <Script
+        id="altora-cv-data"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: `window.__ALTORA_CV__ = ${JSON.stringify({ url: cvUrl, filename: cvFilename })};` }}
+      />
       <Script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" strategy="afterInteractive" />
       <Script src="/tracker.js" strategy="afterInteractive" />
     </>

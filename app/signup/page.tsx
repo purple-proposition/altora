@@ -8,6 +8,8 @@ import { signIn } from 'next-auth/react';
 export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState('');
+  const [school, setSchool] = useState('');
+  const [promotion, setPromotion] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +23,7 @@ export default function SignupPage() {
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, school, promotion }),
     });
     const data = await res.json();
 
@@ -52,6 +54,22 @@ export default function SignupPage() {
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
+          style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
+        />
+        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>École</label>
+        <input
+          type="text"
+          value={school}
+          onChange={e => setSchool(e.target.value)}
+          placeholder="Rocket School…"
+          style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
+        />
+        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Promotion</label>
+        <input
+          type="text"
+          value={promotion}
+          onChange={e => setPromotion(e.target.value)}
+          placeholder="Spoutnik 75…"
           style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
         />
         <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Email</label>

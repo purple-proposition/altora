@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { sql, ensureSchema } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
-  const { email, password, name } = await req.json();
+  const { email, password, name, school, promotion } = await req.json();
 
   const cleanEmail = (email || '').trim().toLowerCase();
   if (!cleanEmail || !password || password.length < 8) {
@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
 
   const passwordHash = await bcrypt.hash(password, 10);
   await sql`
-    INSERT INTO users (email, password_hash, name)
-    VALUES (${cleanEmail}, ${passwordHash}, ${name || null})
+    INSERT INTO users (email, password_hash, name, school, promotion)
+    VALUES (${cleanEmail}, ${passwordHash}, ${name || null}, ${school || null}, ${promotion || null})
   `;
 
   return NextResponse.json({ ok: true });

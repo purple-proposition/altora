@@ -1046,6 +1046,81 @@ document.querySelectorAll('.theme-option').forEach(btn => {
   btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
 });
 
+// --- CV upload + inline preview ---
+
+const cvFileInput = document.getElementById('cv-file-input');
+const cvImportBtn = document.getElementById('cv-import-btn');
+const cvFilenameBtn = document.getElementById('cv-filename-btn');
+const cvFilenameText = document.getElementById('cv-filename-text');
+const cvPreviewOverlay = document.getElementById('cv-preview-overlay');
+const cvPreviewClose = document.getElementById('cv-preview-close');
+const cvPreviewFrame = document.getElementById('cv-preview-frame');
+
+let currentCv = window.__ALTORA_CV__ || { url: '', filename: '' };
+
+function renderCvState() {
+  if (currentCv.url) {
+    cvFilenameText.textContent = currentCv.filename || 'CV.pdf';
+    cvFilenameBtn.classList.remove('hidden');
+    cvImportBtn.innerHTML = '<i data-lucide="upload"></i>Remplacer';
+  } else {
+    cvFilenameBtn.classList.add('hidden');
+    cvImportBtn.innerHTML = '<i data-lucide="upload"></i>Importer';
+  }
+  lucide.createIcons();
+}
+renderCvState();
+
+cvImportBtn.addEventListener('click', () => cvFileInput.click());
+
+cvFileInput.addEventListener('change', async () => {
+  const file = cvFileInput.files[0];
+  if (!file) return;
+
+  cvImportBtn.disabled = true;
+  cvImportBtn.textContent = 'Envoi…';
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const res = await fetch('/api/profile/cv', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (res.ok) {
+      currentCv = { url: data.url, filename: data.filename };
+      renderCvState();
+    } else {
+      alert(data.error || "Échec de l'envoi du CV.");
+    }
+  } catch {
+    alert("Échec de l'envoi du CV.");
+  } finally {
+    cvImportBtn.disabled = false;
+    cvFileInput.value = '';
+  }
+});
+
+function openCvPreview() {
+  if (!currentCv.url) return;
+  cvPreviewFrame.src = currentCv.url;
+  cvPreviewOverlay.classList.remove('hidden');
+  requestAnimationFrame(() => cvPreviewOverlay.classList.add('visible'));
+}
+
+function closeCvPreview() {
+  cvPreviewOverlay.classList.remove('visible');
+  setTimeout(() => {
+    cvPreviewOverlay.classList.add('hidden');
+    cvPreviewFrame.src = '';
+  }, 300);
+}
+
+cvFilenameBtn.addEventListener('click', openCvPreview);
+cvPreviewClose.addEventListener('click', closeCvPreview);
+cvPreviewOverlay.addEventListener('click', e => {
+  if (e.target === cvPreviewOverlay) closeCvPreview();
+});
+
 (async () => {
   await fetchCards();
   render();

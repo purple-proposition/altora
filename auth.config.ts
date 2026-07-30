@@ -9,11 +9,21 @@ export default {
   providers: [],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        const u = user as { school?: string | null; promotion?: string | null };
+        token.school = u.school ?? null;
+        token.promotion = u.promotion ?? null;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) session.user.id = token.id as string;
+      if (session.user) {
+        session.user.id = token.id as string;
+        const u = session.user as { school?: string | null; promotion?: string | null };
+        u.school = token.school as string | null;
+        u.promotion = token.promotion as string | null;
+      }
       return session;
     },
   },
