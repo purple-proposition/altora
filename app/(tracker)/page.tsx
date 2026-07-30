@@ -96,8 +96,8 @@ export default async function TrackerPage() {
               <span className="column-header-label">À postuler</span>
               <span className="column-header-count" id="count-todo">0</span>
             </div>
-            <button type="button" className="add-card-dashed" data-status="todo">+ Ajouter une nouvelle tâche</button>
             <div className="card-list" id="list-todo"></div>
+            <button type="button" className="add-card-dashed" data-status="todo">+ Ajouter une nouvelle tâche</button>
           </div>
 
           <div className="column" data-status="sent">
@@ -106,8 +106,8 @@ export default async function TrackerPage() {
               <span className="column-header-label">Envoyé</span>
               <span className="column-header-count" id="count-sent">0</span>
             </div>
-            <button type="button" className="add-card-dashed" data-status="sent">+ Ajouter une nouvelle tâche</button>
             <div className="card-list" id="list-sent"></div>
+            <button type="button" className="add-card-dashed" data-status="sent">+ Ajouter une nouvelle tâche</button>
           </div>
 
           <div className="column" data-status="interview">
@@ -116,8 +116,8 @@ export default async function TrackerPage() {
               <span className="column-header-label">Entretien</span>
               <span className="column-header-count" id="count-interview">0</span>
             </div>
-            <button type="button" className="add-card-dashed" data-status="interview">+ Ajouter une nouvelle tâche</button>
             <div className="card-list" id="list-interview"></div>
+            <button type="button" className="add-card-dashed" data-status="interview">+ Ajouter une nouvelle tâche</button>
           </div>
 
           <div className="column" data-status="rejected">
@@ -126,8 +126,8 @@ export default async function TrackerPage() {
               <span className="column-header-label">Refus</span>
               <span className="column-header-count" id="count-rejected">0</span>
             </div>
-            <button type="button" className="add-card-dashed" data-status="rejected">+ Ajouter une nouvelle tâche</button>
             <div className="card-list" id="list-rejected"></div>
+            <button type="button" className="add-card-dashed" data-status="rejected">+ Ajouter une nouvelle tâche</button>
           </div>
         </main>
 
