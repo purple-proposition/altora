@@ -1,0 +1,21 @@
+{
+  "name": "altora",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "next": "^15.3.0",
+    "pdfkit": "^0.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/pdfkit": "^0.13.9",
+    "@types/react": "19.2.15",
+    "typescript": "^5"
+  }
+}

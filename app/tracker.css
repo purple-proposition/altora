@@ -406,6 +406,13 @@ body {
   color: var(--text);
 }
 
+.card-link-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .card-link {
   display: inline-flex;
   align-items: center;
@@ -414,6 +421,9 @@ body {
   color: var(--indigo);
   text-decoration: none;
 }
+
+.card-link--generate { color: var(--amber); }
+.card-link .lucide { width: 16px; height: 16px; }
 
 .card-link:hover { text-decoration: underline; }
 

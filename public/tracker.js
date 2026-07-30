@@ -119,6 +119,9 @@ function renderCard(card) {
     });
   }
 
+  const linkRow = document.createElement('div');
+  linkRow.className = 'card-link-row';
+
   if (card.url) {
     const link = document.createElement('a');
     link.className = 'card-link';
@@ -127,8 +130,18 @@ function renderCard(card) {
     link.rel = 'noopener';
     link.innerHTML = '<i data-lucide="external-link"></i> Voir l\'offre';
     link.addEventListener('click', e => e.stopPropagation());
-    el.appendChild(link);
+    linkRow.appendChild(link);
   }
+
+  const genLink = document.createElement('a');
+  genLink.className = 'card-link card-link--generate';
+  const jobParam = card.url || [card.title, card.company].filter(Boolean).join(' chez ');
+  genLink.href = `/generate?job=${encodeURIComponent(jobParam)}&cardId=${encodeURIComponent(card.id)}`;
+  genLink.innerHTML = '<i data-lucide="sparkles"></i> Générer CV';
+  genLink.addEventListener('click', e => e.stopPropagation());
+  linkRow.appendChild(genLink);
+
+  el.appendChild(linkRow);
 
   if (card.createdAt) {
     const dateRow = document.createElement('div');
