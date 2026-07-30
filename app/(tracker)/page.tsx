@@ -56,7 +56,7 @@ export default async function TrackerPage() {
           <button type="button" className="sidebar-user" id="sidebar-profile-btn">
             <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
             <span className="sidebar-user-text">
-              <span className="sidebar-user-name">{firstName}</span>
+              <span className="sidebar-user-name">{fullName || firstName}</span>
               <span className="sidebar-user-email">Étudiant{promotion ? ` · ${promotion}` : ''}</span>
             </span>
             <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>

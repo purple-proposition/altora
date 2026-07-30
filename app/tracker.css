@@ -82,7 +82,7 @@ body {
   height: 100vh;
   overflow: hidden;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   background: var(--bg);
   color: var(--text);
   transition: background 0.2s ease, color 0.2s ease;
@@ -93,15 +93,16 @@ body {
    floating on that background, like every other card in the app --- */
 
 .app-shell {
-  display: flex;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
   width: 100%;
   height: 100vh;
   background: var(--bg);
 }
 
 .app {
-  flex: 1;
+  grid-column: 3 / 13;
   min-width: 0;
   margin: 12px 12px 12px 0;
   background: var(--card-bg);
@@ -114,8 +115,7 @@ body {
 /* --- Sidebar --- */
 
 .sidebar {
-  width: 232px;
-  flex-shrink: 0;
+  grid-column: 1 / 3;
   display: flex;
   flex-direction: column;
   background: transparent;
@@ -147,14 +147,14 @@ body {
 }
 
 .sidebar-brand-name {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   color: var(--text);
 }
 
 .sidebar-brand-promotion {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
@@ -168,7 +168,7 @@ body {
 
 .sidebar-nav-label {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
@@ -184,7 +184,7 @@ body {
   background: transparent;
   color: var(--text-muted);
   font-family: inherit;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   padding: 9px 10px;
   border-radius: 10px;
@@ -202,7 +202,7 @@ body {
 .sidebar-item--active {
   background: var(--card-bg);
   color: var(--text);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .sidebar-item-group.expanded .sidebar-item-chevron { transform: rotate(180deg); }
@@ -228,7 +228,7 @@ body {
   background: transparent;
   color: var(--text-muted);
   font-family: inherit;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 13px;
   padding: 7px 10px;
   border-radius: 8px;
@@ -279,7 +279,7 @@ body {
 
 .sidebar-user-name {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -315,7 +315,7 @@ body {
   margin-bottom: 6px;
   color: var(--text-muted);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .summary-greeting {
@@ -329,13 +329,13 @@ body {
 
 .summary-subtitle {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--text-muted);
   margin: 0;
 }
 
-.summary-subtitle .period-trigger { font-size: 1em; font-weight: 600; }
+.summary-subtitle .period-trigger { font-size: 1em; font-weight: 500; }
 .summary-subtitle .inline-pill { font-size: 0.9em; }
 
 .greeting-name-btn {
@@ -429,7 +429,7 @@ body {
   background: transparent;
   color: var(--text);
   font-family: inherit;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 16px;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -440,7 +440,7 @@ body {
 .period-option.active {
   background: var(--indigo-tint);
   color: var(--indigo);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .inline-pill {
@@ -449,7 +449,7 @@ body {
   gap: 10px;
   padding: 6px 20px 6px 14px;
   border-radius: var(--radius-pill);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.8em;
   margin: 0 4px;
 }
@@ -482,7 +482,7 @@ body {
   gap: 8px;
   padding: 10px 14px;
   border-radius: var(--radius-inner);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
 }
 
@@ -492,7 +492,7 @@ body {
 
 .column-header-count {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   opacity: 0.75;
 }
 
@@ -503,24 +503,43 @@ body {
 .column-header--rose  { background: var(--rose-tint);   color: var(--rose); }
 
 .add-card-dashed {
-  display: none;
+  display: flex;
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin-top: 12px;
-  padding: 12px;
+  box-sizing: border-box;
+  max-height: 0;
+  margin-top: 0;
+  padding: 0 12px;
   border: 1.5px dashed var(--border);
   border-radius: var(--radius-inner);
   background: transparent;
   color: var(--text-muted);
   font-family: inherit;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 13px;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  pointer-events: none;
+  transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              margin-top 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              padding 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.25s ease,
+              border-color 0.15s ease,
+              color 0.15s ease;
 }
 
-.column:hover .add-card-dashed { display: flex; }
+.column:hover .add-card-dashed {
+  max-height: 60px;
+  margin-top: 12px;
+  padding: 12px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
 
 .add-card-dashed:hover { border-color: var(--indigo); color: var(--indigo); }
 
@@ -557,16 +576,16 @@ body {
 }
 
 .card-title {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .card-heading-sep {
   color: var(--text-muted);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .card-company {
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text);
 }
 
@@ -603,7 +622,7 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
@@ -617,7 +636,7 @@ body {
 
 .card-meta-tag {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text-muted);
   background: var(--bg);
   padding: 3px 10px;
@@ -629,7 +648,7 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
@@ -640,7 +659,7 @@ body {
   align-items: center;
   width: fit-content;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--green);
   background: var(--green-tint);
   padding: 3px 10px;
@@ -653,7 +672,7 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
@@ -674,7 +693,7 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
@@ -728,7 +747,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: inherit;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 12px;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
@@ -741,7 +760,7 @@ body {
 .theme-option.active {
   background: var(--indigo-tint);
   color: var(--indigo);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* --- Profile modal --- */
@@ -772,7 +791,7 @@ body {
 
 .profile-name {
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text);
 }
 
@@ -780,7 +799,7 @@ body {
   display: inline-flex;
   align-items: center;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--indigo);
   background: var(--indigo-tint);
   padding: 3px 10px;
@@ -814,7 +833,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: inherit;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   cursor: pointer;
   transition: border-color 0.15s ease;
@@ -916,7 +935,7 @@ body {
 .modal form label {
   display: block;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-muted);
   margin-bottom: 12px;
 }
@@ -953,7 +972,7 @@ body {
 .field-label {
   display: block;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
@@ -971,7 +990,7 @@ body {
   padding: 8px 16px;
   border-radius: var(--radius-pill);
   border: 1.5px solid transparent;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 12px;
   font-family: inherit;
   cursor: pointer;
@@ -1004,7 +1023,7 @@ body {
   border: 1.5px solid transparent;
   background: var(--bg);
   color: var(--text-muted);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 12px;
   font-family: inherit;
   cursor: pointer;
@@ -1027,7 +1046,7 @@ body {
 
 .field-required {
   color: var(--rose);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .contact-block {
@@ -1098,7 +1117,7 @@ body {
   background: none;
   color: var(--indigo);
   font-family: inherit;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 14px;
   padding: 4px 0;
   cursor: pointer;
@@ -1121,7 +1140,7 @@ body {
   border: 1.5px solid transparent;
   background: var(--bg);
   color: var(--text-muted);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 12px;
   font-family: inherit;
   cursor: pointer;
@@ -1150,7 +1169,7 @@ body {
   border-radius: var(--radius-pill);
   padding: 12px 16px;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   cursor: pointer;
   transition: background 0.15s ease, filter 0.15s ease;
 }
@@ -1250,7 +1269,7 @@ body {
   background: transparent;
   color: var(--text);
   font-family: inherit;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   text-align: left;
   cursor: pointer;
@@ -1266,7 +1285,7 @@ body {
 
 .context-label {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
@@ -1288,7 +1307,7 @@ body {
   border-radius: var(--radius-pill);
   padding: 6px 12px;
   font-family: inherit;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 12px;
   cursor: pointer;
   transition: filter 0.15s ease;
