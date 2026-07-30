@@ -8,6 +8,24 @@ let editingId = null;
 let draggingId = null;
 let searchQuery = '';
 
+const JOB_SOURCES = [
+  { match: 'indeed.', label: 'Indeed', icon: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none"><rect width="24" height="24" rx="5" fill="#2557A7"/><text x="12" y="17" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#fff">in</text></svg>' },
+  { match: 'welcometothejungle.', label: 'Welcome to the Jungle', icon: '<i data-lucide="palmtree"></i>' },
+  { match: 'linkedin.', label: 'LinkedIn', icon: '<i data-lucide="linkedin"></i>' },
+  { match: 'apec.', label: 'Apec', icon: '<i data-lucide="briefcase"></i>' },
+  { match: 'glassdoor.', label: 'Glassdoor', icon: '<i data-lucide="briefcase"></i>' },
+  { match: 'monster.', label: 'Monster', icon: '<i data-lucide="briefcase"></i>' },
+];
+
+function getJobSource(url) {
+  if (!url) return null;
+  let host;
+  try { host = new URL(url).hostname.replace(/^www\./, ''); } catch { return null; }
+  const known = JOB_SOURCES.find(s => host.includes(s.match));
+  if (known) return known;
+  return { label: host, icon: '<i data-lucide="globe"></i>' };
+}
+
 async function fetchCards() {
   const res = await fetch('/api/cards');
   if (!res.ok) { cards = []; return; }
@@ -929,9 +947,11 @@ function openDetailView(card) {
     const added = new Date(card.createdAt);
     const dateStr = added.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
     const timeStr = added.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    const source = getJobSource(card.url);
     parts.push(`<div class="card-date-row detail-date-row">
       <span class="card-date"><i data-lucide="calendar"></i>${dateStr}</span>
       <span class="card-date"><i data-lucide="clock"></i>${timeStr}</span>
+      ${source ? `<span class="detail-source-pill">${source.icon}${source.label}</span>` : ''}
     </div>`);
   }
 
@@ -1131,15 +1151,45 @@ document.querySelectorAll('.theme-option').forEach(btn => {
 const sidebarSuiviToggle = document.getElementById('sidebar-suivi-toggle');
 sidebarSuiviToggle.addEventListener('click', () => {
   sidebarSuiviToggle.closest('.sidebar-item-group').classList.toggle('expanded');
+  showTasksView();
 });
 sidebarSuiviToggle.closest('.sidebar-item-group').classList.add('expanded');
 
 document.querySelectorAll('.sidebar-subitem').forEach(btn => {
   btn.addEventListener('click', () => {
+    showTasksView();
     const list = document.getElementById(btn.dataset.scrollTo);
     list?.closest('.column')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
+
+// --- Home / Mes tâches view toggle ---
+
+const sidebarHomeBtn = document.getElementById('sidebar-home-btn');
+const viewHome = document.getElementById('view-home');
+const board = document.getElementById('board');
+const topbarToolbar = document.getElementById('topbar-toolbar');
+const breadcrumbActiveLabel = document.getElementById('breadcrumb-active-label');
+
+function showHomeView() {
+  viewHome.classList.remove('hidden');
+  board.classList.add('hidden');
+  topbarToolbar.classList.add('hidden');
+  sidebarHomeBtn.classList.add('sidebar-item--active');
+  sidebarSuiviToggle.classList.remove('sidebar-item--active');
+  breadcrumbActiveLabel.textContent = 'Home';
+}
+
+function showTasksView() {
+  viewHome.classList.add('hidden');
+  board.classList.remove('hidden');
+  topbarToolbar.classList.remove('hidden');
+  sidebarHomeBtn.classList.remove('sidebar-item--active');
+  sidebarSuiviToggle.classList.add('sidebar-item--active');
+  breadcrumbActiveLabel.textContent = 'Mes tâches';
+}
+
+sidebarHomeBtn.addEventListener('click', showHomeView);
 
 // --- CV upload + inline preview ---
 

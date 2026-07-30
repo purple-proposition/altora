@@ -36,8 +36,12 @@ export default async function TrackerPage() {
 
         <nav className="sidebar-nav">
           <span className="sidebar-nav-label">Menu</span>
+          <button type="button" className="sidebar-item sidebar-item--active" id="sidebar-home-btn">
+            <i data-lucide="home"></i>
+            <span className="sidebar-item-label">Home</span>
+          </button>
           <div className="sidebar-item-group">
-            <button type="button" className="sidebar-item sidebar-item--active" id="sidebar-suivi-toggle">
+            <button type="button" className="sidebar-item" id="sidebar-suivi-toggle">
               <i data-lucide="list-checks"></i>
               <span className="sidebar-item-label">Mes tâches</span>
               <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
@@ -71,11 +75,11 @@ export default async function TrackerPage() {
           <div className="topbar-breadcrumb">
             <span className="breadcrumb-item"><i data-lucide="home"></i>Rocket School</span>
             <span className="breadcrumb-sep">/</span>
-            <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i>Mes tâches</span>
+            <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i><span id="breadcrumb-active-label">Home</span></span>
             <button type="button" className="topbar-bell" title="Notifications"><i data-lucide="bell"></i></button>
           </div>
 
-          <div className="topbar-toolbar">
+          <div className="topbar-toolbar hidden" id="topbar-toolbar">
             <div className="toolbar-left">
               <span className="toolbar-title">Mes tâches</span>
               <span className="toolbar-count" id="toolbar-count">0</span>
@@ -90,7 +94,7 @@ export default async function TrackerPage() {
           </div>
         </div>
 
-        <section className="summary-card">
+        <section className="summary-card" id="view-home">
           <div className="summary-date">{todayLabel}</div>
           <h2 className="summary-greeting">
             <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,
@@ -112,7 +116,7 @@ export default async function TrackerPage() {
           </p>
         </section>
 
-        <main className="board" id="board">
+        <main className="board hidden" id="board">
           <div className="column" data-status="todo">
             <div className="column-header column-header--slate">
               <i data-lucide="circle-dashed"></i>
