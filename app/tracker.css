@@ -223,20 +223,21 @@ body {
 .sidebar-subitem {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  width: 100%;
   border: none;
   background: transparent;
   color: var(--text-muted);
   font-family: inherit;
   font-weight: 500;
-  font-size: 13px;
-  padding: 7px 10px;
-  border-radius: 8px;
+  font-size: 14px;
+  padding: 9px 10px;
+  border-radius: 10px;
   cursor: pointer;
   text-align: left;
 }
 
-.sidebar-subitem .lucide { width: 13px; height: 13px; }
+.sidebar-subitem .lucide { width: 16px; height: 16px; flex-shrink: 0; }
 .sidebar-subitem:hover { background: var(--card-bg); color: var(--text); }
 
 .sidebar-bottom {
@@ -306,6 +307,17 @@ body {
 }
 
 /* --- Topbar --- */
+
+.topbar-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin: -32px -40px 0;
+  padding: 24px 40px 0;
+  background: color-mix(in srgb, var(--card-bg) 82%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
 
 .topbar-breadcrumb {
   display: flex;
@@ -395,10 +407,21 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  width: 34px;
+  padding: 8px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   color: var(--text-muted);
+  overflow: hidden;
+  cursor: pointer;
+  transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1), padding 0.25s ease;
+}
+
+.toolbar-search:hover,
+.toolbar-search:focus-within {
+  width: 246px;
+  padding: 8px 12px;
+  cursor: text;
 }
 
 .toolbar-search .lucide { width: 14px; height: 14px; flex-shrink: 0; }
@@ -411,7 +434,15 @@ body {
   font-weight: 500;
   font-size: 13px;
   color: var(--text);
-  width: 200px;
+  width: 0;
+  opacity: 0;
+  transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.15s ease;
+}
+
+.toolbar-search:hover input,
+.toolbar-search:focus-within input {
+  width: 100%;
+  opacity: 1;
 }
 
 .toolbar-search input::placeholder { color: var(--text-muted); }
