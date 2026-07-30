@@ -251,34 +251,43 @@ function measureTextWidth(el, text) {
 // jumping to the new length.
 function animateLabelSwap(el, newText, duration = 280) {
   if (el.textContent === newText) return;
-  const startWidth = el.offsetWidth;
-  const endWidth = measureTextWidth(el, newText);
+  const container = el.closest('.summary-text');
+  const startHeight = container ? container.getBoundingClientRect().height : 0;
 
-  el.style.display = 'inline-block';
-  el.style.overflow = 'hidden';
-  el.style.verticalAlign = 'bottom';
-  el.style.width = `${startWidth}px`;
-  el.style.opacity = '1';
-
-  requestAnimationFrame(() => {
-    el.style.transition = `opacity 130ms ease`;
-    el.style.opacity = '0';
-  });
+  // Text reflow (a word jumping to/from another line) is a discrete layout
+  // event that CSS can't ease — no width/timing curve makes it look smooth.
+  // So instead of easing the label's width (which exposes that snap mid-
+  // transition), we fade the whole sentence out, swap + reflow while fully
+  // invisible, then fade the settled result back in. The snap still happens,
+  // but nobody sees it.
+  if (container) {
+    container.style.transition = `opacity 150ms ease`;
+    container.style.opacity = '0';
+  }
 
   setTimeout(() => {
     el.textContent = newText;
-    el.style.transition = `width ${duration}ms ${PREMIUM_EASE}, opacity 150ms ease`;
-    el.style.width = `${endWidth}px`;
-    el.style.opacity = '1';
-  }, 140);
 
-  setTimeout(() => {
-    el.style.width = '';
-    el.style.overflow = '';
-    el.style.display = '';
-    el.style.verticalAlign = '';
-    el.style.transition = '';
-  }, 140 + duration + 20);
+    if (container) {
+      const endHeight = container.getBoundingClientRect().height;
+      container.style.transition = '';
+      container.style.height = `${startHeight}px`;
+      container.style.overflow = 'hidden';
+      container.getBoundingClientRect();
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          container.style.transition = `height ${duration}ms ${PREMIUM_EASE}, opacity 200ms ease`;
+          container.style.height = `${endHeight}px`;
+          container.style.opacity = '1';
+        });
+      });
+      setTimeout(() => {
+        container.style.height = '';
+        container.style.overflow = '';
+        container.style.transition = '';
+      }, duration + 40);
+    }
+  }, 160);
 }
 
 // Odometer-style roll: the old number slides fully out (up if the value rose,
