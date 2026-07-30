@@ -446,13 +446,15 @@ body {
 .inline-pill {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 20px 6px 14px;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: var(--radius-pill);
   font-weight: 500;
   font-size: 0.8em;
-  margin: 0 4px;
+  margin: 0 6px;
 }
+
+.inline-pill .lucide { flex-shrink: 0; }
 
 .inline-pill--slate  { background: var(--bg);          color: var(--text-muted); }
 .inline-pill--indigo { background: var(--indigo-tint); color: var(--indigo); }

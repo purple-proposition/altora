@@ -217,7 +217,7 @@ function renderCard(card) {
 
 // --- Summary digest (time-scoped: today / this week / this month) ---
 
-const PERIOD_LABELS = { today: "aujourd'hui", week: 'cette semaine', month: 'ce mois-ci' };
+const PERIOD_LABELS = { today: "Aujourd'hui", week: 'Cette semaine', month: 'Ce mois-ci' };
 
 let currentPeriod = 'today';
 
