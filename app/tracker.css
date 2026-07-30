@@ -474,7 +474,7 @@ body {
 .column {
   background: var(--card-bg);
   border-radius: var(--radius-card);
-  padding: 12px;
+  padding: 12px 12px 12px 0;
   min-height: 200px;
 }
 
@@ -573,7 +573,7 @@ body {
 .card.dragging { opacity: 0.4; }
 
 .card-heading {
-  font-size: 16px;
+  font-size: 14px;
   margin-bottom: 8px;
 }
 
@@ -602,13 +602,13 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--indigo);
   text-decoration: none;
 }
 
 .card-link--generate { color: var(--amber); }
-.card-link .lucide { width: 16px; height: 16px; }
+.card-link .lucide { width: 14px; height: 14px; }
 
 .card-link:hover { text-decoration: underline; }
 
@@ -700,13 +700,6 @@ body {
 }
 
 .card-contact .lucide { width: 13px; height: 13px; }
-
-.card-empty {
-  font-size: 12px;
-  color: var(--text-muted);
-  text-align: center;
-  padding: 16px 4px;
-}
 
 /* --- FAB --- */
 

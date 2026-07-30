@@ -47,13 +47,7 @@ function renderColumnList(status) {
   document.getElementById(`count-${status}`).textContent = items.length;
 
   list.innerHTML = '';
-  if (items.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'card-empty';
-    empty.textContent = 'Aucune candidature ici';
-    list.appendChild(empty);
-    return;
-  }
+  if (items.length === 0) return;
 
   items.forEach(card => list.appendChild(renderCard(card)));
 }
