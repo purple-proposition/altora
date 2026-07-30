@@ -120,6 +120,7 @@ body {
   flex-direction: column;
   background: transparent;
   padding: 16px 12px;
+  border-right: 1px solid var(--border);
   overflow-y: auto;
   font-family: inherit;
 }
