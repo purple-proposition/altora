@@ -1,5 +1,5 @@
 import Script from 'next/script';
-import { auth } from '@/auth';
+import { auth, signOut } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 
 export default async function TrackerPage() {
@@ -51,6 +51,7 @@ export default async function TrackerPage() {
           </div>
           <a href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></a>
           <a href="/calendar" className="sidebar-item"><i data-lucide="calendar"></i><span className="sidebar-item-label">Calendrier</span></a>
+          <a href="/documents" className="sidebar-item"><i data-lucide="folder"></i><span className="sidebar-item-label">Mes documents</span></a>
         </nav>
 
         <div className="sidebar-bottom">
@@ -167,6 +168,15 @@ export default async function TrackerPage() {
                 <button type="button" className="theme-option" data-theme="dark"><i data-lucide="moon"></i>Sombre</button>
               </div>
             </div>
+
+            <form
+              action={async () => {
+                'use server';
+                await signOut({ redirectTo: '/login' });
+              }}
+            >
+              <button type="submit" className="profile-logout"><i data-lucide="log-out"></i>Se déconnecter</button>
+            </form>
           </div>
         </div>
 
