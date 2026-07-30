@@ -67,6 +67,27 @@ export default async function TrackerPage() {
       </aside>
 
       <div className="app">
+        <div className="topbar-breadcrumb">
+          <span className="breadcrumb-item"><i data-lucide="home"></i>Rocket School</span>
+          <span className="breadcrumb-sep">/</span>
+          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i>Mes tâches</span>
+          <button type="button" className="topbar-bell" title="Notifications"><i data-lucide="bell"></i></button>
+        </div>
+
+        <div className="topbar-toolbar">
+          <div className="toolbar-left">
+            <span className="toolbar-title">Mes tâches</span>
+            <span className="toolbar-count" id="toolbar-count">0</span>
+          </div>
+          <div className="toolbar-right">
+            <div className="toolbar-search">
+              <i data-lucide="search"></i>
+              <input type="text" id="board-search" placeholder="Rechercher une candidature..." />
+            </div>
+            <button type="button" className="toolbar-filter" title="Filtrer"><i data-lucide="sliders-horizontal"></i></button>
+          </div>
+        </div>
+
         <section className="summary-card">
           <div className="summary-date">{todayLabel}</div>
           <h2 className="summary-greeting">
@@ -177,6 +198,13 @@ export default async function TrackerPage() {
             >
               <button type="submit" className="profile-logout"><i data-lucide="log-out"></i>Se déconnecter</button>
             </form>
+          </div>
+        </div>
+
+        <div className="modal-overlay hidden" id="detail-overlay">
+          <div className="modal detail-modal">
+            <button type="button" className="modal-close" id="detail-close" title="Fermer"><i data-lucide="x"></i></button>
+            <div id="detail-content"></div>
           </div>
         </div>
 

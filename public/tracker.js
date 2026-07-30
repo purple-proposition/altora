@@ -6,6 +6,7 @@ const STATUS_ICONS = { todo: 'circle-dashed', sent: 'hourglass', interview: 'tar
 let cards = [];
 let editingId = null;
 let draggingId = null;
+let searchQuery = '';
 
 async function fetchCards() {
   const res = await fetch('/api/cards');
@@ -42,9 +43,14 @@ function uid() {
 
 function renderColumnList(status) {
   const list = document.getElementById(`list-${status}`);
-  const items = cards.filter(c => c.status === status);
+  const all = cards.filter(c => c.status === status);
 
-  document.getElementById(`count-${status}`).textContent = items.length;
+  document.getElementById(`count-${status}`).textContent = all.length;
+
+  const query = searchQuery.trim().toLowerCase();
+  const items = query
+    ? all.filter(c => (c.title || '').toLowerCase().includes(query) || (c.company || '').toLowerCase().includes(query))
+    : all;
 
   list.innerHTML = '';
   if (items.length === 0) return;
@@ -52,10 +58,15 @@ function renderColumnList(status) {
   items.forEach(card => list.appendChild(renderCard(card)));
 }
 
+function updateToolbarCount() {
+  document.getElementById('toolbar-count').textContent = cards.length;
+}
+
 // Rebuilds only the given columns' card lists (cheaper than a full render —
 // used when a drag only touches one or two statuses) then refreshes stats/digest.
 function renderPartial(statuses) {
   statuses.forEach(renderColumnList);
+  updateToolbarCount();
   renderSummaryDigest(currentPeriod);
   lucide.createIcons();
 }
@@ -63,9 +74,16 @@ function renderPartial(statuses) {
 function render() {
   STATUSES.forEach(renderColumnList);
 
+  updateToolbarCount();
   renderSummaryDigest(currentPeriod);
   lucide.createIcons();
 }
+
+document.getElementById('board-search').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  STATUSES.forEach(renderColumnList);
+  lucide.createIcons();
+});
 
 function renderCard(card) {
   const el = document.createElement('div');
@@ -190,7 +208,7 @@ function renderCard(card) {
     el.appendChild(dateRow);
   }
 
-  el.addEventListener('click', () => openModal('edit', card));
+  el.addEventListener('click', () => openDetailView(card));
 
   el.addEventListener('contextmenu', e => {
     e.preventDefault();
@@ -519,12 +537,22 @@ function openCardContextMenu(card, x, y) {
   editBtn.addEventListener('click', () => { closeContextMenu(); openModal('edit', card); });
   contextMenu.appendChild(editBtn);
 
-  const moveRow = document.createElement('div');
-  moveRow.className = 'context-move-row';
+  const moveGroup = document.createElement('div');
+  moveGroup.className = 'context-item-group';
+
+  const moveToggle = document.createElement('button');
+  moveToggle.type = 'button';
+  moveToggle.className = 'context-item';
+  moveToggle.innerHTML = '<i data-lucide="move"></i>Déplacer vers<i data-lucide="chevron-down" class="context-item-chevron"></i>';
+  moveToggle.addEventListener('click', () => moveGroup.classList.toggle('expanded'));
+  moveGroup.appendChild(moveToggle);
+
+  const moveSubmenu = document.createElement('div');
+  moveSubmenu.className = 'context-submenu';
   STATUSES.filter(s => s !== card.status).forEach(status => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = `context-move-btn status-btn--${{todo:'slate',sent:'amber',interview:'green',rejected:'rose'}[status]}`;
+    btn.className = 'context-subitem';
     btn.innerHTML = `<i data-lucide="${STATUS_ICONS[status]}"></i>${STATUS_LABELS[status]}`;
     btn.addEventListener('click', () => {
       closeContextMenu();
@@ -535,13 +563,23 @@ function openCardContextMenu(card, x, y) {
       updateCardRemote(card);
       animateHeightChange([fromColumn, toColumn], () => renderPartial([fromStatus, status]));
     });
-    moveRow.appendChild(btn);
+    moveSubmenu.appendChild(btn);
   });
-  const moveLabel = document.createElement('div');
-  moveLabel.className = 'context-label';
-  moveLabel.textContent = 'Déplacer vers';
-  contextMenu.appendChild(moveLabel);
-  contextMenu.appendChild(moveRow);
+  moveGroup.appendChild(moveSubmenu);
+  contextMenu.appendChild(moveGroup);
+
+  const duplicateBtn = document.createElement('button');
+  duplicateBtn.type = 'button';
+  duplicateBtn.className = 'context-item';
+  duplicateBtn.innerHTML = '<i data-lucide="copy"></i>Dupliquer';
+  duplicateBtn.addEventListener('click', () => {
+    closeContextMenu();
+    const copy = { ...card, id: uid(), createdAt: Date.now() };
+    cards.push(copy);
+    createCardRemote(copy);
+    render();
+  });
+  contextMenu.appendChild(duplicateBtn);
 
   const deleteBtn = document.createElement('button');
   deleteBtn.type = 'button';
@@ -825,6 +863,91 @@ fieldUrl.addEventListener('blur', () => {
   // reads schema.org JobPosting / Open Graph tags from the actual page).
   parseJobOffer(url).then(applyGuess);
 });
+
+// --- Read-only offer detail view (opened by clicking a card; editing is
+// only reachable via the right-click context menu, to avoid accidental edits) ---
+
+const detailOverlay = document.getElementById('detail-overlay');
+const detailContent = document.getElementById('detail-content');
+const detailClose = document.getElementById('detail-close');
+
+function openDetailView(card) {
+  const parts = [];
+
+  parts.push(`
+    <span class="detail-status-tag detail-status-tag--${card.status}">
+      <i data-lucide="${STATUS_ICONS[card.status]}"></i>${STATUS_LABELS[card.status]}
+    </span>
+    <h3 class="detail-title">${card.title || 'Offre sans titre'}${card.company ? ` <span class="detail-company">chez ${card.company}</span>` : ''}</h3>
+  `);
+
+  if (card.location || card.salary || card.contractType) {
+    const chips = [];
+    if (card.contractType) chips.push(`<span class="card-meta-tag">${card.contractType}</span>`);
+    if (card.location) chips.push(`<span class="card-meta-item"><i data-lucide="map-pin"></i>${card.location}</span>`);
+    if (card.salary) chips.push(`<span class="card-meta-item"><i data-lucide="banknote"></i>${card.salary}</span>`);
+    parts.push(`<div class="detail-meta-row">${chips.join('')}</div>`);
+  }
+
+  if (card.status === 'interview' && card.interviewStage) {
+    parts.push(`<div class="card-stage-tag">${STAGE_LABELS[card.interviewStage] || ''}</div>`);
+  }
+
+  if (card.deadline) {
+    const isOverdue = new Date(card.deadline + 'T00:00:00') < startOfDay(new Date());
+    const d = new Date(card.deadline + 'T00:00:00');
+    const dStr = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    parts.push(`<div class="card-deadline${isOverdue ? ' card-deadline--overdue' : ''}"><i data-lucide="alarm-clock"></i> Sans réponse après le ${dStr}</div>`);
+  }
+
+  if (card.contacts && card.contacts.length) {
+    const rows = card.contacts.map(contact => {
+      const name = [contact.firstName, contact.lastName].filter(Boolean).join(' ');
+      if (!name && !contact.value) return '';
+      const icon = contact.type === 'phone' ? 'phone' : 'mail';
+      return `<div class="card-contact-block">
+        ${name ? `<div class="card-contact"><i data-lucide="user"></i>${name}</div>` : ''}
+        ${contact.value ? `<div class="card-contact"><i data-lucide="${icon}"></i>${contact.value}</div>` : ''}
+      </div>`;
+    }).join('');
+    if (rows) parts.push(`<div class="detail-section"><span class="detail-label">Contact</span>${rows}</div>`);
+  }
+
+  if (card.notes) {
+    parts.push(`<div class="detail-section"><span class="detail-label">Notes</span><p class="detail-notes">${card.notes}</p></div>`);
+  }
+
+  const links = [];
+  if (card.url) links.push(`<a class="card-link" href="${card.url}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Voir l'offre</a>`);
+  if (card.status === 'todo') {
+    const jobParam = card.url || [card.title, card.company].filter(Boolean).join(' chez ');
+    links.push(`<a class="card-link card-link--generate" href="/generate?job=${encodeURIComponent(jobParam)}&cardId=${encodeURIComponent(card.id)}"><i data-lucide="sparkles"></i> Générer CV</a>`);
+  }
+  if (links.length) parts.push(`<div class="card-link-row detail-link-row">${links.join('')}</div>`);
+
+  if (card.createdAt) {
+    const added = new Date(card.createdAt);
+    const dateStr = added.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    const timeStr = added.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    parts.push(`<div class="card-date-row detail-date-row">
+      <span class="card-date"><i data-lucide="calendar"></i>${dateStr}</span>
+      <span class="card-date"><i data-lucide="clock"></i>${timeStr}</span>
+    </div>`);
+  }
+
+  detailContent.innerHTML = parts.join('');
+  detailOverlay.classList.remove('hidden');
+  requestAnimationFrame(() => detailOverlay.classList.add('visible'));
+  lucide.createIcons();
+}
+
+function closeDetailView() {
+  detailOverlay.classList.remove('visible');
+  setTimeout(() => detailOverlay.classList.add('hidden'), 300);
+}
+
+detailClose.addEventListener('click', closeDetailView);
+detailOverlay.addEventListener('click', e => { if (e.target === detailOverlay) closeDetailView(); });
 
 function openModal(mode, card, presetStatus) {
   form.reset();
