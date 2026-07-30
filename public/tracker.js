@@ -509,6 +509,15 @@ function closeContextMenu() {
 function openCardContextMenu(card, x, y) {
   contextMenu.innerHTML = '';
 
+  if (card.url) {
+    const openBtn = document.createElement('button');
+    openBtn.type = 'button';
+    openBtn.className = 'context-item';
+    openBtn.innerHTML = '<i data-lucide="external-link"></i>Ouvrir l\'offre';
+    openBtn.addEventListener('click', () => { closeContextMenu(); window.open(card.url, '_blank', 'noopener'); });
+    contextMenu.appendChild(openBtn);
+  }
+
   const editBtn = document.createElement('button');
   editBtn.type = 'button';
   editBtn.className = 'context-item';
@@ -539,19 +548,6 @@ function openCardContextMenu(card, x, y) {
   moveLabel.textContent = 'Déplacer vers';
   contextMenu.appendChild(moveLabel);
   contextMenu.appendChild(moveRow);
-
-  if (card.url) {
-    const openBtn = document.createElement('button');
-    openBtn.type = 'button';
-    openBtn.className = 'context-item';
-    openBtn.innerHTML = '<i data-lucide="external-link"></i>Ouvrir l\'offre';
-    openBtn.addEventListener('click', () => { closeContextMenu(); window.open(card.url, '_blank', 'noopener'); });
-    contextMenu.appendChild(openBtn);
-  }
-
-  const divider = document.createElement('div');
-  divider.className = 'context-divider';
-  contextMenu.appendChild(divider);
 
   const deleteBtn = document.createElement('button');
   deleteBtn.type = 'button';
