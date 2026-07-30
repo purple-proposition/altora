@@ -61,18 +61,23 @@ export default async function TrackerPage() {
 
       <div className="app">
         <section className="summary-card">
-          <p className="summary-text">
-            <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,{' '}
+          <div className="summary-date">
             <span className="period-trigger-wrap">
               <button type="button" className="period-trigger" id="period-trigger">
-                <span id="period-label">aujourd&apos;hui</span><i data-lucide="chevron-down"></i>
+                <span id="period-label">Aujourd&apos;hui</span><i data-lucide="chevron-down"></i>
               </button>
               <span className="period-popup hidden" id="period-popup">
                 <button type="button" className="period-option active" data-period="today">Aujourd&apos;hui</button>
                 <button type="button" className="period-option" data-period="week">Cette semaine</button>
                 <button type="button" className="period-option" data-period="month">Ce mois-ci</button>
               </span>
-            </span> tu as <span className="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> <span id="label-todo">offres à postuler</span>,
+            </span>
+          </div>
+          <h2 className="summary-greeting">
+            <span id="greeting">Bonjour</span>, <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>.
+          </h2>
+          <p className="summary-subtitle">
+            Tu as <span className="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> <span id="label-todo">offres à postuler</span>,
             <span className="inline-pill inline-pill--amber"><i data-lucide="hourglass"></i><span id="summary-sent">0</span></span> <span id="label-sent">candidatures envoyées</span>,
             <span className="inline-pill inline-pill--green"><i data-lucide="target"></i><span id="summary-interview">0</span></span> <span id="label-interview">entretiens planifiés</span> et
             <span className="inline-pill inline-pill--rose"><i data-lucide="folder-x"></i><span id="summary-rejected">0</span></span> <span id="label-rejected">refus reçus</span>.
@@ -85,11 +90,7 @@ export default async function TrackerPage() {
               <span className="stat-pill stat-pill--slate"><i data-lucide="circle-dashed"></i>À postuler</span>
               <button className="add-card-btn" data-status="todo" title="Ajouter une candidature"><i data-lucide="plus"></i></button>
             </div>
-            <div className="stat-number-row"><span className="stat-value" id="stat-todo">0</span></div>
-            <div className="stat-bar-row">
-              <div className="stat-bar-track"><div className="stat-bar-fill stat-bar-fill--slate" id="bar-todo"></div></div>
-              <span className="stat-bar-pct" id="pct-todo">0%</span>
-            </div>
+            <div className="column-divider"></div>
             <div className="card-list" id="list-todo"></div>
           </div>
 
@@ -98,11 +99,7 @@ export default async function TrackerPage() {
               <span className="stat-pill stat-pill--amber"><i data-lucide="hourglass"></i>Envoyé</span>
               <button className="add-card-btn" data-status="sent" title="Ajouter une candidature"><i data-lucide="plus"></i></button>
             </div>
-            <div className="stat-number-row"><span className="stat-value" id="stat-sent">0</span></div>
-            <div className="stat-bar-row">
-              <div className="stat-bar-track"><div className="stat-bar-fill stat-bar-fill--amber" id="bar-sent"></div></div>
-              <span className="stat-bar-pct" id="pct-sent">0%</span>
-            </div>
+            <div className="column-divider"></div>
             <div className="card-list" id="list-sent"></div>
           </div>
 
@@ -111,11 +108,7 @@ export default async function TrackerPage() {
               <span className="stat-pill stat-pill--green"><i data-lucide="target"></i>Entretien</span>
               <button className="add-card-btn" data-status="interview" title="Ajouter une candidature"><i data-lucide="plus"></i></button>
             </div>
-            <div className="stat-number-row"><span className="stat-value" id="stat-interview">0</span></div>
-            <div className="stat-bar-row">
-              <div className="stat-bar-track"><div className="stat-bar-fill stat-bar-fill--green" id="bar-interview"></div></div>
-              <span className="stat-bar-pct" id="pct-interview">0%</span>
-            </div>
+            <div className="column-divider"></div>
             <div className="card-list" id="list-interview"></div>
           </div>
 
@@ -124,11 +117,7 @@ export default async function TrackerPage() {
               <span className="stat-pill stat-pill--rose"><i data-lucide="folder-x"></i>Refus</span>
               <button className="add-card-btn" data-status="rejected" title="Ajouter une candidature"><i data-lucide="plus"></i></button>
             </div>
-            <div className="stat-number-row"><span className="stat-value" id="stat-rejected">0</span></div>
-            <div className="stat-bar-row">
-              <div className="stat-bar-track"><div className="stat-bar-fill stat-bar-fill--rose" id="bar-rejected"></div></div>
-              <span className="stat-bar-pct" id="pct-rejected">0%</span>
-            </div>
+            <div className="column-divider"></div>
             <div className="card-list" id="list-rejected"></div>
           </div>
         </main>

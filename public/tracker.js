@@ -60,7 +60,6 @@ function renderColumnList(status) {
 // used when a drag only touches one or two statuses) then refreshes stats/digest.
 function renderPartial(statuses) {
   statuses.forEach(renderColumnList);
-  renderStats();
   renderSummaryDigest(currentPeriod);
   lucide.createIcons();
 }
@@ -68,7 +67,6 @@ function renderPartial(statuses) {
 function render() {
   STATUSES.forEach(renderColumnList);
 
-  renderStats();
   renderSummaryDigest(currentPeriod);
   lucide.createIcons();
 }
@@ -213,19 +211,6 @@ function renderCard(card) {
   });
 
   return el;
-}
-
-function renderStats() {
-  const total = cards.length;
-  const todo = cards.filter(c => c.status === 'todo').length;
-  const sent = cards.filter(c => c.status === 'sent').length;
-  const interview = cards.filter(c => c.status === 'interview').length;
-  const rejected = cards.filter(c => c.status === 'rejected').length;
-
-  setStat('todo', todo, total ? Math.round((todo / total) * 100) : 0);
-  setStat('sent', sent, total ? Math.round((sent / total) * 100) : 0);
-  setStat('interview', interview, total ? Math.round((interview / total) * 100) : 0);
-  setStat('rejected', rejected, total ? Math.round((rejected / total) * 100) : 0);
 }
 
 // --- Summary digest (time-scoped: today / this week / this month) ---
@@ -435,25 +420,6 @@ document.addEventListener('click', e => {
   if (!periodPopup.classList.contains('visible')) return;
   if (!e.target.closest('.period-trigger-wrap')) closePeriodPopup();
 });
-
-function setStat(key, value, pct) {
-  const valueEl = document.getElementById(`stat-${key}`);
-  const barEl = document.getElementById(`bar-${key}`);
-  const pctEl = document.getElementById(`pct-${key}`);
-  const cardEl = document.querySelector(`.column[data-status="${key}"]`);
-
-  const changed = valueEl.textContent !== String(value);
-
-  rollNumber(valueEl, value);
-  barEl.style.width = `${pct}%`;
-  pctEl.textContent = `${pct}%`;
-
-  if (changed) {
-    cardEl.classList.remove('pulse');
-    void cardEl.offsetWidth;
-    cardEl.classList.add('pulse');
-  }
-}
 
 // --- Drag and drop ---
 
