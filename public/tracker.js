@@ -1,23 +1,37 @@
-const STORAGE_KEY = 'job-tracker-cards';
 const STATUSES = ['todo', 'sent', 'interview', 'rejected'];
 const STAGE_LABELS = { '1': '1er entretien', '2': '2e entretien', final: 'Entretien final' };
 const STATUS_LABELS = { todo: 'À postuler', sent: 'Envoyé', interview: 'Entretien', rejected: 'Refus' };
 const STATUS_ICONS = { todo: 'circle-dashed', sent: 'hourglass', interview: 'target', rejected: 'folder-x' };
 
-let cards = loadCards();
+let cards = [];
 let editingId = null;
 let draggingId = null;
 
-function loadCards() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch (e) {
-    return [];
-  }
+async function fetchCards() {
+  const res = await fetch('/api/cards');
+  if (!res.ok) { cards = []; return; }
+  const data = await res.json();
+  cards = data.cards || [];
 }
 
-function saveCards() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+async function createCardRemote(card) {
+  await fetch('/api/cards', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(card),
+  });
+}
+
+async function updateCardRemote(card) {
+  await fetch(`/api/cards/${encodeURIComponent(card.id)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(card),
+  });
+}
+
+async function deleteCardRemote(id) {
+  await fetch(`/api/cards/${encodeURIComponent(id)}`, { method: 'DELETE' });
 }
 
 function uid() {
@@ -423,7 +437,7 @@ STATUSES.forEach(status => {
       const toColumn = list.closest('.column');
       const fromStatus = card.status;
       card.status = status;
-      saveCards();
+      updateCardRemote(card);
       animateHeightChange([fromColumn, toColumn], () => renderPartial([fromStatus, status]));
     }
   });
@@ -505,7 +519,7 @@ function openCardContextMenu(card, x, y) {
       const toColumn = document.querySelector(`.column[data-status="${status}"]`);
       const fromStatus = card.status;
       card.status = status;
-      saveCards();
+      updateCardRemote(card);
       animateHeightChange([fromColumn, toColumn], () => renderPartial([fromStatus, status]));
     });
     moveRow.appendChild(btn);
@@ -536,7 +550,7 @@ function openCardContextMenu(card, x, y) {
   deleteBtn.addEventListener('click', () => {
     closeContextMenu();
     cards = cards.filter(c => c.id !== card.id);
-    saveCards();
+    deleteCardRemote(card.id);
     render();
   });
   contextMenu.appendChild(deleteBtn);
@@ -864,19 +878,22 @@ form.addEventListener('submit', e => {
   if (editingId) {
     const card = cards.find(c => c.id === editingId);
     Object.assign(card, data);
+    updateCardRemote(card);
   } else {
-    cards.push({ id: uid(), createdAt: Date.now(), ...data });
+    const card = { id: uid(), createdAt: Date.now(), ...data };
+    cards.push(card);
+    createCardRemote(card);
   }
 
-  saveCards();
   render();
   closeModal();
 });
 
 btnDelete.addEventListener('click', () => {
   if (!editingId) return;
-  cards = cards.filter(c => c.id !== editingId);
-  saveCards();
+  const deletedId = editingId;
+  cards = cards.filter(c => c.id !== deletedId);
+  deleteCardRemote(deletedId);
   render();
   closeModal();
 });
@@ -966,4 +983,7 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.settings-trigger-wrap')) closeThemePopup();
 });
 
-render();
+(async () => {
+  await fetchCards();
+  render();
+})();

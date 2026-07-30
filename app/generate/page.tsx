@@ -18,8 +18,6 @@ const EMPTY_ANALYSIS: Analysis = {
   keywords: [], adjustments: [], missing: [], atsScore: 0, atsImprovements: [],
 };
 
-const TRACKER_STORAGE_KEY = 'job-tracker-cards';
-
 export default function GeneratePage() {
   return (
     <Suspense fallback={null}>
@@ -256,13 +254,13 @@ function GenerateForm() {
 
             {cardId && (
               <button
-                onClick={() => {
+                onClick={async () => {
                   try {
-                    const raw = localStorage.getItem(TRACKER_STORAGE_KEY);
-                    const cards = raw ? JSON.parse(raw) : [];
-                    const card = cards.find((c: { id: string }) => c.id === cardId);
-                    if (card) card.status = 'sent';
-                    localStorage.setItem(TRACKER_STORAGE_KEY, JSON.stringify(cards));
+                    await fetch(`/api/cards/${encodeURIComponent(cardId)}`, {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ status: 'sent' }),
+                    });
                     setMarkedSent(true);
                   } catch { /* ignore */ }
                 }}

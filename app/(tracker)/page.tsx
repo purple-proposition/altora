@@ -1,16 +1,28 @@
 import Script from 'next/script';
+import { auth, signOut } from '@/auth';
 
-export default function TrackerPage() {
+export default async function TrackerPage() {
+  const session = await auth();
+  const firstName = session?.user?.name?.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
+
   return (
     <>
       <div className="app">
         <header className="topbar">
           <h1>Altora</h1>
+          <form
+            action={async () => {
+              'use server';
+              await signOut({ redirectTo: '/login' });
+            }}
+          >
+            <button type="submit" className="logout-btn">Se déconnecter</button>
+          </form>
         </header>
 
         <section className="summary-card">
           <p className="summary-text">
-            <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt="Jesse" /> Jesse,{' '}
+            <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> {firstName},{' '}
             <span className="period-trigger-wrap">
               <button type="button" className="period-trigger" id="period-trigger">
                 <span id="period-label">aujourd&apos;hui</span><i data-lucide="chevron-down"></i>

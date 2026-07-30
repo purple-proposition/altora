@@ -9,10 +9,14 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
+    "@neondatabase/serverless": "^1.1.0",
+    "bcryptjs": "^3.0.3",
     "next": "^15.3.0",
+    "next-auth": "^5.0.0-beta.32",
     "pdfkit": "^0.15.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/pdfkit": "^0.13.9",
     "@types/react": "19.2.15",
