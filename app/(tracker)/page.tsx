@@ -7,8 +7,7 @@ export default async function TrackerPage() {
   const fullName = session?.user?.name || '';
   const firstName = fullName.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
   const email = session?.user?.email || '';
-  const userExtra = session?.user as { school?: string | null; promotion?: string | null } | undefined;
-  const school = userExtra?.school || '';
+  const userExtra = session?.user as { promotion?: string | null } | undefined;
   const promotion = userExtra?.promotion || '';
 
   let cvUrl = '';
@@ -20,13 +19,19 @@ export default async function TrackerPage() {
     cvFilename = rows[0]?.cv_filename || '';
   }
 
+  const rawDate = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const todayLabel = rawDate.charAt(0).toUpperCase() + rawDate.slice(1);
+
   return (
     <>
       <div className="app-shell">
       <aside className="sidebar">
         <div className="sidebar-brand">
           <img className="sidebar-logo" src="/rocket-school-logo.jpg" alt="Rocket School" />
-          <span className="sidebar-brand-name">Rocket School</span>
+          <span className="sidebar-brand-text">
+            <span className="sidebar-brand-name">Rocket School</span>
+            {promotion && <span className="sidebar-brand-promotion">{promotion}</span>}
+          </span>
         </div>
 
         <nav className="sidebar-nav">
@@ -61,7 +66,11 @@ export default async function TrackerPage() {
 
       <div className="app">
         <section className="summary-card">
-          <div className="summary-date">
+          <div className="summary-date">{todayLabel}</div>
+          <h2 className="summary-greeting">
+            <span id="greeting">Bonjour</span>, <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,
+          </h2>
+          <p className="summary-subtitle">
             <span className="period-trigger-wrap">
               <button type="button" className="period-trigger" id="period-trigger">
                 <span id="period-label">Aujourd&apos;hui</span><i data-lucide="chevron-down"></i>
@@ -71,13 +80,7 @@ export default async function TrackerPage() {
                 <button type="button" className="period-option" data-period="week">Cette semaine</button>
                 <button type="button" className="period-option" data-period="month">Ce mois-ci</button>
               </span>
-            </span>
-          </div>
-          <h2 className="summary-greeting">
-            <span id="greeting">Bonjour</span>, <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>.
-          </h2>
-          <p className="summary-subtitle">
-            Tu as <span className="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> <span id="label-todo">offres à postuler</span>,
+            </span>, tu as <span className="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> <span id="label-todo">offres à postuler</span>,
             <span className="inline-pill inline-pill--amber"><i data-lucide="hourglass"></i><span id="summary-sent">0</span></span> <span id="label-sent">candidatures envoyées</span>,
             <span className="inline-pill inline-pill--green"><i data-lucide="target"></i><span id="summary-interview">0</span></span> <span id="label-interview">entretiens planifiés</span> et
             <span className="inline-pill inline-pill--rose"><i data-lucide="folder-x"></i><span id="summary-rejected">0</span></span> <span id="label-rejected">refus reçus</span>.
@@ -92,6 +95,7 @@ export default async function TrackerPage() {
             </div>
             <div className="column-divider"></div>
             <div className="card-list" id="list-todo"></div>
+            <button type="button" className="add-card-dashed" data-status="todo">+ Ajouter une nouvelle tâche</button>
           </div>
 
           <div className="column" data-status="sent">
@@ -101,6 +105,7 @@ export default async function TrackerPage() {
             </div>
             <div className="column-divider"></div>
             <div className="card-list" id="list-sent"></div>
+            <button type="button" className="add-card-dashed" data-status="sent">+ Ajouter une nouvelle tâche</button>
           </div>
 
           <div className="column" data-status="interview">
@@ -110,6 +115,7 @@ export default async function TrackerPage() {
             </div>
             <div className="column-divider"></div>
             <div className="card-list" id="list-interview"></div>
+            <button type="button" className="add-card-dashed" data-status="interview">+ Ajouter une nouvelle tâche</button>
           </div>
 
           <div className="column" data-status="rejected">
@@ -119,6 +125,7 @@ export default async function TrackerPage() {
             </div>
             <div className="column-divider"></div>
             <div className="card-list" id="list-rejected"></div>
+            <button type="button" className="add-card-dashed" data-status="rejected">+ Ajouter une nouvelle tâche</button>
           </div>
         </main>
 
@@ -135,17 +142,7 @@ export default async function TrackerPage() {
                   <span className="pill-pro">Compte pro</span>
                 </div>
                 <div className="profile-email">{email}</div>
-              </div>
-            </div>
-
-            <div className="field-row">
-              <div className="field-group">
-                <span className="field-label">École</span>
-                <div className="profile-static-value">{school || '—'}</div>
-              </div>
-              <div className="field-group">
-                <span className="field-label">Promotion</span>
-                <div className="profile-static-value">{promotion || '—'}</div>
+                <div className="profile-promotion">{promotion || '—'}</div>
               </div>
             </div>
 
@@ -179,10 +176,6 @@ export default async function TrackerPage() {
             <iframe id="cv-preview-frame" className="cv-preview-frame" title="Aperçu du CV"></iframe>
           </div>
         </div>
-
-        <button className="fab" id="fab-import" title="Importer une offre">
-          <i data-lucide="plus"></i>
-        </button>
 
         <div className="modal-overlay hidden" id="modal-overlay">
           <div className="modal">

@@ -262,7 +262,7 @@ function renderSummaryDigest(period) {
   const counts = { todo, sent, interview, rejected };
   Object.keys(SUMMARY_LABELS).forEach(key => {
     const forms = SUMMARY_LABELS[key];
-    document.getElementById(`label-${key}`).textContent = counts[key] === 1 ? forms.singular : forms.plural;
+    document.getElementById(`label-${key}`).textContent = counts[key] <= 1 ? forms.singular : forms.plural;
   });
 
   document.querySelectorAll('.period-option').forEach(btn => {
@@ -929,11 +929,10 @@ btnDelete.addEventListener('click', () => {
   closeModal();
 });
 
-document.querySelectorAll('.add-card-btn').forEach(btn => {
+document.querySelectorAll('.add-card-btn, .add-card-dashed').forEach(btn => {
   btn.addEventListener('click', () => openModal('create', null, btn.dataset.status));
 });
 
-document.getElementById('fab-import').addEventListener('click', () => openModal('import'));
 
 // Real server-side scrape via the /api/parse-offer serverless function
 // (only available once deployed to Vercel — no-ops during local static preview).
