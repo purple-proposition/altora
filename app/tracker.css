@@ -142,7 +142,7 @@ body {
 
 .sidebar-brand-name {
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text);
 }
 
@@ -190,7 +190,7 @@ body {
 .sidebar-item--active {
   background: var(--card-bg);
   color: var(--text);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .sidebar-item-group.expanded .sidebar-item-chevron { transform: rotate(180deg); }
@@ -231,8 +231,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
 }
 
 .sidebar-user {
@@ -286,22 +284,6 @@ body {
 
 .sidebar-user-chevron { width: 14px !important; height: 14px !important; color: var(--text-muted); flex-shrink: 0; }
 
-.sidebar-logout {
-  border: none;
-  background: none;
-  color: var(--text-muted);
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 8px;
-  text-align: left;
-  border-radius: 8px;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.sidebar-logout:hover { background: var(--card-bg); color: var(--rose); }
-
 /* Lucide icons scale with the font-size of whatever they sit inside */
 .lucide {
   width: 1em;
@@ -314,10 +296,6 @@ body {
 /* --- Summary --- */
 
 .summary-card {
-  background: var(--card-bg);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow);
-  padding: 24px 28px 24px;
   margin-bottom: 24px;
 }
 
@@ -1238,7 +1216,6 @@ body {
   .column { padding: 20px; }
   .stat-value { font-size: 32px; }
 
-  .summary-card { padding: 20px; }
   .summary-text { font-size: 32px; line-height: 1.4; }
 
   .fab { right: 20px; bottom: 20px; width: 52px; height: 52px; }
