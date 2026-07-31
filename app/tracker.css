@@ -2031,3 +2031,113 @@ text-box-edge: cap alphabetic;
   text-box-edge: cap alphabetic;
   color: var(--text-muted);
 }
+
+/* --- Générer un CV (page /generate) --- */
+
+.generate-view { max-width: 640px; }
+
+.generate-textarea {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+}
+.generate-textarea:hover { border-color: var(--text-muted); }
+.generate-textarea:focus { outline: none; border-color: var(--indigo); }
+.generate-textarea--small { min-height: 100px; font-size: 13px; }
+
+.generate-error {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-input);
+  background: var(--rose-tint);
+  color: var(--rose);
+  font-size: 13px;
+}
+
+.generate-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+.generate-actions--split { justify-content: space-between; }
+
+.generate-progress-wrap { padding: 24px 0; }
+.generate-progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.generate-progress-track {
+  background: var(--bg);
+  border-radius: 4px;
+  height: 4px;
+  overflow: hidden;
+}
+.generate-progress-fill {
+  background: var(--indigo);
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.generate-meta {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+
+.ats-score-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  border-radius: var(--radius-card);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.ats-score-card--good { background: var(--green-tint); color: var(--green); }
+.ats-score-card--mid { background: var(--amber-tint); color: var(--amber); }
+.ats-score-card--low { background: var(--rose-tint); color: var(--rose); }
+.ats-score-value { flex-shrink: 0; text-align: center; }
+.ats-score-number { font-size: 36px; font-weight: 700; line-height: 1; }
+.ats-score-suffix { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+.ats-score-card .field-label { color: inherit; opacity: 0.75; }
+
+.generate-downloads { display: flex; gap: 8px; margin-bottom: 24px; }
+.generate-downloads .btn-primary { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+
+.generate-mark-sent { width: 100%; margin-bottom: 24px; }
+
+.generate-section { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 24px; }
+.generate-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.generate-copy-btn { padding: 8px 12px; font-size: 12px; }
+
+.generate-email-block {
+  background: var(--bg);
+  border-radius: var(--radius-input);
+  padding: 12px 16px;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.generate-subsection + .generate-subsection { margin-top: 16px; }
+.generate-pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.generate-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--text); line-height: 1.5; }
+.generate-list--muted { color: var(--text-muted); }
