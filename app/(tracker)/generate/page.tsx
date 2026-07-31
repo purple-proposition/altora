@@ -31,6 +31,7 @@ function GenerateForm() {
   const searchParams = useSearchParams();
   const cardId = searchParams.get('cardId');
   const [jobPosting, setJobPosting] = useState(() => searchParams.get('job') ?? '');
+  const [usingStoredDescription, setUsingStoredDescription] = useState(false);
   const [markedSent, setMarkedSent] = useState(false);
   const [contractType, setContractType] = useState<'alternance' | 'cdi'>('alternance');
   const [state, setState] = useState<State>('idle');
@@ -52,7 +53,24 @@ function GenerateForm() {
   useEffect(() => {
     const w = window as unknown as { lucide?: { createIcons: () => void } };
     if (w.lucide) w.lucide.createIcons();
-  }, [state]);
+  }, [state, usingStoredDescription]);
+
+  // A card imported from a URL already has its posting text saved (see the
+  // import modal) — reuse it here instead of asking the user to paste it
+  // again or re-fetching a page that might now be gone/blocked.
+  useEffect(() => {
+    if (!cardId) return;
+    let cancelled = false;
+    fetch(`/api/cards/${encodeURIComponent(cardId)}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(card => {
+        if (cancelled || !card?.jobDescription) return;
+        setJobPosting(card.jobDescription);
+        setUsingStoredDescription(true);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [cardId]);
 
   async function handleCopyEmail() {
     if (!email) return;
@@ -185,12 +203,26 @@ function GenerateForm() {
 
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>
-              <textarea
-                className="generate-textarea"
-                placeholder="Colle la fiche de poste ou un lien…"
-                value={jobPosting}
-                onChange={(e) => setJobPosting(e.target.value)}
-              />
+              {usingStoredDescription ? (
+                <div className="generate-stored-description">
+                  <i data-lucide="check-circle"></i>
+                  <span>Déjà en mémoire depuis le suivi — pas besoin de la recoller.</span>
+                  <button
+                    type="button"
+                    className="generate-stored-description-edit"
+                    onClick={() => { setUsingStoredDescription(false); setJobPosting(''); }}
+                  >
+                    Remplacer
+                  </button>
+                </div>
+              ) : (
+                <textarea
+                  className="generate-textarea"
+                  placeholder="Colle la fiche de poste ou un lien…"
+                  value={jobPosting}
+                  onChange={(e) => setJobPosting(e.target.value)}
+                />
+              )}
             </div>
 
             {state === 'error' && <div className="generate-error">{error}</div>}

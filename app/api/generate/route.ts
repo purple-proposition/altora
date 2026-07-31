@@ -5,6 +5,7 @@ import { auth } from '@/auth';
 import { assertSafeUrl } from '@/lib/ssrfGuard';
 import { readCapped } from '@/lib/cappedFetch';
 import { rateLimit } from '@/lib/rateLimit';
+import { cleanJobPostingHtml } from '@/lib/jobPosting';
 
 const MAX_JOB_POSTING_RESPONSE_BYTES = 2 * 1024 * 1024;
 
@@ -465,16 +466,7 @@ async function fetchJobPosting(url: string): Promise<string> {
     });
     if (!res.ok) throw new Error(`La page a répondu ${res.status}`);
     const html = await readCapped(res, MAX_JOB_POSTING_RESPONSE_BYTES);
-    const text = html
-      .replace(/<script[\s\S]*?<\/script>/gi, '')
-      .replace(/<style[\s\S]*?<\/style>/gi, '')
-      .replace(/<nav[\s\S]*?<\/nav>/gi, '')
-      .replace(/<header[\s\S]*?<\/header>/gi, '')
-      .replace(/<footer[\s\S]*?<\/footer>/gi, '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
-      .replace(/\s+/g, ' ').trim().slice(0, 10000);
+    const text = cleanJobPostingHtml(html);
     if (text.length < 200) throw new Error('Contenu trop court – le site bloque les requêtes automatiques (ex. LinkedIn, Indeed)');
     return text;
   } finally { clearTimeout(timer); }

@@ -222,6 +222,15 @@ export default async function TrackerPage() {
               <label>Lien de l&apos;offre
                 <input type="url" id="field-url" placeholder="https://..." />
               </label>
+              <p className="url-parse-status hidden" id="url-parse-status"></p>
+              <details className="job-description-details" id="job-description-details">
+                <summary className="job-description-summary">Texte de l&apos;offre (optionnel)</summary>
+                <textarea
+                  id="field-job-description"
+                  rows={4}
+                  placeholder="Rempli automatiquement si le lien peut être analysé, ou colle ici le texte de l'offre si le site le bloque. Sert uniquement à générer le CV plus tard — n'apparaît pas sur la carte."
+                ></textarea>
+              </details>
               <div className="field-row">
                 <label>Poste <span className="field-required">*</span>
                   <input type="text" id="field-title" placeholder="Intitulé du poste" required aria-required="true" />
