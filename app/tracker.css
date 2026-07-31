@@ -238,6 +238,10 @@ body {
 .sidebar--collapsed .sidebar-item,
 .sidebar--collapsed .sidebar-user {
   justify-content: center;
+  align-self: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
 }
 
 .sidebar--collapsed .sidebar-item-link-inner {
@@ -478,6 +482,7 @@ body {
   flex-shrink: 0;
   width: 32px;
   height: 32px;
+  padding: 0;
   margin-right: 24px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
@@ -646,7 +651,7 @@ body {
   justify-content: center;
   width: 32px;
   height: 32px;
-  border: none;
+  border: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
   border-radius: var(--radius-input);
@@ -2368,13 +2373,13 @@ legend.field-label { padding: 0; }
 
 /* --- Documents (page /documents) --- */
 
-.documents-header { margin-bottom: 20px; }
+.documents-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .documents-title { font-size: 32px; font-weight: 500; line-height: 1; margin: 0; }
 
 .documents-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 24px;
   align-items: start;
 }
 
@@ -2472,10 +2477,18 @@ legend.field-label { padding: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-muted);
+}
+.doc-thumb-sheet img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  pointer-events: none;
 }
 .doc-thumb-sheet .lucide { width: 28px; height: 28px; }
 
@@ -2590,10 +2603,11 @@ legend.field-label { padding: 0; }
 
 .folder-card {
   position: relative;
-  transition: outline-color 0.15s ease;
+  transition: outline-color 0.15s ease, border-color 0.15s ease;
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+.folder-card:hover { border-color: var(--text-muted); }
 .folder-card--drag-over { outline-color: var(--indigo); }
 
 .folder-card-drop-hint {
@@ -2654,28 +2668,39 @@ legend.field-label { padding: 0; }
 .folder-context-item--danger:hover { background: var(--rose-tint); }
 
 .folder-create {
-  border: 1.5px dashed var(--border);
-  border-radius: var(--radius-card);
+  position: relative;
 }
-.folder-create-summary {
+.folder-create-trigger {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 16px 20px;
-  cursor: pointer;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: transparent;
   color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 500;
+  cursor: pointer;
   list-style: none;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.folder-create-summary::-webkit-details-marker { display: none; }
-.folder-create-summary:hover { color: var(--text); }
-.folder-create[open] .folder-create-summary { border-bottom: 1px solid var(--border); }
+.folder-create-trigger::-webkit-details-marker { display: none; }
+.folder-create-trigger:hover { background: var(--card-bg); color: var(--text); }
+.folder-create-trigger .lucide { width: 16px; height: 16px; }
 
 .folder-create-form {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
   display: flex;
   gap: 8px;
-  padding: 16px 20px;
+  width: 280px;
+  padding: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 24px color-mix(in srgb, black 16%, transparent);
 }
 .folder-create-form input {
   flex: 1;

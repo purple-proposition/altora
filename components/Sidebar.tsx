@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useSidebarCollapse } from './SidebarCollapseContext';
 
 type GenerationSummary = { id: string; company: string; poste: string; createdAt: string };
+type FolderSummary = { id: number; name: string };
 
 export default function Sidebar({
   fullName,
@@ -42,6 +43,26 @@ export default function Sidebar({
         fetch('/api/generations')
           .then(res => (res.ok ? res.json() : null))
           .then(data => { if (data?.generations) setHistory(data.generations); })
+          .catch(() => {});
+      }
+      return next;
+    });
+  }
+
+  // Same lazy-load-on-first-open pattern as the generation history above —
+  // most visits never open this either.
+  const [foldersOpen, setFoldersOpen] = useState(false);
+  const [foldersLoaded, setFoldersLoaded] = useState(false);
+  const [folders, setFolders] = useState<FolderSummary[]>([]);
+
+  function toggleFolders() {
+    setFoldersOpen(prev => {
+      const next = !prev;
+      if (next && !foldersLoaded) {
+        setFoldersLoaded(true);
+        fetch('/api/folders')
+          .then(res => (res.ok ? res.json() : null))
+          .then(data => { if (data?.folders) setFolders(data.folders); })
           .catch(() => {});
       }
       return next;
@@ -189,10 +210,35 @@ export default function Sidebar({
 
         <span className="sidebar-nav-label sidebar-nav-label--group">Espace</span>
 
-        <Link href="/documents" className={`sidebar-item${isDocuments ? ' sidebar-item--active' : ''}`}>
-          <i data-lucide="folder"></i>
-          <span className="sidebar-item-label">Mes documents</span>
-        </Link>
+        <div className={`sidebar-item-group${foldersOpen ? ' expanded' : ''}`}>
+          <div className={`sidebar-item${isDocuments ? ' sidebar-item--active' : ''}`}>
+            <Link href="/documents" className="sidebar-item-link-inner">
+              <i data-lucide="folder"></i>
+              <span className="sidebar-item-label">Mes documents</span>
+            </Link>
+            <button
+              type="button"
+              className="sidebar-item-chevron-btn"
+              onClick={toggleFolders}
+              aria-expanded={foldersOpen}
+              aria-controls="sidebar-folders-submenu"
+              aria-label="Afficher les dossiers"
+            >
+              <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+            </button>
+          </div>
+          <div className="sidebar-submenu" id="sidebar-folders-submenu">
+            {folders.length === 0 && foldersLoaded && (
+              <span className="sidebar-submenu-empty">Aucun dossier créé</span>
+            )}
+            {folders.map(f => (
+              <Link key={f.id} href={`/documents/folder/${f.id}`} className="sidebar-subitem" title={f.name}>
+                <i data-lucide="folder"></i>
+                <span className="sidebar-subitem-label">{f.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
 
         <Link href="/inbox" className={`sidebar-item${isInbox ? ' sidebar-item--active' : ''}`}>
           <i data-lucide="mail"></i>

@@ -15,13 +15,14 @@ export default async function CustomFolderPage({ params }: { params: Promise<{ i
   const folderId = Number(id);
   const [folderRows, fileRows] = await Promise.all([
     sql`SELECT id, name FROM folders WHERE id = ${folderId} AND user_id = ${session.user.id}`,
-    sql`SELECT url, filename, created_at FROM folder_files WHERE folder_id = ${folderId} AND user_id = ${session.user.id} ORDER BY created_at ASC`,
+    sql`SELECT url, filename, thumbnail_url, created_at FROM folder_files WHERE folder_id = ${folderId} AND user_id = ${session.user.id} ORDER BY created_at ASC`,
   ]);
   const folder = folderRows[0] as { id: number; name: string } | undefined;
   if (!folder) notFound();
-  const docs = (fileRows as { url: string; filename: string; created_at: string }[]).map(row => ({
+  const docs = (fileRows as { url: string; filename: string; thumbnail_url: string | null; created_at: string }[]).map(row => ({
     url: row.url,
     filename: row.filename,
+    thumbnailUrl: row.thumbnail_url,
     createdAt: new Date(row.created_at).getTime(),
   }));
 

@@ -12,29 +12,31 @@ export default async function DocumentsPage() {
 
   let cvUrl = '';
   let cvFilename = '';
+  let cvThumbnailUrl = '';
   let folders: { id: number; name: string }[] = [];
   let folderFiles: Record<number, DocFile[]> = {};
 
   if (session?.user?.id) {
     await ensureSchema();
     const [userRows, folderRows, fileRows] = await Promise.all([
-      sql`SELECT cv_url, cv_filename FROM users WHERE id = ${session.user.id}`,
+      sql`SELECT cv_url, cv_filename, cv_thumbnail_url FROM users WHERE id = ${session.user.id}`,
       sql`SELECT id, name FROM folders WHERE user_id = ${session.user.id} ORDER BY created_at ASC`,
-      sql`SELECT folder_id, url, filename, created_at FROM folder_files WHERE user_id = ${session.user.id} ORDER BY created_at ASC`,
+      sql`SELECT folder_id, url, filename, thumbnail_url, created_at FROM folder_files WHERE user_id = ${session.user.id} ORDER BY created_at ASC`,
     ]);
     cvUrl = userRows[0]?.cv_url || '';
     cvFilename = userRows[0]?.cv_filename || '';
+    cvThumbnailUrl = userRows[0]?.cv_thumbnail_url || '';
     folders = folderRows as { id: number; name: string }[];
-    folderFiles = (fileRows as { folder_id: number; url: string; filename: string; created_at: string }[]).reduce(
+    folderFiles = (fileRows as { folder_id: number; url: string; filename: string; thumbnail_url: string | null; created_at: string }[]).reduce(
       (acc, row) => {
-        (acc[row.folder_id] ||= []).push({ url: row.url, filename: row.filename, createdAt: new Date(row.created_at).getTime() });
+        (acc[row.folder_id] ||= []).push({ url: row.url, filename: row.filename, thumbnailUrl: row.thumbnail_url, createdAt: new Date(row.created_at).getTime() });
         return acc;
       },
       {} as Record<number, DocFile[]>,
     );
   }
 
-  const cvDocs: DocFile[] = cvUrl ? [{ url: cvUrl, filename: cvFilename || 'CV.pdf' }] : [];
+  const cvDocs: DocFile[] = cvUrl ? [{ url: cvUrl, filename: cvFilename || 'CV.pdf', thumbnailUrl: cvThumbnailUrl }] : [];
 
   return (
     <>
@@ -51,6 +53,15 @@ export default async function DocumentsPage() {
       <section className="documents-view">
         <div className="documents-header">
           <h2 className="documents-title">Mes documents</h2>
+          <details className="folder-create">
+            <summary className="folder-create-trigger" aria-label="Créer un dossier" title="Créer un dossier">
+              <i data-lucide="plus"></i>
+            </summary>
+            <form action={createFolder} className="folder-create-form">
+              <input type="text" name="name" placeholder="Nom du dossier…" maxLength={100} required />
+              <button type="submit" className="btn-primary">Créer</button>
+            </form>
+          </details>
         </div>
 
         <div className="documents-grid">
@@ -79,17 +90,6 @@ export default async function DocumentsPage() {
           {folders.map(folder => (
             <FolderCard key={folder.id} folder={folder} docs={folderFiles[folder.id] || []} />
           ))}
-
-          <details className="folder-create">
-            <summary className="folder-create-summary">
-              <i data-lucide="folder-plus"></i>
-              <span>Créer un dossier</span>
-            </summary>
-            <form action={createFolder} className="folder-create-form">
-              <input type="text" name="name" placeholder="Nom du dossier…" maxLength={100} required />
-              <button type="submit" className="btn-primary">Créer</button>
-            </form>
-          </details>
         </div>
       </section>
     </>

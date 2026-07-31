@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export type DocFile = { url: string; filename: string; createdAt?: number };
+export type DocFile = { url: string; filename: string; thumbnailUrl?: string | null; createdAt?: number };
 
 // Purely visual, non-interactive — just a peek at what a folder holds, not a
 // file browser. This used to render a live <embed type="application/pdf">,
@@ -8,8 +8,22 @@ export type DocFile = { url: string; filename: string; createdAt?: number };
 // download) as part of the plugin's own rendering surface — pointer-events:
 // none on the embed, plus an opaque blocker on top, both failed to suppress
 // it, since that toolbar isn't dispatched through normal DOM events. A
-// static sheet with a file icon sidesteps the problem entirely: there is
-// nothing left that a browser could ever consider "hoverable".
+// static <img> (the actual first page, rendered server-side at upload time)
+// or, failing that, a generic file icon, sidesteps the problem entirely:
+// there is nothing left that a browser could ever consider "hoverable".
+function Sheet({ doc }: { doc: DocFile }) {
+  return (
+    <div className="doc-thumb-sheet">
+      {doc.thumbnailUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={doc.thumbnailUrl} alt="" draggable={false} />
+      ) : (
+        <i data-lucide="file-text"></i>
+      )}
+    </div>
+  );
+}
+
 export default function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: string }) {
   if (docs.length === 0) return null;
 
@@ -17,7 +31,7 @@ export default function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: st
     return (
       <Link href={href} className="doc-thumb-grid">
         <div className="doc-thumb-bare">
-          <div className="doc-thumb-sheet"><i data-lucide="file-text"></i></div>
+          <Sheet doc={docs[0]} />
         </div>
       </Link>
     );
@@ -28,7 +42,7 @@ export default function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: st
       <div className="doc-thumb-bare doc-thumb-fan">
         {docs.slice(0, 3).map((doc, i) => (
           <div className={`doc-thumb-fan-layer doc-thumb-fan-layer--${i}`} key={doc.url}>
-            <div className="doc-thumb-sheet"><i data-lucide="file-text"></i></div>
+            <Sheet doc={doc} />
           </div>
         ))}
       </div>

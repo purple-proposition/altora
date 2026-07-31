@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
-type DocFile = { url: string; filename: string; createdAt?: number };
+import type { DocFile } from './DocThumbGrid';
 
 export default function FolderDetailView({ docs }: { docs: DocFile[] }) {
   const [sort, setSort] = useState<'alpha' | 'date'>('alpha');
@@ -41,7 +40,14 @@ export default function FolderDetailView({ docs }: { docs: DocFile[] }) {
           {sorted.map(doc => (
             <a className="folder-detail-item" href={doc.url} target="_blank" rel="noopener noreferrer" key={doc.url}>
               <div className="doc-thumb-bare">
-                <div className="doc-thumb-sheet"><i data-lucide="file-text"></i></div>
+                <div className="doc-thumb-sheet">
+                  {doc.thumbnailUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={doc.thumbnailUrl} alt="" draggable={false} />
+                  ) : (
+                    <i data-lucide="file-text"></i>
+                  )}
+                </div>
               </div>
               <span className="folder-detail-item-name">{doc.filename}</span>
             </a>

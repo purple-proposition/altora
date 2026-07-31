@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
+import { renderPdfFirstPageToPng } from '@/lib/pdfThumbnail';
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
@@ -46,8 +47,23 @@ export async function POST(req: NextRequest) {
     contentType: detected.contentType,
   });
 
-  await ensureSchema();
-  await sql`UPDATE users SET cv_url = ${blob.url}, cv_filename = ${safeName} WHERE id = ${session.user.id}`;
+  // Only PDFs can be rendered to a page image — DOC/DOCX just keep the
+  // generic file icon. A failed render (corrupt/unusual PDF) does too.
+  let thumbnailUrl: string | null = null;
+  if (detected.ext === '.pdf') {
+    const png = await renderPdfFirstPageToPng(Buffer.from(await file.arrayBuffer()));
+    if (png) {
+      const thumbBlob = await put(`cv-thumbnails/${session.user.id}-${Date.now()}.png`, png, {
+        access: 'public',
+        addRandomSuffix: false,
+        contentType: 'image/png',
+      });
+      thumbnailUrl = thumbBlob.url;
+    }
+  }
 
-  return NextResponse.json({ url: blob.url, filename: safeName });
+  await ensureSchema();
+  await sql`UPDATE users SET cv_url = ${blob.url}, cv_filename = ${safeName}, cv_thumbnail_url = ${thumbnailUrl} WHERE id = ${session.user.id}`;
+
+  return NextResponse.json({ url: blob.url, filename: safeName, thumbnailUrl });
 }

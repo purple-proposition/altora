@@ -10,14 +10,16 @@ export default async function CvFolderPage() {
 
   let cvUrl = '';
   let cvFilename = '';
+  let cvThumbnailUrl = '';
   if (session?.user?.id) {
     await ensureSchema();
-    const rows = await sql`SELECT cv_url, cv_filename FROM users WHERE id = ${session.user.id}`;
+    const rows = await sql`SELECT cv_url, cv_filename, cv_thumbnail_url FROM users WHERE id = ${session.user.id}`;
     cvUrl = rows[0]?.cv_url || '';
     cvFilename = rows[0]?.cv_filename || '';
+    cvThumbnailUrl = rows[0]?.cv_thumbnail_url || '';
   }
 
-  const docs = cvUrl ? [{ url: cvUrl, filename: cvFilename || 'CV.pdf' }] : [];
+  const docs = cvUrl ? [{ url: cvUrl, filename: cvFilename || 'CV.pdf', thumbnailUrl: cvThumbnailUrl }] : [];
 
   return (
     <>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
+import { renderPdfFirstPageToPng } from '@/lib/pdfThumbnail';
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_FILES_PER_REQUEST = 10;
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: `${MAX_FILES_PER_REQUEST} fichiers maximum à la fois.` }, { status: 400 });
   }
 
-  const saved: { url: string; filename: string }[] = [];
+  const saved: { url: string; filename: string; thumbnailUrl: string | null }[] = [];
   for (const file of files) {
     if (file.size > MAX_SIZE_BYTES) {
       return NextResponse.json({ error: `"${file.name}" dépasse 10 Mo.` }, { status: 400 });
@@ -50,17 +51,33 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const safeName = (file.name || 'document').replace(/[<>&"'\x00-\x1f]/g, '_').slice(0, 150);
 
     const fileId = crypto.randomUUID();
-    const blob = await put(`folder-files/${session.user.id}-${folderId}-${fileId}${ext}`, file, {
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const blob = await put(`folder-files/${session.user.id}-${folderId}-${fileId}${ext}`, fileBuffer, {
       access: 'public',
       addRandomSuffix: false,
       contentType: detected.contentType,
     });
 
+    // Only PDFs can be rendered to a page image — DOC/DOCX just keep the
+    // generic file icon. A failed render (corrupt/unusual PDF) does too.
+    let thumbnailUrl: string | null = null;
+    if (detected.ext === '.pdf') {
+      const png = await renderPdfFirstPageToPng(fileBuffer);
+      if (png) {
+        const thumbBlob = await put(`folder-files/${session.user.id}-${folderId}-${fileId}-thumb.png`, png, {
+          access: 'public',
+          addRandomSuffix: false,
+          contentType: 'image/png',
+        });
+        thumbnailUrl = thumbBlob.url;
+      }
+    }
+
     await sql`
-      INSERT INTO folder_files (id, folder_id, user_id, url, filename)
-      VALUES (${fileId}, ${folderId}, ${session.user.id}, ${blob.url}, ${safeName})
+      INSERT INTO folder_files (id, folder_id, user_id, url, filename, thumbnail_url)
+      VALUES (${fileId}, ${folderId}, ${session.user.id}, ${blob.url}, ${safeName}, ${thumbnailUrl})
     `;
-    saved.push({ url: blob.url, filename: safeName });
+    saved.push({ url: blob.url, filename: safeName, thumbnailUrl });
   }
 
   return NextResponse.json({ files: saved });

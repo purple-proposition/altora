@@ -35,6 +35,7 @@ async function runSchema() {
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS promotion TEXT`;
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_url TEXT`;
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_filename TEXT`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_thumbnail_url TEXT`;
   await sql`
     CREATE TABLE IF NOT EXISTS cards (
       id TEXT PRIMARY KEY,
@@ -61,9 +62,11 @@ async function runSchema() {
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       url TEXT NOT NULL,
       filename TEXT NOT NULL,
+      thumbnail_url TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `;
+  await sql`ALTER TABLE folder_files ADD COLUMN IF NOT EXISTS thumbnail_url TEXT`;
   await sql`CREATE INDEX IF NOT EXISTS folder_files_folder_id_idx ON folder_files(folder_id)`;
   await sql`
     CREATE TABLE IF NOT EXISTS generations (
