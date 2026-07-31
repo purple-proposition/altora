@@ -196,7 +196,11 @@ body {
    instead of a spring/motion library. */
 .sidebar--collapsed { width: 84px; padding: 24px 12px; }
 
-.sidebar--collapsed .sidebar-brand { justify-content: center; }
+/* The faded-out (opacity 0) brand text still holds its intrinsic width, and
+   the flex gap adds on top — both were nudging the logo ~6px off the rail's
+   centerline compared to the nav icons below it. */
+.sidebar--collapsed .sidebar-brand { justify-content: center; gap: 0; }
+.sidebar--collapsed .sidebar-brand-text { width: 0; }
 
 .sidebar-brand-text,
 .sidebar-nav-label,
@@ -249,6 +253,24 @@ body {
 .sidebar--collapsed .sidebar-item-link-inner {
   flex: 0;
   justify-content: center;
+}
+
+/* align-self:center on the items only centers direct flex children of
+   .sidebar-nav — items wrapped in a .sidebar-item-group (ATS Booster,
+   Mes documents) sit inside a plain block div and were staying stuck to
+   the left, and the avatar had the same problem inside .sidebar-bottom.
+   Centering has to happen at every container level. */
+.sidebar--collapsed .sidebar-nav {
+  align-items: center;
+  gap: 8px;
+}
+.sidebar--collapsed .sidebar-item-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sidebar--collapsed .sidebar-bottom {
+  align-items: center;
 }
 
 .sidebar-nav {
@@ -2046,8 +2068,12 @@ legend.field-label { padding: 0; }
     padding: 8px 8px;
     justify-content: flex-start;
   }
-  .sidebar--collapsed .sidebar-brand { justify-content: flex-start; }
+  .sidebar--collapsed .sidebar-brand { justify-content: flex-start; gap: 8px; }
+  .sidebar--collapsed .sidebar-brand-text { width: auto; }
   .sidebar--collapsed .sidebar-item-link-inner { flex: 1; justify-content: flex-start; }
+  .sidebar--collapsed .sidebar-nav { align-items: stretch; gap: 2px; }
+  .sidebar--collapsed .sidebar-item-group { display: block; }
+  .sidebar--collapsed .sidebar-bottom { align-items: stretch; }
 
   .sidebar-mobile-backdrop {
     position: fixed;

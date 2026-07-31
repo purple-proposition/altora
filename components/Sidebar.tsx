@@ -46,6 +46,10 @@ export default function Sidebar({
 
   const unreadCount = INBOX_MESSAGES.filter(m => m.unread).length;
 
+  // Off the home page the candidatures submenu is React-owned (on home,
+  // tracker.js drives the same UI against its live board).
+  const [suiviOpen, setSuiviOpen] = useState(false);
+
   // The generated-CVs list is only worth fetching once someone actually
   // opens the submenu — most visits never touch it.
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -174,11 +178,31 @@ export default function Sidebar({
             </div>
           </div>
         ) : (
-          <Link href="/?view=tasks" className="sidebar-item">
-            <i data-lucide="list-checks"></i>
-            <span className="sidebar-item-label">Mes candidatures</span>
-            {todoCount !== null && todoCount > 0 && <span className="sidebar-item-badge">{todoCount}</span>}
-          </Link>
+          <div className={`sidebar-item-group${suiviOpen ? ' expanded' : ''}`}>
+            <div className="sidebar-item">
+              <Link href="/?view=tasks" className="sidebar-item-link-inner">
+                <i data-lucide="list-checks"></i>
+                <span className="sidebar-item-label">Mes candidatures</span>
+              </Link>
+              {todoCount !== null && todoCount > 0 && <span className="sidebar-item-badge">{todoCount}</span>}
+              <button
+                type="button"
+                className="sidebar-item-chevron-btn"
+                onClick={() => setSuiviOpen(prev => !prev)}
+                aria-expanded={suiviOpen}
+                aria-controls="sidebar-suivi-submenu-links"
+                aria-label="Afficher les catégories de Mes candidatures"
+              >
+                <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+              </button>
+            </div>
+            <div className="sidebar-submenu" id="sidebar-suivi-submenu-links">
+              <Link href="/?view=tasks&scroll=list-todo" className="sidebar-subitem"><i data-lucide="circle-dashed"></i>À postuler</Link>
+              <Link href="/?view=tasks&scroll=list-sent" className="sidebar-subitem"><i data-lucide="hourglass"></i>Envoyé</Link>
+              <Link href="/?view=tasks&scroll=list-interview" className="sidebar-subitem"><i data-lucide="target"></i>Entretien</Link>
+              <Link href="/?view=tasks&scroll=list-rejected" className="sidebar-subitem"><i data-lucide="folder-x"></i>Refus</Link>
+            </div>
+          </div>
         )}
 
         {isHome ? (

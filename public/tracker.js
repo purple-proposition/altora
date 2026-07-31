@@ -270,8 +270,11 @@
 
     function updateToolbarCount() {
       document.getElementById('toolbar-count').textContent = cards.length;
+      // Same definition as the React sidebar's own badge (cards still to
+      // send), so the number doesn't change when navigating to/from home.
+      const todoCount = cards.filter(c => c.status === 'todo').length;
       const sidebarBadge = document.getElementById('sidebar-tasks-count');
-      if (sidebarBadge) sidebarBadge.textContent = cards.length || '';
+      if (sidebarBadge) sidebarBadge.textContent = todoCount || '';
     }
 
     // Rebuilds only the given columns' card lists (cheaper than a full render —
@@ -1501,7 +1504,10 @@
       sidebarSuiviChevron.setAttribute('aria-expanded', String(expanded));
     });
 
-    document.querySelectorAll('.sidebar-subitem').forEach(btn => {
+    // Scoped to the candidatures submenu — the sidebar has other React-owned
+    // .sidebar-subitem links (generated CVs, document folders) that must NOT
+    // get a showTasksView() side effect bolted onto their navigation.
+    document.querySelectorAll('#sidebar-submenu .sidebar-subitem').forEach(btn => {
       btn.addEventListener('click', () => {
         showTasksView();
         const list = document.getElementById(btn.dataset.scrollTo);
@@ -1821,6 +1827,7 @@
 
     const initialParams = new URLSearchParams(window.location.search);
     const requestedView = initialParams.get('view');
+    const requestedScroll = initialParams.get('scroll');
     const requestedProfile = initialParams.get('profile') === '1';
     if (requestedView || requestedProfile) {
       window.history.replaceState({}, '', window.location.pathname + window.location.hash);
@@ -1830,6 +1837,13 @@
     if (initialView === 'calendar') showCalendarView();
     else if (initialView === 'tasks') showTasksView();
     else showHomeView();
+
+    // The candidatures submenu links from OTHER pages land here as
+    // "/?view=tasks&scroll=list-x" — same target column scroll the submenu
+    // buttons do when already on this page.
+    if (requestedScroll && initialView === 'tasks') {
+      document.getElementById(requestedScroll)?.closest('.column')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     // The sidebar's profile row is only a real button (that opens this modal
     // in place) when already on "/" — from any other page it's a plain Link
