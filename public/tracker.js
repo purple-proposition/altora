@@ -1153,7 +1153,6 @@ sidebarSuiviToggle.addEventListener('click', () => {
   sidebarSuiviToggle.closest('.sidebar-item-group').classList.toggle('expanded');
   showTasksView();
 });
-sidebarSuiviToggle.closest('.sidebar-item-group').classList.add('expanded');
 
 document.querySelectorAll('.sidebar-subitem').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -1183,11 +1182,14 @@ function deactivateAllViews() {
   sidebarCalendarBtn.classList.remove('sidebar-item--active');
 }
 
+const ACTIVE_VIEW_KEY = 'altora-active-view';
+
 function showHomeView() {
   deactivateAllViews();
   viewHome.classList.remove('hidden');
   sidebarHomeBtn.classList.add('sidebar-item--active');
   breadcrumbActiveLabel.textContent = 'Accueil';
+  localStorage.setItem(ACTIVE_VIEW_KEY, 'home');
 }
 
 function showTasksView() {
@@ -1196,6 +1198,7 @@ function showTasksView() {
   topbarToolbar.classList.remove('hidden');
   sidebarSuiviToggle.classList.add('sidebar-item--active');
   breadcrumbActiveLabel.textContent = 'Mes tâches';
+  localStorage.setItem(ACTIVE_VIEW_KEY, 'tasks');
 }
 
 function showCalendarView() {
@@ -1204,10 +1207,13 @@ function showCalendarView() {
   sidebarCalendarBtn.classList.add('sidebar-item--active');
   breadcrumbActiveLabel.textContent = 'Calendrier';
   renderCalendarMonth();
+  localStorage.setItem(ACTIVE_VIEW_KEY, 'calendar');
 }
 
+const breadcrumbHomeBtn = document.getElementById('breadcrumb-home-btn');
 sidebarHomeBtn.addEventListener('click', showHomeView);
 sidebarCalendarBtn.addEventListener('click', showCalendarView);
+breadcrumbHomeBtn.addEventListener('click', showHomeView);
 
 // --- Calendrier : planning de formation en alternance ---
 // Données extraites du planning "Apollo 160 DBD - B3 : REC // ALT - LYON"
@@ -1418,3 +1424,16 @@ cvPreviewOverlay.addEventListener('click', e => {
   await fetchCards();
   render();
 })();
+
+// --- Restore active view on load: ?view= param (cross-page links) wins over
+// the last view saved in localStorage (page refresh), default is Accueil.
+
+const requestedView = new URLSearchParams(window.location.search).get('view');
+if (requestedView) {
+  window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+}
+const initialView = requestedView || localStorage.getItem(ACTIVE_VIEW_KEY);
+
+if (initialView === 'calendar') showCalendarView();
+else if (initialView === 'tasks') showTasksView();
+else showHomeView();

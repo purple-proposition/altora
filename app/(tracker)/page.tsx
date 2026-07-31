@@ -76,7 +76,7 @@ export default async function TrackerPage() {
       <div className="app">
         <div className="topbar-sticky">
           <div className="topbar-breadcrumb">
-            <span className="breadcrumb-item"><i data-lucide="home"></i>Rocket School</span>
+            <button type="button" className="breadcrumb-item breadcrumb-item--link" id="breadcrumb-home-btn"><i data-lucide="home"></i>Rocket School</button>
             <span className="breadcrumb-sep">/</span>
             <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i><span id="breadcrumb-active-label">Accueil</span></span>
             <button type="button" className="topbar-bell" title="Notifications"><i data-lucide="bell"></i></button>
