@@ -8,8 +8,6 @@ export default async function TrackerPage() {
   const fullName = session?.user?.name || '';
   const firstName = fullName.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
   const email = session?.user?.email || '';
-  const userExtra = session?.user as { promotion?: string | null } | undefined;
-  const promotion = userExtra?.promotion || '';
 
   let cvUrl = '';
   let cvFilename = '';
@@ -25,56 +23,6 @@ export default async function TrackerPage() {
 
   return (
     <>
-      <div className="app-shell">
-      <aside className="sidebar">
-        <div className="sidebar-brand">
-          <img className="sidebar-logo" src="/rocket-school-logo.jpg" alt="Rocket School" />
-          <span className="sidebar-brand-text">
-            <span className="sidebar-brand-name">Rocket School</span>
-            {promotion && <span className="sidebar-brand-promotion">{promotion}</span>}
-          </span>
-        </div>
-
-        <nav className="sidebar-nav">
-          <span className="sidebar-nav-label">Menu</span>
-          <button type="button" className="sidebar-item sidebar-item--active" id="sidebar-home-btn">
-            <i data-lucide="home"></i>
-            <span className="sidebar-item-label">Accueil</span>
-          </button>
-          <div className="sidebar-item-group">
-            <button type="button" className="sidebar-item" id="sidebar-suivi-toggle">
-              <i data-lucide="list-checks"></i>
-              <span className="sidebar-item-label">Mes tâches</span>
-              <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
-            </button>
-            <div className="sidebar-submenu" id="sidebar-submenu">
-              <button type="button" className="sidebar-subitem" data-scroll-to="list-todo"><i data-lucide="circle-dashed"></i>À postuler</button>
-              <button type="button" className="sidebar-subitem" data-scroll-to="list-sent"><i data-lucide="hourglass"></i>Envoyé</button>
-              <button type="button" className="sidebar-subitem" data-scroll-to="list-interview"><i data-lucide="target"></i>Entretien</button>
-              <button type="button" className="sidebar-subitem" data-scroll-to="list-rejected"><i data-lucide="folder-x"></i>Refus</button>
-            </div>
-          </div>
-          <a href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></a>
-          <button type="button" className="sidebar-item" id="sidebar-calendar-btn">
-            <i data-lucide="calendar"></i>
-            <span className="sidebar-item-label">Calendrier</span>
-          </button>
-          <a href="/documents" className="sidebar-item"><i data-lucide="folder"></i><span className="sidebar-item-label">Mes documents</span></a>
-        </nav>
-
-        <div className="sidebar-bottom">
-          <button type="button" className="sidebar-user" id="sidebar-profile-btn">
-            <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
-            <span className="sidebar-user-text">
-              <span className="sidebar-user-name">{fullName || firstName}</span>
-              <span className="sidebar-user-email">Étudiant</span>
-            </span>
-            <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>
-          </button>
-        </div>
-      </aside>
-
-      <div className="app">
         <div className="topbar-sticky">
           <div className="topbar-breadcrumb">
             <button type="button" className="breadcrumb-item breadcrumb-item--link" id="breadcrumb-home-btn"><i data-lucide="home"></i>Accueil</button>
@@ -330,17 +278,12 @@ export default async function TrackerPage() {
             </form>
           </div>
         </div>
-      </div>
-      </div>
-
-      <div className="grid-overlay" id="grid-overlay"></div>
 
       <Script
         id="altora-cv-data"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{ __html: `window.__ALTORA_CV__ = ${JSON.stringify({ url: cvUrl, filename: cvFilename })};` }}
       />
-      <Script src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="beforeInteractive" />
       <Script src={`/tracker.js?v=${assetVersion('tracker.js')}`} strategy="afterInteractive" />
     </>
   );
