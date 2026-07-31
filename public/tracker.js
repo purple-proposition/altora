@@ -299,11 +299,18 @@
 
     function renderCard(card) {
       const el = document.createElement('div');
-      el.className = 'card';
+      el.className = 'card' + (card.schoolProposed ? ' card--school' : '');
       el.draggable = true;
       el.dataset.id = card.id;
       el.tabIndex = 0;
       el.setAttribute('role', 'button');
+
+      if (card.schoolProposed) {
+        const badge = document.createElement('div');
+        badge.className = 'card-school-badge';
+        badge.append(iconEl('graduation-cap'), 'Proposée par l’école');
+        el.appendChild(badge);
+      }
 
       const heading = document.createElement('div');
       heading.className = 'card-heading';
@@ -795,6 +802,7 @@
     const fieldLocation = document.getElementById('field-location');
     const fieldSalary = document.getElementById('field-salary');
     const fieldJobDescription = document.getElementById('field-job-description');
+    const fieldSchoolToggle = document.getElementById('field-school-toggle');
     const jobDescriptionDetails = document.getElementById('job-description-details');
     const urlParseStatus = document.getElementById('url-parse-status');
     const contactsList = document.getElementById('contacts-list');
@@ -823,6 +831,14 @@
     contractButtons.forEach(btn => {
       btn.addEventListener('click', () => setContractType(currentContract === btn.dataset.contract ? null : btn.dataset.contract));
     });
+
+    function setSchoolProposed(value) {
+      fieldSchoolToggle.dataset.school = String(value);
+      fieldSchoolToggle.classList.toggle('active', value);
+      fieldSchoolToggle.setAttribute('aria-checked', String(value));
+    }
+
+    fieldSchoolToggle.addEventListener('click', () => setSchoolProposed(fieldSchoolToggle.dataset.school !== 'true'));
 
     // Groups digits by 2 ("06 06 95 41 26") as the user types a phone number.
     function formatPhone(raw) {
@@ -1279,6 +1295,7 @@
       jobDescriptionDetails.open = false;
       setInterviewStage(null);
       setContractType(null);
+      setSchoolProposed(false);
       formContacts = [];
       btnDelete.classList.add('hidden');
       modalHint.classList.add('hidden');
@@ -1296,6 +1313,7 @@
         setStatusPicker(card.status);
         setInterviewStage(card.interviewStage || null);
         setContractType(card.contractType || null);
+        setSchoolProposed(!!card.schoolProposed);
         fieldNotes.value = card.notes || '';
         fieldDeadline.value = card.deadline || '';
         fieldInterviewAt.value = card.interviewAt || '';
@@ -1339,6 +1357,7 @@
         location: fieldLocation.value.trim(),
         salary: fieldSalary.value.trim(),
         contractType: currentContract,
+        schoolProposed: fieldSchoolToggle.dataset.school === 'true',
         status: currentStatus,
         interviewStage: currentStatus === 'interview' ? currentStage : null,
         interviewAt: currentStatus === 'interview' ? (fieldInterviewAt.value || null) : null,
@@ -1490,7 +1509,7 @@
       });
     });
 
-    // --- Home / Mes tâches / Calendrier view toggle ---
+    // --- Home / Mes candidatures / Calendrier view toggle ---
 
     const sidebarHomeBtn = document.getElementById('sidebar-home-btn');
     const sidebarCalendarBtn = document.getElementById('sidebar-calendar-btn');
@@ -1525,7 +1544,7 @@
       board.classList.remove('hidden');
       topbarToolbar.classList.remove('hidden');
       sidebarSuiviToggle.classList.add('sidebar-item--active');
-      breadcrumbActiveLabel.textContent = 'Mes tâches';
+      breadcrumbActiveLabel.textContent = 'Mes candidatures';
       localStorage.setItem(ACTIVE_VIEW_KEY, 'tasks');
     }
 

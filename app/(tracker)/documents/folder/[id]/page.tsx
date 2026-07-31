@@ -12,9 +12,18 @@ export default async function CustomFolderPage({ params }: { params: Promise<{ i
   if (!session?.user?.id) notFound();
 
   await ensureSchema();
-  const rows = await sql`SELECT id, name FROM folders WHERE id = ${Number(id)} AND user_id = ${session.user.id}`;
-  const folder = rows[0] as { id: number; name: string } | undefined;
+  const folderId = Number(id);
+  const [folderRows, fileRows] = await Promise.all([
+    sql`SELECT id, name FROM folders WHERE id = ${folderId} AND user_id = ${session.user.id}`,
+    sql`SELECT url, filename, created_at FROM folder_files WHERE folder_id = ${folderId} AND user_id = ${session.user.id} ORDER BY created_at ASC`,
+  ]);
+  const folder = folderRows[0] as { id: number; name: string } | undefined;
   if (!folder) notFound();
+  const docs = (fileRows as { url: string; filename: string; created_at: string }[]).map(row => ({
+    url: row.url,
+    filename: row.filename,
+    createdAt: new Date(row.created_at).getTime(),
+  }));
 
   return (
     <>
@@ -35,7 +44,7 @@ export default async function CustomFolderPage({ params }: { params: Promise<{ i
           <h2 className="documents-title">{folder.name}</h2>
         </div>
 
-        <FolderDetailView docs={[]} />
+        <FolderDetailView docs={docs} />
       </section>
     </>
   );

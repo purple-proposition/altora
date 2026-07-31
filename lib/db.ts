@@ -55,6 +55,17 @@ async function runSchema() {
   `;
   await sql`CREATE INDEX IF NOT EXISTS folders_user_id_idx ON folders(user_id)`;
   await sql`
+    CREATE TABLE IF NOT EXISTS folder_files (
+      id TEXT PRIMARY KEY,
+      folder_id INTEGER NOT NULL REFERENCES folders(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      url TEXT NOT NULL,
+      filename TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `;
+  await sql`CREATE INDEX IF NOT EXISTS folder_files_folder_id_idx ON folder_files(folder_id)`;
+  await sql`
     CREATE TABLE IF NOT EXISTS generations (
       id TEXT PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

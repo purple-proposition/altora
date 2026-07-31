@@ -16,6 +16,20 @@ export async function createFolder(formData: FormData) {
   revalidatePath('/documents');
 }
 
+export async function renameFolder(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const id = Number(formData.get('id'));
+  const name = String(formData.get('name') || '').trim().slice(0, 100);
+  if (!Number.isInteger(id) || !name) return;
+
+  await ensureSchema();
+  await sql`UPDATE folders SET name = ${name} WHERE id = ${id} AND user_id = ${session.user.id}`;
+  revalidatePath('/documents');
+  revalidatePath(`/documents/folder/${id}`);
+}
+
 export async function deleteFolder(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return;

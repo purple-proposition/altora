@@ -251,14 +251,14 @@ function GenerateForm() {
           <SidebarCollapseToggle />
           <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
           <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="file-text"></i>Générer un CV</span>
+          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="file-text"></i>ATS Booster</span>
           <TopbarActions />
         </div>
       </div>
 
       <section className="generate-view">
         <div className="documents-header">
-          <h2 className="documents-title">Générer un CV</h2>
+          <h2 className="documents-title">ATS Booster</h2>
         </div>
 
         {(state === 'idle' || state === 'error') && (

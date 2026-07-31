@@ -27,17 +27,14 @@ export default function SidebarCollapseToggle() {
   }, [collapsed]);
 
   return (
-    <>
-      <button
-        type="button"
-        className="topbar-collapse-btn"
-        onClick={toggle}
-        title={collapsed ? 'Agrandir le menu' : 'Réduire le menu'}
-        aria-label={collapsed ? 'Agrandir le menu' : 'Réduire le menu'}
-      >
-        <i data-lucide={collapsed ? 'panel-left-open' : 'panel-left-close'}></i>
-      </button>
-      <span className="topbar-collapse-sep" aria-hidden="true"></span>
-    </>
+    <button
+      type="button"
+      className="topbar-collapse-btn"
+      onClick={toggle}
+      title={collapsed ? 'Agrandir le menu' : 'Réduire le menu'}
+      aria-label={collapsed ? 'Agrandir le menu' : 'Réduire le menu'}
+    >
+      <i data-lucide={collapsed ? 'panel-left-open' : 'panel-left-close'}></i>
+    </button>
   );
 }

@@ -25,7 +25,7 @@ export default function Sidebar({
   // The toggle button itself now lives in the topbar (SidebarCollapseToggle),
   // shared across pages via context — Sidebar just reads the collapsed state
   // to apply its own layout class.
-  const { collapsed } = useSidebarCollapse();
+  const { collapsed, mobileOpen, closeMobile } = useSidebarCollapse();
 
   // The generated-CVs list is only worth fetching once someone actually
   // opens the submenu — most visits never touch it.
@@ -77,8 +77,18 @@ export default function Sidebar({
     return () => clearInterval(id);
   }, [pathname, searchParams, collapsed]);
 
+  // A route change is the clearest signal the visitor picked something —
+  // close the mobile drawer so it doesn't stay covering the new page. A
+  // no-op on desktop, since mobileOpen never becomes true there.
+  useEffect(() => {
+    closeMobile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, searchParams]);
+
   return (
-    <aside className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}`}>
+    <>
+      {mobileOpen && <div className="sidebar-mobile-backdrop" onClick={closeMobile}></div>}
+      <aside className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}${mobileOpen ? ' sidebar--mobile-open' : ''}`}>
       <div className="sidebar-brand">
         <img className="sidebar-logo" src="/rocket-school-logo.jpg" alt="Rocket School" />
         <span className="sidebar-brand-text">
@@ -106,7 +116,7 @@ export default function Sidebar({
           <div className="sidebar-item-group">
             <div className="sidebar-item" id="sidebar-suivi-toggle" role="button" tabIndex={0}>
               <i data-lucide="list-checks"></i>
-              <span className="sidebar-item-label">Mes tâches</span>
+              <span className="sidebar-item-label">Mes candidatures</span>
               <span className="sidebar-item-badge" id="sidebar-tasks-count"></span>
               <button
                 type="button"
@@ -114,7 +124,7 @@ export default function Sidebar({
                 id="sidebar-suivi-chevron"
                 aria-expanded="false"
                 aria-controls="sidebar-submenu"
-                aria-label="Afficher les catégories de Mes tâches"
+                aria-label="Afficher les catégories de Mes candidatures"
               >
                 <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
               </button>
@@ -129,7 +139,7 @@ export default function Sidebar({
         ) : (
           <Link href="/?view=tasks" className="sidebar-item">
             <i data-lucide="list-checks"></i>
-            <span className="sidebar-item-label">Mes tâches</span>
+            <span className="sidebar-item-label">Mes candidatures</span>
           </Link>
         )}
 
@@ -151,7 +161,7 @@ export default function Sidebar({
           <div className={`sidebar-item${isGeneratePage ? ' sidebar-item--active' : ''}`}>
             <Link href="/generate" className="sidebar-item-link-inner">
               <i data-lucide="file-text"></i>
-              <span className="sidebar-item-label">Générer un CV</span>
+              <span className="sidebar-item-label">ATS Booster</span>
             </Link>
             <button
               type="button"
@@ -211,6 +221,7 @@ export default function Sidebar({
           </Link>
         )}
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

@@ -41,7 +41,7 @@ export default async function TrackerPage() {
 
           <div className="topbar-toolbar hidden" id="topbar-toolbar">
             <div className="toolbar-left">
-              <span className="toolbar-title">Mes tâches</span>
+              <span className="toolbar-title">Mes candidatures</span>
               <span className="toolbar-count" id="toolbar-count">0</span>
             </div>
             <div className="toolbar-right">
@@ -268,6 +268,13 @@ export default async function TrackerPage() {
                   <button type="button" className="status-btn status-btn--rose" data-status="rejected" role="radio" aria-checked="false"><i data-lucide="folder-x"></i>Refus</button>
                 </div>
               </fieldset>
+              <div className="field-group">
+                <button type="button" className="school-toggle-btn" id="field-school-toggle" data-school="false" role="switch" aria-checked="false">
+                  <i data-lucide="graduation-cap"></i>
+                  <span>Offre proposée par l&apos;école</span>
+                  <span className="school-toggle-switch"></span>
+                </button>
+              </div>
               <fieldset className="field-group hidden" id="interview-stage-group">
                 <legend className="field-label">Étape de l&apos;entretien</legend>
                 <div className="interview-stage-picker" id="interview-stage-picker" role="radiogroup">

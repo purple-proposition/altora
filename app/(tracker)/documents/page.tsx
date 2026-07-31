@@ -1,45 +1,11 @@
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
+import DocThumbGrid, { type DocFile } from '@/components/DocThumbGrid';
+import FolderCard from '@/components/FolderCard';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
-import { createFolder, deleteFolder } from './actions';
-
-type DocFile = { url: string; filename: string };
-
-// Purely visual, non-interactive — just a peek at what a folder holds, not
-// a file browser. No name, no frame, just the sheet itself; opening the
-// folder's full list (with names and sort options) happens via the click-
-// through link on the thumbnail. Multiple documents collapse into a single
-// fanned stack instead of a wall of squares.
-function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: string }) {
-  if (docs.length === 0) return null;
-
-  if (docs.length === 1) {
-    const doc = docs[0];
-    return (
-      <Link href={href} className="doc-thumb-grid">
-        <div className="doc-thumb-bare">
-          <embed src={doc.url} type="application/pdf" />
-          <div className="doc-thumb-blocker"></div>
-        </div>
-      </Link>
-    );
-  }
-
-  return (
-    <Link href={href} className="doc-thumb-grid">
-      <div className="doc-thumb-bare doc-thumb-fan">
-        {docs.slice(0, 3).map((doc, i) => (
-          <div className={`doc-thumb-fan-layer doc-thumb-fan-layer--${i}`} key={doc.url}>
-            <embed src={doc.url} type="application/pdf" />
-            <div className="doc-thumb-blocker"></div>
-          </div>
-        ))}
-      </div>
-    </Link>
-  );
-}
+import { createFolder } from './actions';
 
 export default async function DocumentsPage() {
   const session = await auth();
@@ -47,16 +13,25 @@ export default async function DocumentsPage() {
   let cvUrl = '';
   let cvFilename = '';
   let folders: { id: number; name: string }[] = [];
+  let folderFiles: Record<number, DocFile[]> = {};
 
   if (session?.user?.id) {
     await ensureSchema();
-    const [userRows, folderRows] = await Promise.all([
+    const [userRows, folderRows, fileRows] = await Promise.all([
       sql`SELECT cv_url, cv_filename FROM users WHERE id = ${session.user.id}`,
       sql`SELECT id, name FROM folders WHERE user_id = ${session.user.id} ORDER BY created_at ASC`,
+      sql`SELECT folder_id, url, filename, created_at FROM folder_files WHERE user_id = ${session.user.id} ORDER BY created_at ASC`,
     ]);
     cvUrl = userRows[0]?.cv_url || '';
     cvFilename = userRows[0]?.cv_filename || '';
     folders = folderRows as { id: number; name: string }[];
+    folderFiles = (fileRows as { folder_id: number; url: string; filename: string; created_at: string }[]).reduce(
+      (acc, row) => {
+        (acc[row.folder_id] ||= []).push({ url: row.url, filename: row.filename, createdAt: new Date(row.created_at).getTime() });
+        return acc;
+      },
+      {} as Record<number, DocFile[]>,
+    );
   }
 
   const cvDocs: DocFile[] = cvUrl ? [{ url: cvUrl, filename: cvFilename || 'CV.pdf' }] : [];
@@ -102,22 +77,7 @@ export default async function DocumentsPage() {
           </div>
 
           {folders.map(folder => (
-            <div className="folder-card" key={folder.id}>
-              <div className="folder-card-header">
-                <i data-lucide="folder"></i>
-                <span className="folder-card-name">{folder.name}</span>
-                <span className="folder-card-count">0</span>
-                <form action={deleteFolder} className="folder-delete-form">
-                  <input type="hidden" name="id" value={folder.id} />
-                  <button type="submit" className="folder-delete-btn" aria-label={`Supprimer le dossier ${folder.name}`}>
-                    <i data-lucide="trash-2"></i>
-                  </button>
-                </form>
-              </div>
-              <div className="folder-card-body">
-                <p className="folder-empty">Dossier vide.</p>
-              </div>
-            </div>
+            <FolderCard key={folder.id} folder={folder} docs={folderFiles[folder.id] || []} />
           ))}
 
           <details className="folder-create">
