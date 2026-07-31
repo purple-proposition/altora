@@ -43,7 +43,7 @@ export default function Sidebar({
 
         {isHome ? (
           <div className="sidebar-item-group">
-            <button type="button" className="sidebar-item" id="sidebar-suivi-toggle">
+            <button type="button" className="sidebar-item" id="sidebar-suivi-toggle" aria-expanded="false" aria-controls="sidebar-submenu">
               <i data-lucide="list-checks"></i>
               <span className="sidebar-item-label">Mes tâches</span>
               <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>

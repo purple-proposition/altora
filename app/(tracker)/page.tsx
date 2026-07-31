@@ -28,7 +28,7 @@ export default async function TrackerPage() {
             <button type="button" className="breadcrumb-item breadcrumb-item--link" id="breadcrumb-home-btn"><i data-lucide="home"></i>Accueil</button>
             <span className="breadcrumb-sep">/</span>
             <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i><span id="breadcrumb-active-label">Accueil</span></span>
-            <button type="button" className="topbar-bell" title="Notifications"><i data-lucide="bell"></i></button>
+            <button type="button" className="topbar-bell" title="Notifications" aria-label="Notifications"><i data-lucide="bell"></i></button>
           </div>
 
           <div className="topbar-toolbar hidden" id="topbar-toolbar">
@@ -41,7 +41,7 @@ export default async function TrackerPage() {
                 <i data-lucide="search"></i>
                 <input type="text" id="board-search" placeholder="Rechercher une candidature..." />
               </div>
-              <button type="button" className="toolbar-filter" title="Filtrer"><i data-lucide="sliders-horizontal"></i></button>
+              <button type="button" className="toolbar-filter" title="Filtrer" aria-label="Filtrer"><i data-lucide="sliders-horizontal"></i></button>
             </div>
           </div>
         </div>
@@ -143,10 +143,10 @@ export default async function TrackerPage() {
           </div>
         </section>
 
-        <div className="modal-overlay hidden" id="profile-overlay">
-          <div className="modal profile-modal">
-            <button type="button" className="modal-close" id="profile-close" title="Fermer"><i data-lucide="x"></i></button>
-            <h3>Profil</h3>
+        <div className="modal-overlay hidden" id="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+          <div className="modal profile-modal" tabIndex={-1}>
+            <button type="button" className="modal-close" id="profile-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
+            <h3 id="profile-modal-title">Profil</h3>
 
             <div className="profile-header">
               <img className="profile-avatar" src="/avatar.jpg" alt={firstName} />
@@ -190,24 +190,24 @@ export default async function TrackerPage() {
           </div>
         </div>
 
-        <div className="modal-overlay hidden" id="detail-overlay">
-          <div className="modal detail-modal">
-            <button type="button" className="modal-close" id="detail-close" title="Fermer"><i data-lucide="x"></i></button>
+        <div className="modal-overlay hidden" id="detail-overlay" role="dialog" aria-modal="true" aria-label="Détail de l'offre">
+          <div className="modal detail-modal" tabIndex={-1}>
+            <button type="button" className="modal-close" id="detail-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
             <div id="detail-content"></div>
           </div>
         </div>
 
-        <div className="modal-overlay hidden" id="cv-preview-overlay">
-          <div className="modal cv-preview-modal">
-            <button type="button" className="modal-close" id="cv-preview-close" title="Fermer"><i data-lucide="x"></i></button>
+        <div className="modal-overlay hidden" id="cv-preview-overlay" role="dialog" aria-modal="true" aria-labelledby="cv-preview-title">
+          <div className="modal cv-preview-modal" tabIndex={-1}>
+            <button type="button" className="modal-close" id="cv-preview-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
             <h3 id="cv-preview-title">Ton CV</h3>
             <iframe id="cv-preview-frame" className="cv-preview-frame" title="Aperçu du CV"></iframe>
           </div>
         </div>
 
-        <div className="modal-overlay hidden" id="modal-overlay">
-          <div className="modal">
-            <button type="button" className="modal-close" id="btn-close" title="Fermer"><i data-lucide="x"></i></button>
+        <div className="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div className="modal" tabIndex={-1}>
+            <button type="button" className="modal-close" id="btn-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
             <h3 id="modal-title">Nouvelle offre</h3>
             <p className="modal-hint hidden" id="modal-hint">Colle le lien de l&apos;offre — tu pourras compléter les détails juste après.</p>
             <form id="card-form">
@@ -216,7 +216,7 @@ export default async function TrackerPage() {
               </label>
               <div className="field-row">
                 <label>Poste <span className="field-required">*</span>
-                  <input type="text" id="field-title" placeholder="Intitulé du poste" />
+                  <input type="text" id="field-title" placeholder="Intitulé du poste" required aria-required="true" />
                 </label>
                 <label>Entreprise
                   <input type="text" id="field-company" placeholder="Nom de l'entreprise" />
@@ -230,33 +230,33 @@ export default async function TrackerPage() {
                   <input type="text" id="field-salary" placeholder="35-40k€, selon profil…" />
                 </label>
               </div>
-              <div className="field-group">
-                <span className="field-label">Type de contrat</span>
-                <div className="contract-picker" id="contract-picker">
-                  <button type="button" className="contract-btn" data-contract="CDI">CDI</button>
-                  <button type="button" className="contract-btn" data-contract="CDD">CDD</button>
-                  <button type="button" className="contract-btn" data-contract="Alternance">Alternance</button>
-                  <button type="button" className="contract-btn" data-contract="Stage">Stage</button>
-                  <button type="button" className="contract-btn" data-contract="Freelance">Freelance</button>
+              <fieldset className="field-group">
+                <legend className="field-label">Type de contrat</legend>
+                <div className="contract-picker" id="contract-picker" role="radiogroup">
+                  <button type="button" className="contract-btn" data-contract="CDI" role="radio" aria-checked="false">CDI</button>
+                  <button type="button" className="contract-btn" data-contract="CDD" role="radio" aria-checked="false">CDD</button>
+                  <button type="button" className="contract-btn" data-contract="Alternance" role="radio" aria-checked="false">Alternance</button>
+                  <button type="button" className="contract-btn" data-contract="Stage" role="radio" aria-checked="false">Stage</button>
+                  <button type="button" className="contract-btn" data-contract="Freelance" role="radio" aria-checked="false">Freelance</button>
                 </div>
-              </div>
-              <div className="field-group">
-                <span className="field-label">Statut</span>
-                <div className="status-picker" id="status-picker">
-                  <button type="button" className="status-btn status-btn--slate" data-status="todo"><i data-lucide="circle-dashed"></i>À postuler</button>
-                  <button type="button" className="status-btn status-btn--amber" data-status="sent"><i data-lucide="hourglass"></i>Envoyé</button>
-                  <button type="button" className="status-btn status-btn--green" data-status="interview"><i data-lucide="target"></i>Entretien</button>
-                  <button type="button" className="status-btn status-btn--rose" data-status="rejected"><i data-lucide="folder-x"></i>Refus</button>
+              </fieldset>
+              <fieldset className="field-group">
+                <legend className="field-label">Statut</legend>
+                <div className="status-picker" id="status-picker" role="radiogroup">
+                  <button type="button" className="status-btn status-btn--slate" data-status="todo" role="radio" aria-checked="false"><i data-lucide="circle-dashed"></i>À postuler</button>
+                  <button type="button" className="status-btn status-btn--amber" data-status="sent" role="radio" aria-checked="false"><i data-lucide="hourglass"></i>Envoyé</button>
+                  <button type="button" className="status-btn status-btn--green" data-status="interview" role="radio" aria-checked="false"><i data-lucide="target"></i>Entretien</button>
+                  <button type="button" className="status-btn status-btn--rose" data-status="rejected" role="radio" aria-checked="false"><i data-lucide="folder-x"></i>Refus</button>
                 </div>
-              </div>
-              <div className="field-group hidden" id="interview-stage-group">
-                <span className="field-label">Étape de l&apos;entretien</span>
-                <div className="interview-stage-picker" id="interview-stage-picker">
-                  <button type="button" className="stage-btn" data-stage="1">1er entretien</button>
-                  <button type="button" className="stage-btn" data-stage="2">2e entretien</button>
-                  <button type="button" className="stage-btn" data-stage="final">Entretien final</button>
+              </fieldset>
+              <fieldset className="field-group hidden" id="interview-stage-group">
+                <legend className="field-label">Étape de l&apos;entretien</legend>
+                <div className="interview-stage-picker" id="interview-stage-picker" role="radiogroup">
+                  <button type="button" className="stage-btn" data-stage="1" role="radio" aria-checked="false">1er entretien</button>
+                  <button type="button" className="stage-btn" data-stage="2" role="radio" aria-checked="false">2e entretien</button>
+                  <button type="button" className="stage-btn" data-stage="final" role="radio" aria-checked="false">Entretien final</button>
                 </div>
-              </div>
+              </fieldset>
               <label>Sans réponse après le
                 <input type="date" id="field-deadline" />
               </label>

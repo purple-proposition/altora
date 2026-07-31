@@ -108,6 +108,8 @@ function renderCard(card) {
   el.className = 'card';
   el.draggable = true;
   el.dataset.id = card.id;
+  el.tabIndex = 0;
+  el.setAttribute('role', 'button');
 
   const heading = document.createElement('div');
   heading.className = 'card-heading';
@@ -227,6 +229,14 @@ function renderCard(card) {
   }
 
   el.addEventListener('click', () => openDetailView(card));
+
+  el.addEventListener('keydown', e => {
+    if (e.target !== el) return; // let inputs/buttons inside the card handle their own keys
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openDetailView(card);
+    }
+  });
 
   el.addEventListener('contextmenu', e => {
     e.preventDefault();
@@ -666,7 +676,9 @@ let formContacts = [];
 function setContractType(contract) {
   currentContract = contract;
   contractButtons.forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.contract === contract);
+    const checked = btn.dataset.contract === contract;
+    btn.classList.toggle('active', checked);
+    btn.setAttribute('aria-checked', String(checked));
   });
 }
 
@@ -764,7 +776,9 @@ btnAddContact.addEventListener('click', () => {
 function setStatusPicker(status) {
   currentStatus = status;
   statusButtons.forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.status === status);
+    const checked = btn.dataset.status === status;
+    btn.classList.toggle('active', checked);
+    btn.setAttribute('aria-checked', String(checked));
   });
   interviewStageGroup.classList.toggle('hidden', status !== 'interview');
   if (status !== 'interview') setInterviewStage(null);
@@ -773,7 +787,9 @@ function setStatusPicker(status) {
 function setInterviewStage(stage) {
   currentStage = stage;
   stageButtons.forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.stage === stage);
+    const checked = btn.dataset.stage === stage;
+    btn.classList.toggle('active', checked);
+    btn.setAttribute('aria-checked', String(checked));
   });
 }
 
@@ -882,6 +898,57 @@ fieldUrl.addEventListener('blur', () => {
   parseJobOffer(url).then(applyGuess);
 });
 
+// --- Shared modal a11y: focus trap, Escape-to-close, focus restored to
+// whatever triggered the modal. Used by every .modal-overlay below. ---
+
+let lastFocusedBeforeModal = null;
+
+function trapModalFocus(e, containerEl) {
+  if (e.key !== 'Tab') return;
+  const focusables = Array.from(containerEl.querySelectorAll(
+    'button, [href], input, select, textarea, iframe, [tabindex]:not([tabindex="-1"])'
+  )).filter(el => !el.disabled && el.offsetParent !== null);
+  if (!focusables.length) return;
+  const first = focusables[0], last = focusables[focusables.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+}
+
+// Call right after showing the overlay. `focusEl` is what should receive
+// focus first (defaults to the .modal container itself).
+function trapModalOpen(overlayEl, closeFn, focusEl) {
+  lastFocusedBeforeModal = document.activeElement;
+  const container = overlayEl.querySelector('.modal') || overlayEl;
+  requestAnimationFrame(() => (focusEl || container).focus());
+  const onKeydown = e => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeFn();
+    } else {
+      trapModalFocus(e, container);
+    }
+  };
+  overlayEl._a11yKeydown = onKeydown;
+  document.addEventListener('keydown', onKeydown);
+}
+
+// Call right after hiding the overlay.
+function trapModalClose(overlayEl) {
+  if (overlayEl._a11yKeydown) {
+    document.removeEventListener('keydown', overlayEl._a11yKeydown);
+    overlayEl._a11yKeydown = null;
+  }
+  if (lastFocusedBeforeModal && document.contains(lastFocusedBeforeModal)) {
+    lastFocusedBeforeModal.focus();
+  }
+  lastFocusedBeforeModal = null;
+}
+
 // --- Read-only offer detail view (opened by clicking a card; editing is
 // only reachable via the right-click context menu, to avoid accidental edits) ---
 
@@ -958,12 +1025,14 @@ function openDetailView(card) {
   detailContent.innerHTML = parts.join('');
   detailOverlay.classList.remove('hidden');
   requestAnimationFrame(() => detailOverlay.classList.add('visible'));
+  trapModalOpen(detailOverlay, closeDetailView);
   lucide.createIcons();
 }
 
 function closeDetailView() {
   detailOverlay.classList.remove('visible');
   setTimeout(() => detailOverlay.classList.add('hidden'), 300);
+  trapModalClose(detailOverlay);
 }
 
 detailClose.addEventListener('click', closeDetailView);
@@ -1007,12 +1076,13 @@ function openModal(mode, card, presetStatus) {
   renderContactsList();
   overlay.classList.remove('hidden');
   requestAnimationFrame(() => overlay.classList.add('visible'));
-  (mode === 'import' ? fieldUrl : fieldTitle).focus();
+  trapModalOpen(overlay, closeModal, mode === 'import' ? fieldUrl : fieldTitle);
 }
 
 function closeModal() {
   overlay.classList.remove('visible');
   setTimeout(() => overlay.classList.add('hidden'), 300);
+  trapModalClose(overlay);
   editingId = null;
 }
 
@@ -1126,12 +1196,14 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'system');
 function openProfileModal() {
   profileOverlay.classList.remove('hidden');
   requestAnimationFrame(() => profileOverlay.classList.add('visible'));
+  trapModalOpen(profileOverlay, closeProfileModal);
   sidebarProfileBtn.classList.add('active');
 }
 
 function closeProfileModal() {
   profileOverlay.classList.remove('visible');
   setTimeout(() => profileOverlay.classList.add('hidden'), 300);
+  trapModalClose(profileOverlay);
   sidebarProfileBtn.classList.remove('active');
 }
 
@@ -1150,7 +1222,8 @@ document.querySelectorAll('.theme-option').forEach(btn => {
 
 const sidebarSuiviToggle = document.getElementById('sidebar-suivi-toggle');
 sidebarSuiviToggle.addEventListener('click', () => {
-  sidebarSuiviToggle.closest('.sidebar-item-group').classList.toggle('expanded');
+  const expanded = sidebarSuiviToggle.closest('.sidebar-item-group').classList.toggle('expanded');
+  sidebarSuiviToggle.setAttribute('aria-expanded', String(expanded));
   showTasksView();
 });
 
@@ -1320,6 +1393,8 @@ function renderCalendarMonth() {
         + (!inMonth ? ' calendar-day--muted' : '')
         + (key === todayKey ? ' calendar-day--today' : '')
         + (ev && inMonth ? ` calendar-day--${ev.type}` : '');
+      const dateLabel = `${day} ${CALENDAR_MONTH_LABELS[m].toLowerCase()} ${y}`;
+      dayEl.setAttribute('aria-label', ev && inMonth ? `${dateLabel} — ${ev.label}` : dateLabel);
       dayEl.innerHTML = `<span class="calendar-day-number">${day}</span>`;
       weekEl.appendChild(dayEl);
       cursor.setDate(cursor.getDate() + 1);
@@ -1404,6 +1479,7 @@ function openCvPreview() {
   cvPreviewFrame.src = currentCv.url;
   cvPreviewOverlay.classList.remove('hidden');
   requestAnimationFrame(() => cvPreviewOverlay.classList.add('visible'));
+  trapModalOpen(cvPreviewOverlay, closeCvPreview);
 }
 
 function closeCvPreview() {
@@ -1412,6 +1488,7 @@ function closeCvPreview() {
     cvPreviewOverlay.classList.add('hidden');
     cvPreviewFrame.src = '';
   }, 300);
+  trapModalClose(cvPreviewOverlay);
 }
 
 cvFilenameBtn.addEventListener('click', openCvPreview);
