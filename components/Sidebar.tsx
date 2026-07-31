@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Sidebar({
   fullName,
@@ -13,8 +14,30 @@ export default function Sidebar({
   promotion: string;
 }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const isHome = pathname === '/';
   const isDocuments = pathname === '/documents';
+
+  // This layout (and this Sidebar) stays mounted across client-side
+  // navigations between "/", "/documents", "/generate" — Next.js doesn't
+  // remount a shared layout on every route change, so a one-shot
+  // lucide.createIcons() call in the layout only ever renders whichever
+  // page happened to be there when it first fired. Re-running it on every
+  // route change is what actually keeps icons rendered on every page.
+  useEffect(() => {
+    const w = window as unknown as { lucide?: { createIcons: () => void } };
+    if (w.lucide) {
+      w.lucide.createIcons();
+      return;
+    }
+    const id = setInterval(() => {
+      if (w.lucide) {
+        w.lucide.createIcons();
+        clearInterval(id);
+      }
+    }, 50);
+    return () => clearInterval(id);
+  }, [pathname, searchParams]);
 
   return (
     <aside className="sidebar">
