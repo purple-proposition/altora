@@ -4,6 +4,8 @@ import { sql, ensureSchema } from '@/lib/db';
 
 export default async function DocumentsPage() {
   const session = await auth();
+  const fullName = session?.user?.name || '';
+  const firstName = fullName.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
 
   let cvUrl = '';
   let cvFilename = '';
@@ -45,6 +47,17 @@ export default async function DocumentsPage() {
               <span className="sidebar-item-label">Mes documents</span>
             </a>
           </nav>
+
+          <div className="sidebar-bottom">
+            <a href="/?view=home" className="sidebar-user">
+              <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
+              <span className="sidebar-user-text">
+                <span className="sidebar-user-name">{fullName || firstName}</span>
+                <span className="sidebar-user-email">Étudiant</span>
+              </span>
+              <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>
+            </a>
+          </div>
         </aside>
 
         <div className="app">
@@ -96,6 +109,14 @@ export default async function DocumentsPage() {
         </div>
       </div>
 
+      <Script id="documents-theme" strategy="beforeInteractive">
+        {`
+          var theme = localStorage.getItem('altora-theme') || 'system';
+          if (theme === 'dark' || theme === 'light') {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        `}
+      </Script>
       <Script src="/lucide.js" strategy="beforeInteractive" />
       <Script id="documents-icons" strategy="afterInteractive">
         {'lucide.createIcons();'}
