@@ -340,11 +340,11 @@ body {
 .topbar-breadcrumb {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding-bottom: 24px;
   margin-bottom: 24px;
   border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
   color: var(--text-muted);
@@ -409,6 +409,7 @@ body {
 .toolbar-title {
   font-size: 16px;
   font-weight: 500;
+  line-height: 1;
   color: var(--text);
 }
 
@@ -767,11 +768,13 @@ body {
 
 .card-heading {
   font-size: 14px;
+  line-height: 1;
   margin-bottom: 8px;
 }
 
 .card-title {
   font-weight: 500;
+  line-height: 1;
 }
 
 .card-heading-sep {
@@ -953,7 +956,7 @@ body {
 
 /* --- Profile modal --- */
 
-.profile-modal h3 { margin-bottom: 24px; }
+.profile-modal h3 { line-height: 1; margin-bottom: 24px; }
 
 .profile-header {
   display: flex;
@@ -1092,6 +1095,7 @@ body {
 .detail-title {
   margin: 0 24px 16px 0;
   font-size: 24px;
+  line-height: 1;
 }
 
 .detail-company {
@@ -1212,7 +1216,7 @@ body {
 
 .modal-close:hover { color: var(--text); }
 
-.modal h3 { margin: 0 24px 12px 0; font-size: 32px; }
+.modal h3 { margin: 0 24px 12px 0; font-size: 32px; line-height: 1; }
 
 .modal-hint {
   font-size: 12px;
@@ -1650,7 +1654,7 @@ body {
   align-items: center;
   gap: 12px;
 }
-.calendar-title { font-size: 22px; font-weight: 500; margin: 0; text-transform: capitalize; }
+.calendar-title { font-size: 24px; font-weight: 500; line-height: 1; margin: 0; text-transform: capitalize; }
 
 .calendar-nav {
   display: flex;
@@ -1749,7 +1753,7 @@ body {
 /* --- Documents (page /documents) --- */
 
 .documents-header { margin-bottom: 20px; }
-.documents-title { font-size: 22px; font-weight: 500; margin: 0; }
+.documents-title { font-size: 24px; font-weight: 500; line-height: 1; margin: 0; }
 
 .documents-grid {
   display: flex;
