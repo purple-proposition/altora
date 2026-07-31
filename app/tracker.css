@@ -137,7 +137,7 @@ body {
   display: flex;
   flex-direction: column;
   background: transparent;
-  padding: 16px 12px;
+  padding: 24px 12px;
   overflow-y: auto;
   font-family: inherit;
 }
