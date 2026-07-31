@@ -59,7 +59,7 @@ export default function Sidebar({
       </div>
 
       <nav className="sidebar-nav">
-        <span className="sidebar-nav-label">Menu</span>
+        <span className="sidebar-nav-label">Suivi</span>
 
         {isHome ? (
           <button type="button" className="sidebar-item sidebar-item--active" id="sidebar-home-btn">
@@ -104,8 +104,6 @@ export default function Sidebar({
           </Link>
         )}
 
-        <Link href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></Link>
-
         {isHome ? (
           <button type="button" className="sidebar-item" id="sidebar-calendar-btn">
             <i data-lucide="calendar"></i>
@@ -117,6 +115,12 @@ export default function Sidebar({
             <span className="sidebar-item-label">Calendrier</span>
           </Link>
         )}
+
+        <span className="sidebar-nav-label sidebar-nav-label--group">Outils</span>
+
+        <Link href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></Link>
+
+        <span className="sidebar-nav-label sidebar-nav-label--group">Espace</span>
 
         <Link href="/documents" className={`sidebar-item${isDocuments ? ' sidebar-item--active' : ''}`}>
           <i data-lucide="folder"></i>

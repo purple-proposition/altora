@@ -33,8 +33,10 @@ export default async function TrackerPage() {
             <button type="button" className="breadcrumb-item breadcrumb-item--link" id="breadcrumb-home-btn"><i data-lucide="home"></i>Accueil</button>
             <span className="breadcrumb-sep">/</span>
             <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i><span id="breadcrumb-active-label">Accueil</span></span>
-            <Link href="/inbox" className="topbar-bell" title="Messagerie" aria-label="Messagerie"><i data-lucide="mail"></i></Link>
-            <button type="button" className="topbar-bell" title="Notifications" aria-label="Notifications"><i data-lucide="bell"></i></button>
+            <div className="topbar-actions">
+              <Link href="/inbox" className="topbar-bell" title="Messagerie" aria-label="Messagerie"><i data-lucide="mail"></i></Link>
+              <button type="button" className="topbar-bell" title="Notifications" aria-label="Notifications"><i data-lucide="bell"></i></button>
+            </div>
           </div>
 
           <div className="topbar-toolbar hidden" id="topbar-toolbar">

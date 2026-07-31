@@ -3,6 +3,49 @@ import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 import { createFolder, deleteFolder } from './actions';
 
+type DocFile = { url: string; filename: string };
+
+// Purely visual, non-interactive squares — they exist so the user can see
+// what's in a folder at a glance, not to browse files. A folder holding more
+// than one document collapses into a single fanned stack instead of a wall
+// of squares; opening a file happens via the filename caption underneath.
+function DocThumbGrid({ docs }: { docs: DocFile[] }) {
+  if (docs.length === 0) return null;
+
+  if (docs.length === 1) {
+    const doc = docs[0];
+    return (
+      <div className="doc-thumb-grid">
+        <div className="doc-thumb-item">
+          <div className="doc-thumb-square">
+            <embed src={doc.url} type="application/pdf" />
+          </div>
+          <a className="doc-thumb-name" href={doc.url} target="_blank" rel="noopener noreferrer">
+            <i data-lucide="file-text"></i>{doc.filename}
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="doc-thumb-grid">
+      <div className="doc-thumb-item">
+        <div className="doc-thumb-square doc-thumb-fan">
+          {docs.slice(0, 3).map((doc, i) => (
+            <div className={`doc-thumb-fan-layer doc-thumb-fan-layer--${i}`} key={doc.url}>
+              <embed src={doc.url} type="application/pdf" />
+            </div>
+          ))}
+        </div>
+        <span className="doc-thumb-name doc-thumb-name--static">
+          <i data-lucide="files"></i>{docs.length} documents
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default async function DocumentsPage() {
   const session = await auth();
 
@@ -20,6 +63,8 @@ export default async function DocumentsPage() {
     cvFilename = userRows[0]?.cv_filename || '';
     folders = folderRows as { id: number; name: string }[];
   }
+
+  const cvDocs: DocFile[] = cvUrl ? [{ url: cvUrl, filename: cvFilename || 'CV.pdf' }] : [];
 
   return (
     <>
@@ -41,21 +86,10 @@ export default async function DocumentsPage() {
             <div className="folder-card-header">
               <i data-lucide="folder"></i>
               <span className="folder-card-name">Mes CV</span>
-              <span className="folder-card-count">{cvUrl ? 1 : 0}</span>
+              <span className="folder-card-count">{cvDocs.length}</span>
             </div>
             <div className="folder-card-body">
-              {cvUrl ? (
-                <div className="doc-thumb-grid">
-                  <a className="doc-thumb-item" href={cvUrl} target="_blank" rel="noopener noreferrer">
-                    <span className="doc-thumb-preview">
-                      <embed src={cvUrl} type="application/pdf" />
-                    </span>
-                    <span className="doc-thumb-name"><i data-lucide="file-text"></i>{cvFilename || 'CV.pdf'}</span>
-                  </a>
-                </div>
-              ) : (
-                <p className="folder-empty">Aucun CV importé pour le moment.</p>
-              )}
+              {cvDocs.length ? <DocThumbGrid docs={cvDocs} /> : <p className="folder-empty">Aucun CV importé pour le moment.</p>}
             </div>
           </div>
 

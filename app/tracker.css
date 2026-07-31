@@ -202,6 +202,8 @@ body {
   padding: 8px;
 }
 
+.sidebar-nav-label--group { margin-top: 16px; }
+
 .sidebar-item {
   display: flex;
   align-items: center;
@@ -427,8 +429,14 @@ body {
 
 .breadcrumb-sep { color: var(--border); }
 
-.topbar-bell {
+.topbar-actions {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-bell {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -496,6 +504,7 @@ body {
   align-items: center;
   gap: 8px;
   width: 32px;
+  height: 32px;
   padding: 8px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
@@ -512,7 +521,7 @@ body {
   cursor: text;
 }
 
-.toolbar-search .lucide { width: 14px; height: 14px; flex-shrink: 0; }
+.toolbar-search .lucide { width: 16px; height: 16px; flex-shrink: 0; }
 
 .toolbar-search input {
   border: none;
@@ -2061,8 +2070,8 @@ legend.field-label { padding: 0; }
 
 .doc-thumb-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, 160px);
+  gap: 16px;
   padding: 12px;
 }
 
@@ -2070,37 +2079,73 @@ legend.field-label { padding: 0; }
   display: flex;
   flex-direction: column;
   gap: 8px;
-  text-decoration: none;
-  color: var(--text);
+  width: 160px;
 }
 
-.doc-thumb-preview {
-  display: block;
-  width: 100%;
-  height: 180px;
+/* Purely visual — the square itself has no interaction (no link, no hover
+   affordance); it exists only so the user can see what's in the folder at a
+   glance. Opening a file happens via the filename caption below it. */
+.doc-thumb-square {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 160px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   overflow: hidden;
   background: var(--bg);
 }
-.doc-thumb-preview embed {
-  width: 100%;
+.doc-thumb-square embed {
+  /* Sized to an A4 portrait page (1 : 1.414) and fit to the square's full
+     height so the whole page is visible, letterboxed — never cropped. */
+  width: 70.7%;
   height: 100%;
-  pointer-events: none; /* the file opens via the surrounding link, not the embedded viewer's own UI */
+  pointer-events: none;
 }
-.doc-thumb-item:hover .doc-thumb-preview { border-color: var(--indigo); }
+
+/* Multiple documents in one folder collapse into a single fanned stack
+   instead of a wall of squares — a "there's more than one file here" cue,
+   not a per-file browser. */
+.doc-thumb-fan {
+  overflow: visible;
+  border: none;
+  background: none;
+}
+.doc-thumb-fan-layer {
+  position: absolute;
+  width: 60%;
+  height: 84%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card-bg);
+  box-shadow: 0 2px 6px color-mix(in srgb, black 12%, transparent);
+  overflow: hidden;
+  pointer-events: none;
+}
+.doc-thumb-fan-layer embed { width: 100%; height: 100%; pointer-events: none; }
+.doc-thumb-fan-layer--0 { transform: rotate(-8deg) translate(-16%, 4%); z-index: 1; }
+.doc-thumb-fan-layer--1 { transform: rotate(0deg); z-index: 2; }
+.doc-thumb-fan-layer--2 { transform: rotate(8deg) translate(16%, 4%); z-index: 3; }
 
 .doc-thumb-name {
   display: flex;
   align-items: center;
   gap: 6px;
+  width: 160px;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.3;
+  color: var(--text);
+  text-decoration: none;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.doc-thumb-name:hover { color: var(--indigo); }
+.doc-thumb-name--static { cursor: default; }
+.doc-thumb-name--static:hover { color: var(--text); }
 .doc-thumb-name .lucide { flex-shrink: 0; width: 14px; height: 14px; color: var(--text-muted); }
 
 .folder-delete-form { margin-left: auto; }
@@ -2156,6 +2201,96 @@ legend.field-label { padding: 0; }
 }
 .folder-create-form input:focus { outline: none; border-color: var(--indigo); }
 .folder-create-form .btn-primary { padding: 8px 16px; font-size: 14px; }
+
+/* --- Inbox (page /inbox) --- */
+
+.inbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inbox-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.inbox-message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.inbox-message-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.inbox-message-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.inbox-message-sender {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  color: var(--text);
+}
+
+.inbox-message-email {
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inbox-message-time {
+  margin-left: auto;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.inbox-message-subject {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.inbox-message-preview {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.inbox-message-unread-dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--indigo);
+  flex-shrink: 0;
+}
 
 /* --- Générer un CV (page /generate) --- */
 
