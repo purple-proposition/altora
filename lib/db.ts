@@ -45,4 +45,13 @@ async function runSchema() {
     )
   `;
   await sql`CREATE INDEX IF NOT EXISTS cards_user_id_idx ON cards(user_id)`;
+  await sql`
+    CREATE TABLE IF NOT EXISTS folders (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `;
+  await sql`CREATE INDEX IF NOT EXISTS folders_user_id_idx ON folders(user_id)`;
 }
