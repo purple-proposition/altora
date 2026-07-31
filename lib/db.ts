@@ -2,7 +2,22 @@ import { neon } from '@neondatabase/serverless';
 
 export const sql = neon(process.env.DATABASE_URL!);
 
-export async function ensureSchema() {
+// Schema only needs to be checked/created once per warm server instance —
+// re-running 7 CREATE/ALTER/INDEX statements on every single page load was
+// adding a full sequential round-trip chain to every navigation.
+let schemaReady: Promise<void> | null = null;
+
+export function ensureSchema() {
+  if (!schemaReady) {
+    schemaReady = runSchema().catch(err => {
+      schemaReady = null; // let the next call retry instead of caching a permanent failure
+      throw err;
+    });
+  }
+  return schemaReady;
+}
+
+async function runSchema() {
   await sql`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,

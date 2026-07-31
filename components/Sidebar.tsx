@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 export default function Sidebar({
@@ -34,10 +35,10 @@ export default function Sidebar({
             <span className="sidebar-item-label">Accueil</span>
           </button>
         ) : (
-          <a href="/?view=home" className="sidebar-item">
+          <Link href="/?view=home" className="sidebar-item">
             <i data-lucide="home"></i>
             <span className="sidebar-item-label">Accueil</span>
-          </a>
+          </Link>
         )}
 
         {isHome ? (
@@ -55,13 +56,13 @@ export default function Sidebar({
             </div>
           </div>
         ) : (
-          <a href="/?view=tasks" className="sidebar-item">
+          <Link href="/?view=tasks" className="sidebar-item">
             <i data-lucide="list-checks"></i>
             <span className="sidebar-item-label">Mes tâches</span>
-          </a>
+          </Link>
         )}
 
-        <a href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></a>
+        <Link href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></Link>
 
         {isHome ? (
           <button type="button" className="sidebar-item" id="sidebar-calendar-btn">
@@ -69,16 +70,16 @@ export default function Sidebar({
             <span className="sidebar-item-label">Calendrier</span>
           </button>
         ) : (
-          <a href="/?view=calendar" className="sidebar-item">
+          <Link href="/?view=calendar" className="sidebar-item">
             <i data-lucide="calendar"></i>
             <span className="sidebar-item-label">Calendrier</span>
-          </a>
+          </Link>
         )}
 
-        <a href="/documents" className={`sidebar-item${isDocuments ? ' sidebar-item--active' : ''}`}>
+        <Link href="/documents" className={`sidebar-item${isDocuments ? ' sidebar-item--active' : ''}`}>
           <i data-lucide="folder"></i>
           <span className="sidebar-item-label">Mes documents</span>
-        </a>
+        </Link>
       </nav>
 
       <div className="sidebar-bottom">
@@ -92,14 +93,14 @@ export default function Sidebar({
             <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>
           </button>
         ) : (
-          <a href="/?view=home" className="sidebar-user">
+          <Link href="/?view=home" className="sidebar-user">
             <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
             <span className="sidebar-user-text">
               <span className="sidebar-user-name">{fullName || firstName}</span>
               <span className="sidebar-user-email">Étudiant</span>
             </span>
             <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>
-          </a>
+          </Link>
         )}
       </div>
     </aside>

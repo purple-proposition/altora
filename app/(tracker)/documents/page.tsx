@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 
@@ -17,7 +18,7 @@ export default async function DocumentsPage() {
     <>
       <div className="topbar-sticky">
         <div className="topbar-breadcrumb">
-          <a className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</a>
+          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
           <span className="breadcrumb-sep">/</span>
           <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="folder"></i>Mes documents</span>
         </div>
