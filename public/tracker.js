@@ -543,25 +543,28 @@
     // --- Drag and drop ---
 
     STATUSES.forEach(status => {
-      const list = COLUMN_ELS[status].list;
+      // Listens on the whole column, not just .card-list — an empty list
+      // collapses to ~0 height (.card-list:empty), which made dropping into
+      // an empty column nearly impossible when the list itself was the target.
+      const column = COLUMN_ELS[status].column;
 
-      list.addEventListener('dragover', e => {
+      column.addEventListener('dragover', e => {
         e.preventDefault();
-        list.classList.add('drag-over');
+        column.classList.add('drag-over');
       });
 
-      list.addEventListener('dragleave', () => {
-        list.classList.remove('drag-over');
+      column.addEventListener('dragleave', e => {
+        if (!column.contains(e.relatedTarget)) column.classList.remove('drag-over');
       });
 
-      list.addEventListener('drop', e => {
+      column.addEventListener('drop', e => {
         e.preventDefault();
-        list.classList.remove('drag-over');
+        column.classList.remove('drag-over');
         if (!draggingId) return;
         const card = cards.find(c => c.id === draggingId);
         if (card && card.status !== status) {
           const fromColumn = COLUMN_ELS[card.status].column;
-          const toColumn = COLUMN_ELS[status].column;
+          const toColumn = column;
           const fromStatus = card.status;
           card.status = status;
           updateCardRemote(card);

@@ -30,7 +30,12 @@ export default async function TrackerLayout({ children }: { children: React.Reac
       </Script>
       <Script src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="beforeInteractive" />
       <Script id="altora-icons" strategy="afterInteractive">
-        {'lucide.createIcons();'}
+        {`
+          (function renderIcons() {
+            if (window.lucide) { lucide.createIcons(); }
+            else { setTimeout(renderIcons, 50); }
+          })();
+        `}
       </Script>
     </>
   );
