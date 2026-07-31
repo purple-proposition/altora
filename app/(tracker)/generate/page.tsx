@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import TopbarActions from '@/components/TopbarActions';
 
 type State = 'idle' | 'loading' | 'done' | 'error';
 
@@ -156,6 +157,7 @@ function GenerateForm() {
           <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
           <span className="breadcrumb-sep">/</span>
           <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="file-text"></i>Générer un CV</span>
+          <TopbarActions />
         </div>
       </div>
 

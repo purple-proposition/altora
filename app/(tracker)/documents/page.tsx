@@ -1,48 +1,40 @@
 import Link from 'next/link';
+import TopbarActions from '@/components/TopbarActions';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 import { createFolder, deleteFolder } from './actions';
 
 type DocFile = { url: string; filename: string };
 
-// Purely visual, non-interactive squares — they exist so the user can see
-// what's in a folder at a glance, not to browse files. A folder holding more
-// than one document collapses into a single fanned stack instead of a wall
-// of squares; opening a file happens via the filename caption underneath.
-function DocThumbGrid({ docs }: { docs: DocFile[] }) {
+// Purely visual, non-interactive — just a peek at what a folder holds, not
+// a file browser. No name, no frame, just the sheet itself; opening the
+// folder's full list (with names and sort options) happens via the click-
+// through link on the thumbnail. Multiple documents collapse into a single
+// fanned stack instead of a wall of squares.
+function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: string }) {
   if (docs.length === 0) return null;
 
   if (docs.length === 1) {
     const doc = docs[0];
     return (
-      <div className="doc-thumb-grid">
-        <div className="doc-thumb-item">
-          <div className="doc-thumb-square">
-            <embed src={doc.url} type="application/pdf" />
-          </div>
-          <a className="doc-thumb-name" href={doc.url} target="_blank" rel="noopener noreferrer">
-            <i data-lucide="file-text"></i>{doc.filename}
-          </a>
+      <Link href={href} className="doc-thumb-grid">
+        <div className="doc-thumb-bare">
+          <embed src={doc.url} type="application/pdf" />
         </div>
-      </div>
+      </Link>
     );
   }
 
   return (
-    <div className="doc-thumb-grid">
-      <div className="doc-thumb-item">
-        <div className="doc-thumb-square doc-thumb-fan">
-          {docs.slice(0, 3).map((doc, i) => (
-            <div className={`doc-thumb-fan-layer doc-thumb-fan-layer--${i}`} key={doc.url}>
-              <embed src={doc.url} type="application/pdf" />
-            </div>
-          ))}
-        </div>
-        <span className="doc-thumb-name doc-thumb-name--static">
-          <i data-lucide="files"></i>{docs.length} documents
-        </span>
+    <Link href={href} className="doc-thumb-grid">
+      <div className="doc-thumb-bare doc-thumb-fan">
+        {docs.slice(0, 3).map((doc, i) => (
+          <div className={`doc-thumb-fan-layer doc-thumb-fan-layer--${i}`} key={doc.url}>
+            <embed src={doc.url} type="application/pdf" />
+          </div>
+        ))}
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -73,6 +65,7 @@ export default async function DocumentsPage() {
           <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
           <span className="breadcrumb-sep">/</span>
           <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="folder"></i>Mes documents</span>
+          <TopbarActions />
         </div>
       </div>
 
@@ -89,7 +82,7 @@ export default async function DocumentsPage() {
               <span className="folder-card-count">{cvDocs.length}</span>
             </div>
             <div className="folder-card-body">
-              {cvDocs.length ? <DocThumbGrid docs={cvDocs} /> : <p className="folder-empty">Aucun CV importé pour le moment.</p>}
+              {cvDocs.length ? <DocThumbGrid docs={cvDocs} href="/documents/cv" /> : <p className="folder-empty">Aucun CV importé pour le moment.</p>}
             </div>
           </div>
 

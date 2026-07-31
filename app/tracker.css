@@ -346,7 +346,7 @@ body {
 }
 
 .sidebar-user-name {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1;
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
@@ -436,6 +436,83 @@ body {
   gap: 8px;
 }
 
+.topbar-action-wrap { position: relative; }
+
+.topbar-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: color-mix(in srgb, var(--card-bg) 65%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 24px color-mix(in srgb, black 16%, transparent);
+  overflow: hidden;
+  z-index: 30;
+}
+
+.topbar-popover-header {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar-notification-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.topbar-notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.topbar-notification-item:last-child { border-bottom: none; }
+.topbar-notification-item .lucide { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; margin-top: 2px; }
+
+.topbar-notification-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.topbar-notification-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.topbar-notification-time {
+  font-size: 11px;
+  line-height: 1;
+  color: var(--text-muted);
+}
+
+.inbox-message--compact {
+  display: flex;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 0;
+  background: none;
+  text-decoration: none;
+  color: inherit;
+}
+.inbox-message--compact:hover { background: var(--bg); }
+
 .topbar-bell {
   display: flex;
   align-items: center;
@@ -468,7 +545,7 @@ body {
 }
 
 .toolbar-title {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 500;
   line-height: 1;
   text-box-trim: trim-both;
@@ -2070,35 +2147,24 @@ legend.field-label { padding: 0; }
 }
 
 .doc-thumb-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 160px);
-  gap: 16px;
+  display: inline-flex;
   padding: 12px;
+  text-decoration: none;
 }
 
-.doc-thumb-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 160px;
-}
-
-/* Purely visual — the square itself has no interaction (no link, no hover
-   affordance); it exists only so the user can see what's in the folder at a
-   glance. Opening a file happens via the filename caption below it. */
-.doc-thumb-square {
+/* Purely visual — just a peek at the sheet itself, no frame, no background,
+   no name. Opening the folder's full list (names + sort) happens via this
+   click-through link, not on the thumbnail itself. */
+.doc-thumb-bare {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 160px;
   height: 160px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
   overflow: hidden;
-  background: var(--bg);
 }
-.doc-thumb-square embed {
+.doc-thumb-bare embed {
   /* Sized to an A4 portrait page (1 : 1.414) and fit to the square's full
      height so the whole page is visible, letterboxed — never cropped. */
   width: 70.7%;
@@ -2109,19 +2175,12 @@ legend.field-label { padding: 0; }
 /* Multiple documents in one folder collapse into a single fanned stack
    instead of a wall of squares — a "there's more than one file here" cue,
    not a per-file browser. */
-.doc-thumb-fan {
-  overflow: visible;
-  border: none;
-  background: none;
-}
+.doc-thumb-fan { overflow: visible; }
 .doc-thumb-fan-layer {
   position: absolute;
   width: 60%;
   height: 84%;
-  border: 1px solid var(--border);
   border-radius: 6px;
-  background: var(--card-bg);
-  box-shadow: 0 2px 6px color-mix(in srgb, black 12%, transparent);
   overflow: hidden;
   pointer-events: none;
 }
@@ -2130,24 +2189,83 @@ legend.field-label { padding: 0; }
 .doc-thumb-fan-layer--1 { transform: rotate(0deg); z-index: 2; }
 .doc-thumb-fan-layer--2 { transform: rotate(8deg) translate(16%, 4%); z-index: 3; }
 
-.doc-thumb-name {
+/* --- Folder detail (pages /documents/cv, /documents/lettres, /documents/folder/[id]) --- */
+
+.folder-detail-toolbar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.folder-detail-sort-label {
+  font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  color: var(--text-muted);
+}
+
+.folder-detail-sort-group {
+  display: flex;
+  gap: 8px;
+}
+
+.folder-detail-sort-btn {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.folder-detail-sort-btn:hover { color: var(--text); }
+.folder-detail-sort-btn--active {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--card-bg);
+}
+
+.folder-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 160px);
+  gap: 16px;
+}
+
+.folder-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 160px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.folder-detail-item .doc-thumb-bare {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--bg);
+}
+.folder-detail-item:hover .doc-thumb-bare { border-color: var(--indigo); }
+
+.folder-detail-item-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  word-break: break-word;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.3;
   color: var(--text);
-  text-decoration: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
-.doc-thumb-name:hover { color: var(--indigo); }
-.doc-thumb-name--static { cursor: default; }
-.doc-thumb-name--static:hover { color: var(--text); }
-.doc-thumb-name .lucide { flex-shrink: 0; width: 14px; height: 14px; color: var(--text-muted); }
 
 .folder-delete-form { margin-left: auto; }
 .folder-delete-btn {
