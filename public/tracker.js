@@ -1310,8 +1310,12 @@ function renderCalendarMonth() {
       const ev = calendarEventFor(key);
 
       const dayEl = document.createElement('div');
-      dayEl.className = 'calendar-day' + (!inMonth ? ' calendar-day--muted' : '') + (isWeekend ? ' calendar-day--weekend' : '') + (key === todayKey ? ' calendar-day--today' : '');
-      dayEl.innerHTML = `<span class="calendar-day-number">${day}</span>${ev ? `<span class="calendar-event calendar-event--${ev.type}">${ev.label}</span>` : ''}`;
+      dayEl.className = 'calendar-day'
+        + (!inMonth ? ' calendar-day--muted' : '')
+        + (isWeekend ? ' calendar-day--weekend' : '')
+        + (key === todayKey ? ' calendar-day--today' : '')
+        + (ev && inMonth ? ` calendar-day--${ev.type}` : '');
+      dayEl.innerHTML = `<span class="calendar-day-number">${day}</span>`;
       weekEl.appendChild(dayEl);
       cursor.setDate(cursor.getDate() + 1);
     }

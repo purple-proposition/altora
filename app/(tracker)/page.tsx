@@ -174,12 +174,12 @@ export default async function TrackerPage() {
           </div>
 
           <div className="calendar-legend">
-            <span className="calendar-legend-item calendar-event--entreprise"><span className="calendar-legend-dot" style={{ background: 'var(--text-muted)' }}></span>Semaine en entreprise</span>
-            <span className="calendar-legend-item calendar-event--formation"><span className="calendar-legend-dot" style={{ background: 'var(--indigo)' }}></span>Journée de formation</span>
-            <span className="calendar-legend-item calendar-event--conges"><span className="calendar-legend-dot" style={{ background: 'var(--amber)' }}></span>Congés pédagogique</span>
-            <span className="calendar-legend-item calendar-event--examen"><span className="calendar-legend-dot" style={{ background: 'var(--green)' }}></span>Examens écrit/oral</span>
-            <span className="calendar-legend-item calendar-event--examen_oral"><span className="calendar-legend-dot" style={{ background: 'var(--violet)' }}></span>Examen oral (convocation)</span>
-            <span className="calendar-legend-item calendar-event--ferie"><span className="calendar-legend-dot" style={{ background: 'var(--rose)' }}></span>Jour férié</span>
+            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--entreprise"></span>Semaine en entreprise</span>
+            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--formation"></span>Journée de formation</span>
+            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--conges"></span>Congés pédagogique</span>
+            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--examen"></span>Examens écrit/oral</span>
+            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--examen_oral"></span>Examen oral (convocation)</span>
+            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--ferie"></span>Jour férié</span>
           </div>
 
           <div className="calendar-grid">

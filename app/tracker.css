@@ -33,6 +33,11 @@
   --violet-tint: #f5f3ff;   /* violet-50 */
   --violet-track: #ede9fe;  /* violet-100 */
 
+  --cyan: #0891b2;          /* cyan-600 */
+  --cyan-fill: #06b6d4;     /* cyan-500 */
+  --cyan-tint: #ecfeff;     /* cyan-50 */
+  --cyan-track: #cffafe;    /* cyan-100 */
+
   /* Unified radius scale (4px grid) */
   --radius-card: 20px;   /* summary-card, stat-card, column, modal */
   --radius-inner: 16px;  /* job card, drag-over outline */
@@ -61,6 +66,8 @@
     --rose-track: #881337;
     --violet-tint: #2e1065;
     --violet-track: #4c1d95;
+    --cyan-tint: #083344;
+    --cyan-track: #155e75;
   }
 }
 
@@ -82,6 +89,8 @@
   --rose-track: #881337;
   --violet-tint: #2e1065;
   --violet-track: #4c1d95;
+  --cyan-tint: #083344;
+  --cyan-track: #155e75;
 }
 
 * { box-sizing: border-box; }
@@ -1666,6 +1675,8 @@ body {
   border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: 500;
+  background: var(--bg);
+  color: var(--text-muted);
 }
 .calendar-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
@@ -1710,19 +1721,22 @@ body {
 .calendar-day--today { box-shadow: inset 0 0 0 2px var(--indigo); border-radius: var(--radius-input); }
 .calendar-day--today .calendar-day-number { color: var(--indigo); font-weight: 600; }
 
-.calendar-event {
-  display: block;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 3px 7px;
-  border-radius: var(--radius-pill);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.calendar-event--entreprise { background: var(--bg); color: var(--text-muted); }
-.calendar-event--formation { background: var(--indigo-tint); color: var(--indigo); }
-.calendar-event--conges { background: var(--amber-tint); color: var(--amber); }
-.calendar-event--examen { background: var(--green-tint); color: var(--green); }
-.calendar-event--examen_oral { background: var(--violet-tint); color: var(--violet); }
-.calendar-event--ferie { background: var(--rose-tint); color: var(--rose); }
+.calendar-day--entreprise { background: var(--cyan-tint); }
+.calendar-day--entreprise .calendar-day-number { color: var(--cyan); }
+.calendar-day--formation { background: var(--indigo-tint); }
+.calendar-day--formation .calendar-day-number { color: var(--indigo); }
+.calendar-day--conges { background: var(--amber-tint); }
+.calendar-day--conges .calendar-day-number { color: var(--amber); }
+.calendar-day--examen { background: var(--green-tint); }
+.calendar-day--examen .calendar-day-number { color: var(--green); }
+.calendar-day--examen_oral { background: var(--violet-tint); }
+.calendar-day--examen_oral .calendar-day-number { color: var(--violet); }
+.calendar-day--ferie { background: var(--rose-tint); }
+.calendar-day--ferie .calendar-day-number { color: var(--rose); }
+
+.calendar-legend-dot--entreprise { background: var(--cyan); }
+.calendar-legend-dot--formation { background: var(--indigo); }
+.calendar-legend-dot--conges { background: var(--amber); }
+.calendar-legend-dot--examen { background: var(--green); }
+.calendar-legend-dot--examen_oral { background: var(--violet); }
+.calendar-legend-dot--ferie { background: var(--rose); }
