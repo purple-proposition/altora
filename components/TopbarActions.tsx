@@ -47,27 +47,28 @@ export default function TopbarActions() {
           <i data-lucide="mail"></i>
           {unreadCount > 0 && <span className="topbar-bell-badge">{unreadCount}</span>}
         </button>
-        {open === 'mail' && (
-          <div className="topbar-popover">
-            <div className="topbar-popover-header">Messagerie</div>
-            <div className="topbar-message-list">
-              {INBOX_MESSAGES.map((message, i) => (
-                <Link href="/inbox" className="inbox-message inbox-message--compact" onClick={() => setOpen(null)} key={i}>
-                  <img className="inbox-message-avatar" src={message.avatar} alt={message.senderName} />
-                  <div className="inbox-message-body">
-                    <div className="inbox-message-top">
-                      <span className="inbox-message-sender">{message.senderName}</span>
-                      <span className="inbox-message-time">{message.time}</span>
-                    </div>
-                    <span className="inbox-message-subject">{message.subject}</span>
-                    <p className="inbox-message-preview">{message.preview}</p>
+        {/* Always mounted (never conditionally unmounted) so opacity/transform
+            can actually transition in both directions — the same spring-in
+            used by the period-popup and calendar-legend-popup elsewhere. */}
+        <div className={`topbar-popover${open === 'mail' ? ' topbar-popover--visible' : ''}`}>
+          <div className="topbar-popover-header">Messagerie</div>
+          <div className="topbar-message-list">
+            {INBOX_MESSAGES.map((message, i) => (
+              <Link href="/inbox" className="inbox-message inbox-message--compact" onClick={() => setOpen(null)} key={i}>
+                <img className="inbox-message-avatar" src={message.avatar} alt={message.senderName} />
+                <div className="inbox-message-body">
+                  <div className="inbox-message-top">
+                    <span className="inbox-message-sender">{message.senderName}</span>
+                    <span className="inbox-message-time">{message.time}</span>
                   </div>
-                  {message.unread && <span className="inbox-message-unread-dot"></span>}
-                </Link>
-              ))}
-            </div>
+                  <span className="inbox-message-subject">{message.subject}</span>
+                  <p className="inbox-message-preview">{message.preview}</p>
+                </div>
+                {message.unread && <span className="inbox-message-unread-dot"></span>}
+              </Link>
+            ))}
           </div>
-        )}
+        </div>
       </div>
 
       <div className="topbar-action-wrap">
@@ -80,22 +81,20 @@ export default function TopbarActions() {
         >
           <i data-lucide="bell"></i>
         </button>
-        {open === 'bell' && (
-          <div className="topbar-popover">
-            <div className="topbar-popover-header">Notifications</div>
-            <div className="topbar-notification-list">
-              {NOTIFICATIONS.map((n, i) => (
-                <div className="topbar-notification-item" key={i}>
-                  <i data-lucide={n.icon}></i>
-                  <div className="topbar-notification-body">
-                    <p className="topbar-notification-text">{n.text}</p>
-                    <span className="topbar-notification-time">{n.time}</span>
-                  </div>
+        <div className={`topbar-popover${open === 'bell' ? ' topbar-popover--visible' : ''}`}>
+          <div className="topbar-popover-header">Notifications</div>
+          <div className="topbar-notification-list">
+            {NOTIFICATIONS.map((n, i) => (
+              <div className="topbar-notification-item" key={i}>
+                <i data-lucide={n.icon}></i>
+                <div className="topbar-notification-body">
+                  <p className="topbar-notification-text">{n.text}</p>
+                  <span className="topbar-notification-time">{n.time}</span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
