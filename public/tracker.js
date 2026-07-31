@@ -4,7 +4,37 @@
 // id silently kills the entire script" into a visible console error
 // instead of a mysteriously dead page.
 (function () {
+  // This outer IIFE runs once, ever — but the (tracker) layout it lives in
+  // stays mounted across every client-side navigation, while the home
+  // page's own content (board, sidebar view-toggle buttons, modals...)
+  // fully unmounts and remounts each time the route leaves "/" and comes
+  // back. Document-level listeners below (added via trackDocListener) are
+  // the only side effect that survives a remount on its own — everything
+  // else lives inside the unmounted subtree and is simply discarded with
+  // it — so they're tracked here and dropped before initApp() rebinds a
+  // fresh set, instead of silently piling up one extra copy per visit home.
+  const trackedDocListeners = [];
+  function trackDocListener(type, handler) {
+    document.addEventListener(type, handler);
+    trackedDocListeners.push([type, handler]);
+  }
+  function clearTrackedDocListeners() {
+    trackedDocListeners.forEach(([type, handler]) => document.removeEventListener(type, handler));
+    trackedDocListeners.length = 0;
+  }
+
+  // Re-entrant: window.altoraInitApp (called by Sidebar.tsx on every route
+  // change) re-invokes this so the board/sidebar/modals rebind against
+  // whichever DOM instance is actually live, instead of the one that
+  // existed the first time this script ever ran.
+  function initApp() {
   try {
+    const board = document.getElementById('board');
+    if (!board) return; // not on the home route — nothing here to (re)initialize
+    if (board.dataset.altoraInit === '1') return; // this exact mount is already bound
+    board.dataset.altoraInit = '1';
+    clearTrackedDocListeners();
+
     // lucide.js loads as its own afterInteractive script, and Next.js does
     // not guarantee execution order between separate afterInteractive
     // scripts — so window.lucide might not exist yet the first time this
@@ -232,6 +262,8 @@
 
     function updateToolbarCount() {
       document.getElementById('toolbar-count').textContent = cards.length;
+      const sidebarBadge = document.getElementById('sidebar-tasks-count');
+      if (sidebarBadge) sidebarBadge.textContent = cards.length || '';
     }
 
     // Rebuilds only the given columns' card lists (cheaper than a full render —
@@ -543,7 +575,7 @@
       });
     });
 
-    document.addEventListener('click', e => {
+    trackDocListener('click', e => {
       if (!periodPopup.classList.contains('visible')) return;
       if (!e.target.closest('.period-trigger-wrap')) closePeriodPopup();
     });
@@ -627,6 +659,10 @@
 
     // --- Card context menu (right-click) ---
 
+    // Appended straight to document.body, outside React's tree — it survives
+    // a home-page remount on its own, so a stale copy from a previous mount
+    // has to be removed explicitly instead of just being discarded with it.
+    document.querySelectorAll('.context-menu').forEach(el => el.remove());
     const contextMenu = document.createElement('div');
     contextMenu.className = 'context-menu hidden';
     document.body.appendChild(contextMenu);
@@ -725,13 +761,13 @@
       requestAnimationFrame(() => contextMenu.classList.add('visible'));
     }
 
-    document.addEventListener('click', e => {
+    trackDocListener('click', e => {
       if (!contextMenu.contains(e.target)) closeContextMenu();
     });
-    document.addEventListener('contextmenu', e => {
+    trackDocListener('contextmenu', e => {
       if (!e.target.closest('.card')) closeContextMenu();
     });
-    document.addEventListener('keydown', e => {
+    trackDocListener('keydown', e => {
       if (e.key === 'Escape') closeContextMenu();
     });
 
@@ -1279,7 +1315,7 @@
       gridOverlay.appendChild(document.createElement('span'));
     }
 
-    document.addEventListener('keydown', e => {
+    trackDocListener('keydown', e => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const tag = document.activeElement.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
@@ -1342,10 +1378,23 @@
     // --- Sidebar: Suivi submenu toggle + scroll-to-column ---
 
     const sidebarSuiviToggle = document.getElementById('sidebar-suivi-toggle');
-    sidebarSuiviToggle.addEventListener('click', () => {
+    const sidebarSuiviChevron = document.getElementById('sidebar-suivi-chevron');
+
+    // Clicking the row itself only navigates — it no longer auto-expands the
+    // submenu as a side effect. Only the dedicated chevron button toggles it.
+    sidebarSuiviToggle.addEventListener('click', showTasksView);
+    sidebarSuiviToggle.addEventListener('keydown', e => {
+      if (e.target !== sidebarSuiviToggle) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        showTasksView();
+      }
+    });
+
+    sidebarSuiviChevron.addEventListener('click', e => {
+      e.stopPropagation();
       const expanded = sidebarSuiviToggle.closest('.sidebar-item-group').classList.toggle('expanded');
-      sidebarSuiviToggle.setAttribute('aria-expanded', String(expanded));
-      showTasksView();
+      sidebarSuiviChevron.setAttribute('aria-expanded', String(expanded));
     });
 
     document.querySelectorAll('.sidebar-subitem').forEach(btn => {
@@ -1362,7 +1411,7 @@
     const sidebarCalendarBtn = document.getElementById('sidebar-calendar-btn');
     const viewHome = document.getElementById('view-home');
     const viewCalendar = document.getElementById('view-calendar');
-    const board = document.getElementById('board');
+    // `board` is already declared at the top of initApp() (used for the re-init guard).
     const topbarToolbar = document.getElementById('topbar-toolbar');
     const breadcrumbActiveLabel = document.getElementById('breadcrumb-active-label');
 
@@ -1573,11 +1622,11 @@
       e.stopPropagation();
       calendarLegendPopup.classList.contains('visible') ? closeCalendarLegend() : openCalendarLegend();
     });
-    document.addEventListener('click', e => {
+    trackDocListener('click', e => {
       if (!calendarLegendPopup.classList.contains('visible')) return;
       if (!e.target.closest('.calendar-legend-trigger-wrap')) closeCalendarLegend();
     });
-    document.addEventListener('keydown', e => {
+    trackDocListener('keydown', e => {
       if (e.key === 'Escape' && calendarLegendPopup.classList.contains('visible')) closeCalendarLegend();
     });
 
@@ -1679,4 +1728,8 @@
   } catch (err) {
     console.error('tracker.js failed to initialize:', err);
   }
+  }
+
+  initApp();
+  window.altoraInitApp = initApp;
 })();

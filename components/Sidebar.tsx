@@ -17,6 +17,7 @@ export default function Sidebar({
   const searchParams = useSearchParams();
   const isHome = pathname === '/';
   const isDocuments = pathname === '/documents';
+  const isInbox = pathname === '/inbox';
 
   // This layout (and this Sidebar) stays mounted across client-side
   // navigations between "/", "/documents", "/generate" — Next.js doesn't
@@ -25,7 +26,15 @@ export default function Sidebar({
   // page happened to be there when it first fired. Re-running it on every
   // route change is what actually keeps icons rendered on every page.
   useEffect(() => {
-    const w = window as unknown as { lucide?: { createIcons: () => void } };
+    const w = window as unknown as { lucide?: { createIcons: () => void }; altoraInitApp?: () => void };
+
+    // Same root cause as the icons above: the home page's own content (board,
+    // sidebar view-toggle buttons, modals) fully remounts every time the route
+    // leaves "/" and comes back, so tracker.js's bindings need to be redone
+    // against the fresh DOM — altoraInitApp() is a no-op if we're not on the
+    // home route or if this exact mount is already bound.
+    w.altoraInitApp?.();
+
     if (w.lucide) {
       w.lucide.createIcons();
       return;
@@ -66,11 +75,21 @@ export default function Sidebar({
 
         {isHome ? (
           <div className="sidebar-item-group">
-            <button type="button" className="sidebar-item" id="sidebar-suivi-toggle" aria-expanded="false" aria-controls="sidebar-submenu">
+            <div className="sidebar-item" id="sidebar-suivi-toggle" role="button" tabIndex={0}>
               <i data-lucide="list-checks"></i>
               <span className="sidebar-item-label">Mes tâches</span>
-              <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
-            </button>
+              <span className="sidebar-item-badge" id="sidebar-tasks-count"></span>
+              <button
+                type="button"
+                className="sidebar-item-chevron-btn"
+                id="sidebar-suivi-chevron"
+                aria-expanded="false"
+                aria-controls="sidebar-submenu"
+                aria-label="Afficher les catégories de Mes tâches"
+              >
+                <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+              </button>
+            </div>
             <div className="sidebar-submenu" id="sidebar-submenu">
               <button type="button" className="sidebar-subitem" data-scroll-to="list-todo"><i data-lucide="circle-dashed"></i>À postuler</button>
               <button type="button" className="sidebar-subitem" data-scroll-to="list-sent"><i data-lucide="hourglass"></i>Envoyé</button>
@@ -102,6 +121,11 @@ export default function Sidebar({
         <Link href="/documents" className={`sidebar-item${isDocuments ? ' sidebar-item--active' : ''}`}>
           <i data-lucide="folder"></i>
           <span className="sidebar-item-label">Mes documents</span>
+        </Link>
+
+        <Link href="/inbox" className={`sidebar-item${isInbox ? ' sidebar-item--active' : ''}`}>
+          <i data-lucide="mail"></i>
+          <span className="sidebar-item-label">Boîte de réception</span>
         </Link>
       </nav>
 
