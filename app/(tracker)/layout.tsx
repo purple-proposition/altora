@@ -20,7 +20,13 @@ export default async function TrackerLayout({ children }: { children: React.Reac
 
       <div className="grid-overlay" id="grid-overlay"></div>
 
-      <Script id="altora-theme" strategy="beforeInteractive">
+      {/* beforeInteractive only runs on the very first hard page load of the
+          whole app — since every session actually starts at /login (outside
+          this layout) and reaches "/" via a client-side redirect, this
+          layout is mounted client-side, and beforeInteractive scripts here
+          never fire at all. afterInteractive fires correctly regardless of
+          how the layout was mounted. */}
+      <Script id="altora-theme" strategy="afterInteractive">
         {`
           var theme = localStorage.getItem('altora-theme') || 'system';
           if (theme === 'dark' || theme === 'light') {
@@ -28,7 +34,7 @@ export default async function TrackerLayout({ children }: { children: React.Reac
           }
         `}
       </Script>
-      <Script src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="beforeInteractive" />
+      <Script id="altora-lucide" src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="afterInteractive" />
       <Script id="altora-icons" strategy="afterInteractive">
         {`
           (function renderIcons() {

@@ -5,6 +5,16 @@
 // instead of a mysteriously dead page.
 (function () {
   try {
+    // lucide.js loads as its own afterInteractive script, and Next.js does
+    // not guarantee execution order between separate afterInteractive
+    // scripts — so window.lucide might not exist yet the first time this
+    // runs. Every internal call goes through this instead of the raw
+    // lucide.createIcons(), retrying until the library is actually there.
+    function safeCreateIcons() {
+      if (window.lucide) lucide.createIcons();
+      else setTimeout(safeCreateIcons, 50);
+    }
+
     // Named tuning constants (previously bare literals scattered around the file).
     const OVERLAY_CLOSE_MS = 300; // matches the CSS transition on .modal-overlay
     const CONTEXT_MENU_CLOSE_MS = 200; // the context menu is lighter/faster than a full modal
@@ -230,7 +240,7 @@
       statuses.forEach(renderColumnList);
       updateToolbarCount();
       renderSummaryDigest(currentPeriod);
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     function render() {
@@ -238,13 +248,13 @@
 
       updateToolbarCount();
       renderSummaryDigest(currentPeriod);
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     document.getElementById('board-search').addEventListener('input', e => {
       searchQuery = e.target.value;
       STATUSES.forEach(renderColumnList);
-      lucide.createIcons();
+      safeCreateIcons();
     });
 
     function renderCard(card) {
@@ -704,7 +714,7 @@
       contextMenu.classList.remove('hidden');
       contextMenu.style.left = '0px';
       contextMenu.style.top = '0px';
-      lucide.createIcons();
+      safeCreateIcons();
 
       const rect = contextMenu.getBoundingClientRect();
       const clampedX = Math.min(x, window.innerWidth - rect.width - CONTEXT_MENU_EDGE_MARGIN_PX);
@@ -838,7 +848,7 @@
           contact.value = valueInput.value;
           // Skipped during the initial renderContactsList loop, which already does
           // a single createIcons() pass after all contacts are built.
-          if (!skipIconRefresh) lucide.createIcons();
+          if (!skipIconRefresh) safeCreateIcons();
         }
 
         typeBtn.addEventListener('click', () => setType(contact.type === 'phone' ? 'email' : 'phone'));
@@ -859,7 +869,7 @@
         block.appendChild(detailRow);
         contactsList.appendChild(block);
       });
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     btnAddContact.addEventListener('click', () => {
@@ -1135,7 +1145,7 @@
       detailOverlay.classList.remove('hidden');
       requestAnimationFrame(() => detailOverlay.classList.add('visible'));
       trapModalOpen(detailOverlay, closeDetailView);
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     function closeDetailView() {
@@ -1592,7 +1602,7 @@
         cvFilenameBtn.classList.add('hidden');
         cvImportBtn.innerHTML = '<i data-lucide="upload"></i>Importer';
       }
-      lucide.createIcons();
+      safeCreateIcons();
     }
     renderCvState();
 
