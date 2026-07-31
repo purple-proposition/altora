@@ -442,10 +442,13 @@ body {
 .topbar-action-wrap { position: relative; }
 
 .topbar-popover {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+  /* Portaled onto <body> (see TopbarActions.tsx) — position:fixed with
+     top/right computed in JS from the trigger button's own position, so
+     escaping .topbar-sticky's own backdrop-filter/stacking context doesn't
+     leave the popover mispositioned. */
+  position: fixed;
   width: 320px;
+  padding: 8px;
   background: color-mix(in srgb, var(--card-bg) 65%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -454,10 +457,7 @@ body {
   box-shadow: 0 8px 24px color-mix(in srgb, black 16%, transparent);
   z-index: 30;
   /* Same spring-in used by every other popup on the site (period-popup,
-     calendar-legend-popup). overflow:hidden is intentionally NOT set here —
-     combined with backdrop-filter it silently disables the blur in some
-     browsers (WebKit in particular); the rounded corners are handled by the
-     header/list's own border-radius on their outer edges instead. */
+     calendar-legend-popup). */
   transform-origin: top right;
   opacity: 0;
   transform: scale(0.85) translateY(-8px);
@@ -471,7 +471,7 @@ body {
 }
 
 .topbar-popover-header {
-  padding: 12px 16px;
+  padding: 8px 8px 4px;
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
@@ -480,27 +480,27 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
-  border-bottom: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
-  border-radius: var(--radius-card) var(--radius-card) 0 0;
 }
 
 .topbar-notification-list,
 .topbar-message-list {
   display: flex;
   flex-direction: column;
+  gap: 2px;
   max-height: 280px;
   overflow-y: auto;
-  border-radius: 0 0 var(--radius-card) var(--radius-card);
 }
 
+/* No dividers between items on purpose — just a hover highlight per row. */
 .topbar-notification-item {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  padding: 12px 16px;
-  border-bottom: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+  padding: 8px;
+  border-radius: var(--radius-inner);
+  transition: background 0.15s ease;
 }
-.topbar-notification-item:last-child { border-bottom: none; }
+.topbar-notification-item:hover { background: var(--bg); }
 .topbar-notification-item .lucide { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; margin-top: 2px; }
 
 .topbar-notification-body {
@@ -524,15 +524,14 @@ body {
 
 .inbox-message--compact {
   display: flex;
-  padding: 12px 16px;
+  padding: 8px;
   border: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
-  border-radius: 0;
+  border-radius: var(--radius-inner);
   background: none;
   text-decoration: none;
   color: inherit;
+  transition: background 0.15s ease;
 }
-.inbox-message--compact:last-child { border-bottom: none; border-radius: 0 0 var(--radius-card) var(--radius-card); }
 .inbox-message--compact:hover { background: var(--bg); }
 
 .topbar-bell {
@@ -1525,6 +1524,10 @@ body {
   border-color: var(--text-muted);
 }
 
+/* Chrome/Safari render a date input's "/" separators in a lighter muted
+   tone by default, out of step with the digits right next to them. */
+.modal form input[type="date"]::-webkit-datetime-edit-text { color: var(--text); }
+
 .field-group { margin-bottom: 12px; }
 fieldset.field-group { border: none; padding: 0; }
 legend.field-label { padding: 0; }
@@ -1628,6 +1631,15 @@ legend.field-label { padding: 0; }
 .url-parse-status.hidden { display: none; }
 .url-parse-status--error { color: var(--rose); }
 .url-parse-status--success { color: var(--green); }
+
+/* Fields the AI is about to (maybe) fill in — the extraction call can take
+   a couple of seconds, so the fields themselves pulse while it's in flight
+   instead of just sitting there looking unresponsive. */
+@keyframes field-ai-pulse {
+  0%, 100% { border-color: var(--border); background: var(--card-bg); }
+  50% { border-color: var(--indigo); background: var(--indigo-tint); }
+}
+.field-ai-loading { animation: field-ai-pulse 1.1s ease-in-out infinite; }
 
 .job-description-details { margin-top: -4px; }
 .job-description-summary {

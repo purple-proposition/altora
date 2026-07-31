@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { INBOX_MESSAGES } from '@/lib/mockInbox';
 
@@ -10,10 +11,44 @@ const NOTIFICATIONS = [
   { icon: 'file-check-2', text: 'Ton CV a bien été importé', time: 'Hier' },
 ];
 
+// Portaled straight onto <body> instead of living inside .topbar-sticky (which
+// has its own backdrop-filter for the sticky-header blur) — some browsers
+// don't compose a descendant's backdrop-filter correctly when an ancestor
+// already has one, which was silently killing the popover's own frosted-glass
+// effect. Rendering outside that subtree removes the ambiguity entirely.
+function usePopoverPosition(anchorRef: React.RefObject<HTMLElement | null>, open: boolean) {
+  const [pos, setPos] = useState({ top: 0, right: 0 });
+
+  useEffect(() => {
+    if (!open) return;
+    function update() {
+      const rect = anchorRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+    }
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', update, true);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', update, true);
+    };
+  }, [open, anchorRef]);
+
+  return pos;
+}
+
 export default function TopbarActions() {
   const [open, setOpen] = useState<'mail' | 'bell' | null>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const mailWrapRef = useRef<HTMLDivElement>(null);
+  const bellWrapRef = useRef<HTMLDivElement>(null);
   const unreadCount = INBOX_MESSAGES.filter(m => m.unread).length;
+
+  const mailPos = usePopoverPosition(mailWrapRef, open === 'mail');
+  const bellPos = usePopoverPosition(bellWrapRef, open === 'bell');
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     // mousedown, not click — a same-node 'click' listener races the button's
@@ -21,9 +56,14 @@ export default function TopbarActions() {
     // browsers), which made the popover open only some of the time.
     // mousedown always fires before the click that follows it, so this
     // decides purely on inside/outside with no ordering ambiguity, and the
-    // ensuing click still toggles the state normally.
+    // ensuing click still toggles the state normally. closest(...) (rather
+    // than a single ref.contains) covers both trigger buttons AND the
+    // portaled popover content, which now lives outside this component's
+    // own DOM subtree.
     function onPointerDown(e: MouseEvent) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(null);
+      const target = e.target as Element;
+      if (target.closest?.('.topbar-action-wrap, .topbar-popover')) return;
+      setOpen(null);
     }
     document.addEventListener('mousedown', onPointerDown);
     return () => document.removeEventListener('mousedown', onPointerDown);
@@ -35,8 +75,8 @@ export default function TopbarActions() {
   }, [open]);
 
   return (
-    <div className="topbar-actions" ref={wrapRef}>
-      <div className="topbar-action-wrap">
+    <div className="topbar-actions">
+      <div className="topbar-action-wrap" ref={mailWrapRef}>
         <button
           type="button"
           className="topbar-bell"
@@ -47,10 +87,25 @@ export default function TopbarActions() {
           <i data-lucide="mail"></i>
           {unreadCount > 0 && <span className="topbar-bell-badge">{unreadCount}</span>}
         </button>
-        {/* Always mounted (never conditionally unmounted) so opacity/transform
-            can actually transition in both directions — the same spring-in
-            used by the period-popup and calendar-legend-popup elsewhere. */}
-        <div className={`topbar-popover${open === 'mail' ? ' topbar-popover--visible' : ''}`}>
+      </div>
+
+      <div className="topbar-action-wrap" ref={bellWrapRef}>
+        <button
+          type="button"
+          className="topbar-bell"
+          title="Notifications"
+          aria-label="Notifications"
+          onClick={() => setOpen(open === 'bell' ? null : 'bell')}
+        >
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+
+      {mounted && createPortal(
+        <div
+          className={`topbar-popover${open === 'mail' ? ' topbar-popover--visible' : ''}`}
+          style={{ top: mailPos.top, right: mailPos.right }}
+        >
           <div className="topbar-popover-header">Messagerie</div>
           <div className="topbar-message-list">
             {INBOX_MESSAGES.map((message, i) => (
@@ -68,20 +123,15 @@ export default function TopbarActions() {
               </Link>
             ))}
           </div>
-        </div>
-      </div>
+        </div>,
+        document.body
+      )}
 
-      <div className="topbar-action-wrap">
-        <button
-          type="button"
-          className="topbar-bell"
-          title="Notifications"
-          aria-label="Notifications"
-          onClick={() => setOpen(open === 'bell' ? null : 'bell')}
+      {mounted && createPortal(
+        <div
+          className={`topbar-popover${open === 'bell' ? ' topbar-popover--visible' : ''}`}
+          style={{ top: bellPos.top, right: bellPos.right }}
         >
-          <i data-lucide="bell"></i>
-        </button>
-        <div className={`topbar-popover${open === 'bell' ? ' topbar-popover--visible' : ''}`}>
           <div className="topbar-popover-header">Notifications</div>
           <div className="topbar-notification-list">
             {NOTIFICATIONS.map((n, i) => (
@@ -94,8 +144,9 @@ export default function TopbarActions() {
               </div>
             ))}
           </div>
-        </div>
-      </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

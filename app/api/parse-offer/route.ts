@@ -54,12 +54,16 @@ async function extractWithAI(text: string): Promise<ExtractedOffer | null> {
     const jsonMatch = block.text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
     const parsed = JSON.parse(jsonMatch[0]);
+    // Accept numbers too (e.g. a bare salary figure) — the prompt asks for
+    // strings, but rejecting anything the model didn't format exactly as
+    // asked would silently drop a real answer back to null.
+    const asString = (v: unknown) => (typeof v === 'string' ? v : typeof v === 'number' ? String(v) : null);
     return {
-      title: typeof parsed.title === 'string' ? parsed.title : null,
-      company: typeof parsed.company === 'string' ? parsed.company : null,
-      location: typeof parsed.location === 'string' ? parsed.location : null,
-      salary: typeof parsed.salary === 'string' ? parsed.salary : null,
-      contractType: typeof parsed.contractType === 'string' ? parsed.contractType : null,
+      title: asString(parsed.title),
+      company: asString(parsed.company),
+      location: asString(parsed.location),
+      salary: asString(parsed.salary),
+      contractType: asString(parsed.contractType),
     };
   } catch {
     return null;

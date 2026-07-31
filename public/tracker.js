@@ -786,6 +786,9 @@
     const fieldInterviewAt = document.getElementById('field-interview-at');
     const fieldLocation = document.getElementById('field-location');
     const fieldSalary = document.getElementById('field-salary');
+    const fieldJobDescription = document.getElementById('field-job-description');
+    const jobDescriptionDetails = document.getElementById('job-description-details');
+    const urlParseStatus = document.getElementById('url-parse-status');
     const contactsList = document.getElementById('contacts-list');
     const btnAddContact = document.getElementById('btn-add-contact');
     const statusPicker = document.getElementById('status-picker');
@@ -1014,7 +1017,15 @@
 
     let lastAutoTitle = '';
     let lastAutoCompany = '';
+    let lastAutoLocation = '';
+    let lastAutoSalary = '';
+    let lastAutoContract = '';
+    let lastAutoDescription = '';
 
+    // Only overwrites a field if it's still empty or still holds a PREVIOUS
+    // auto-filled value — once the user edits a field themselves, later
+    // guesses (the instant client-side one, then the slower AI one) never
+    // clobber what they typed.
     function applyGuess(guess) {
       if (!guess) return;
       if (guess.title && (fieldTitle.value.trim() === '' || fieldTitle.value === lastAutoTitle)) {
@@ -1025,17 +1036,61 @@
         fieldCompany.value = guess.company;
         lastAutoCompany = guess.company;
       }
+      if (guess.location && (fieldLocation.value.trim() === '' || fieldLocation.value === lastAutoLocation)) {
+        fieldLocation.value = guess.location;
+        lastAutoLocation = guess.location;
+      }
+      if (guess.salary && (fieldSalary.value.trim() === '' || fieldSalary.value === lastAutoSalary)) {
+        fieldSalary.value = guess.salary;
+        lastAutoSalary = guess.salary;
+      }
+      if (guess.contractType && (!currentContract || currentContract === lastAutoContract)) {
+        setContractType(guess.contractType);
+        lastAutoContract = guess.contractType;
+      }
+      if (guess.description && (fieldJobDescription.value.trim() === '' || fieldJobDescription.value === lastAutoDescription)) {
+        fieldJobDescription.value = guess.description;
+        lastAutoDescription = guess.description;
+      }
+    }
+
+    let urlParseStatusTimer = null;
+
+    function setUrlParseStatus(text, variant) {
+      clearTimeout(urlParseStatusTimer);
+      urlParseStatus.textContent = text;
+      urlParseStatus.className = 'url-parse-status' + (variant ? ` url-parse-status--${variant}` : '') + (text ? '' : ' hidden');
     }
 
     fieldUrl.addEventListener('blur', () => {
       const url = fieldUrl.value.trim();
       if (!url) return;
 
+      // Instant, free, client-side guess from the URL's own slug — shows
+      // something immediately while the slower AI pass (below) is in flight.
       applyGuess(guessFromUrl(url));
 
-      // Upgrade with a real server-side scrape once it lands (slower, more accurate —
-      // reads schema.org JobPosting / Open Graph tags from the actual page).
-      parseJobOffer(url).then(applyGuess);
+      const aiLoadingFields = [fieldTitle, fieldCompany, fieldLocation, fieldSalary];
+      aiLoadingFields.forEach(f => f.classList.add('field-ai-loading'));
+
+      setUrlParseStatus('Analyse de l’offre en cours…');
+      parseJobOffer(url).then(result => {
+        aiLoadingFields.forEach(f => f.classList.remove('field-ai-loading'));
+
+        if (!result) {
+          setUrlParseStatus('');
+          return;
+        }
+        if (result.blocked) {
+          setUrlParseStatus('Ce site bloque l’extraction automatique — colle le texte de l’offre ci-dessous.', 'error');
+          jobDescriptionDetails.open = true;
+          fieldJobDescription.focus();
+          return;
+        }
+        applyGuess(result);
+        setUrlParseStatus('Offre analysée automatiquement ✓', 'success');
+        urlParseStatusTimer = setTimeout(() => setUrlParseStatus(''), 4000);
+      });
     });
 
     // --- Shared modal a11y: focus trap, Escape-to-close, focus restored to
@@ -1198,6 +1253,12 @@
       editingId = null;
       lastAutoTitle = '';
       lastAutoCompany = '';
+      lastAutoLocation = '';
+      lastAutoSalary = '';
+      lastAutoContract = '';
+      lastAutoDescription = '';
+      setUrlParseStatus('');
+      jobDescriptionDetails.open = false;
       setInterviewStage(null);
       setContractType(null);
       formContacts = [];
@@ -1212,6 +1273,8 @@
         fieldCompany.value = card.company || '';
         fieldLocation.value = card.location || '';
         fieldSalary.value = card.salary || '';
+        fieldJobDescription.value = card.jobDescription || '';
+        if (card.jobDescription) jobDescriptionDetails.open = true;
         setStatusPicker(card.status);
         setInterviewStage(card.interviewStage || null);
         setContractType(card.contractType || null);
@@ -1266,6 +1329,10 @@
           .map(c => ({ ...c, firstName: c.firstName.trim(), lastName: c.lastName.trim(), value: c.value.trim() }))
           .filter(c => c.firstName || c.lastName || c.value),
         notes: fieldNotes.value.trim(),
+        // Kept off the card and detail view on purpose — this is only read
+        // back when generating a CV, so that step never has to re-fetch or
+        // re-paste the posting.
+        jobDescription: fieldJobDescription.value.trim() || null,
       };
 
       if (editingId) {
