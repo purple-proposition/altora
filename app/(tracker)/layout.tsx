@@ -34,15 +34,10 @@ export default async function TrackerLayout({ children }: { children: React.Reac
           }
         `}
       </Script>
+      {/* Sidebar.tsx renders icons itself (on every route change, via
+          useEffect) since a one-shot script here would only ever catch
+          whichever page was current the one time it fired. */}
       <Script id="altora-lucide" src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="afterInteractive" />
-      <Script id="altora-icons" strategy="afterInteractive">
-        {`
-          (function renderIcons() {
-            if (window.lucide) { lucide.createIcons(); }
-            else { setTimeout(renderIcons, 50); }
-          })();
-        `}
-      </Script>
     </>
   );
 }
