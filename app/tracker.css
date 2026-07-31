@@ -1665,7 +1665,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 .calendar-legend-item {
   display: inline-flex;
@@ -1693,8 +1693,10 @@ body {
 }
 .calendar-weekday {
   padding: 10px 8px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   color: var(--text-muted);
   text-align: center;
 }
@@ -1706,33 +1708,35 @@ body {
 }
 .calendar-week:last-child { border-bottom: none; }
 .calendar-day {
-  min-height: 92px;
-  padding: 8px;
+  min-height: 120px;
+  padding: 10px;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  background: var(--card-bg);
 }
 .calendar-day:last-child { border-right: none; }
 .calendar-day--muted { background: var(--bg); }
-.calendar-day--weekend { background: var(--bg); }
 .calendar-day-number { font-size: 13px; font-weight: 500; color: var(--text); }
 .calendar-day--muted .calendar-day-number { color: var(--text-muted); }
-.calendar-day--today { box-shadow: inset 0 0 0 2px var(--indigo); border-radius: var(--radius-input); }
+.calendar-day--today { box-shadow: inset 0 0 0 2px var(--indigo); }
 .calendar-day--today .calendar-day-number { color: var(--indigo); font-weight: 600; }
 
-.calendar-day--entreprise { background: var(--cyan-tint); }
-.calendar-day--entreprise .calendar-day-number { color: var(--cyan); }
-.calendar-day--formation { background: var(--indigo-tint); }
-.calendar-day--formation .calendar-day-number { color: var(--indigo); }
-.calendar-day--conges { background: var(--amber-tint); }
-.calendar-day--conges .calendar-day-number { color: var(--amber); }
-.calendar-day--examen { background: var(--green-tint); }
-.calendar-day--examen .calendar-day-number { color: var(--green); }
-.calendar-day--examen_oral { background: var(--violet-tint); }
-.calendar-day--examen_oral .calendar-day-number { color: var(--violet); }
-.calendar-day--ferie { background: var(--rose-tint); }
-.calendar-day--ferie .calendar-day-number { color: var(--rose); }
+.calendar-day-tag {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 500;
+}
+.calendar-day-tag--entreprise { background: var(--cyan-tint); color: var(--cyan); }
+.calendar-day-tag--formation { background: var(--indigo-tint); color: var(--indigo); }
+.calendar-day-tag--conges { background: var(--amber-tint); color: var(--amber); }
+.calendar-day-tag--examen { background: var(--green-tint); color: var(--green); }
+.calendar-day-tag--examen_oral { background: var(--violet-tint); color: var(--violet); }
+.calendar-day-tag--ferie { background: var(--rose-tint); color: var(--rose); }
 
 .calendar-legend-dot--entreprise { background: var(--cyan); }
 .calendar-legend-dot--formation { background: var(--indigo); }
