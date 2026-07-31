@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSidebarCollapse } from './SidebarCollapseContext';
+import { INBOX_MESSAGES } from '@/lib/mockInbox';
 
 type GenerationSummary = { id: string; company: string; poste: string; createdAt: string };
 type FolderSummary = { id: number; name: string };
@@ -27,6 +28,23 @@ export default function Sidebar({
   // shared across pages via context — Sidebar just reads the collapsed state
   // to apply its own layout class.
   const { collapsed, mobileOpen, closeMobile } = useSidebarCollapse();
+
+  // "Mes candidatures" should show how many are still waiting to be sent
+  // even when you're not on the home board — tracker.js keeps this in sync
+  // live while you're there (dragging cards between columns), this covers
+  // every other page (and the first paint on load).
+  const [todoCount, setTodoCount] = useState<number | null>(null);
+  useEffect(() => {
+    fetch('/api/cards')
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (!data?.cards) return;
+        setTodoCount(data.cards.filter((c: { status?: string }) => c.status === 'todo').length);
+      })
+      .catch(() => {});
+  }, [pathname]);
+
+  const unreadCount = INBOX_MESSAGES.filter(m => m.unread).length;
 
   // The generated-CVs list is only worth fetching once someone actually
   // opens the submenu — most visits never touch it.
@@ -138,7 +156,7 @@ export default function Sidebar({
             <div className="sidebar-item" id="sidebar-suivi-toggle" role="button" tabIndex={0}>
               <i data-lucide="list-checks"></i>
               <span className="sidebar-item-label">Mes candidatures</span>
-              <span className="sidebar-item-badge" id="sidebar-tasks-count"></span>
+              <span className="sidebar-item-badge" id="sidebar-tasks-count">{todoCount !== null && todoCount > 0 ? todoCount : ''}</span>
               <button
                 type="button"
                 className="sidebar-item-chevron-btn"
@@ -161,6 +179,7 @@ export default function Sidebar({
           <Link href="/?view=tasks" className="sidebar-item">
             <i data-lucide="list-checks"></i>
             <span className="sidebar-item-label">Mes candidatures</span>
+            {todoCount !== null && todoCount > 0 && <span className="sidebar-item-badge">{todoCount}</span>}
           </Link>
         )}
 
@@ -248,6 +267,7 @@ export default function Sidebar({
         <Link href="/inbox" className={`sidebar-item${isInbox ? ' sidebar-item--active' : ''}`}>
           <i data-lucide="mail"></i>
           <span className="sidebar-item-label">Boîte de réception</span>
+          {unreadCount > 0 && <span className="sidebar-item-badge">{unreadCount}</span>}
         </Link>
       </nav>
 
