@@ -116,18 +116,21 @@
       return links;
     }
 
-    function buildDateSpans(card) {
-      if (!card.createdAt) return [];
-      const added = new Date(card.createdAt);
-      const dateStr = added.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
-      const timeStr = added.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      const dateSpan = document.createElement('span');
-      dateSpan.className = 'card-date';
-      dateSpan.append(iconEl('calendar'), dateStr);
-      const timeSpan = document.createElement('span');
-      timeSpan.className = 'card-date';
-      timeSpan.append(iconEl('clock'), timeStr);
-      return [dateSpan, timeSpan];
+    // card.interviewAt is a <input type="datetime-local"> value: "YYYY-MM-DDTHH:mm".
+    // The date portion doubles as this interview's calendar-day key.
+    function interviewDateKey(card) {
+      return card.status === 'interview' && card.interviewAt ? card.interviewAt.slice(0, 10) : null;
+    }
+
+    function buildInterviewPill(card) {
+      if (card.status !== 'interview' || !card.interviewAt) return null;
+      const d = new Date(card.interviewAt);
+      const dateStr = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+      const timeStr = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+      const pill = document.createElement('span');
+      pill.className = 'card-interview-pill';
+      pill.append(iconEl('calendar'), `Entretien le ${dateStr} à ${timeStr}`);
+      return pill;
     }
 
     const STATUSES = ['todo', 'sent', 'interview', 'rejected'];
@@ -297,13 +300,8 @@
       linkRow.append(...buildLinkNodes(card));
       el.appendChild(linkRow);
 
-      const dateSpans = buildDateSpans(card);
-      if (dateSpans.length) {
-        const dateRow = document.createElement('div');
-        dateRow.className = 'card-date-row';
-        dateRow.append(...dateSpans);
-        el.appendChild(dateRow);
-      }
+      const interviewPill = buildInterviewPill(card);
+      if (interviewPill) el.appendChild(interviewPill);
 
       el.addEventListener('click', () => openDetailView(card));
 
@@ -739,6 +737,7 @@
     const fieldCompany = document.getElementById('field-company');
     const fieldNotes = document.getElementById('field-notes');
     const fieldDeadline = document.getElementById('field-deadline');
+    const fieldInterviewAt = document.getElementById('field-interview-at');
     const fieldLocation = document.getElementById('field-location');
     const fieldSalary = document.getElementById('field-salary');
     const contactsList = document.getElementById('contacts-list');
@@ -1120,20 +1119,16 @@
         nodes.push(linkRow);
       }
 
-      const dateSpans = buildDateSpans(card);
-      if (dateSpans.length) {
-        const dateRow = document.createElement('div');
-        dateRow.className = 'card-date-row detail-date-row';
-        dateRow.append(...dateSpans);
-        const source = getJobSource(card.url);
-        if (source) {
-          const pill = document.createElement('span');
-          pill.className = 'detail-source-pill';
-          pill.insertAdjacentHTML('beforeend', source.icon); // trusted, hardcoded in JOB_SOURCES — never user input
-          pill.append(source.label);
-          dateRow.appendChild(pill);
-        }
-        nodes.push(dateRow);
+      const interviewPill = buildInterviewPill(card);
+      if (interviewPill) nodes.push(interviewPill);
+
+      const source = getJobSource(card.url);
+      if (source) {
+        const pill = document.createElement('span');
+        pill.className = 'detail-source-pill';
+        pill.insertAdjacentHTML('beforeend', source.icon); // trusted, hardcoded in JOB_SOURCES — never user input
+        pill.append(source.label);
+        nodes.push(pill);
       }
 
       detailContent.replaceChildren(...nodes);
@@ -1176,6 +1171,7 @@
         setContractType(card.contractType || null);
         fieldNotes.value = card.notes || '';
         fieldDeadline.value = card.deadline || '';
+        fieldInterviewAt.value = card.interviewAt || '';
         formContacts = card.contacts ? card.contacts.map(c => ({ ...c })) : [];
         btnDelete.classList.remove('hidden');
       } else if (mode === 'import') {
@@ -1218,6 +1214,7 @@
         contractType: currentContract,
         status: currentStatus,
         interviewStage: currentStatus === 'interview' ? currentStage : null,
+        interviewAt: currentStatus === 'interview' ? (fieldInterviewAt.value || null) : null,
         deadline: fieldDeadline.value || null,
         contacts: formContacts
           .map(c => ({ ...c, firstName: c.firstName.trim(), lastName: c.lastName.trim(), value: c.value.trim() }))
@@ -1508,8 +1505,21 @@
             + (key === todayKey ? ' calendar-day--today' : '')
             + (ev && inMonth ? ` calendar-day--${ev.type}` : '');
           const dateLabel = `${day} ${CALENDAR_MONTH_LABELS[m].toLowerCase()} ${y}`;
-          dayEl.setAttribute('aria-label', ev && inMonth ? `${dateLabel} — ${ev.label}` : dateLabel);
+          const dayInterviews = inMonth ? cards.filter(c => interviewDateKey(c) === key) : [];
+          const labelParts = [
+            ev && inMonth ? ev.label : null,
+            ...dayInterviews.map(c => `entretien${c.company ? ' chez ' + c.company : ''}`),
+          ].filter(Boolean);
+          dayEl.setAttribute('aria-label', labelParts.length ? `${dateLabel} — ${labelParts.join(', ')}` : dateLabel);
           dayEl.innerHTML = `<span class="calendar-day-number">${day}</span>`;
+          dayInterviews.forEach(c => {
+            const pill = document.createElement('span');
+            pill.className = 'calendar-day-interview-pill';
+            const timeStr = new Date(c.interviewAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+            pill.append(iconEl('target'), `${timeStr} ${c.company || 'Entretien'}`);
+            pill.addEventListener('click', () => openDetailView(c));
+            dayEl.appendChild(pill);
+          });
           weekEl.appendChild(dayEl);
           cursor.setDate(cursor.getDate() + 1);
         }

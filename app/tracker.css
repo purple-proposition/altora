@@ -866,24 +866,22 @@ body {
 
 .card-link:hover { text-decoration: underline; }
 
-.card-date-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.card-date {
+.card-interview-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  margin-top: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
   font-size: 12px;
   line-height: 1;
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--green);
+  background: var(--green-tint);
 }
+.card-interview-pill .lucide { width: 12px; height: 12px; }
 
 .card-meta-row {
   display: flex;
@@ -1239,16 +1237,11 @@ body {
   margin-bottom: 16px;
 }
 
-.detail-date-row {
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-
 .detail-source-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-left: auto;
+  margin-top: 16px;
   padding: 4px 8px;
   border-radius: var(--radius-pill);
   background: var(--bg);
@@ -1344,6 +1337,8 @@ body {
   color: var(--text-muted);
   margin-bottom: 12px;
 }
+
+.interview-at-label { margin-top: 12px; }
 
 .modal form input,
 .modal form select,
@@ -1926,6 +1921,29 @@ text-box-edge: cap alphabetic;
 .calendar-day--examen:hover { border-color: var(--green); }
 .calendar-day--examen_oral:hover { border-color: var(--violet); }
 .calendar-day--ferie:hover { border-color: var(--rose); }
+
+.calendar-day-interview-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  font-weight: 500;
+  color: var(--green);
+  background: var(--green-tint);
+  cursor: pointer;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.calendar-day-interview-pill .lucide { width: 12px; height: 12px; flex-shrink: 0; }
+.calendar-day-interview-pill:hover { filter: brightness(0.95); }
 
 .calendar-legend-dot--entreprise { background: var(--cyan); }
 .calendar-legend-dot--formation { background: var(--indigo); }

@@ -262,6 +262,9 @@ export default async function TrackerPage() {
                   <button type="button" className="stage-btn" data-stage="2" role="radio" aria-checked="false">2e entretien</button>
                   <button type="button" className="stage-btn" data-stage="final" role="radio" aria-checked="false">Entretien final</button>
                 </div>
+                <label className="interview-at-label">Date et heure de l&apos;entretien
+                  <input type="datetime-local" id="field-interview-at" />
+                </label>
               </fieldset>
               <label>Sans réponse après le
                 <input type="date" id="field-deadline" />
