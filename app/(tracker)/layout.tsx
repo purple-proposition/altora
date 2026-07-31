@@ -2,6 +2,7 @@ import Script from 'next/script';
 import '../tracker.css';
 import { auth } from '@/auth';
 import Sidebar from '@/components/Sidebar';
+import GridOverlayToggle from '@/components/GridOverlayToggle';
 import { SidebarCollapseProvider } from '@/components/SidebarCollapseContext';
 import { assetVersion } from '@/lib/assetVersion';
 
@@ -22,6 +23,7 @@ export default async function TrackerLayout({ children }: { children: React.Reac
       </SidebarCollapseProvider>
 
       <div className="grid-overlay" id="grid-overlay"></div>
+      <GridOverlayToggle />
 
       {/* beforeInteractive only runs on the very first hard page load of the
           whole app — since every session actually starts at /login (outside
