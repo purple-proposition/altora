@@ -174,7 +174,7 @@ function GenerateForm() {
               Fiche de poste
             </label>
             <textarea
-              style={{ width: '100%', minHeight: '260px', padding: '14px', fontSize: '14px', fontFamily: 'var(--font-geist-sans), system-ui, sans-serif', border: '1px solid #ddd', borderRadius: '6px', resize: 'vertical', lineHeight: 1.6, color: '#111' }}
+              style={{ width: '100%', minHeight: '260px', padding: '14px', fontSize: '14px', fontFamily: 'Inter, system-ui, sans-serif', border: '1px solid #ddd', borderRadius: '6px', resize: 'vertical', lineHeight: 1.6, color: '#111' }}
               placeholder="Colle la fiche de poste ou un lien…"
               value={jobPosting}
               onChange={(e) => setJobPosting(e.target.value)}
@@ -333,7 +333,7 @@ function GenerateForm() {
                 Modifications à apporter
               </label>
               <textarea
-                style={{ width: '100%', minHeight: '100px', padding: '12px 14px', fontSize: '13px', fontFamily: 'var(--font-geist-sans), system-ui, sans-serif', border: '1px solid #ddd', borderRadius: '6px', resize: 'vertical', lineHeight: 1.6, color: '#111', outline: 'none' }}
+                style={{ width: '100%', minHeight: '100px', padding: '12px 14px', fontSize: '13px', fontFamily: 'Inter, system-ui, sans-serif', border: '1px solid #ddd', borderRadius: '6px', resize: 'vertical', lineHeight: 1.6, color: '#111', outline: 'none' }}
                 placeholder="Ex. : Renforcer le bullet CRM, raccourcir l'accroche, mettre davantage en avant le SEO, reformuler le 2e paragraphe de la lettre…"
                 value={modifications}
                 onChange={(e) => setModifications(e.target.value)}
