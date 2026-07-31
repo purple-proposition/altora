@@ -21,6 +21,10 @@ export default async function TrackerPage() {
   const rawDate = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
   const todayLabel = rawDate.charAt(0).toUpperCase() + rawDate.slice(1);
 
+  // Escape "<" so a filename containing "</script>" can't break out of the
+  // inline script tag below (JSON.stringify does not escape it on its own).
+  const cvDataJson = JSON.stringify({ url: cvUrl, filename: cvFilename }).replace(/</g, '\\u003c');
+
   return (
     <>
         <div className="topbar-sticky">
@@ -282,7 +286,7 @@ export default async function TrackerPage() {
       <Script
         id="altora-cv-data"
         strategy="afterInteractive"
-        dangerouslySetInnerHTML={{ __html: `window.__ALTORA_CV__ = ${JSON.stringify({ url: cvUrl, filename: cvFilename })};` }}
+        dangerouslySetInnerHTML={{ __html: `window.__ALTORA_CV__ = ${cvDataJson};` }}
       />
       <Script src={`/tracker.js?v=${assetVersion('tracker.js')}`} strategy="afterInteractive" />
     </>

@@ -4,6 +4,11 @@ import bcrypt from 'bcryptjs';
 import { sql, ensureSchema } from './lib/db';
 import authConfig from './auth.config';
 
+// A bcrypt hash of a random, unguessable value — used to pay the same
+// hashing cost on the "no such user" path as on the "wrong password" path,
+// so response timing can't be used to enumerate registered emails.
+const DUMMY_HASH = '$2a$10$CwTycUXWue0Thq9StjUM0uJ8i9AtRJ8p4hKQEqZgUAKtpN5j2z6dK';
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
@@ -20,10 +25,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         await ensureSchema();
         const rows = await sql`SELECT id, email, password_hash, name, school, promotion FROM users WHERE email = ${email}`;
         const user = rows[0];
-        if (!user) return null;
 
-        const valid = await bcrypt.compare(password, user.password_hash);
-        if (!valid) return null;
+        const valid = await bcrypt.compare(password, user?.password_hash || DUMMY_HASH);
+        if (!user || !valid) return null;
 
         return { id: String(user.id), email: user.email, name: user.name, school: user.school, promotion: user.promotion };
       },

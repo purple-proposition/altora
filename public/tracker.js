@@ -1,3 +1,23 @@
+// Card fields (title, company, location, salary, notes, contact name/value)
+// are user-entered and end up interpolated into HTML strings below — always
+// through this, never raw, or a value containing markup breaks out.
+const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => HTML_ESCAPES[c]);
+}
+
+// Only allow http(s) as a clickable/hrefable URL — blocks javascript: URIs
+// and other schemes hidden in a pasted job-offer link.
+function safeHref(url) {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? url : null;
+  } catch {
+    return null;
+  }
+}
+
 const STATUSES = ['todo', 'sent', 'interview', 'rejected'];
 const STAGE_LABELS = { '1': '1er entretien', '2': '2e entretien', final: 'Entretien final' };
 const STATUS_LABELS = { todo: 'À postuler', sent: 'Envoyé', interview: 'Entretien', rejected: 'Refus' };
@@ -143,13 +163,13 @@ function renderCard(card) {
     if (card.location) {
       const loc = document.createElement('span');
       loc.className = 'card-meta-item';
-      loc.innerHTML = `<i data-lucide="map-pin"></i>${card.location}`;
+      loc.innerHTML = `<i data-lucide="map-pin"></i>${escapeHtml(card.location)}`;
       metaRow.appendChild(loc);
     }
     if (card.salary) {
       const sal = document.createElement('span');
       sal.className = 'card-meta-item';
-      sal.innerHTML = `<i data-lucide="banknote"></i>${card.salary}`;
+      sal.innerHTML = `<i data-lucide="banknote"></i>${escapeHtml(card.salary)}`;
       metaRow.appendChild(sal);
     }
     el.appendChild(metaRow);
@@ -179,11 +199,11 @@ function renderCard(card) {
       const block = document.createElement('div');
       block.className = 'card-contact-block';
       if (name) {
-        block.innerHTML += `<div class="card-contact"><i data-lucide="user"></i>${name}</div>`;
+        block.insertAdjacentHTML('beforeend', `<div class="card-contact"><i data-lucide="user"></i>${escapeHtml(name)}</div>`);
       }
       if (contact.value) {
         const icon = contact.type === 'phone' ? 'phone' : 'mail';
-        block.innerHTML += `<div class="card-contact"><i data-lucide="${icon}"></i>${contact.value}</div>`;
+        block.insertAdjacentHTML('beforeend', `<div class="card-contact"><i data-lucide="${icon}"></i>${escapeHtml(contact.value)}</div>`);
       }
       el.appendChild(block);
     });
@@ -192,7 +212,7 @@ function renderCard(card) {
   const linkRow = document.createElement('div');
   linkRow.className = 'card-link-row';
 
-  if (card.url) {
+  if (safeHref(card.url)) {
     const link = document.createElement('a');
     link.className = 'card-link';
     link.href = card.url;
@@ -963,14 +983,14 @@ function openDetailView(card) {
     <span class="detail-status-tag detail-status-tag--${card.status}">
       <i data-lucide="${STATUS_ICONS[card.status]}"></i>${STATUS_LABELS[card.status]}
     </span>
-    <h3 class="detail-title">${card.title || 'Offre sans titre'}${card.company ? ` <span class="detail-company">chez ${card.company}</span>` : ''}</h3>
+    <h3 class="detail-title">${escapeHtml(card.title || 'Offre sans titre')}${card.company ? ` <span class="detail-company">chez ${escapeHtml(card.company)}</span>` : ''}</h3>
   `);
 
   if (card.location || card.salary || card.contractType) {
     const chips = [];
-    if (card.contractType) chips.push(`<span class="card-meta-tag">${card.contractType}</span>`);
-    if (card.location) chips.push(`<span class="card-meta-item"><i data-lucide="map-pin"></i>${card.location}</span>`);
-    if (card.salary) chips.push(`<span class="card-meta-item"><i data-lucide="banknote"></i>${card.salary}</span>`);
+    if (card.contractType) chips.push(`<span class="card-meta-tag">${escapeHtml(card.contractType)}</span>`);
+    if (card.location) chips.push(`<span class="card-meta-item"><i data-lucide="map-pin"></i>${escapeHtml(card.location)}</span>`);
+    if (card.salary) chips.push(`<span class="card-meta-item"><i data-lucide="banknote"></i>${escapeHtml(card.salary)}</span>`);
     parts.push(`<div class="detail-meta-row">${chips.join('')}</div>`);
   }
 
@@ -991,19 +1011,19 @@ function openDetailView(card) {
       if (!name && !contact.value) return '';
       const icon = contact.type === 'phone' ? 'phone' : 'mail';
       return `<div class="card-contact-block">
-        ${name ? `<div class="card-contact"><i data-lucide="user"></i>${name}</div>` : ''}
-        ${contact.value ? `<div class="card-contact"><i data-lucide="${icon}"></i>${contact.value}</div>` : ''}
+        ${name ? `<div class="card-contact"><i data-lucide="user"></i>${escapeHtml(name)}</div>` : ''}
+        ${contact.value ? `<div class="card-contact"><i data-lucide="${icon}"></i>${escapeHtml(contact.value)}</div>` : ''}
       </div>`;
     }).join('');
     if (rows) parts.push(`<div class="detail-section"><span class="detail-label">Contact</span>${rows}</div>`);
   }
 
   if (card.notes) {
-    parts.push(`<div class="detail-section"><span class="detail-label">Notes</span><p class="detail-notes">${card.notes}</p></div>`);
+    parts.push(`<div class="detail-section"><span class="detail-label">Notes</span><p class="detail-notes">${escapeHtml(card.notes)}</p></div>`);
   }
 
   const links = [];
-  if (card.url) links.push(`<a class="card-link" href="${card.url}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Voir l'offre</a>`);
+  if (safeHref(card.url)) links.push(`<a class="card-link" href="${escapeHtml(card.url)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Voir l'offre</a>`);
   if (card.status === 'todo') {
     const jobParam = card.url || [card.title, card.company].filter(Boolean).join(' chez ');
     links.push(`<a class="card-link card-link--generate" href="/generate?job=${encodeURIComponent(jobParam)}&cardId=${encodeURIComponent(card.id)}"><i data-lucide="sparkles"></i> Générer CV</a>`);

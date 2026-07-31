@@ -1,6 +1,11 @@
 import Anthropic from '@anthropic-ai/sdk';
 import PDFDocument from 'pdfkit';
 import { NextRequest } from 'next/server';
+import { auth } from '@/auth';
+import { assertSafeUrl } from '@/lib/ssrfGuard';
+import { readCapped } from '@/lib/cappedFetch';
+
+const MAX_JOB_POSTING_RESPONSE_BYTES = 2 * 1024 * 1024;
 
 const JESSE_BASE = {
   name: 'Jesse Sotomayor',
@@ -444,11 +449,13 @@ function sanitizeLetter(paragraphs: string[]): string[] {
 function isUrl(s: string) { return /^https?:\/\//i.test(s); }
 
 async function fetchJobPosting(url: string): Promise<string> {
+  const safeUrl = await assertSafeUrl(url);
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 12000);
   try {
-    const res = await fetch(url, {
+    const res = await fetch(safeUrl, {
       signal: ctrl.signal,
+      redirect: 'manual',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
@@ -456,7 +463,7 @@ async function fetchJobPosting(url: string): Promise<string> {
       },
     });
     if (!res.ok) throw new Error(`La page a répondu ${res.status}`);
-    const html = await res.text();
+    const html = await readCapped(res, MAX_JOB_POSTING_RESPONSE_BYTES);
     const text = html
       .replace(/<script[\s\S]*?<\/script>/gi, '')
       .replace(/<style[\s\S]*?<\/style>/gi, '')
@@ -488,7 +495,18 @@ function makeStream() {
 // ── Route ────────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-  const { jobPosting, modifications, contractType = 'alternance' } = await req.json();
+  const session = await auth();
+  if (!session?.user?.id) {
+    return new Response(JSON.stringify({ error: 'Non authentifié' }), { status: 401 });
+  }
+
+  let body: { jobPosting?: string; modifications?: unknown; contractType?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ error: 'Corps de requête invalide' }), { status: 400 });
+  }
+  const { jobPosting, modifications, contractType = 'alternance' } = body;
   const isCDI = contractType === 'cdi';
   if (!jobPosting?.trim()) {
     return new Response(JSON.stringify({ error: 'Fiche de poste manquante' }), { status: 400 });
@@ -993,7 +1011,8 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       });
 
     } catch (e: unknown) {
-      await send({ error: e instanceof Error ? e.message : 'Erreur inconnue' });
+      console.error('generate route failed:', e);
+      await send({ error: 'Une erreur est survenue pendant la génération. Réessaie dans un instant.' });
     } finally {
       close();
     }

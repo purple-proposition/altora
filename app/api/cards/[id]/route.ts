@@ -18,7 +18,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!session?.user?.id) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
 
   const { id } = await params;
-  const patch = await req.json();
+  let patch: { id?: unknown; [key: string]: unknown };
+  try {
+    patch = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Corps de requête invalide' }, { status: 400 });
+  }
   const { id: _drop, ...patchData } = patch;
 
   await ensureSchema();
@@ -26,8 +31,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!existing[0]) return NextResponse.json({ error: 'Introuvable' }, { status: 404 });
 
   const merged = { ...(existing[0].data as object), ...patchData };
+  const json = JSON.stringify(merged);
+  if (json.length > 50_000) {
+    return NextResponse.json({ error: 'Données trop volumineuses' }, { status: 400 });
+  }
   await sql`
-    UPDATE cards SET data = ${JSON.stringify(merged)}::jsonb, updated_at = now()
+    UPDATE cards SET data = ${json}::jsonb, updated_at = now()
     WHERE id = ${id} AND user_id = ${session.user.id}
   `;
   return NextResponse.json({ ok: true });

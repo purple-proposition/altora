@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import { assertSafeUrl } from '@/lib/ssrfGuard';
+import { readCapped } from '@/lib/cappedFetch';
+
+const MAX_RESPONSE_BYTES = 2 * 1024 * 1024; // 2MB — plenty for an HTML job posting page
 
 const BROWSER_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -61,13 +66,17 @@ function fromTitleTag(html: string): ParsedOffer | null {
 }
 
 export async function GET(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+
   const url = req.nextUrl.searchParams.get('url');
   if (!url) {
     return NextResponse.json({ error: 'Missing url query param' }, { status: 400 });
   }
 
+  let safeUrl: URL;
   try {
-    new URL(url);
+    safeUrl = await assertSafeUrl(url);
   } catch {
     return NextResponse.json({ error: 'Invalid url' }, { status: 400 });
   }
@@ -76,14 +85,16 @@ export async function GET(req: NextRequest) {
   const timeout = setTimeout(() => controller.abort(), 8000);
 
   try {
-    const response = await fetch(url, { headers: BROWSER_HEADERS, signal: controller.signal });
+    const response = await fetch(safeUrl, { headers: BROWSER_HEADERS, signal: controller.signal, redirect: 'manual' });
     clearTimeout(timeout);
 
-    if (!response.ok) {
+    if (!response.ok || (response.status >= 300 && response.status < 400)) {
+      // redirect: 'manual' surfaces 3xx as opaqueredirect/normal responses without
+      // following them — a redirect to an internal URL is never auto-followed here.
       return NextResponse.json({ title: null, company: null });
     }
 
-    const html = await response.text();
+    const html = await readCapped(response, MAX_RESPONSE_BYTES);
     const result = fromJsonLd(html) || fromOpenGraph(html) || fromTitleTag(html) || { title: null, company: null };
     return NextResponse.json(result);
   } catch {
