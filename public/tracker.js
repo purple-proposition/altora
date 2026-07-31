@@ -1534,6 +1534,33 @@
       renderCalendarMonth();
     });
 
+    // --- Calendar legend popover ---
+
+    const calendarLegendTrigger = document.getElementById('calendar-legend-trigger');
+    const calendarLegendPopup = document.getElementById('calendar-legend-popup');
+
+    function openCalendarLegend() {
+      calendarLegendPopup.classList.remove('hidden');
+      requestAnimationFrame(() => calendarLegendPopup.classList.add('visible'));
+      calendarLegendTrigger.setAttribute('aria-expanded', 'true');
+    }
+    function closeCalendarLegend() {
+      calendarLegendPopup.classList.remove('visible');
+      setTimeout(() => calendarLegendPopup.classList.add('hidden'), OVERLAY_CLOSE_MS);
+      calendarLegendTrigger.setAttribute('aria-expanded', 'false');
+    }
+    calendarLegendTrigger.addEventListener('click', e => {
+      e.stopPropagation();
+      calendarLegendPopup.classList.contains('visible') ? closeCalendarLegend() : openCalendarLegend();
+    });
+    document.addEventListener('click', e => {
+      if (!calendarLegendPopup.classList.contains('visible')) return;
+      if (!e.target.closest('.calendar-legend-trigger-wrap')) closeCalendarLegend();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && calendarLegendPopup.classList.contains('visible')) closeCalendarLegend();
+    });
+
     // --- CV upload + inline preview ---
 
     const cvFileInput = document.getElementById('cv-file-input');

@@ -121,6 +121,17 @@ export default async function TrackerPage() {
               <button type="button" className="calendar-nav-btn" id="calendar-prev" aria-label="Mois précédent"><i data-lucide="chevron-left"></i></button>
               <button type="button" className="calendar-nav-btn" id="calendar-today" aria-label="Aujourd&apos;hui"><i data-lucide="dot"></i></button>
               <button type="button" className="calendar-nav-btn" id="calendar-next" aria-label="Mois suivant"><i data-lucide="chevron-right"></i></button>
+              <span className="calendar-legend-trigger-wrap">
+                <button type="button" className="calendar-nav-btn" id="calendar-legend-trigger" aria-label="Légende des couleurs" aria-expanded="false" aria-controls="calendar-legend-popup"><i data-lucide="circle-help"></i></button>
+                <div className="calendar-legend-popup hidden" id="calendar-legend-popup">
+                  <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--entreprise"></span>Semaine en entreprise</span>
+                  <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--formation"></span>Journée de formation</span>
+                  <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--conges"></span>Congés pédagogique</span>
+                  <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--examen"></span>Examens écrit/oral</span>
+                  <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--examen_oral"></span>Examen oral (convocation)</span>
+                  <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--ferie"></span>Jour férié</span>
+                </div>
+              </span>
             </div>
           </div>
 
@@ -135,15 +146,6 @@ export default async function TrackerPage() {
               <div className="calendar-weekday">Dim</div>
             </div>
             <div className="calendar-weeks" id="calendar-weeks"></div>
-          </div>
-
-          <div className="calendar-legend">
-            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--entreprise"></span>Semaine en entreprise</span>
-            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--formation"></span>Journée de formation</span>
-            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--conges"></span>Congés pédagogique</span>
-            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--examen"></span>Examens écrit/oral</span>
-            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--examen_oral"></span>Examen oral (convocation)</span>
-            <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--ferie"></span>Jour férié</span>
           </div>
         </section>
 
