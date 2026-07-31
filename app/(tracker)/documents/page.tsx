@@ -50,7 +50,7 @@ export default async function DocumentsPage() {
         <div className="app">
           <div className="topbar-sticky">
             <div className="topbar-breadcrumb">
-              <a className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Rocket School</a>
+              <a className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</a>
               <span className="breadcrumb-sep">/</span>
               <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="folder"></i>Mes documents</span>
             </div>
