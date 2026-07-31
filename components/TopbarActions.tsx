@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { INBOX_MESSAGES } from '@/lib/mockInbox';
 
 const NOTIFICATIONS = [
   { icon: 'calendar-clock', text: 'Entretien "Stagiaire en Marketing H/F" demain à 18h00', time: 'Il y a 2h' },
@@ -9,25 +10,23 @@ const NOTIFICATIONS = [
   { icon: 'file-check-2', text: 'Ton CV a bien été importé', time: 'Hier' },
 ];
 
-const INBOX_PREVIEW = {
-  senderName: 'Rocket School',
-  senderEmail: 'contact@rocket-school.eu',
-  avatar: '/rocket-school-logo.jpg',
-  subject: 'Job Dating Marketing & Digital — inscriptions ouvertes',
-  preview: "Rocket School organise un job dating avec une dizaine d'entreprises partenaires le 18 septembre à Lyon. Places limitées, inscris-toi avant le 10 septembre.",
-  time: '09:14',
-};
-
 export default function TopbarActions() {
   const [open, setOpen] = useState<'mail' | 'bell' | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const unreadCount = INBOX_MESSAGES.filter(m => m.unread).length;
 
   useEffect(() => {
-    function onClick(e: MouseEvent) {
+    // mousedown, not click — a same-node 'click' listener races the button's
+    // own onClick handler (whichever fires first is inconsistent across
+    // browsers), which made the popover open only some of the time.
+    // mousedown always fires before the click that follows it, so this
+    // decides purely on inside/outside with no ordering ambiguity, and the
+    // ensuing click still toggles the state normally.
+    function onPointerDown(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(null);
     }
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
   }, []);
 
   useEffect(() => {
@@ -46,21 +45,27 @@ export default function TopbarActions() {
           onClick={() => setOpen(open === 'mail' ? null : 'mail')}
         >
           <i data-lucide="mail"></i>
+          {unreadCount > 0 && <span className="topbar-bell-badge">{unreadCount}</span>}
         </button>
         {open === 'mail' && (
           <div className="topbar-popover">
             <div className="topbar-popover-header">Messagerie</div>
-            <Link href="/inbox" className="inbox-message inbox-message--compact" onClick={() => setOpen(null)}>
-              <img className="inbox-message-avatar" src={INBOX_PREVIEW.avatar} alt={INBOX_PREVIEW.senderName} />
-              <div className="inbox-message-body">
-                <div className="inbox-message-top">
-                  <span className="inbox-message-sender">{INBOX_PREVIEW.senderName}</span>
-                  <span className="inbox-message-time">{INBOX_PREVIEW.time}</span>
-                </div>
-                <span className="inbox-message-subject">{INBOX_PREVIEW.subject}</span>
-                <p className="inbox-message-preview">{INBOX_PREVIEW.preview}</p>
-              </div>
-            </Link>
+            <div className="topbar-message-list">
+              {INBOX_MESSAGES.map((message, i) => (
+                <Link href="/inbox" className="inbox-message inbox-message--compact" onClick={() => setOpen(null)} key={i}>
+                  <img className="inbox-message-avatar" src={message.avatar} alt={message.senderName} />
+                  <div className="inbox-message-body">
+                    <div className="inbox-message-top">
+                      <span className="inbox-message-sender">{message.senderName}</span>
+                      <span className="inbox-message-time">{message.time}</span>
+                    </div>
+                    <span className="inbox-message-subject">{message.subject}</span>
+                    <p className="inbox-message-preview">{message.preview}</p>
+                  </div>
+                  {message.unread && <span className="inbox-message-unread-dot"></span>}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
       </div>

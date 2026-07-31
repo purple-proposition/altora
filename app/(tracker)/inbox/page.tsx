@@ -1,27 +1,6 @@
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
-
-type InboxMessage = {
-  senderName: string;
-  senderEmail: string;
-  avatar: string;
-  subject: string;
-  preview: string;
-  time: string;
-  unread?: boolean;
-};
-
-const MESSAGES: InboxMessage[] = [
-  {
-    senderName: 'Rocket School',
-    senderEmail: 'contact@rocket-school.eu',
-    avatar: '/rocket-school-logo.jpg',
-    subject: 'Job Dating Marketing & Digital — inscriptions ouvertes',
-    preview: "Rocket School organise un job dating avec une dizaine d'entreprises partenaires le 18 septembre à Lyon. Places limitées, inscris-toi depuis ton espace élève avant le 10 septembre pour réserver ton créneau.",
-    time: '09:14',
-    unread: true,
-  },
-];
+import { INBOX_MESSAGES as MESSAGES } from '@/lib/mockInbox';
 
 export default function InboxPage() {
   return (

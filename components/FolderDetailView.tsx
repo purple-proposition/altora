@@ -42,6 +42,7 @@ export default function FolderDetailView({ docs }: { docs: DocFile[] }) {
             <a className="folder-detail-item" href={doc.url} target="_blank" rel="noopener noreferrer" key={doc.url}>
               <div className="doc-thumb-bare">
                 <embed src={doc.url} type="application/pdf" />
+                <div className="doc-thumb-blocker"></div>
               </div>
               <span className="folder-detail-item-name">{doc.filename}</span>
             </a>

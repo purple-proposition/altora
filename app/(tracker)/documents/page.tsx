@@ -20,6 +20,7 @@ function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: string }) {
       <Link href={href} className="doc-thumb-grid">
         <div className="doc-thumb-bare">
           <embed src={doc.url} type="application/pdf" />
+          <div className="doc-thumb-blocker"></div>
         </div>
       </Link>
     );
@@ -31,6 +32,7 @@ function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: string }) {
         {docs.slice(0, 3).map((doc, i) => (
           <div className={`doc-thumb-fan-layer doc-thumb-fan-layer--${i}`} key={doc.url}>
             <embed src={doc.url} type="application/pdf" />
+            <div className="doc-thumb-blocker"></div>
           </div>
         ))}
       </div>
