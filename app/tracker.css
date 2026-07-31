@@ -448,7 +448,7 @@ body {
      leave the popover mispositioned. */
   position: fixed;
   width: 320px;
-  padding: 8px;
+  padding: 24px;
   background: color-mix(in srgb, var(--card-bg) 65%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -471,7 +471,7 @@ body {
 }
 
 .topbar-popover-header {
-  padding: 8px 8px 4px;
+  padding: 0 0 24px;
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
@@ -778,11 +778,11 @@ body {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  min-width: 180px;
+  min-width: 212px;
   background: var(--card-bg);
   border-radius: var(--radius-inner);
   box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-  padding: 8px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -2017,11 +2017,11 @@ legend.field-label { padding: 0; }
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 220px;
+  min-width: 252px;
   background: var(--card-bg);
   border-radius: var(--radius-inner);
   box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-  padding: 8px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 2px;
