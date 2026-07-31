@@ -1,6 +1,7 @@
 import Script from 'next/script';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
+import { assetVersion } from '@/lib/assetVersion';
 
 export default async function DocumentsPage() {
   const session = await auth();
@@ -117,7 +118,7 @@ export default async function DocumentsPage() {
           }
         `}
       </Script>
-      <Script src="/lucide.js" strategy="beforeInteractive" />
+      <Script src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="beforeInteractive" />
       <Script id="documents-icons" strategy="afterInteractive">
         {'lucide.createIcons();'}
       </Script>

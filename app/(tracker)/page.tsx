@@ -1,6 +1,7 @@
 import Script from 'next/script';
 import { auth, signOut } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
+import { assetVersion } from '@/lib/assetVersion';
 
 export default async function TrackerPage() {
   const session = await auth();
@@ -339,8 +340,8 @@ export default async function TrackerPage() {
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{ __html: `window.__ALTORA_CV__ = ${JSON.stringify({ url: cvUrl, filename: cvFilename })};` }}
       />
-      <Script src="/lucide.js" strategy="beforeInteractive" />
-      <Script src="/tracker.js" strategy="afterInteractive" />
+      <Script src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="beforeInteractive" />
+      <Script src={`/tracker.js?v=${assetVersion('tracker.js')}`} strategy="afterInteractive" />
     </>
   );
 }
