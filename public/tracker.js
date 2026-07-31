@@ -1318,9 +1318,9 @@ function renderCalendarMonth() {
       const dayEl = document.createElement('div');
       dayEl.className = 'calendar-day'
         + (!inMonth ? ' calendar-day--muted' : '')
-        + (key === todayKey ? ' calendar-day--today' : '');
-      dayEl.innerHTML = `<span class="calendar-day-number">${day}</span>`
-        + (ev && inMonth ? `<span class="calendar-day-tag calendar-day-tag--${ev.type}">${ev.label}</span>` : '');
+        + (key === todayKey ? ' calendar-day--today' : '')
+        + (ev && inMonth ? ` calendar-day--${ev.type}` : '');
+      dayEl.innerHTML = `<span class="calendar-day-number">${day}</span>`;
       weekEl.appendChild(dayEl);
       cursor.setDate(cursor.getDate() + 1);
     }
