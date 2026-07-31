@@ -41,11 +41,7 @@ export default async function CustomFolderPage({ params }: { params: Promise<{ i
       </div>
 
       <section className="documents-view">
-        <div className="documents-header">
-          <h2 className="documents-title">{folder.name}</h2>
-        </div>
-
-        <FolderDetailView docs={docs} />
+        <FolderDetailView title={folder.name} docs={docs} />
       </section>
     </>
   );

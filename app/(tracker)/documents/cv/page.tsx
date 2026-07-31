@@ -36,11 +36,7 @@ export default async function CvFolderPage() {
       </div>
 
       <section className="documents-view">
-        <div className="documents-header">
-          <h2 className="documents-title">Mes CV</h2>
-        </div>
-
-        <FolderDetailView docs={docs} />
+        <FolderDetailView title="Mes CV" docs={docs} />
       </section>
     </>
   );

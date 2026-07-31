@@ -41,7 +41,7 @@
     // runs. Every internal call goes through this instead of the raw
     // lucide.createIcons(), retrying until the library is actually there.
     function safeCreateIcons() {
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide) window.lucide.createIcons();
       else setTimeout(safeCreateIcons, 50);
     }
 

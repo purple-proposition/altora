@@ -19,11 +19,7 @@ export default function LettresFolderPage() {
       </div>
 
       <section className="documents-view">
-        <div className="documents-header">
-          <h2 className="documents-title">Mes lettres de motivation</h2>
-        </div>
-
-        <FolderDetailView docs={[]} />
+        <FolderDetailView title="Mes lettres de motivation" docs={[]} />
       </section>
     </>
   );

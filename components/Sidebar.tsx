@@ -228,9 +228,14 @@ export default function Sidebar({
             </button>
           </div>
           <div className="sidebar-submenu" id="sidebar-folders-submenu">
-            {folders.length === 0 && foldersLoaded && (
-              <span className="sidebar-submenu-empty">Aucun dossier créé</span>
-            )}
+            <Link href="/documents/cv" className="sidebar-subitem">
+              <i data-lucide="folder"></i>
+              <span className="sidebar-subitem-label">Mes CV</span>
+            </Link>
+            <Link href="/documents/lettres" className="sidebar-subitem">
+              <i data-lucide="folder"></i>
+              <span className="sidebar-subitem-label">Mes lettres de motivation</span>
+            </Link>
             {folders.map(f => (
               <Link key={f.id} href={`/documents/folder/${f.id}`} className="sidebar-subitem" title={f.name}>
                 <i data-lucide="folder"></i>

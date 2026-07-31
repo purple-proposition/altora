@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { DocFile } from './DocThumbGrid';
 
-export default function FolderDetailView({ docs }: { docs: DocFile[] }) {
+export default function FolderDetailView({ title, docs }: { title: string; docs: DocFile[] }) {
   const [sort, setSort] = useState<'alpha' | 'date'>('alpha');
 
   const sorted = [...docs].sort((a, b) => {
@@ -13,8 +13,8 @@ export default function FolderDetailView({ docs }: { docs: DocFile[] }) {
 
   return (
     <>
-      <div className="folder-detail-toolbar">
-        <span className="folder-detail-sort-label">Trier par</span>
+      <div className="documents-header">
+        <h2 className="documents-title">{title}</h2>
         <div className="folder-detail-sort-group">
           <button
             type="button"
