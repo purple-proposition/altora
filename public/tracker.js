@@ -1715,8 +1715,10 @@
     // --- Restore active view on load: ?view= param (cross-page links) wins over
     // the last view saved in localStorage (page refresh), default is Accueil.
 
-    const requestedView = new URLSearchParams(window.location.search).get('view');
-    if (requestedView) {
+    const initialParams = new URLSearchParams(window.location.search);
+    const requestedView = initialParams.get('view');
+    const requestedProfile = initialParams.get('profile') === '1';
+    if (requestedView || requestedProfile) {
       window.history.replaceState({}, '', window.location.pathname + window.location.hash);
     }
     const initialView = requestedView || localStorage.getItem(ACTIVE_VIEW_KEY);
@@ -1724,6 +1726,12 @@
     if (initialView === 'calendar') showCalendarView();
     else if (initialView === 'tasks') showTasksView();
     else showHomeView();
+
+    // The sidebar's profile row is only a real button (that opens this modal
+    // in place) when already on "/" — from any other page it's a plain Link
+    // to "/?view=home&profile=1", so the modal needs to open itself once
+    // that navigation lands here.
+    if (requestedProfile) openProfileModal();
 
   } catch (err) {
     console.error('tracker.js failed to initialize:', err);

@@ -144,7 +144,7 @@ export default function Sidebar({
             <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>
           </button>
         ) : (
-          <Link href="/?view=home" className="sidebar-user">
+          <Link href="/?view=home&profile=1" className="sidebar-user">
             <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
             <span className="sidebar-user-text">
               <span className="sidebar-user-name">{fullName || firstName}</span>
