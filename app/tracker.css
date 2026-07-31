@@ -400,12 +400,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
-  border-radius: 8px;
+  border-radius: var(--radius-input);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -1304,18 +1304,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
   background: none;
   color: var(--text-muted);
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.modal-close .lucide { width: 20px; height: 20px; }
+.modal-close .lucide { width: 16px; height: 16px; }
 
-.modal-close:hover { color: var(--text); }
+.modal-close:hover { background: var(--bg); color: var(--text); }
 
 .modal h3 { margin: 0 24px 12px 0; font-size: 32px; line-height: 1; }
 
@@ -1512,8 +1513,8 @@ legend.field-label { padding: 0; }
   justify-content: center;
   width: 32px;
   height: 32px;
-  border: none;
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
   background: none;
   color: var(--text-muted);
   cursor: pointer;
@@ -1806,7 +1807,7 @@ legend.field-label { padding: 0; }
   width: 32px;
   height: 32px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-input);
   background: var(--card-bg);
   color: var(--text-muted);
   cursor: pointer;
