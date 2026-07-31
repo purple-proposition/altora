@@ -84,9 +84,17 @@
         chips.push(tag);
       }
       if (card.location) {
-        const loc = document.createElement('span');
-        loc.className = 'card-meta-item';
+        // The documented cross-platform "universal" Maps URL — opens the
+        // native Maps app on mobile if installed, Google Maps in the
+        // browser otherwise, without needing to know which the user has.
+        const loc = document.createElement('a');
+        loc.className = 'card-meta-item card-meta-item--link';
+        loc.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(card.location)}`;
+        loc.target = '_blank';
+        loc.rel = 'noopener';
+        loc.title = 'Ouvrir dans Maps';
         loc.append(iconEl('map-pin'), card.location);
+        loc.addEventListener('click', e => e.stopPropagation());
         chips.push(loc);
       }
       if (card.salary) {
@@ -1015,12 +1023,22 @@
       return { title, company };
     }
 
-    let lastAutoTitle = '';
+    let lastAutoTitleBase = '';
+    let lastAutoContract = '';
     let lastAutoCompany = '';
     let lastAutoLocation = '';
     let lastAutoSalary = '';
-    let lastAutoContract = '';
     let lastAutoDescription = '';
+
+    // The contract type reads more naturally folded into the title itself
+    // ("Digital Marketing Executive en CDI") than as a separate pill guess,
+    // so it's composed here instead of going through setContractType — the
+    // manual contract picker in the form is untouched, this only changes
+    // what the URL import auto-fills.
+    function composeTitle(base, contract) {
+      if (!base) return '';
+      return contract ? `${base} en ${contract}` : base;
+    }
 
     // Only overwrites a field if it's still empty or still holds a PREVIOUS
     // auto-filled value — once the user edits a field themselves, later
@@ -1028,9 +1046,13 @@
     // clobber what they typed.
     function applyGuess(guess) {
       if (!guess) return;
-      if (guess.title && (fieldTitle.value.trim() === '' || fieldTitle.value === lastAutoTitle)) {
-        fieldTitle.value = guess.title;
-        lastAutoTitle = guess.title;
+      if (guess.title || guess.contractType) {
+        const currentComposed = composeTitle(lastAutoTitleBase, lastAutoContract);
+        if (fieldTitle.value.trim() === '' || fieldTitle.value === currentComposed) {
+          if (guess.title) lastAutoTitleBase = guess.title;
+          if (guess.contractType) lastAutoContract = guess.contractType;
+          fieldTitle.value = composeTitle(lastAutoTitleBase, lastAutoContract);
+        }
       }
       if (guess.company && (fieldCompany.value.trim() === '' || fieldCompany.value === lastAutoCompany)) {
         fieldCompany.value = guess.company;
@@ -1043,10 +1065,6 @@
       if (guess.salary && (fieldSalary.value.trim() === '' || fieldSalary.value === lastAutoSalary)) {
         fieldSalary.value = guess.salary;
         lastAutoSalary = guess.salary;
-      }
-      if (guess.contractType && (!currentContract || currentContract === lastAutoContract)) {
-        setContractType(guess.contractType);
-        lastAutoContract = guess.contractType;
       }
       if (guess.description && (fieldJobDescription.value.trim() === '' || fieldJobDescription.value === lastAutoDescription)) {
         fieldJobDescription.value = guess.description;
@@ -1251,7 +1269,7 @@
     function openModal(mode, card, presetStatus) {
       form.reset();
       editingId = null;
-      lastAutoTitle = '';
+      lastAutoTitleBase = '';
       lastAutoCompany = '';
       lastAutoLocation = '';
       lastAutoSalary = '';

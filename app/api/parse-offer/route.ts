@@ -42,7 +42,7 @@ async function extractWithAI(text: string): Promise<ExtractedOffer | null> {
     const message = await client.messages.create({
       model: 'claude-haiku-4-5',
       max_tokens: 300,
-      system: 'Tu extrais des informations structurées depuis le texte brut d\'une offre d\'emploi. Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, sans markdown. Si une information est absente, mets null. Le contractType doit être l\'une de ces valeurs exactes si applicable : "CDI", "CDD", "Alternance", "Stage", "Freelance" — sinon null.',
+      system: 'Tu extrais des informations structurées depuis le texte brut d\'une offre d\'emploi. Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, sans markdown. Si une information est absente, mets null. Le titre ne doit jamais contenir de mention de genre ("H/F", "(H/F)", "F/H", "h/f", etc.) — retire-la systématiquement. Le contractType doit être l\'une de ces valeurs exactes si applicable : "CDI", "CDD", "Alternance", "Stage", "Freelance" — sinon null.',
       messages: [{
         role: 'user',
         content: `Extrait le titre du poste, l'entreprise, le lieu, la rémunération et le type de contrat de cette offre :\n\n${text.slice(0, MAX_CHARS_SENT_TO_MODEL)}\n\nRéponds avec exactement ce format : {"title": "...", "company": "...", "location": "...", "salary": "...", "contractType": "..."}`,

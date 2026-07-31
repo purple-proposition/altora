@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
@@ -71,6 +71,20 @@ function GenerateForm() {
       .catch(() => {});
     return () => { cancelled = true; };
   }, [cardId]);
+
+  // Arriving here already carrying a posting (a card's "Générer CV" link,
+  // or a prefilled ?job= link) skips the idle form entirely and starts
+  // generating right away — only someone who lands with nothing typed
+  // still has to press the button themselves.
+  const autoTriggeredRef = useRef(false);
+  useEffect(() => {
+    if (autoTriggeredRef.current) return;
+    if (!jobPosting.trim()) return;
+    if (!cardId && !searchParams.get('job')) return;
+    autoTriggeredRef.current = true;
+    handleGenerate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobPosting, cardId]);
 
   async function handleCopyEmail() {
     if (!email) return;
@@ -241,13 +255,17 @@ function GenerateForm() {
         )}
 
         {state === 'loading' && (
-          <div className="generate-progress-wrap">
-            <div className="generate-progress-label">
-              <span>{step}</span>
-              <span>{progress}%</span>
-            </div>
-            <div className="generate-progress-track">
-              <div className="generate-progress-fill" style={{ width: `${progress}%` }} />
+          <div className="modal-overlay visible" role="dialog" aria-modal="true" aria-label="Génération en cours">
+            <div className="modal generate-loading-modal">
+              <div className="generate-progress-wrap">
+                <div className="generate-progress-label">
+                  <span>{step}</span>
+                  <span>{progress}%</span>
+                </div>
+                <div className="generate-progress-track">
+                  <div className="generate-progress-fill" style={{ width: `${progress}%` }} />
+                </div>
+              </div>
             </div>
           </div>
         )}

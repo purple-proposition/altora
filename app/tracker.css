@@ -183,6 +183,53 @@ body {
   color: var(--text-muted);
 }
 
+.sidebar-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.sidebar-collapse-btn:hover { background: var(--card-bg); color: var(--text); }
+.sidebar-collapse-btn .lucide { width: 16px; height: 16px; }
+
+/* Collapsed: sidebar shrinks from a 2-track to a 1-track span on the same
+   12-column grid the whole app shell already uses, so the content pane
+   reclaims the freed track — no separate pixel width to keep in sync. */
+.sidebar--collapsed { grid-column: 1 / 2; padding: 24px 12px; }
+.app-shell:has(.sidebar--collapsed) .app { grid-column: 2 / 13; }
+
+.sidebar--collapsed .sidebar-brand {
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0 20px;
+}
+.sidebar--collapsed .sidebar-collapse-btn { margin-left: 0; }
+
+.sidebar--collapsed .sidebar-brand-text,
+.sidebar--collapsed .sidebar-nav-label,
+.sidebar--collapsed .sidebar-item-label,
+.sidebar--collapsed .sidebar-item-badge,
+.sidebar--collapsed .sidebar-item-chevron-btn,
+.sidebar--collapsed .sidebar-submenu,
+.sidebar--collapsed .sidebar-user-text,
+.sidebar--collapsed .sidebar-user-chevron {
+  display: none;
+}
+
+.sidebar--collapsed .sidebar-item,
+.sidebar--collapsed .sidebar-user {
+  justify-content: center;
+}
+
 .sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -491,11 +538,15 @@ body {
   overflow-y: auto;
 }
 
-/* No dividers between items on purpose — just a hover highlight per row. */
+/* No dividers between items on purpose — just a hover highlight per row.
+   margin:-8px + padding:8px keeps the icon/text aligned to the popover's
+   own 24px padding (the item's own padding would otherwise push it in an
+   extra 8px) while letting the hover background bleed slightly wider. */
 .topbar-notification-item {
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  margin: 0 -8px;
   padding: 8px;
   border-radius: var(--radius-inner);
   transition: background 0.15s ease;
@@ -522,8 +573,14 @@ body {
   color: var(--text-muted);
 }
 
-.inbox-message--compact {
+/* Doubled up with .inbox-message (equal specificity to that base rule) so
+   this reliably wins regardless of source order and actually clears the
+   card-style border/background .inbox-message carries on the full inbox
+   page — margin:-8px mirrors .topbar-notification-item so the avatar stays
+   aligned to the popover's 24px padding. */
+.inbox-message.inbox-message--compact {
   display: flex;
+  margin: 0 -8px;
   padding: 8px;
   border: none;
   border-radius: var(--radius-inner);
@@ -1073,6 +1130,9 @@ body {
   font-weight: 500;
   color: var(--text-muted);
 }
+
+.card-meta-item--link { text-decoration: none; }
+.card-meta-item--link:hover { color: var(--indigo); text-decoration: underline; }
 
 .card-meta-item .lucide { width: 12px; height: 12px; }
 

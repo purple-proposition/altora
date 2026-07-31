@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+const COLLAPSED_KEY = 'altora-sidebar-collapsed';
 
 export default function Sidebar({
   fullName,
@@ -18,6 +20,23 @@ export default function Sidebar({
   const isHome = pathname === '/';
   const isDocuments = pathname === '/documents';
   const isInbox = pathname === '/inbox';
+
+  // Starts expanded (matching the server-rendered markup) and only reads the
+  // saved preference after mount — reading localStorage in the initial
+  // state would render differently than the server did and trip a
+  // hydration mismatch.
+  const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem(COLLAPSED_KEY) === '1') setCollapsed(true);
+  }, []);
+
+  function toggleCollapsed() {
+    setCollapsed(prev => {
+      const next = !prev;
+      localStorage.setItem(COLLAPSED_KEY, next ? '1' : '0');
+      return next;
+    });
+  }
 
   // This layout (and this Sidebar) stays mounted across client-side
   // navigations between "/", "/documents", "/generate" — Next.js doesn't
@@ -46,16 +65,25 @@ export default function Sidebar({
       }
     }, 50);
     return () => clearInterval(id);
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, collapsed]);
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}`}>
       <div className="sidebar-brand">
         <img className="sidebar-logo" src="/rocket-school-logo.jpg" alt="Rocket School" />
         <span className="sidebar-brand-text">
           <span className="sidebar-brand-name">Rocket School</span>
           {promotion && <span className="sidebar-brand-promotion">{promotion}</span>}
         </span>
+        <button
+          type="button"
+          className="sidebar-collapse-btn"
+          onClick={toggleCollapsed}
+          title={collapsed ? 'Agrandir le menu' : 'Réduire le menu'}
+          aria-label={collapsed ? 'Agrandir le menu' : 'Réduire le menu'}
+        >
+          <i data-lucide={collapsed ? 'panel-left-open' : 'panel-left-close'}></i>
+        </button>
       </div>
 
       <nav className="sidebar-nav">
