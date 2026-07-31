@@ -418,9 +418,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding-bottom: 24px;
   margin-bottom: 24px;
-  border-bottom: 1px solid var(--border);
 }
 
 .toolbar-left {
@@ -810,7 +808,7 @@ body {
   border-radius: var(--radius-inner);
   padding: 12px 16px;
   cursor: grab;
-  border: 1px solid #f5f5f5; /* Tailwind neutral-100, closest to #efefef */
+  border: 1px solid var(--border); /* neutral-200, #e5e5e5 */
   transition: border-color 0.15s ease;
 }
 
