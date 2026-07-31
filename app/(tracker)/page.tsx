@@ -1,6 +1,7 @@
 import Script from 'next/script';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
+import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import { auth, signOut } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 import { assetVersion } from '@/lib/assetVersion';
@@ -31,6 +32,7 @@ export default async function TrackerPage() {
     <>
         <div className="topbar-sticky">
           <div className="topbar-breadcrumb">
+            <SidebarCollapseToggle />
             <button type="button" className="breadcrumb-item breadcrumb-item--link" id="breadcrumb-home-btn"><i data-lucide="home"></i>Accueil</button>
             <span className="breadcrumb-sep">/</span>
             <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i><span id="breadcrumb-active-label">Accueil</span></span>

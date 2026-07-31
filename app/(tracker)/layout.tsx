@@ -2,6 +2,7 @@ import Script from 'next/script';
 import '../tracker.css';
 import { auth } from '@/auth';
 import Sidebar from '@/components/Sidebar';
+import { SidebarCollapseProvider } from '@/components/SidebarCollapseContext';
 import { assetVersion } from '@/lib/assetVersion';
 
 export default async function TrackerLayout({ children }: { children: React.ReactNode }) {
@@ -13,10 +14,12 @@ export default async function TrackerLayout({ children }: { children: React.Reac
 
   return (
     <>
-      <div className="app-shell">
-        <Sidebar fullName={fullName} firstName={firstName} promotion={promotion} />
-        <div className="app">{children}</div>
-      </div>
+      <SidebarCollapseProvider>
+        <div className="app-shell">
+          <Sidebar fullName={fullName} firstName={firstName} promotion={promotion} />
+          <div className="app">{children}</div>
+        </div>
+      </SidebarCollapseProvider>
 
       <div className="grid-overlay" id="grid-overlay"></div>
 

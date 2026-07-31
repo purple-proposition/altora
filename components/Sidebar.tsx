@@ -2,9 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-
-const COLLAPSED_KEY = 'altora-sidebar-collapsed';
+import { useEffect } from 'react';
+import { useSidebarCollapse } from './SidebarCollapseContext';
 
 export default function Sidebar({
   fullName,
@@ -21,22 +20,10 @@ export default function Sidebar({
   const isDocuments = pathname === '/documents';
   const isInbox = pathname === '/inbox';
 
-  // Starts expanded (matching the server-rendered markup) and only reads the
-  // saved preference after mount — reading localStorage in the initial
-  // state would render differently than the server did and trip a
-  // hydration mismatch.
-  const [collapsed, setCollapsed] = useState(false);
-  useEffect(() => {
-    if (localStorage.getItem(COLLAPSED_KEY) === '1') setCollapsed(true);
-  }, []);
-
-  function toggleCollapsed() {
-    setCollapsed(prev => {
-      const next = !prev;
-      localStorage.setItem(COLLAPSED_KEY, next ? '1' : '0');
-      return next;
-    });
-  }
+  // The toggle button itself now lives in the topbar (SidebarCollapseToggle),
+  // shared across pages via context — Sidebar just reads the collapsed state
+  // to apply its own layout class.
+  const { collapsed } = useSidebarCollapse();
 
   // This layout (and this Sidebar) stays mounted across client-side
   // navigations between "/", "/documents", "/generate" — Next.js doesn't
@@ -75,15 +62,6 @@ export default function Sidebar({
           <span className="sidebar-brand-name">Rocket School</span>
           {promotion && <span className="sidebar-brand-promotion">{promotion}</span>}
         </span>
-        <button
-          type="button"
-          className="sidebar-collapse-btn"
-          onClick={toggleCollapsed}
-          title={collapsed ? 'Agrandir le menu' : 'Réduire le menu'}
-          aria-label={collapsed ? 'Agrandir le menu' : 'Réduire le menu'}
-        >
-          <i data-lucide={collapsed ? 'panel-left-open' : 'panel-left-close'}></i>
-        </button>
       </div>
 
       <nav className="sidebar-nav">

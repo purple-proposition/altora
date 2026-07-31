@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
+import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import FolderDetailView from '@/components/FolderDetailView';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
@@ -22,6 +23,7 @@ export default async function CvFolderPage() {
     <>
       <div className="topbar-sticky">
         <div className="topbar-breadcrumb">
+          <SidebarCollapseToggle />
           <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
           <span className="breadcrumb-sep">/</span>
           <Link className="breadcrumb-item breadcrumb-item--link" href="/documents"><i data-lucide="folder"></i>Mes documents</Link>
