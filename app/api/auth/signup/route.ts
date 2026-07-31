@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { sql, ensureSchema } from '@/lib/db';
+import { rateLimit, clientIp } from '@/lib/rateLimit';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -11,6 +12,10 @@ function capString(v: unknown, max: number): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  if (!rateLimit(`signup:${clientIp(req)}`, 5, 10 * 60_000)) {
+    return NextResponse.json({ error: 'Trop de tentatives, réessaie dans quelques minutes.' }, { status: 429 });
+  }
+
   let body: { email?: unknown; password?: unknown; name?: unknown; school?: unknown; promotion?: unknown };
   try {
     body = await req.json();

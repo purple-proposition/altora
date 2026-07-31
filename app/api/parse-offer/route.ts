@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { assertSafeUrl } from '@/lib/ssrfGuard';
 import { readCapped } from '@/lib/cappedFetch';
+import { rateLimit } from '@/lib/rateLimit';
 
 const MAX_RESPONSE_BYTES = 2 * 1024 * 1024; // 2MB — plenty for an HTML job posting page
 
@@ -68,6 +69,10 @@ function fromTitleTag(html: string): ParsedOffer | null {
 export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+
+  if (!rateLimit(`parse-offer:${session.user.id}`, 20, 60 * 60_000)) {
+    return NextResponse.json({ error: 'Trop de requêtes, réessaie plus tard.' }, { status: 429 });
+  }
 
   const url = req.nextUrl.searchParams.get('url');
   if (!url) {

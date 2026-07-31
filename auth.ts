@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { sql, ensureSchema } from './lib/db';
+import { rateLimit } from './lib/rateLimit';
 import authConfig from './auth.config';
 
 // A bcrypt hash of a random, unguessable value — used to pay the same
@@ -21,6 +22,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = (credentials?.email as string || '').trim().toLowerCase();
         const password = credentials?.password as string || '';
         if (!email || !password) return null;
+
+        // Throttle per email so credential-stuffing against one account can't
+        // run unbounded (indistinguishable from a wrong password to the caller).
+        if (!rateLimit(`login:${email}`, 10, 15 * 60_000)) return null;
 
         await ensureSchema();
         const rows = await sql`SELECT id, email, password_hash, name, school, promotion FROM users WHERE email = ${email}`;

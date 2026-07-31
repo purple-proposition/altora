@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server';
 import { auth } from '@/auth';
 import { assertSafeUrl } from '@/lib/ssrfGuard';
 import { readCapped } from '@/lib/cappedFetch';
+import { rateLimit } from '@/lib/rateLimit';
 
 const MAX_JOB_POSTING_RESPONSE_BYTES = 2 * 1024 * 1024;
 
@@ -498,6 +499,12 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) {
     return new Response(JSON.stringify({ error: 'Non authentifié' }), { status: 401 });
+  }
+
+  // This route calls Claude and renders PDFs — expensive enough to be worth
+  // throttling per user, separately from the cheaper parse-offer lookup.
+  if (!rateLimit(`generate:${session.user.id}`, 10, 60 * 60_000)) {
+    return new Response(JSON.stringify({ error: 'Trop de générations, réessaie dans une heure.' }), { status: 429 });
   }
 
   let body: { jobPosting?: string; modifications?: unknown; contractType?: string };
