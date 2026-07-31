@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSidebarCollapse } from './SidebarCollapseContext';
+
+type GenerationSummary = { id: string; company: string; poste: string; createdAt: string };
 
 export default function Sidebar({
   fullName,
@@ -24,6 +26,27 @@ export default function Sidebar({
   // shared across pages via context — Sidebar just reads the collapsed state
   // to apply its own layout class.
   const { collapsed } = useSidebarCollapse();
+
+  // The generated-CVs list is only worth fetching once someone actually
+  // opens the submenu — most visits never touch it.
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [history, setHistory] = useState<GenerationSummary[]>([]);
+  const isGeneratePage = pathname === '/generate';
+
+  function toggleHistory() {
+    setHistoryOpen(prev => {
+      const next = !prev;
+      if (next && !historyLoaded) {
+        setHistoryLoaded(true);
+        fetch('/api/generations')
+          .then(res => (res.ok ? res.json() : null))
+          .then(data => { if (data?.generations) setHistory(data.generations); })
+          .catch(() => {});
+      }
+      return next;
+    });
+  }
 
   // This layout (and this Sidebar) stays mounted across client-side
   // navigations between "/", "/documents", "/generate" — Next.js doesn't
@@ -124,7 +147,35 @@ export default function Sidebar({
 
         <span className="sidebar-nav-label sidebar-nav-label--group">Outils</span>
 
-        <Link href="/generate" className="sidebar-item"><i data-lucide="file-text"></i><span className="sidebar-item-label">Générer un CV</span></Link>
+        <div className={`sidebar-item-group${historyOpen ? ' expanded' : ''}`}>
+          <div className={`sidebar-item${isGeneratePage ? ' sidebar-item--active' : ''}`}>
+            <Link href="/generate" className="sidebar-item-link-inner">
+              <i data-lucide="file-text"></i>
+              <span className="sidebar-item-label">Générer un CV</span>
+            </Link>
+            <button
+              type="button"
+              className="sidebar-item-chevron-btn"
+              onClick={toggleHistory}
+              aria-expanded={historyOpen}
+              aria-controls="sidebar-generate-submenu"
+              aria-label="Afficher les CV générés"
+            >
+              <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+            </button>
+          </div>
+          <div className="sidebar-submenu" id="sidebar-generate-submenu">
+            {history.length === 0 && historyLoaded && (
+              <span className="sidebar-submenu-empty">Aucun CV généré</span>
+            )}
+            {history.map(g => (
+              <Link key={g.id} href={`/generate?historyId=${g.id}`} className="sidebar-subitem" title={[g.poste, g.company].filter(Boolean).join(' chez ')}>
+                <i data-lucide="file-text"></i>
+                <span className="sidebar-subitem-label">{[g.poste, g.company].filter(Boolean).join(' chez ') || 'CV généré'}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
 
         <span className="sidebar-nav-label sidebar-nav-label--group">Espace</span>
 

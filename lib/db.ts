@@ -54,4 +54,21 @@ async function runSchema() {
     )
   `;
   await sql`CREATE INDEX IF NOT EXISTS folders_user_id_idx ON folders(user_id)`;
+  await sql`
+    CREATE TABLE IF NOT EXISTS generations (
+      id TEXT PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      card_id TEXT REFERENCES cards(id) ON DELETE SET NULL,
+      company TEXT NOT NULL DEFAULT '',
+      poste TEXT NOT NULL DEFAULT '',
+      contract_type TEXT NOT NULL DEFAULT 'alternance',
+      job_description TEXT NOT NULL DEFAULT '',
+      cv_url TEXT NOT NULL,
+      lettre_url TEXT NOT NULL,
+      analysis JSONB NOT NULL,
+      email JSONB,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `;
+  await sql`CREATE INDEX IF NOT EXISTS generations_user_id_idx ON generations(user_id)`;
 }

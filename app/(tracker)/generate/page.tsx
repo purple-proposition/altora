@@ -30,6 +30,7 @@ export default function GeneratePage() {
 
 function GenerateForm() {
   const searchParams = useSearchParams();
+  const historyId = searchParams.get('historyId');
   const cardId = searchParams.get('cardId');
   const [jobPosting, setJobPosting] = useState(() => searchParams.get('job') ?? '');
   const [usingStoredDescription, setUsingStoredDescription] = useState(false);
@@ -38,6 +39,7 @@ function GenerateForm() {
   const [state, setState] = useState<State>('idle');
   const [error, setError] = useState('');
   const [duration, setDuration] = useState(0);
+  const [generatedAt, setGeneratedAt] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState('');
   const [cvUrl, setCvUrl] = useState('');
@@ -47,6 +49,7 @@ function GenerateForm() {
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState<{ to: string; objet: string; corps: string } | null>(null);
   const [emailCopied, setEmailCopied] = useState(false);
+  const [poste, setPoste] = useState('');
 
   // Icons here are React-rendered (not the DOM tracker.js writes directly to),
   // so the shared layout's one-time icon pass can miss ones that only show up
@@ -60,7 +63,7 @@ function GenerateForm() {
   // import modal) — reuse it here instead of asking the user to paste it
   // again or re-fetching a page that might now be gone/blocked.
   useEffect(() => {
-    if (!cardId) return;
+    if (!cardId || historyId) return;
     let cancelled = false;
     fetch(`/api/cards/${encodeURIComponent(cardId)}`)
       .then(res => (res.ok ? res.json() : null))
@@ -71,21 +74,55 @@ function GenerateForm() {
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [cardId]);
+  }, [cardId, historyId]);
+
+  // Reopening a past generation from the sidebar history — restore the full
+  // result view straight from storage instead of regenerating anything. The
+  // job posting/contract type come back too, so "Appliquer" (below) still
+  // has what it needs to re-run with modifications.
+  useEffect(() => {
+    if (!historyId) return;
+    let cancelled = false;
+    fetch(`/api/generations/${encodeURIComponent(historyId)}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(record => {
+        if (cancelled || !record) return;
+        setJobPosting(record.jobDescription || '');
+        setContractType(record.contractType === 'cdi' ? 'cdi' : 'alternance');
+        setCvUrl(record.cvUrl);
+        setLettreUrl(record.lettreUrl);
+        setAnalysis({
+          keywords: record.analysis?.keywords ?? [],
+          adjustments: record.analysis?.adjustments ?? [],
+          missing: record.analysis?.missing ?? [],
+          atsScore: record.analysis?.atsScore ?? 0,
+          atsImprovements: record.analysis?.atsImprovements ?? [],
+        });
+        setCompany(record.company || '');
+        setPoste(record.poste || '');
+        setEmail(record.email || null);
+        setGeneratedAt(record.createdAt || null);
+        setState('done');
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [historyId]);
 
   // Arriving here already carrying a posting (a card's "Générer CV" link,
   // or a prefilled ?job= link) skips the idle form entirely and starts
   // generating right away — only someone who lands with nothing typed
-  // still has to press the button themselves.
+  // still has to press the button themselves. A history reopen is handled
+  // entirely by the effect above and must never also trigger a fresh run.
   const autoTriggeredRef = useRef(false);
   useEffect(() => {
+    if (historyId) return;
     if (autoTriggeredRef.current) return;
     if (!jobPosting.trim()) return;
     if (!cardId && !searchParams.get('job')) return;
     autoTriggeredRef.current = true;
     handleGenerate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobPosting, cardId]);
+  }, [jobPosting, cardId, historyId]);
 
   async function handleCopyEmail() {
     if (!email) return;
@@ -145,19 +182,41 @@ function GenerateForm() {
               const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
               return URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
             };
-            setCvUrl(toUrl(data.cv));
-            setLettreUrl(toUrl(data.lettre));
-            setAnalysis({
+            const doneAnalysis: Analysis = {
               keywords: data.keywords ?? [],
               adjustments: data.adjustments ?? [],
               missing: data.missing ?? [],
               atsScore: data.atsScore ?? 0,
               atsImprovements: data.atsImprovements ?? [],
-            });
+            };
+            setCvUrl(toUrl(data.cv));
+            setLettreUrl(toUrl(data.lettre));
+            setAnalysis(doneAnalysis);
             setCompany(data.company ?? '');
+            setPoste(data.poste ?? '');
             setEmail(data.email ?? null);
+            setGeneratedAt(null);
             setDuration(Math.round((Date.now() - t0) / 1000));
             setState('done');
+
+            // Persisted so the sidebar history can list it and reopen the
+            // exact same result later — best-effort, a failure here shouldn't
+            // block the user from seeing/downloading what was just generated.
+            fetch('/api/generations', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                cardId,
+                company: data.company ?? '',
+                poste: data.poste ?? '',
+                contractType,
+                jobDescription: jobPosting,
+                cv: data.cv,
+                lettre: data.lettre,
+                analysis: doneAnalysis,
+                email: data.email ?? null,
+              }),
+            }).catch(() => {});
           }
         }
       }
@@ -168,14 +227,16 @@ function GenerateForm() {
   }
 
   function handleReset() {
-    if (cvUrl) URL.revokeObjectURL(cvUrl);
-    if (lettreUrl) URL.revokeObjectURL(lettreUrl);
+    if (cvUrl && cvUrl.startsWith('blob:')) URL.revokeObjectURL(cvUrl);
+    if (lettreUrl && lettreUrl.startsWith('blob:')) URL.revokeObjectURL(lettreUrl);
     setCvUrl(''); setLettreUrl('');
     setAnalysis(EMPTY_ANALYSIS);
     setModifications('');
     setCompany('');
+    setPoste('');
     setEmail(null);
     setEmailCopied(false);
+    setGeneratedAt(null);
     setJobPosting('');
     setProgress(0); setStep('');
     setState('idle');
@@ -274,7 +335,14 @@ function GenerateForm() {
 
         {state === 'done' && (
           <div>
-            <p className="generate-meta">Généré en {duration}s</p>
+            <p className="generate-meta">
+              {(poste || company) && (
+                <span className="generate-meta-title">{[poste, company].filter(Boolean).join(' chez ')} — </span>
+              )}
+              {generatedAt
+                ? `Généré le ${new Date(generatedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`
+                : `Généré en ${duration}s`}
+            </p>
 
             {analysis.atsScore > 0 && (
               <div className={`ats-score-card ats-score-card--${scoreTone}`}>

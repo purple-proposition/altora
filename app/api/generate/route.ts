@@ -1001,6 +1001,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         cv: cvBuf.toString('base64'),
         lettre: lettreBuf.toString('base64'),
         company: parsed.lettre.company ?? '',
+        poste: parsed.lettre.poste ?? '',
         email: emailData,
         keywords: parsed.keywords ?? [],
         adjustments: parsed.adjustments ?? [],
