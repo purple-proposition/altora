@@ -12,6 +12,7 @@
     "@neondatabase/serverless": "^1.1.0",
     "@vercel/blob": "^2.6.1",
     "bcryptjs": "^3.0.3",
+    "geist": "^1.7.2",
     "next": "^15.3.0",
     "next-auth": "^5.0.0-beta.32",
     "pdfkit": "^0.15.1"

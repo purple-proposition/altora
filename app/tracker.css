@@ -99,7 +99,7 @@ body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-weight: 500;
   background: var(--bg);
   color: var(--text);
@@ -167,11 +167,17 @@ body {
 .sidebar-brand-name {
   font-weight: 500;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text);
 }
 
 .sidebar-brand-promotion {
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
 }
@@ -186,6 +192,9 @@ body {
 
 .sidebar-nav-label {
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -204,6 +213,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   padding: 8px 8px;
   border-radius: 12px;
   cursor: pointer;
@@ -249,6 +261,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   padding: 8px 8px;
   border-radius: 12px;
   cursor: pointer;
@@ -298,6 +313,9 @@ body {
 
 .sidebar-user-name {
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text);
   white-space: nowrap;
@@ -307,6 +325,9 @@ body {
 
 .sidebar-user-email {
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -347,6 +368,8 @@ body {
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text-muted);
 }
 
@@ -410,6 +433,8 @@ body {
   font-size: 16px;
   font-weight: 500;
   line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text);
 }
 
@@ -424,6 +449,9 @@ body {
   background: var(--bg);
   color: var(--text-muted);
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
 }
 
@@ -463,6 +491,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text);
   width: 0;
   opacity: 0;
@@ -504,6 +535,9 @@ body {
   margin-bottom: 8px;
   color: var(--text-muted);
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
 }
 
@@ -567,6 +601,9 @@ body {
   font-family: inherit;
   font-weight: inherit;
   font-size: 1em;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   letter-spacing: inherit;
   cursor: pointer;
   border-radius: 8px;
@@ -620,6 +657,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 16px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   cursor: pointer;
   transition: background 0.15s ease;
 }
@@ -640,6 +680,9 @@ body {
   border-radius: var(--radius-pill);
   font-weight: 500;
   font-size: 0.8em;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   margin: 0 8px;
 }
 
@@ -675,6 +718,9 @@ body {
   border-radius: var(--radius-inner);
   font-weight: 500;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
 }
 
 .column-header .lucide { width: 16px; height: 16px; }
@@ -683,6 +729,9 @@ body {
 
 .column-header-count {
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   opacity: 0.75;
 }
@@ -709,6 +758,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   cursor: pointer;
   overflow: hidden;
   opacity: 0;
@@ -769,12 +821,16 @@ body {
 .card-heading {
   font-size: 14px;
   line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   margin-bottom: 8px;
 }
 
 .card-title {
   font-weight: 500;
   line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
 }
 
 .card-heading-sep {
@@ -799,6 +855,9 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--indigo);
   text-decoration: none;
 }
@@ -820,6 +879,9 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
 }
@@ -834,6 +896,9 @@ body {
 
 .card-meta-tag {
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
   background: var(--bg);
@@ -846,6 +911,9 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
 }
@@ -857,6 +925,9 @@ body {
   align-items: center;
   width: fit-content;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--green);
   background: var(--green-tint);
@@ -870,6 +941,9 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
   margin-bottom: 8px;
@@ -891,6 +965,9 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
 }
@@ -940,6 +1017,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
@@ -982,6 +1062,9 @@ body {
 
 .profile-name {
   font-size: 20px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text);
 }
@@ -990,6 +1073,9 @@ body {
   display: inline-flex;
   align-items: center;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--indigo);
   background: var(--indigo-tint);
@@ -999,11 +1085,17 @@ body {
 
 .profile-email {
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text-muted);
 }
 
 .profile-promotion {
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text-muted);
 }
 
@@ -1026,6 +1118,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   cursor: pointer;
   transition: border-color 0.15s ease;
 }
@@ -1043,6 +1138,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   padding: 8px 0 0;
   margin-top: 16px;
   cursor: pointer;
@@ -1081,6 +1179,9 @@ body {
   padding: 4px 12px;
   border-radius: var(--radius-pill);
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   margin-bottom: 12px;
 }
@@ -1096,6 +1197,8 @@ body {
   margin: 0 24px 16px 0;
   font-size: 24px;
   line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
 }
 
 .detail-company {
@@ -1118,6 +1221,9 @@ body {
 .detail-label {
   display: block;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
   margin-bottom: 8px;
@@ -1149,6 +1255,9 @@ body {
   background: var(--bg);
   color: var(--text-muted);
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
 }
 .detail-source-pill svg { flex-shrink: 0; border-radius: 4px; }
@@ -1229,6 +1338,9 @@ body {
 .modal form label {
   display: block;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
   margin-bottom: 12px;
@@ -1245,6 +1357,9 @@ body {
   border: 1px solid var(--border);
   background: var(--card-bg);
   font-size: 16px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-family: inherit;
   color: var(--text);
   transition: border-color 0.15s ease;
@@ -1266,6 +1381,9 @@ body {
 .field-label {
   display: block;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
   margin-bottom: 8px;
@@ -1286,6 +1404,9 @@ body {
   border: 1.5px solid transparent;
   font-weight: 500;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.15s ease, filter 0.15s ease;
@@ -1319,6 +1440,9 @@ body {
   color: var(--text-muted);
   font-weight: 500;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.15s ease, filter 0.15s ease;
@@ -1413,6 +1537,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   padding: 4px 0;
   cursor: pointer;
 }
@@ -1436,6 +1563,9 @@ body {
   color: var(--text-muted);
   font-weight: 500;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.15s ease, filter 0.15s ease;
@@ -1463,6 +1593,9 @@ body {
   border-radius: var(--radius-pill);
   padding: 12px 16px;
   font-size: 16px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s ease, filter 0.15s ease;
@@ -1565,6 +1698,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   text-align: left;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -1612,6 +1748,9 @@ body {
   font-family: inherit;
   font-weight: 500;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   text-align: left;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
@@ -1643,6 +1782,9 @@ body {
   align-items: center;
   gap: 8px;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
   text-decoration: none;
@@ -1689,6 +1831,9 @@ body {
   padding: 4px 8px;
   border-radius: var(--radius-pill);
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   background: var(--bg);
   color: var(--text-muted);
@@ -1710,6 +1855,8 @@ body {
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -1733,6 +1880,9 @@ body {
 }
 .calendar-day--muted { background: var(--bg); }
 .calendar-day-number { align-self: center; font-size: 12px; font-weight: 500; color: var(--text); }
+line-height: 1;
+text-box-trim: trim-both;
+text-box-edge: cap alphabetic;
 .calendar-day--muted .calendar-day-number { color: var(--text-muted); }
 .calendar-day--today { box-shadow: inset 0 0 0 2px var(--indigo); }
 .calendar-day--today .calendar-day-number { color: var(--indigo); font-weight: 600; }
@@ -1785,9 +1935,15 @@ body {
 }
 .folder-card-header .lucide { width: 16px; height: 16px; color: var(--text-muted); }
 .folder-card-name { font-size: 14px; font-weight: 600; color: var(--text); }
+line-height: 1;
+text-box-trim: trim-both;
+text-box-edge: cap alphabetic;
 .folder-card-count {
   margin-left: auto;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   color: var(--text-muted);
   background: var(--bg);
@@ -1811,6 +1967,9 @@ body {
   color: var(--text);
   text-decoration: none;
   font-size: 14px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   font-weight: 500;
   transition: background 0.15s ease;
 }
@@ -1823,5 +1982,8 @@ body {
   padding: 20px 12px;
   margin: 0;
   font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text-muted);
 }
