@@ -137,8 +137,6 @@ export default function Sidebar({
       </div>
 
       <nav className="sidebar-nav">
-        <span className="sidebar-nav-label">Suivi</span>
-
         {isHome ? (
           <button type="button" className="sidebar-item sidebar-item--active" id="sidebar-home-btn">
             <i data-lucide="home"></i>
@@ -195,8 +193,6 @@ export default function Sidebar({
           </Link>
         )}
 
-        <span className="sidebar-nav-label sidebar-nav-label--group">Outils</span>
-
         <div className={`sidebar-item-group${historyOpen ? ' expanded' : ''}`}>
           <div className={`sidebar-item${isGeneratePage ? ' sidebar-item--active' : ''}`}>
             <Link href="/generate" className="sidebar-item-link-inner">
@@ -226,8 +222,6 @@ export default function Sidebar({
             ))}
           </div>
         </div>
-
-        <span className="sidebar-nav-label sidebar-nav-label--group">Espace</span>
 
         <div className={`sidebar-item-group${foldersOpen ? ' expanded' : ''}`}>
           <div className={`sidebar-item${isDocuments ? ' sidebar-item--active' : ''}`}>

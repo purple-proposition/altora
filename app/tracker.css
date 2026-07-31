@@ -2021,14 +2021,29 @@ legend.field-label { padding: 0; }
   .sidebar--collapsed { width: 280px; padding: 24px; }
   .sidebar--collapsed .sidebar-brand-text,
   .sidebar--collapsed .sidebar-nav-label,
-  .sidebar--collapsed .sidebar-item-label,
-  .sidebar--collapsed .sidebar-user-text { opacity: 1; pointer-events: auto; }
+  .sidebar--collapsed .sidebar-user-text {
+    opacity: 1;
+    min-width: auto;
+    pointer-events: auto;
+  }
+  .sidebar--collapsed .sidebar-item-label {
+    flex: 1;
+    opacity: 1;
+    min-width: auto;
+    pointer-events: auto;
+  }
   .sidebar--collapsed .sidebar-item-badge { display: inline-flex; }
   .sidebar--collapsed .sidebar-item-chevron-btn { display: flex; }
   .sidebar--collapsed .sidebar-user-chevron { display: inline; }
   .sidebar--collapsed .sidebar-item-group.expanded .sidebar-submenu { display: flex; }
   .sidebar--collapsed .sidebar-item,
-  .sidebar--collapsed .sidebar-user { justify-content: flex-start; }
+  .sidebar--collapsed .sidebar-user {
+    width: 100%;
+    height: auto;
+    padding: 8px 8px;
+    justify-content: flex-start;
+  }
+  .sidebar--collapsed .sidebar-brand { justify-content: flex-start; }
   .sidebar--collapsed .sidebar-item-link-inner { flex: 1; justify-content: flex-start; }
 
   .sidebar-mobile-backdrop {
