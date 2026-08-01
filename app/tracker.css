@@ -3145,18 +3145,22 @@ legend.field-label { padding: 0; }
 }
 
 .method-card { display: flex; flex-direction: column; gap: 8px; }
-.method-card--intro {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  padding: 16px;
-}
+
+/* "C'est quoi un ATS ?" stays plain, full-width text — only the 4
+   numbered cards below it get a frame (see .method-explain-grid). */
+.method-card--intro { padding: 0; }
 
 .method-explain-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-top: 16px;
+}
+.method-explain-grid .method-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  padding: 16px;
 }
 @media (max-width: 720px) {
   .method-explain-grid { grid-template-columns: 1fr; }
@@ -3165,18 +3169,7 @@ legend.field-label { padding: 0; }
 /* --- ATS Booster intro screen (before the job-posting form) --- */
 
 .generate-intro { display: flex; flex-direction: column; gap: 24px; }
-.method-card--intro-standalone {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: 24px;
-}
-.method-card--intro-standalone .method-card--intro {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin-bottom: 8px;
-}
+.method-card--intro-standalone { padding: 0; }
 .generate-intro-cta { width: 100%; padding: 16px 24px; font-size: 15px; }
 
 .method-card-head { display: flex; align-items: center; gap: 8px; }
