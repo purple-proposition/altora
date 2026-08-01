@@ -252,6 +252,7 @@ body {
 
 .sidebar--collapsed .sidebar-item-link-inner {
   flex: 0;
+  gap: 0;
   justify-content: center;
 }
 
