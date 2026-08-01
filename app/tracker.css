@@ -2147,6 +2147,20 @@ legend.field-label { padding: 0; }
   .modal { grid-column: auto; width: 100%; max-width: 420px; padding: 24px; }
 }
 
+/* --- Route loading skeleton (app/(tracker)/loading.tsx) --- */
+
+.route-skeleton-bar {
+  height: 16px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--text-muted) 16%, transparent);
+  animation: route-skeleton-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes route-skeleton-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 /* --- Grid overlay (toggle with "G") --- */
 
 .grid-overlay {

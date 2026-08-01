@@ -39,6 +39,10 @@ export default function Sidebar({
   // every other page (and the first paint on load).
   const [todoCount, setTodoCount] = useState<number | null>(null);
   useEffect(() => {
+    // On home, tracker.js drives the badge live off its own in-memory board
+    // (via #sidebar-tasks-count) — refetching here too would be a second,
+    // redundant DB round-trip on the one page that visits most often.
+    if (isHome) return;
     fetch('/api/cards')
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
@@ -46,7 +50,7 @@ export default function Sidebar({
         setTodoCount(data.cards.filter((c: { status?: string }) => c.status === 'todo').length);
       })
       .catch(() => {});
-  }, [pathname]);
+  }, [pathname, isHome]);
 
   const unreadCount = INBOX_MESSAGES.filter(m => m.unread).length;
 
