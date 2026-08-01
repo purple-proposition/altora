@@ -253,7 +253,7 @@ function GenerateForm() {
         </div>
       </div>
 
-      <section className="generate-view">
+      <section className={`generate-view${state === 'done' ? ' generate-view--wide' : ''}`}>
         <div className="documents-header">
           <h2 className="documents-title">ATS Booster</h2>
         </div>
@@ -386,7 +386,7 @@ function GenerateForm() {
         )}
 
         {state === 'done' && (
-          <div>
+          <div className="generate-dashboard">
             <p className="generate-meta">
               {(poste || company) && (
                 <span className="generate-meta-title">{[poste, company].filter(Boolean).join(' chez ')} — </span>
@@ -396,29 +396,38 @@ function GenerateForm() {
                 : `Généré en ${duration}s`}
             </p>
 
-            {analysis.atsScore > 0 && (
-              <div className={`ats-score-card ats-score-card--${scoreTone}`}>
-                <div className="ats-score-value">
-                  <div className="ats-score-number">{analysis.atsScore}</div>
-                  <div className="ats-score-suffix">/ 100</div>
-                </div>
-                {analysis.atsImprovements.length > 0 && (
-                  <div>
-                    <span className="field-label">Axes d&apos;amélioration</span>
-                    <ul className="generate-list">
-                      {analysis.atsImprovements.map((item, i) => <li key={i}>{item}</li>)}
-                    </ul>
+            <div className="dash-row">
+              {analysis.atsScore > 0 && (
+                <div className={`dash-tile dash-tile--score ats-score-card--${scoreTone}`}>
+                  <div className="ats-score-value">
+                    <div className="ats-score-number">{analysis.atsScore}</div>
+                    <div className="ats-score-suffix">/ 100</div>
                   </div>
-                )}
-              </div>
-            )}
+                  <div className="dash-tile-body">
+                    <span className="dash-tile-title">Score ATS</span>
+                    {analysis.atsImprovements.length > 0 && (
+                      <ul className="generate-list">
+                        {analysis.atsImprovements.map((item, i) => <li key={i}>{item}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              )}
 
-            <div className="generate-downloads">
-              <a className="btn-primary" href={cvUrl} download={`Jesse_Sotomayor_CV_${normalizeFilename(company)}.pdf`}>
-                <i data-lucide="download"></i> CV.pdf
+              <a className="dash-tile dash-tile--download" href={cvUrl} download={`Jesse_Sotomayor_CV_${normalizeFilename(company)}.pdf`}>
+                <span className="dash-tile-icon"><i data-lucide="file-text"></i></span>
+                <span className="dash-tile-body">
+                  <span className="dash-tile-title">Télécharger le CV</span>
+                  <span className="dash-tile-subtitle">CV.pdf</span>
+                </span>
               </a>
-              <a className="btn-primary" href={lettreUrl} download={`Jesse_Sotomayor_Lettre_${normalizeFilename(company)}.pdf`}>
-                <i data-lucide="download"></i> Lettre.pdf
+
+              <a className="dash-tile dash-tile--download" href={lettreUrl} download={`Jesse_Sotomayor_Lettre_${normalizeFilename(company)}.pdf`}>
+                <span className="dash-tile-icon"><i data-lucide="mail"></i></span>
+                <span className="dash-tile-body">
+                  <span className="dash-tile-title">Télécharger la lettre</span>
+                  <span className="dash-tile-subtitle">Lettre.pdf</span>
+                </span>
               </a>
             </div>
 
@@ -442,51 +451,53 @@ function GenerateForm() {
               </button>
             )}
 
-            {email && (email.objet || email.corps) && (
-              <div className="generate-section">
-                <div className="generate-section-header">
-                  <span className="field-label">Email d&apos;envoi</span>
-                  <button type="button" className="btn-secondary generate-copy-btn" onClick={handleCopyEmail}>
-                    {emailCopied ? '✓ Copié' : 'Copier'}
-                  </button>
-                </div>
-                <div className="generate-email-block">
-                  {email.to
-                    ? <>À : {email.to}{'\n'}</>
-                    : <>À : non détecté{'\n'}</>}
-                  Objet : {email.objet}{'\n\n'}{email.corps}
-                </div>
-              </div>
-            )}
-
-            <div className="generate-section">
-              {analysis.keywords.length > 0 && (
-                <div className="generate-subsection">
-                  <span className="field-label">Mots-clés ATS intégrés</span>
-                  <div className="generate-pill-row">
-                    {analysis.keywords.map((k, i) => <span key={i} className="card-meta-tag">{k}</span>)}
+            <div className="dash-grid">
+              <div className="dash-card">
+                {analysis.keywords.length > 0 && (
+                  <div className="generate-subsection">
+                    <span className="field-label">Mots-clés ATS intégrés</span>
+                    <div className="generate-pill-row">
+                      {analysis.keywords.map((k, i) => <span key={i} className="card-meta-tag">{k}</span>)}
+                    </div>
                   </div>
-                </div>
-              )}
-              {analysis.adjustments.length > 0 && (
-                <div className="generate-subsection">
-                  <span className="field-label">Ajustements réalisés</span>
-                  <ul className="generate-list">
-                    {analysis.adjustments.map((a, i) => <li key={i}>{a}</li>)}
-                  </ul>
-                </div>
-              )}
-              {analysis.missing.length > 0 && (
-                <div className="generate-subsection">
-                  <span className="field-label">Compétences non couvertes</span>
-                  <ul className="generate-list generate-list--muted">
-                    {analysis.missing.map((m, i) => <li key={i}>{m}</li>)}
-                  </ul>
+                )}
+                {analysis.adjustments.length > 0 && (
+                  <div className="generate-subsection">
+                    <span className="field-label">Ajustements réalisés</span>
+                    <ul className="generate-list">
+                      {analysis.adjustments.map((a, i) => <li key={i}>{a}</li>)}
+                    </ul>
+                  </div>
+                )}
+                {analysis.missing.length > 0 && (
+                  <div className="generate-subsection">
+                    <span className="field-label">Compétences non couvertes</span>
+                    <ul className="generate-list generate-list--muted">
+                      {analysis.missing.map((m, i) => <li key={i}>{m}</li>)}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {email && (email.objet || email.corps) && (
+                <div className="dash-card">
+                  <div className="generate-section-header">
+                    <span className="field-label">Email d&apos;envoi</span>
+                    <button type="button" className="btn-secondary generate-copy-btn" onClick={handleCopyEmail}>
+                      {emailCopied ? '✓ Copié' : 'Copier'}
+                    </button>
+                  </div>
+                  <div className="generate-email-block">
+                    {email.to
+                      ? <>À : {email.to}{'\n'}</>
+                      : <>À : non détecté{'\n'}</>}
+                    Objet : {email.objet}{'\n\n'}{email.corps}
+                  </div>
                 </div>
               )}
             </div>
 
-            <div className="generate-section">
+            <div className="dash-card">
               <div className="field-group">
                 <span className="field-label">Modifications à apporter</span>
                 <textarea

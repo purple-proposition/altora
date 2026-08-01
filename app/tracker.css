@@ -2856,6 +2856,69 @@ legend.field-label { padding: 0; }
 /* --- ATS Booster (page /generate) --- */
 
 .generate-view { max-width: 640px; }
+.generate-view--wide { max-width: none; }
+
+.generate-dashboard { display: flex; flex-direction: column; gap: 24px; }
+
+.dash-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.dash-tile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  padding: 20px;
+}
+
+.dash-tile--score { align-items: flex-start; }
+.dash-tile--score.ats-score-card--good { background: var(--green-tint); border-color: transparent; color: var(--green); }
+.dash-tile--score.ats-score-card--mid { background: var(--amber-tint); border-color: transparent; color: var(--amber); }
+.dash-tile--score.ats-score-card--low { background: var(--rose-tint); border-color: transparent; color: var(--rose); }
+
+.dash-tile--download {
+  text-decoration: none;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.dash-tile--download:hover { border-color: var(--indigo); background: var(--indigo-tint); }
+.dash-tile-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--radius-input);
+  background: var(--indigo-tint);
+  color: var(--indigo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dash-tile-icon .lucide { width: 20px; height: 20px; }
+.dash-tile-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dash-tile-title { font-size: 14px; font-weight: 500; color: var(--text); }
+.dash-tile-subtitle { font-size: 12px; color: var(--text-muted); }
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.dash-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  padding: 24px;
+}
+.dash-card > .generate-subsection:first-child { margin-top: 0; }
+.dash-card .generate-section-header { margin-top: 0; }
 
 .generate-textarea {
   display: block;
