@@ -38,7 +38,7 @@ function MethodExplanation() {
           <h3 className="method-card-title method-card-title--intro">C&apos;est quoi un ATS ?</h3>
         </div>
         <p className="method-card-text">
-          Un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures ») est le logiciel que la quasi-totalité des entreprises utilisent pour trier les candidatures reçues. <strong>9 candidatures sur 10 passent d&apos;abord par un ATS</strong> avant qu&apos;un recruteur ne voie le CV : le logiciel le scanne, en extrait le texte et cherche les mots-clés de l&apos;offre (compétences, outils, intitulé du poste). <strong>Le premier « lecteur » de ton CV est donc un algorithme</strong>, pas un humain : un CV mal structuré peut être écarté avant d&apos;être lu, même avec un profil parfait pour le poste.
+          <strong>9 candidatures sur 10</strong> passent d&apos;abord par un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures ») avant qu&apos;un recruteur ne voie le CV : le logiciel le scanne, en extrait le texte et cherche les mots-clés de l&apos;offre, intitulé du poste, compétences, outils. <strong>Le premier « lecteur » de ton CV est donc un algorithme</strong>, pas un humain. Mal structuré, il sera écarté avant même d&apos;être lu, même si ton profil est parfait pour le poste.
         </p>
       </div>
 
