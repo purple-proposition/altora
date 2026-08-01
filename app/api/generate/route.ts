@@ -6,70 +6,20 @@ import { assertSafeUrl } from '@/lib/ssrfGuard';
 import { readCapped } from '@/lib/cappedFetch';
 import { rateLimit } from '@/lib/rateLimit';
 import { cleanJobPostingHtml } from '@/lib/jobPosting';
+import { getUserProfile, isProfileComplete, type UserProfile } from '@/lib/profile';
 
 const MAX_JOB_POSTING_RESPONSE_BYTES = 2 * 1024 * 1024;
 
-const JESSE_BASE = {
-  name: 'Jesse Sotomayor',
-  email: 'jessesotomayor@icloud.com',
-  phone: '+33 6 06 95 41 36',
-  linkedin: 'linkedin.com/in/jessesotomayor',
-  portfolio: 'jessesotomayor.vercel.app',
-  city: 'Lyon',
-  title: "Data Marketing & IA · Alternance à partir d'octobre 2026 · 4j entreprise / 1j école",
-  profil:
-    "Étudiant en marketing digital spécialisé en acquisition et CRM, avec une expérience opérationnelle en emailing, analyse de performance et développement commercial. Co-fondateur d'un média digital ayant atteint 4 000 auditeurs mensuels et plus de 2 millions de vues grâce à une stratégie de contenu, de référencement et de community management. Recherche une alternance à partir d'octobre 2026.",
-  experiences: [
-    {
-      company: 'Job Events',
-      title: 'Chargé de marketing digital en alternance',
-      dates: '10/2025 – Présent',
-      bullets: [
-        "Transfert complet d'un CRM vers un autre : migration d'une base de plus de 20 000 fiches, nettoyage intégral et enrichissement pour améliorer la segmentation et la conversion.",
-        "Automatisation de processus via des outils d'IA pour réduire les tâches récurrentes et centraliser le suivi des performances.",
-        "Gestion des campagnes de prospection sur Lemlist et des newsletters sur Odoo : paramétrage, ciblage, A/B testing et analyse des taux d'ouverture, de clic et de conversion.",
-        "Refonte du site web : amélioration de l'expérience utilisateur et mise en place du suivi de performance via Google Analytics.",
-        "Création de supports d'aide à la vente : présentations, one-pagers et contenus commerciaux.",
-      ],
-    },
-    {
-      company: '8Beats Radio',
-      title: 'Co-fondateur / Responsable marketing digital',
-      dates: '09/2021 – Présent',
-      bullets: [
-        "Développement de la croissance organique du média de 0 à 4 000 auditeurs mensuels grâce à une stratégie de contenu, de référencement naturel, d'animation des réseaux sociaux et de partenariats.",
-        "Pilotage de la stratégie social media avec notamment plus de 2 millions de vues générées sur TikTok.",
-        "Définition de l'identité de marque : charte graphique, expérience utilisateur du site et ligne éditoriale cohérente sur l'ensemble des supports.",
-        "Projet incubé à l'Hôtel 71 (12 mois) puis accompagné par la French Tech Lyon (1 trimestre) : structuration opérationnelle, développement du projet et accélération de la croissance.",
-      ],
-    },
-  ],
-  formation: [
-    {
-      school: 'École Supérieure du Digital',
-      degree: 'Bac +4 · Manager de la stratégie marketing et digitale',
-      dates: '10/2026 – En cours',
-      bullets: [] as string[],
-    },
-    {
-      school: 'Rocket School',
-      degree: 'Bac +3 · Marketing spécialisé en acquisition numérique',
-      dates: '07/2025 – 10/2026',
-      bullets: [] as string[],
-    },
-  ],
-  competences:
-    'Acquisition digitale · CRM · Marketing automation · IA générative · Emailing · Segmentation · A/B testing · Analyse de données · Reporting · Référencement naturel (SEO) · Référencement payant (SEA) · Optimisation de la conversion · Landing pages · Funnel marketing · Copywriting · Community management · Gestion de projet · UX/UI',
-  outils:
-    'Google Analytics · Google Ads · Meta Ads · Brevo · HubSpot · Odoo · Figma · Canva · Adobe Creative Suite · Microsoft Office · Notion · TikTok · Instagram · Claude',
-  langues: 'Français : langue maternelle · Anglais : courant · Espagnol : intermédiaire',
-};
+// Shape the CV renderer/prompt work with — same as the stored profile, plus
+// the computed CV title (role + optional alternance/rythme suffix) that only
+// exists for the duration of one generation.
+type CVProfile = UserProfile & { title: string };
 
 // ── PDF helpers ──────────────────────────────────────────────────────────────
 
 function generatePDF(doc_fn: (doc: InstanceType<typeof PDFDocument>) => void): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ size: 'A4', margin: 0, info: { Author: 'Jesse Sotomayor' } });
+    const doc = new PDFDocument({ size: 'A4', margin: 0 });
     const chunks: Buffer[] = [];
     doc.on('data', (c: Buffer) => chunks.push(c));
     doc.on('end', () => resolve(Buffer.concat(chunks)));
@@ -81,7 +31,7 @@ function generatePDF(doc_fn: (doc: InstanceType<typeof PDFDocument>) => void): P
 
 // Renders all CV content onto `doc` with a `shrink` factor (0 < shrink ≤ 1).
 // shrink < 1 compresses spacing uniformly to reclaim vertical space.
-function renderCVContent(doc: InstanceType<typeof PDFDocument>, cv: typeof JESSE_BASE, shrink = 1.0): void {
+function renderCVContent(doc: InstanceType<typeof PDFDocument>, cv: CVProfile, shrink = 1.0): void {
   const M = 42.52;
   const W = 595.28 - M * 2;
   const PAGE_H = 841.89;
@@ -218,7 +168,7 @@ function renderCVContent(doc: InstanceType<typeof PDFDocument>, cv: typeof JESSE
 
 // Strict 1-page enforcement: try shrink=1.0 → 0.91 → 0.83.
 // Overflow is detected by intercepting doc.addPage().
-async function buildCVPdf(cv: typeof JESSE_BASE): Promise<Buffer> {
+async function buildCVPdf(cv: CVProfile): Promise<Buffer> {
   for (const shrink of [1.0, 0.91, 0.83]) {
     let overflowed = false;
     const buf = await generatePDF((doc) => {
@@ -232,7 +182,7 @@ async function buildCVPdf(cv: typeof JESSE_BASE): Promise<Buffer> {
   return generatePDF((doc) => renderCVContent(doc, cv, 0.83));
 }
 
-async function buildLetterPdf(data: { company: string; poste: string; paragraphs: string[] }, isCDI = false): Promise<Buffer> {
+async function buildLetterPdf(profile: UserProfile, data: { company: string; poste: string; paragraphs: string[] }, isCDI = false): Promise<Buffer> {
   // Separators: em-dash and en-dash (non-date) → middle dot
   const clean = (s: string) =>
     s.replace(/\s*—\s*/g, ' · ')      // em-dash → point médian
@@ -242,30 +192,39 @@ async function buildLetterPdf(data: { company: string; poste: string; paragraphs
     const ln = (str: string, x: number, yPos: number, opts: object = {}) =>
       doc.text(str, x, yPos, { lineBreak: false, ...opts });
 
-    doc.font('Helvetica-Bold').fontSize(11).fillColor('#000'); ln('Jesse Sotomayor', M, y); y += 14;
+    doc.font('Helvetica-Bold').fontSize(11).fillColor('#000'); ln(profile.name, M, y); y += 14;
     doc.font('Helvetica').fontSize(10).fillColor('#333');
-    ln('jessesotomayor@icloud.com', M, y); y += 13;
-    ln('+33 6 06 95 41 36', M, y); y += 30;
+    ln(profile.email, M, y); y += 13;
+    ln(profile.phone, M, y); y += 30;
 
     const dateStr = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     doc.font('Helvetica').fontSize(10).fillColor('#333');
-    ln(`Lyon, le ${dateStr}`, M, y - 57, { align: 'right', width: W });
+    ln(`${profile.city}, le ${dateStr}`, M, y - 57, { align: 'right', width: W });
 
     y += 10;
 
-    // Clean poste: strip "Alternance", H/F markers, and feminine suffixes (all epicene patterns)
-    const posteClean = data.poste
+    // Clean poste: strip "Alternance", H/F markers, and resolve epicene suffixes
+    // to a single grammatical gender (masculine by default, feminine if the
+    // candidate's profile says so).
+    let posteClean = data.poste
       .replace(/^alternance\s*[–\-:]\s*/i, '')        // "Alternance – Marketing" → "Marketing"
       .replace(/\s*[–\-]\s*alternance\s*$/i, '')      // "Marketing – Alternance" → "Marketing"
       .replace(/^alternance\s+/i, '')                 // "Alternance Marketing" (sans tiret) → "Marketing"
       .replace(/\s+en\s+alternance\s*$/i, '')         // "Marketing en alternance" → "Marketing"
-      .replace(/\s*[\[(]?\s*[hf]\/[fh]\s*[\])]?\s*/gi, '') // H/F, F/H, (H/F)
-      .replace(/\(e?é?e?s?\)/gi, '')                  // (e), (ée), (es) → masculin
-      .replace(/\((trice|rice|euse)\)/gi, '')          // (trice), (rice), (euse) → masculin
-      .replace(/\/é?e?s?\b/gi, '')                    // /e, /ée, /es → masculin
-      .replace(/[.··](e|es|ée|ées|trice|rice|euse|eure)\b/gi, '') // Apprenti.e / Chargé·e → masculin
-      .replace(/\s+/g, ' ')
-      .trim();
+      .replace(/\s*[\[(]?\s*[hf]\/[fh]\s*[\])]?\s*/gi, ''); // H/F, F/H, (H/F)
+    posteClean = profile.civility === 'Mme'
+      ? posteClean
+          .replace(/\((e)\)/gi, 'e')                              // (e) → e
+          .replace(/\((trice|rice|euse)\)/gi, '$1')                // (trice) → trice
+          .replace(/\/é?e\b/gi, 'e')                              // /e, /ée → e
+          .replace(/[.··]e\b/gi, 'e')                             // Chargé.e → Chargée
+          .replace(/eur\b(?=\s|$)/gi, 'rice')                     // Coordinateur → Coordinatrice (heuristique)
+      : posteClean
+          .replace(/\(e?é?e?s?\)/gi, '')                          // (e), (ée), (es) → masculin
+          .replace(/\((trice|rice|euse)\)/gi, '')                  // (trice), (rice), (euse) → masculin
+          .replace(/\/é?e?s?\b/gi, '')                            // /e, /ée, /es → masculin
+          .replace(/[.··](e|es|ée|ées|trice|rice|euse|eure)\b/gi, ''); // Apprenti.e / Chargé·e → masculin
+    posteClean = posteClean.replace(/\s+/g, ' ').trim();
     // Lowercase initial capital of job title: "Chargé…" → "chargé…"
     const posteLower = posteClean.charAt(0).toLowerCase() + posteClean.slice(1);
     // French elision: "de" → "d'" before a vowel or h
@@ -279,6 +238,9 @@ async function buildLetterPdf(data: { company: string; poste: string; paragraphs
     // Safety filter: strip elements injected elsewhere by the builder.
     // "Bonjour [Madame/Monsieur] [Nom]," is now Claude's first paragraph — allowed.
     // "Bien cordialement," is hardcoded below — strip if Claude duplicates it.
+    const nameLower = profile.name.trim().toLowerCase();
+    const emailLower = profile.email.trim().toLowerCase();
+    const cityLower = profile.city.trim().toLowerCase();
     const paras = data.paragraphs.filter((p) => {
       const t = p.trim().toLowerCase();
       return (
@@ -287,11 +249,11 @@ async function buildLetterPdf(data: { company: string; poste: string; paragraphs
         !/^je vous (prie|adresse)/.test(t) &&   // variante formule de politesse
         !/^(bien\s+)?cordialement/.test(t) &&   // "Cordialement" / "Bien cordialement,"
         !/^au plaisir/.test(t) &&               // "Au plaisir d'échanger,"
-        !/^jesse sotomayor/.test(t) &&          // signature (injectée séparément)
+        (!nameLower || !t.startsWith(nameLower)) &&  // signature (injectée séparément)
         !/^objet\s*:/.test(t) &&                // ligne Objet (injectée séparément)
-        !/^lyon,?\s+le\s/.test(t) &&            // date (injectée séparément)
-        !/^jessesotomayor@/.test(t) &&          // email (injecté séparément)
-        !/^\+33/.test(t)                        // téléphone (injecté séparément)
+        (!cityLower || !new RegExp(`^${cityLower},?\\s+le\\s`).test(t)) && // date (injectée séparément)
+        (!emailLower || !t.startsWith(emailLower)) && // email (injecté séparément)
+        !/^\+?\d[\d\s.]{6,}/.test(t)            // téléphone (injecté séparément)
       );
     });
 
@@ -302,13 +264,13 @@ async function buildLetterPdf(data: { company: string; poste: string; paragraphs
       y = doc.y + (i === 0 ? 14 : 16); // tighter gap after salutation
     }
 
-    // Modern 2026 closing — hardcoded, never comes from Claude
+    // Closing formula — hardcoded, never comes from Claude
     y += 4;
     doc.font('Helvetica').fontSize(10).fillColor('#000');
     doc.text('Bien cordialement,', M, y, { lineBreak: false });
     y = doc.y + 22;
     doc.font('Helvetica-Bold').fontSize(10).fillColor('#000');
-    ln('Jesse Sotomayor', M, y);
+    ln(profile.name, M, y);
   });
 }
 
@@ -367,11 +329,6 @@ function sanitizeLetter(paragraphs: string[]): string[] {
     [/\s*[·•⋅‧・･·∙․]\s*/g,   ', '],
     [/,\s*,/g, ','],
     [/,\s*\./g, '.'],
-    // Disponibilité : date immuable octobre 2026 — corriger tout mois erroné
-    [/disponible\s+à\s+partir\s+de\s+(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|novembre|décembre)\s+2026/gi,
-      "disponible à partir d'octobre 2026"],
-    [/à\s+partir\s+de\s+(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|novembre|décembre)\s+2026/gi,
-      "à partir d'octobre 2026"],
     // Closing sur-familier : supprimer "ou avec [Prénom]"
     [/\s+ou\s+avec\s+[A-ZÉÈÊËÀÂÎÏÔÛÙ][a-zéèêëàâîïôûùü]+\.?/g, '.'],
     // Formule présomptueuse
@@ -386,32 +343,14 @@ function sanitizeLetter(paragraphs: string[]): string[] {
     // "je suis convaincu que" — interdit (opinion sans preuve)
     [/\bje\s+suis\s+convaincu\s+qu[e']/gi,    "je pense que"],
     [/\bje\s+suis\s+persuadé\s+qu[e']/gi,     "je pense que"],
-    // HubSpot ne doit pas apparaître dans la lettre pour Job Events
-    [/\bHubSpot\b/g, 'Odoo'],
-    // "immédiatement" contradictoire avec disponibilité octobre 2026
-    [/\bcontribuer\s+immédiatement\b/gi,    'contribuer dès octobre 2026'],
-    [/\bimmédiatement\s+contribuer\b/gi,    'contribuer dès octobre 2026'],
-    [/\bpeux\s+immédiatement\b/gi,          'pourrai dès octobre 2026'],
-    [/\bimmédiatement\s+disponible\b/gi,    'disponible à partir d\'octobre 2026'],
     // expressions corporates creuses interdites dans la lettre
     [/\brésonne\s+avec\s+ma\s+conviction\b/gi,  'correspond à ce que je pratique'],
     [/\bvotre\s+vision\s+du\b/gi,               'votre positionnement'],
     [/\bje\s+suis\s+enthousiaste\s+à\s+l['']idée\s+de\b/gi, 'je souhaite'],
     [/\bje\s+suis\s+enthousiaste\s+à\s+l['']idée\b/gi,      'je souhaite'],
-    // typo: "job Events" → "Job Events"
-    [/\bjob\s+Events\b/g, 'Job Events'],
-    // 8Beats: Claude invente parfois une collaboration avec une agence web — faux, tout est fait par Jesse
-    [/\bj['']ai\s+(?:aussi\s+)?travaillé\s+(?:directement\s+)?avec\s+(?:l['']agence\s+web|les?\s+(?:partenaires?\s+externes?|prestataires?))[^.]*\./gi, ''],
-    [/\ben\s+collaboration\s+avec\s+(?:une?\s+)?(?:agence\s+web|prestataire)[^.]*\./gi, ''],
-    // transitions creuses en début de para[3] → formulations directes
-    [/^Au[- ]delà\s+de\s+cela,?\s*/gim,         'Depuis 2021, '],
-    [/^Au[- ]delà\s+de\s+mon\s+alternance,?\s*/gim, 'Par ailleurs, '],
     // closing: "en échanger" is grammatically wrong → replace with "en discuter"
     [/\bd['']en\s+échanger\s+avec\s+vous\b/gi, "d'en discuter avec vous"],
     [/\bj['']en\s+échangerai\b/gi,             "j'en discuterai"],
-    // chronology: "En parallèle" introducing 8Beats → cleaner alternatives
-    [/En parallèle,?\s+je\s+gère\s+8Beats/gi,       "Je gère par ailleurs 8Beats"],
-    [/En parallèle,?\s+j['']ai\s+lancé\s+8Beats/gi, "J'ai également lancé 8Beats"],
     // typography: job titles in letters → always lowercase in French context
     [/\bgrowth\s+[Hh]acker\b/g,   "growth hacker"],
     [/\bGrowth\s+[Hh]acker\b/g,   "growth hacker"],
@@ -516,6 +455,11 @@ export async function POST(req: NextRequest) {
     return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY non configurée' }), { status: 500 });
   }
 
+  const profile = await getUserProfile(session.user.id);
+  if (!isProfileComplete(profile)) {
+    return new Response(JSON.stringify({ error: 'Complète ton profil candidat (au moins une expérience) avant de générer un CV.', code: 'PROFILE_INCOMPLETE' }), { status: 422 });
+  }
+
   const { readable, send, close } = makeStream();
 
   (async () => {
@@ -537,22 +481,46 @@ export async function POST(req: NextRequest) {
 
       const client = new Anthropic({ apiKey });
 
-      const systemPrompt = `Tu es un générateur expert de CV et lettres de motivation en français pour Jesse Sotomayor.
+      const civilityLine = profile.civility === 'Mme'
+        ? "Le/la candidat·e est une femme : accorder au féminin partout, résoudre toutes les formes épicènes vers le féminin (H/F, (e), (trice), point médian…) — ex: \"Chargé·e\" → \"Chargée\", \"Coordinateur·trice\" → \"Coordinatrice\"."
+        : profile.civility === 'M'
+        ? "Le candidat est un homme : accorder au masculin partout, résoudre toutes les formes épicènes vers le masculin (H/F, (e), (trice), point médian…) — ex: \"Chargé·e\" → \"Chargé\", \"Coordinateur·trice\" → \"Coordinateur\"."
+        : "Civilité non précisée : résoudre par défaut toutes les formes épicènes vers le masculin (H/F, (e), (trice), point médian…), forme la plus neutre en l'absence d'information.";
+
+      const availabilityLine = profile.availability?.trim()
+        ? `Disponibilité du candidat : "${profile.availability.trim()}". La mentionner UNE SEULE FOIS dans toute la lettre, uniquement dans paragraphs[4] (jamais avant). Dans l'email, la glisser naturellement dans le corps.`
+        : 'Aucune disponibilité renseignée par le candidat : ne pas en inventer une, rester sur la motivation et la contribution.';
+
+      const experiencesForLetter = profile.experiences.slice(0, 2);
+      const letterStructureLine = experiencesForLetter.length >= 2
+        ? `paragraphs[2] : PREUVE PRINCIPALE — l'expérience la plus directement alignée avec le poste, choisie parmi celles du profil de base (jamais une expérience inventée).
+— INTERDIT ABSOLU : ne jamais mélanger deux expériences dans le même paragraphe.
+— Faits concrets, outils, résultats ou méthodes déjà présents dans le CV de base. Ne jamais inventer de mission ou de résultat.
+
+paragraphs[3] : PREUVE COMPLÉMENTAIRE — une deuxième expérience du profil de base, différente de celle de paragraphs[2]
+— Apporte une facette complémentaire utile au poste, renforce la crédibilité.
+— Ne pas répéter les mêmes mots que dans paragraphs[2].
+— INTERDIT ABSOLU : ne jamais mélanger deux expériences dans le même paragraphe.
+— TRANSITION OBLIGATOIRE : la première phrase de paragraphs[3] doit créer un lien logique explicite avec paragraphs[2] (complémentarité, contraste, angle différent) — jamais une simple juxtaposition chronologique du type "Par ailleurs, j'ai aussi...".
+— Chaque connecteur temporel utilisé doit être chronologiquement exact au regard des dates du profil de base — vérifier avant d'écrire.`
+        : `paragraphs[2] et paragraphs[3] fusionnés en une seule preuve (paragraphs[3] peut être vide ou omis) : le profil de base ne contient qu'une expérience exploitable — ne jamais en inventer une seconde. Faits concrets, outils, résultats déjà présents dans le CV de base.`;
+
+      const systemPrompt = `Tu es un générateur expert de CV et lettres de motivation en français pour un·e candidat·e à l'emploi.
 
 MISSION
-Transformer une fiche de poste en CV + lettre + email de candidature : professionnels, ciblés, crédibles, ATS-friendly. Ne jamais inventer d'expérience, outil, diplôme, résultat ou affinité sectorielle.
+Transformer une fiche de poste en CV + lettre + email de candidature : professionnels, ciblés, crédibles, ATS-friendly. Ne jamais inventer d'expérience, outil, diplôme, résultat ou affinité sectorielle — s'en tenir strictement au PROFIL DE BASE DU CANDIDAT fourni plus bas.
 
 PRINCIPES FONDAMENTAUX
-Jesse est un homme : masculin partout, supprimer toutes les formes épicènes : H/F, (e), (trice), /e, mais aussi les formes avec point médian ou point ordinaire : "Apprenti.e" → "Apprenti", "Chargé·e" → "Chargé", "Coordinateur.trice" → "Coordinateur". Supprimer tous ces suffixes partout : dans l'intitulé du poste, le titre du CV, l'objet de la lettre et l'objet de l'email.
+${civilityLine}
 Standard France 2026 : toujours la formulation la plus répandue, la plus compatible ATS. Jamais plus originale si moins standard.
 Pas de première personne dans le CV. "Je" sobre et direct dans la lettre uniquement.
 Ponctuation : jamais de tiret cadratin (—). Le demi-cadratin (–) est réservé aux intervalles de dates et chiffres uniquement.
-Jamais d'élision devant un nom propre commençant par un chiffre : "de 8Beats", jamais "d'8Beats".
+Jamais d'élision fautive devant un nom propre commençant par un chiffre ou une consonne aspirée.
 Chiffres : toujours "plus de 2 000", jamais "2 000+". Introduire les chiffres dans une formulation fluide, jamais balancés secs.
 
 CV / LETTRE : DIFFÉRENCE FONDAMENTALE
 CV = faits, résultats, mots-clés ATS. La lettre ne répète pas le CV.
-Lettre = pourquoi ce poste, pourquoi cette entreprise, pourquoi ce moment, ce que Jesse apporte concrètement.
+Lettre = pourquoi ce poste, pourquoi cette entreprise, pourquoi ce moment, ce que le/la candidat·e apporte concrètement.
 
 ━━━ CV ━━━
 
@@ -561,16 +529,15 @@ Ordre antichronologique strict : expériences ET formation, du plus récent au p
 Bullets : verbe d'action fort + contexte + outil/méthode + résultat chiffré si disponible. 1 ligne, 2 maximum.
 Réordonner bullets, compétences et outils par pertinence décroissante pour le poste. Ne JAMAIS supprimer un outil ni une compétence — seulement réordonner. Tous les outils et compétences du profil de base doivent apparaître sans exception.
 Profil : 3 phrases max. Jamais de "Fort intérêt pour…" ni d'affinité sectorielle non prouvée par une expérience concrète.
-${isCDI ? 'CDI — PROFIL : ne jamais écrire "alternance", "Recherche une alternance" ni "en alternance". Si une disponibilité est mentionnée, utiliser "Disponible à partir d\'octobre 2026".' : ''}
+${isCDI ? "CDI — PROFIL : ne jamais écrire \"alternance\", \"Recherche une alternance\" ni \"en alternance\"." : ''}
 Interdit dans le profil et les bullets : "compétences validées", "compétences certifiées", "compétences prouvées", "compétences démontrées" — sauf si une certification réelle existe. Une compétence se montre par un résultat ou une action concrète, pas par une auto-déclaration de validation.
 Formation : nom de l'école + diplôme + dates uniquement. Zéro bullet, zéro description pédagogique. "bullets":[] dans le JSON.
-${isCDI ? "CDI — FORMATION : ne pas inclure l'École Supérieure du Digital (Bac +4, 10/2026 – En cours). Cette formation n'a pas encore débuté et est incompatible avec un CDI. Inclure uniquement Rocket School." : ''}
 ${isCDI
   ? 'Title : "[intitulé EXACT du poste dans la fiche]". Juste le rôle exact, rien d\'autre — jamais de suffixe "Alternance", "CDI" ou de rythme scolaire. ✅ "Chargé de marketing digital"'
-  : 'Title : "[intitulé EXACT du poste dans la fiche] · Alternance à partir d\'octobre 2026 · 4j entreprise / 1j école". Les trois parties séparées par · sont obligatoires et immuables. ✅ "Chargé de marketing · Alternance à partir d\'octobre 2026 · 4j entreprise / 1j école"'}
+  : `Title : "[intitulé EXACT du poste dans la fiche] · Alternance${profile.availability ? ` · ${profile.availability}` : ''}". Séparateur " · " entre les parties, obligatoire et immuable.`}
 RÈGLE IMMUABLE — SÉPARATEURS CV : dans les champs structurés du CV (titre sous le nom, intitulés de poste, diplômes, ligne de contact), le séparateur est toujours " · ". Le " – " est réservé aux intervalles de dates uniquement. ❌ "Bac +4 – Manager…" ✅ "Bac +4 · Manager…"
-RÈGLE IMMUABLE — PONCTUATION LETTRE : dans le corps de la lettre de motivation, le point médian " · " est ABSOLUMENT INTERDIT sous toutes ses variantes. Ni tiret d'incise (—), ni parenthèse, ni liste avec séparateur. Toute énumération ou incise doit être reformulée avec : virgule, deux-points, point-virgule, ou point. ❌ "concrètement · la gestion social media" ❌ "création visuelle · exactement ce que demandent" ❌ "structurant la croissance · une compétence transférable" ✅ "concrètement : la gestion social media et l'optimisation e-commerce." ✅ "création visuelle, ce qui correspond à vos fiches produits." ✅ "structurant la croissance. Cette compétence est transférable à vos campagnes." Construire des phrases complètes avec sujet-verbe-complément. Ne jamais utiliser · comme deux-points, tiret ou virgule.
-RÈGLE IMMUABLE — UN SEUL DEUX-POINTS PAR PHRASE : jamais deux " : " dans la même phrase, même séparés par une proposition. Un deux-points ouvre une seule fois ; s'il faut annoncer puis détailler, couper en deux phrases distinctes. ❌ "Votre offre m'a intéressé pour une raison claire : elle combine trois sujets sur lesquels je travaille depuis octobre 2025 : la gestion de bases, l'automatisation, le reporting." ✅ "Votre offre m'a intéressé pour une raison claire. Elle combine trois sujets sur lesquels je travaille depuis octobre 2025 : la gestion de bases, l'automatisation, le reporting." Avant de finaliser chaque paragraphe, compter les " : " par phrase — si une phrase en contient plus d'un, la scinder.
+RÈGLE IMMUABLE — PONCTUATION LETTRE : dans le corps de la lettre de motivation, le point médian " · " est ABSOLUMENT INTERDIT sous toutes ses variantes. Ni tiret d'incise (—), ni parenthèse, ni liste avec séparateur. Toute énumération ou incise doit être reformulée avec : virgule, deux-points, point-virgule, ou point. ❌ "concrètement · la gestion social media" ✅ "concrètement : la gestion social media et l'optimisation e-commerce." Construire des phrases complètes avec sujet-verbe-complément. Ne jamais utiliser · comme deux-points, tiret ou virgule.
+RÈGLE IMMUABLE — UN SEUL DEUX-POINTS PAR PHRASE : jamais deux " : " dans la même phrase, même séparés par une proposition. Un deux-points ouvre une seule fois ; s'il faut annoncer puis détailler, couper en deux phrases distinctes. Avant de finaliser chaque paragraphe, compter les " : " par phrase — si une phrase en contient plus d'un, la scinder.
 RÈGLE — RESPIRATION DES ÉNUMÉRATIONS : toute liste de 3 éléments ou plus après un deux-points doit être séparée par des virgules classiques, jamais un enchaînement télégraphique sans respiration. Relire chaque phrase longue (plus de 25 mots) et vérifier qu'elle contient au moins une virgule si elle juxtapose plusieurs idées ou compléments.
 
 1 PAGE A4 STRICTE
@@ -599,51 +566,30 @@ STRUCTURE EN 5 PARAGRAPHES — FONCTIONS OBLIGATOIRES
 paragraphs[0] : Salutation — "Bonjour [Prénom]," si connu, sinon "Bonjour,"
 
 paragraphs[1] : CONSTAT / BESOINS DU POSTE
-Entrer directement par le poste : pourquoi cette mission intéresse Jesse, ce qui fait le lien entre leurs enjeux et son profil, ce qu'il vient chercher ou apporter.
-— INTERDIT : ne jamais résumer l'activité de l'entreprise ou son marché. Le recruteur le sait. Phrases interdites : "Scale Plus accompagne…", "Votre entreprise est spécialisée dans…", "Vous aidez vos clients à…", toute reformulation de la page d'accueil ou de l'annonce.
+Entrer directement par le poste : pourquoi cette mission intéresse le/la candidat·e, ce qui fait le lien entre les enjeux de l'entreprise et son profil, ce qu'il/elle vient chercher ou apporter.
+— INTERDIT : ne jamais résumer l'activité de l'entreprise ou son marché. Le recruteur le sait. Phrases interdites : "[Entreprise] accompagne…", "Votre entreprise est spécialisée dans…", "Vous aidez vos clients à…", toute reformulation de la page d'accueil ou de l'annonce.
 — Test : si la première phrase pourrait être écrite par quelqu'un qui a juste lu le site vitrine, la supprimer et réécrire.
 — Commencer par la motivation, l'adéquation avec la mission, ou ce qui attire dans le poste.
 — INTERDITES — formules d'accroche théâtrales et corporates : ❌ "m'a arrêté" ❌ "a retenu mon attention" ❌ "a immédiatement suscité mon intérêt" ❌ "m'a sauté aux yeux" ❌ "ne pouvait pas me laisser indifférent" ❌ "correspond en tout point à" ❌ "je suis enthousiaste à l'idée de" ❌ "résonne avec ma conviction" ❌ "Votre vision du [X] résonne" ❌ "je suis passionné par" ❌ "contribuer au développement digital de [entreprise]". Ces formules sonnent faux ou décrivent l'entreprise. Préférer un constat direct et factuel, toujours avec "Votre offre" (jamais "Cette offre") : ✅ "Votre offre combine trois sujets sur lesquels je travaille concrètement…" ✅ "Votre offre m'a intéressé pour une raison claire : elle combine…"
-— Jamais "Depuis octobre 2025…" dans ce paragraphe.
 — Jamais de mention de disponibilité ici.
 — Jamais d'entrée directe dans une expérience.
-— INTERDIT — AFFINITÉ SECTORIELLE NON PROUVÉE : ne jamais affirmer un intérêt pour un secteur ou un environnement (ex. "L'environnement B2B événementiel vous intéresse", "Le secteur de la santé me passionne") sans expérience concrète qui le justifie dans le CV de base. Si aucune expérience sectorielle n'existe, ne pas mentionner le secteur — rester sur les compétences transférables (données, segmentation, automatisation) et laisser le CV/l'entreprise parler d'eux-mêmes. Test : si la phrase pourrait être vraie pour n'importe quel candidat sans expérience dans ce secteur, la supprimer.
+— INTERDIT — AFFINITÉ SECTORIELLE NON PROUVÉE : ne jamais affirmer un intérêt pour un secteur ou un environnement sans expérience concrète qui le justifie dans le CV de base. Si aucune expérience sectorielle n'existe, ne pas mentionner le secteur — rester sur les compétences transférables et laisser le CV/l'entreprise parler d'eux-mêmes. Test : si la phrase pourrait être vraie pour n'importe quel candidat sans expérience dans ce secteur, la supprimer.
 
-RÈGLE — UNE SEULE MENTION DE "DEPUIS OCTOBRE 2025" DANS TOUTE LA LETTRE : cette date ne peut apparaître qu'une fois, dans paragraphs[2] (preuve Job Events). Interdite ailleurs, même reformulée ("Depuis octobre…", "Depuis cette date…").
-
-paragraphs[2] : PREUVE PRINCIPALE — l'expérience la plus directement alignée avec le poste
-Ordre par défaut : Job Events d'abord. Exception : si 8Beats est l'expérience clairement plus pertinente pour le poste (ex: rôle SEO, contenu, social media pur, création), alors 8Beats peut être paragraphs[2] et Job Events paragraphs[3].
-— INTERDIT ABSOLU : ne jamais mélanger les deux expériences dans le même paragraphe.
-— Faits concrets, outils, résultats ou méthodes. Ne jamais inventer de missions ou de résultats non présents dans le CV de base.
-
-paragraphs[3] : PREUVE COMPLÉMENTAIRE — 8BEATS UNIQUEMENT
-Apporter une seconde facette utile au poste. Renforcer la crédibilité du profil.
-— Présenter 8Beats comme un projet construit depuis 2021.
-— Mettre l'accent sur la complémentarité avec le poste : croissance, contenu, communication, UI/UX.
-— Résultats disponibles : 4 000 auditeurs mensuels, plus de 2 millions de vues.
-— Ne pas répéter les mêmes mots que dans paragraphs[2].
-— La date "2021" apparaît une seule fois dans le paragraphe, jamais deux fois dans la même phrase. ❌ "j'ai lancé 8Beats Radio en 2021, un média… depuis 2021" ✅ "j'ai lancé 8Beats Radio en 2021, un média qui…"
-— INTERDIT ABSOLU : ne jamais mélanger Job Events et 8Beats dans le même paragraphe. Chacun a son propre bloc.
-— Peut être fusionné avec paragraphs[2] UNIQUEMENT si 8Beats n'est absolument pas aligné avec le poste (cas rare).
-— TRANSITION OBLIGATOIRE : la première phrase de paragraphs[3] doit créer un lien logique explicite avec paragraphs[2] (complémentarité, contraste, ou angle différent sur une même qualité) — jamais une simple juxtaposition du type "Depuis 2021, j'ai également lancé…". ❌ "Depuis 2021, j'ai également lancé 8Beats Radio…" ✅ "Cette rigueur sur la donnée, je la retrouve dans un projet plus personnel : 8Beats Radio…" ✅ "À côté de cette pratique CRM, 8Beats Radio m'a appris une autre dimension du marketing…"
+${letterStructureLine}
 
 paragraphs[4] : PROJECTION + DISPONIBILITÉ + CLÔTURE
-Montrer la contribution concrète à l'entreprise. Mentionner la disponibilité une seule fois.
-— La disponibilité apparaît UNIQUEMENT ici : "à partir d'octobre 2026".
-— Une seule phrase de clôture, courte. Soit la date de disponibilité, soit "Je serai ravi d'en discuter lors d'un premier échange." — pas les deux si elles se répètent. Ne pas surcharger avec deux phrases de clôture redondantes.
+Montrer la contribution concrète à l'entreprise. Mentionner la disponibilité une seule fois (voir DISPONIBILITÉ ci-dessous).
+— Une seule phrase de clôture, courte. Soit la mention de disponibilité, soit "Je serai ravi d'en discuter lors d'un premier échange." — pas les deux si elles se répètent. Ne pas surcharger avec deux phrases de clôture redondantes.
 — Toujours présent.
 — CHUTE AFFIRMÉE : la dernière phrase du paragraphe doit être une affirmation directe, jamais une formule molle ou passive. ❌ "serais heureux d'en parler de vive voix" ❌ "n'hésitez pas à me contacter" ✅ "Je suis prêt à en discuter." ✅ une phrase courte, rythmée, qui referme la lettre sur une note factuelle plutôt qu'une politesse générique.
 
-"Bien cordialement,\nJesse Sotomayor" injecté automatiquement — ne jamais l'inclure dans paragraphs.
+"Bien cordialement,\n${profile.name}" injecté automatiquement — ne jamais l'inclure dans paragraphs.
 
-VERROUILLAGE ÉDITORIAL — DISPONIBILITÉ ET CLÔTURE
-La disponibilité a une seule fonction : conclure la lettre. Elle n'est pas un sujet récurrent.
-— Une seule mention autorisée, dans paragraphs[4], sous une forme unique et concise.
+DISPONIBILITÉ
+${availabilityLine}
 — Interdite dans paragraphs[1], [2] et [3], sans exception, même reformulée, même indirectement.
-— Expressions interdites dans paragraphs[1-3] : toute date de prise de fonction, toute projection temporelle, "dès", "à partir de", "en octobre", "à vos côtés à partir de", "pour une prise de poste", "dès que possible", "dès [mois]", toute formule qui suggère un début de collaboration.
-— Si une phrase prépare ou anticipe la disponibilité sans utiliser le mot "disponible" → la supprimer quand même.
-— Ne pas réintroduire la disponibilité dans une phrase du type "Je pourrais contribuer dès X à vos missions" si la date est déjà mentionnée juste après.
-— Le dernier paragraphe contient soit la disponibilité, soit la formule de clôture — pas deux phrases qui répètent la même idée finale.
+— Expressions interdites dans paragraphs[1-3] : toute date de prise de fonction, toute projection temporelle, "dès", "à partir de", "pour une prise de poste", "dès que possible", toute formule qui suggère un début de collaboration.
+— Si une phrase prépare ou anticipe la disponibilité sans la nommer explicitement → la supprimer quand même.
 
 TEST OBLIGATOIRE AVANT FINALISATION :
 1. Si on retire paragraphs[4] : aucun autre paragraphe ne doit suggérer, préparer ou rappeler la disponibilité. Si c'est le cas → supprimer la mention.
@@ -654,35 +600,25 @@ TRANSITIONS APPROUVÉES
 Ouverture (paragraphs[1]) — préférer une accroche qui donne envie de lire, pas juste une déclaration sèche :
 "Votre offre m'a arrêté pour une raison précise : …" / "Ce qui m'a attiré dans votre annonce, c'est …" / "Ce que vous proposez correspond à quelque chose que j'ai déjà fait concrètement : …" / "En lisant votre offre, j'ai reconnu un terrain sur lequel je travaille déjà…"
 À éviter comme première phrase : "Ce poste m'intéresse parce que" seul — trop abrupt, pas d'accroche.
-Suite de lettre : "Mon expérience chez Job Events montre que…" / "Mon projet 8Beats complète cette logique…" / "Je peux apporter…" / "Je serai disponible à partir d'octobre 2026…" (paragraphs[4] uniquement)
 — PRÉFÉRER LE MODE AFFIRMÉ AU CONDITIONNEL : dans paragraphs[2], [3] et [4], éviter "je pourrais", "je serais heureux de", "j'aimerais" — préférer des formulations affirmées ("je peux", "j'apporte", "je mets en place"). Le conditionnel est réservé aux formules de politesse finales admises, jamais à la présentation des compétences ou de la contribution.
 
 RÈGLE — COHÉRENCE TYPOGRAPHIQUE DES INTITULÉS DE POSTE
-Appliquer une capitalisation uniforme dans toute la lettre et l'objet. Jamais de casse mixte incohérente ("growth Hacker", "Content manager"...). Choisir soit tout en minuscules ("growth hacker"), soit en Title Case ("Growth Hacker"), et s'y tenir partout. Un filtre automatique corrige les cas les plus courants.
-
-RÈGLE — CONNECTEURS TEMPORELS VRAIS
-Chaque connecteur temporel doit être chronologiquement exact.
-Job Events (depuis 10/2025) est l'expérience la plus récente. 8Beats (depuis 09/2021) est antérieure.
-Quand 8Beats est introduit après Job Events : ne jamais écrire "En parallèle" — 8Beats a commencé bien avant.
-Formulations correctes : "Depuis 2021, j'ai également développé…", "Avant cela,", "Plus tôt,", "Cette logique s'inscrit aussi dans…", "À côté de cela,"
-Test : chaque connecteur temporel doit être vrai sur le plan chronologique. Si faux → remplacer.
+Appliquer une capitalisation uniforme dans toute la lettre et l'objet. Jamais de casse mixte incohérente ("growth Hacker", "Content manager"...). Choisir soit tout en minuscules ("growth hacker"), soit en Title Case ("Growth Hacker"), et s'y tenir partout.
 
 CONTRAINTES LETTRE
 200-250 mots. 3-4 phrases par paragraphe, 5 max.
 Utiliser "votre" systématiquement : "votre offre", "vos missions", "votre équipe". Nommer l'entreprise au moins une fois. Personnalisation basée sur le poste, le secteur ou les missions réelles — jamais sur des détails supposés ou une connaissance artificielle de la structure interne.
-Disponibilité toujours "à partir d'octobre 2026". Jamais de formulation vague ou isolée.
-Si la fiche de poste mentionne une date de démarrage différente (août, septembre, janvier…), le signaler naturellement dans la lettre — une phrase sobre suffit : "Je suis disponible à partir d'octobre 2026, ce qui décalerait légèrement la prise de poste." ou "Ma disponibilité est à partir d'octobre 2026." Ne jamais l'ignorer ni prétendre être disponible plus tôt.
 "contribuer" : toujours "contribuer à" + nom ou infinitif. Jamais "contribuer sur" ni sans préposition.
 Ton adapté : startup/scale-up = direct, phrases courtes ; grand groupe = plus posé, jamais archaïque. En cas de doute : préférer ton startup.
 
 TON
-Naturel, sobre, direct, professionnel. Français courant. Écrire comme Jesse parlerait en entretien — voix vivante, pas lisse.
+Naturel, sobre, direct, professionnel. Français courant. Voix vivante, pas lisse.
 Ne pas faire sonner chaque phrase comme une validation parfaite du poste. Laisser apparaître une voix personnelle, avec quelques aspérités humaines.
 Varier la construction des phrases. Pas deux phrases de même structure consécutives. Max deux "je" consécutifs. Densité globale : éviter que "je" soit le sujet de plus de la moitié des phrases.
-Bannir : "Cette expérience de fondateur", "cette expérience d'entrepreneur", "mon expérience de fondateur" — trop génériques et artificiels. Préférer nommer directement le projet ou l'action : "avec 8Beats", "ce projet m'a appris à…", "en construisant ce média…"
+Bannir : "Cette expérience de fondateur", "cette expérience d'entrepreneur", "mon expérience de fondateur" — trop génériques et artificiels. Préférer nommer directement le projet ou l'action.
 Bannir : "résonne avec moi", "ce qui m'anime", "j'aurais l'occasion de", "je suis convaincu que", "au service de", "dans une logique de", "en cohérence avec mon parcours" (si vide), "je me permets", clichés RH.
 Éviter les listes de mots sèches ("acquisition, CRM, performance, données, croissance…") sans phrase pour les relier — préférer une formulation narrative.
-Éviter les répétitions sur les mêmes thèmes dans deux paragraphes proches : si "croissance", "données" ou "optimisation" apparaît déjà dans un paragraphe, ne pas le réutiliser comme mot clé dans le suivant.
+Éviter les répétitions sur les mêmes thèmes dans deux paragraphes proches : si un mot-clé apparaît déjà dans un paragraphe, ne pas le réutiliser tel quel comme mot clé dans le suivant.
 Bannir les formules de consultant : "créer de la valeur", "vision holistique", "approche data-driven", "à 360°", "levier stratégique", "enjeu majeur".
 Fin de paragraphe : jamais "ce qui m'intéresse" comme chute — terminer sur une motivation affirmée.
 
@@ -705,34 +641,15 @@ Autorisés partout : email, campagne, analyse, contenu, segment.
 "plateforme d'emailing/CRM" → "outils d'emailing/CRM". "une SaaS" → "une solution SaaS".
 Anti-copier-coller : ne jamais reprendre mot pour mot les termes techniques ou verbes de la fiche dans la lettre.
 
-CHRONOLOGIE LETTRE
-1. Job Events en premier — "Depuis octobre 2025, chez Job Events, …"
-2. 8Beats en second — "Je gère par ailleurs 8Beats Radio, un média que j'ai lancé en 2021…" / "J'ai également lancé 8Beats en 2021…"
-Jamais "En parallèle" pour introduire 8Beats (suggère même date de départ).
-
 SOURCE DE VÉRITÉ PAR EXPÉRIENCE
-Ne jamais mélanger canaux, outils ou missions entre expériences. En cas de doute : omettre plutôt qu'inventer.
-RÈGLE IMMUABLE — OUTILS DANS LES BULLETS : la présence d'un outil dans la section OUTILS (HubSpot, Brevo, Figma, etc.) n'autorise pas son injection dans un bullet d'expérience. Un outil ne peut apparaître dans un bullet que s'il est déjà mentionné dans ce bullet dans le CV de base. Ne jamais déduire qu'un outil a été utilisé pour une mission donnée — si ce n'est pas dans le bullet de base, ne pas l'ajouter.
-
-8Beats : TikTok, Instagram, Figma, Brevo uniquement.
-Missions : audience, réseaux sociaux, contenu, UI/UX, site, identité de marque, emailing/newsletters, partenariats.
-INTERDIT pour 8Beats : LinkedIn, Lemlist, Odoo. LinkedIn n'est jamais un canal de 8Beats.
-INTERDIT ABSOLU pour 8Beats : ne jamais mentionner "agence web", "prestataire", "partenaires externes", "sous-traitant" ou toute collaboration avec une entité externe pour la construction du site ou du média. 8Beats est un projet entièrement construit par Jesse sans prestataire extérieur. Toute mention d'agence ou de partenaire externe est une invention — la supprimer.
-RÈGLE IMMUABLE — 2 MILLIONS DE VUES : ce chiffre provient exclusivement de TikTok (stratégie social media). Ne JAMAIS l'attribuer à du SEO, à du trafic site, à un référencement naturel, ou à des "vues" de pages web. ❌ "le SEO m'a permis de générer plus de 2 millions de vues" ❌ "plus de 2 millions de vues grâce au référencement" ✅ "plus de 2 millions de vues sur TikTok". Même règle pour les 4 000 auditeurs mensuels : ce sont des auditeurs de la radio/média, pas des visiteurs SEO.
-Mentionner UI/UX si les compétences 8Beats sont présentées et non déjà couvertes.
-RÈGLE IMMUABLE — ÉCRITURE : toujours "UI/UX" — jamais "UI" seul ni "UX" seul. Les deux sont indissociables.
-RÈGLE IMMUABLE — INCUBATION 8BEATS : si "Hôtel 71" ou "12 mois" est mentionné, la durée French Tech Lyon (1 trimestre) doit toujours apparaître dans la même phrase. Les deux mentions sont indissociables. ❌ "incubé à l'Hôtel 71 (12 mois)" seul → ✅ "incubé à l'Hôtel 71 (12 mois) puis accompagné par la French Tech Lyon (1 trimestre)".
-
-Job Events : Lemlist (prospection), Odoo (newsletters), CRM, emailing, A/B testing, Claude si pertinent.
-Missions : CRM, prospection, newsletters, emailing, automatisation, performance, supports commerciaux.
-INTERDIT pour Job Events : TikTok, Instagram, Figma (sauf preuve explicite).
-INTERDIT ABSOLU — HUBSPOT DANS LES BULLETS JOB EVENTS : ne jamais écrire "HubSpot" dans un bullet de Job Events. HubSpot est dans la section OUTILS mais n'est pas associé à un bullet spécifique. Les outils nommés dans les bullets sont Lemlist (prospection), Odoo (newsletters), Google Analytics (site), IA (automatisation). Remplacer HubSpot par le bon outil ou supprimer la mention.
-VÉRIFICATION OBLIGATOIRE : si un bullet de Job Events contient "HubSpot" → le supprimer et utiliser l'outil correct (Lemlist pour prospection, Odoo pour newsletters).
+Ne jamais mélanger canaux, outils ou missions entre expériences différentes. En cas de doute : omettre plutôt qu'inventer.
+RÈGLE IMMUABLE — OUTILS DANS LES BULLETS : la présence d'un outil dans la section OUTILS n'autorise pas son injection dans un bullet d'expérience où il n'apparaît pas déjà. Ne jamais déduire qu'un outil a été utilisé pour une mission donnée — si ce n'est pas dans le bullet de base, ne pas l'ajouter.
+Ne jamais attribuer un résultat chiffré mentionné pour une expérience à une autre expérience ou à un canal différent (ex: un résultat de réseau social ne devient pas un résultat de référencement).
 
 INFORMATIONS MANQUANTES
 Recruteur inconnu → "Bonjour,". Interlocuteur connu mais poste inconnu → ne pas lui attribuer de mission.
-Date non précisée → "à partir d'octobre 2026". Résultat non confirmé → reformuler sans chiffre.
-Durée d'expérience → ne jamais écrire "depuis X ans", "depuis trois ans", "en X années" — jamais de calcul approximatif de durée. Utiliser uniquement l'ancrage par date : "depuis 2021", "depuis octobre 2025".
+Résultat non confirmé → reformuler sans chiffre.
+Durée d'expérience → ne jamais écrire "depuis X ans", "depuis trois ans", "en X années" — jamais de calcul approximatif de durée. Utiliser uniquement l'ancrage par date, tel que fourni dans le profil de base.
 
 ━━━ EMAIL ━━━
 
@@ -740,10 +657,10 @@ Durée d'expérience → ne jamais écrire "depuis X ans", "depuis trois ans", "
 ${isCDI ? 'Objet : "Candidature au poste de [intitulé en minuscules]".' : 'Objet : si la fiche prescrit un format → l\'utiliser exactement. Sinon : "Candidature au poste de [intitulé en minuscules] en alternance".'}
 Corps (5 lignes max) :
 1. "Bonjour [Prénom]," ou "Bonjour,"
-2. Candidature + poste + prise de poste octobre 2026.
+2. Candidature + poste${profile.availability ? ' + disponibilité' : ''}.
 3. 1 résultat ou compétence clé, 1 chiffre max.
 4. "Vous trouverez en pièce jointe mon CV et ma lettre de motivation."
-5. "Bien cordialement,\nJesse Sotomayor"
+5. "Bien cordialement,\n${profile.name}"
 Jamais de reprise de la lettre. Jamais de mention de plateforme (LinkedIn, etc.).
 
 ━━━ MODE DE TRAVAIL ━━━
@@ -761,18 +678,15 @@ CV
 ☐ Formation : école + diplôme + dates uniquement, bullets:[]
 ☐ Profil : 3 phrases max, aucune affinité sectorielle inventée, aucun "Fort intérêt pour…"
 ☐ Aucune "compétence validée/certifiée" sans preuve réelle
-☐ Title : format "[intitulé] – alternance à partir d'octobre 2026", séparateur " – ", "Alternance" en majuscule
-☐ Outils : TOUS présents (14 items), réordonnés uniquement — aucune suppression
-☐ Compétences : TOUS les items présents (19 items), réordonnés uniquement — aucune suppression
+☐ Outils : TOUS présents, réordonnés uniquement — aucune suppression
+☐ Compétences : TOUS les items présents, réordonnés uniquement — aucune suppression
 
 LETTRE
 ☐ paragraphs[1] : parle du poste et de l'entreprise — ne résume pas l'activité de la société, ne commence pas par "je"
-☐ paragraphs[2] : Job Events uniquement, faits concrets
-☐ paragraphs[3] : 8Beats ou preuve complémentaire — pas de répétition de [2]
-☐ paragraphs[4] : disponibilité "à partir d'octobre 2026" présente UNE SEULE FOIS, phrase de clôture courte
-☐ Disponibilité absente des paragraphes [1], [2], [3] — même sous forme indirecte ("dès", "à partir de", "en octobre")
-☐ Aucun calcul de durée ("depuis trois ans") — uniquement ancrage par date ("depuis 2021")
-☐ Aucun "en parallèle" pour introduire 8Beats
+☐ paragraphs[2]/[3] : une expérience distincte du profil de base par paragraphe, faits concrets, pas de mélange
+☐ paragraphs[4] : disponibilité mentionnée au plus UNE SEULE FOIS (ou absente si non renseignée), phrase de clôture courte
+☐ Disponibilité absente des paragraphes [1], [2], [3] — même sous forme indirecte
+☐ Aucun calcul de durée ("depuis trois ans") — uniquement ancrage par date du profil de base
 ☐ Clôture : "discuter" ou "parler" — jamais "en échanger"
 ☐ Aucune répétition inutile des mêmes idées entre deux paragraphes
 ☐ Ton naturel — lire la première phrase : ne résume pas l'entreprise, ne commence pas par "je"
@@ -781,6 +695,11 @@ EMAIL
 ☐ Objet : intitulé du poste entièrement en minuscules après "Candidature au poste de"
 ☐ Corps : 5 lignes max, pas de reprise de la lettre, pas de mention de plateforme
 
+━━━ CONSIGNES PERSONNALISÉES DU CANDIDAT ━━━
+${profile.customInstructions?.trim()
+  ? `Ces règles viennent du candidat lui-même. Elles sont prioritaires sur tout le reste de ce prompt en cas de conflit — sauf si elles demandent d'inventer un fait non présent dans le profil de base :\n${profile.customInstructions.trim()}`
+  : "Aucune consigne personnalisée renseignée."}
+
 ━━━ FORMAT DE SORTIE ━━━
 
 JSON strict, sans markdown, sans backticks. Champ "poste" = intitulé du rôle uniquement, sans "en alternance".
@@ -788,14 +707,22 @@ Ne jamais inclure dans "paragraphs" : "Bien cordialement,", signature, objet, da
 Concision JSON : profil 3 phrases max · bullets 1 ligne (2 max) · paragraphes lettre 3-4 phrases (5 max) · keywords/adjustments/missing/atsImprovements 3-6 items, 1 phrase chacun.
 ATS : mots-clés pertinents repris, compétences standard, verbes d'action, dates lisibles, terminologie France 2026.
 
-PROFIL DE BASE DE JESSE SOTOMAYOR
-${JSON.stringify(JESSE_BASE)}`;
+PROFIL DE BASE DU CANDIDAT
+${JSON.stringify(profile)}`;
+
+      const cvTitleExample = isCDI
+        ? '[intitulé EXACT du poste dans la fiche]'
+        : `[intitulé EXACT du poste dans la fiche] · Alternance${profile.availability ? ` · ${profile.availability}` : ''}`;
+      const emailObjetExample = isCDI ? 'Candidature au poste de [intitulé]' : 'Candidature au poste de [intitulé] en alternance';
+      const emailCorpsExample = isCDI
+        ? `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé] et je vous adresse ma candidature${profile.availability ? ` pour une disponibilité ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`
+        : `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé] en alternance et je vous adresse ma candidature${profile.availability ? ` pour une prise de poste ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`;
 
       const userPrompt = `Fiche de poste :
 ${jobText}
 
 ${modifications ? `Modifications demandées par le candidat (priorité absolue) :\n${modifications}\n\n` : ''}Retourne UNIQUEMENT un objet JSON valide (sans markdown, sans backticks) :
-{"cv":{"title":"${isCDI ? '[intitulé EXACT du poste dans la fiche]' : '[intitulé EXACT du poste dans la fiche] · Alternance à partir d\'octobre 2026 · 4j entreprise / 1j école'}","profil":"...","experiences":[{"company":"...","title":"...","dates":"...","bullets":["..."]}],"formation":[{"school":"...","degree":"...","dates":"...","bullets":[]}],"competences":"...","outils":"..."},"lettre":{"company":"[nom de l'entreprise uniquement, sans article ni préposition, sans accents, prêt pour un nom de fichier — ex: Pachamama, JobEvents, ManoMano]","poste":"[intitulé du rôle uniquement, sans le mot Alternance et sans tirets séparateurs — ex: Marketing & Growth, Chargé de marketing digital]","paragraphs":["...","...","...","..."]},"email":{"to":"[adresse email détectée dans la fiche, ou vide]","objet":"${isCDI ? 'Candidature au poste de [intitulé]' : 'Candidature au poste de [intitulé] en alternance'}","corps":"${isCDI ? 'Bonjour [Prénom],\\n\\nJ\'ai découvert votre offre pour le poste de [intitulé] et je vous adresse ma candidature pour une disponibilité à partir d\'octobre 2026.\\n\\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\\n\\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\\n\\nBien cordialement,\\nJesse Sotomayor' : 'Bonjour [Prénom],\\n\\nJ\'ai découvert votre offre pour le poste de [intitulé] en alternance et je vous adresse ma candidature pour une prise de poste en octobre 2026.\\n\\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\\n\\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\\n\\nBien cordialement,\\nJesse Sotomayor'}"},"keywords":["..."],"adjustments":["..."],"missing":["..."],"atsScore":0,"atsImprovements":["..."]}`;
+{"cv":{"title":"${cvTitleExample}","profil":"...","experiences":[{"company":"...","title":"...","dates":"...","bullets":["..."]}],"formation":[{"school":"...","degree":"...","dates":"...","bullets":[]}],"competences":"...","outils":"..."},"lettre":{"company":"[nom de l'entreprise uniquement, sans article ni préposition, sans accents, prêt pour un nom de fichier — ex: Pachamama, JobEvents, ManoMano]","poste":"[intitulé du rôle uniquement, sans le mot Alternance et sans tirets séparateurs — ex: Marketing & Growth, Chargé de marketing digital]","paragraphs":["...","...","...","..."]},"email":{"to":"[adresse email détectée dans la fiche, ou vide]","objet":"${emailObjetExample}","corps":"${emailCorpsExample}"},"keywords":["..."],"adjustments":["..."],"missing":["..."],"atsScore":0,"atsImprovements":["..."]}`;
 
       // Fake ticker while Claude thinks
       let fakeP = 15;
@@ -816,7 +743,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
 
       const raw = message.content[0].type === 'text' ? message.content[0].text : '';
       let parsed: {
-        cv: Partial<typeof JESSE_BASE>;
+        cv: Partial<CVProfile>;
         lettre: { company: string; poste: string; paragraphs: string[] };
         email: { to: string; objet: string; corps: string };
         keywords: string[]; adjustments: string[]; missing: string[];
@@ -856,38 +783,14 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         s.replace(/\s*—\s*/g, ' · ')             // em-dash → point médian
          .replace(/\s+–\s+/g, ' · ')             // en-dash connecteur → point médian
          .replace(/\bUX\/UI\b/g, 'UI/UX')        // ordre correct
-         .replace(/\bbases?\s+de\s+données\b/gi, 'fichier de contacts')
          .replace(/\bdata[- ]driven\b/gi, 'orienté données')
          .replace(/\bCofondateur\b/g, 'Co-fondateur')
          .replace(/\bcofondateur\b/g, 'co-fondateur');
 
-      // Filtre mécanique sur les bullets CV
-      const sanitizeBullet = (s: string, company: string): string => {
-        // UI/UX toujours dans le bon ordre
-        s = s.replace(/\bUX\/UI\b/g, 'UI/UX');
-        // "bases de données" → "fichier de contacts"
-        s = s.replace(/\bbases?\s+de\s+données\b/gi, 'fichier de contacts');
-        // "data-driven" → interdit dans le profil aussi
-        s = s.replace(/\bdata[- ]driven\b/gi, 'orienté données');
-        // "Cofondateur" → "Co-fondateur"
-        s = s.replace(/\bCofondateur\b/g, 'Co-fondateur');
-        s = s.replace(/\bcofondateur\b/g, 'co-fondateur');
-        if (company === 'Job Events') {
-          // HubSpot n'est jamais dans les bullets Job Events — supprimer
-          s = s.replace(/\s+HubSpot\s*,/g, ',');
-          s = s.replace(/,\s*HubSpot\b/g, '');
-          s = s.replace(/\bHubSpot\s+/g, '');
-          s = s.replace(/\bHubSpot\b/g, '');
-        }
-        if (company === '8Beats Radio') {
-          // Instagram ne peut pas apparaître dans les bullets TikTok/social media
-          // (Instagram est dans les outils mais pas dans les bullets de base)
-          s = s.replace(/\bTikTok\s+et\s+Instagram\b/g, 'TikTok');
-          s = s.replace(/\bInstagram\s+et\s+TikTok\b/g, 'TikTok');
-        }
-        s = s.replace(/\s{2,}/g, ' ').trim();
-        return s;
-      };
+      // Filtre mécanique générique sur les bullets CV — aucune règle propre à
+      // une entreprise ou un outil précis, ça c'est le rôle de customInstructions.
+      const sanitizeBullet = (s: string): string =>
+        s.replace(/\bUX\/UI\b/g, 'UI/UX').replace(/\s{2,}/g, ' ').trim();
 
       // Guard: if Claude returned fewer items than the base (truncation), use base instead
       const protectList = (returned: string | undefined, base: string): string => {
@@ -897,29 +800,33 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         return retCount >= baseCount ? noEm(returned) : base;
       };
 
-      const rawCV = { ...JESSE_BASE, ...parsed.cv } as typeof JESSE_BASE;
-      const cvData: typeof JESSE_BASE = {
+      // A formation hasn't started yet if its "dates" field opens on a
+      // MM/AAAA in the future — used to drop upcoming schooling from a CDI
+      // application (incompatible with a permanent, full-time contract).
+      const formationStarted = (dates: string): boolean => {
+        const m = dates.match(/(\d{2})\/(\d{4})/);
+        if (!m) return true; // can't parse → keep it, don't guess
+        return new Date(Number(m[2]), Number(m[1]) - 1, 1) <= new Date();
+      };
+
+      const rawCV = { ...profile, title: profile.experiences[0]?.title ?? '', ...parsed.cv } as CVProfile;
+      const cvData: CVProfile = {
         ...rawCV,
-        // Strip "en alternance" and epicene markers from the intitulé part (before the first ·)
-        title: noEm(rawCV.title ?? JESSE_BASE.title)
+        // Strip epicene markers from the intitulé part (before the first ·)
+        title: noEm(rawCV.title ?? '')
           .replace(/^(.*?)\s+en\s+alternance(\s*·)/i, '$1$2')
           .replace(/[.··](e|es|ée|ées|trice|rice|euse|eure)\b/gi, ''),
-        profil: noEm(rawCV.profil ?? JESSE_BASE.profil),
-        experiences: (rawCV.experiences ?? JESSE_BASE.experiences).map((e) => ({
+        profil: noEm(rawCV.profil ?? profile.profil),
+        experiences: (rawCV.experiences ?? profile.experiences).map((e) => ({
           ...e,
-          bullets: (e.bullets ?? []).map(b => sanitizeBullet(noEm(b), e.company)),
+          bullets: (e.bullets ?? []).map(b => sanitizeBullet(noEm(b))),
         })),
-        formation: (rawCV.formation ?? JESSE_BASE.formation)
-          // CDI : supprimer ESD — formation non débutée, incompatible CDI
-          // Filtre sur le nom de l'école (robuste même si Claude reformate les dates)
-          .filter((f) => !isCDI || !/supérieure du digital|ESD/i.test(f.school ?? ''))
-          .map((f) => ({
-            ...f,
-            bullets: [] as string[],
-          })),
+        formation: (rawCV.formation ?? profile.formation)
+          .filter((f) => !isCDI || formationStarted(f.dates ?? ''))
+          .map((f) => ({ ...f, bullets: [] as string[] })),
         // protectList: si Claude tronque compétences ou outils → on garde la base complète
-        competences: protectList(rawCV.competences, JESSE_BASE.competences),
-        outils:      protectList(rawCV.outils,      JESSE_BASE.outils),
+        competences: protectList(rawCV.competences, profile.competences),
+        outils:      protectList(rawCV.outils,      profile.outils),
       };
 
       // Sanitize letter + email body: remove any English jargon Claude may have missed
@@ -941,7 +848,9 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       // Strip any sentence that looks like an availability mention or a closing formula,
       // then append one canonical sentence that combines both.
       if (letterParagraphs.length >= 5) {
-        const CLOSING = "Je suis disponible à partir d'octobre 2026 et serais heureux d'en parler de vive voix avec vous prochainement.";
+        const CLOSING = profile.availability?.trim()
+          ? `Je suis disponible ${profile.availability.trim()} et serais heureux d'en parler de vive voix avec vous prochainement.`
+          : "Je serais heureux d'en parler de vive voix avec vous prochainement.";
         const isClosingSentence = (s: string) =>
           /disponible\s+à\s+partir|je\s+ser[aio]+s?\s+(ravi|heureux|content|disponible)|d[''']en\s+dis[ck]uter|premier\s+échange|de\s+vive\s+voix|à\s+partir\s+d[''']octobre|prise\s+de\s+poste/i.test(s);
         // Split roughly on sentence boundaries, filter closing sentences, re-append the fixed one
@@ -992,7 +901,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
             corps: sanitizeLetter([noEm(parsed.email.corps)])[0] }
         : { to: '', objet: '', corps: '' };
 
-      const [cvBuf, lettreBuf] = await Promise.all([buildCVPdf(cvData), buildLetterPdf(lettreData, isCDI)]);
+      const [cvBuf, lettreBuf] = await Promise.all([buildCVPdf(cvData), buildLetterPdf(profile, lettreData, isCDI)]);
       await send({ progress: 95, step: 'Finalisation…' });
 
       await send({

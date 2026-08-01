@@ -2992,3 +2992,74 @@ legend.field-label { padding: 0; }
 
 .generate-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--text); line-height: 1.5; }
 .generate-list--muted { color: var(--text-muted); }
+
+/* ── Profil candidat ─────────────────────────────────────────────────── */
+
+.profile-view-header { margin-bottom: 24px; }
+.profile-view-title { font-size: 32px; font-weight: 500; line-height: 1; margin: 0 0 8px; }
+.profile-view-hint { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0; max-width: 640px; }
+
+.profile-form { display: flex; flex-direction: column; gap: 24px; max-width: 640px; }
+
+.profile-form fieldset.field-group { border: none; padding: 0; margin: 0; }
+.profile-form legend.field-label { padding: 0; margin-bottom: 12px; }
+
+.profile-form label {
+  display: block;
+  font-size: 12px;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.profile-form input,
+.profile-form select,
+.profile-form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  font-size: 14px;
+  line-height: 1.4;
+  font-family: inherit;
+  color: var(--text);
+  transition: border-color 0.15s ease;
+  resize: vertical;
+}
+
+.profile-form input:hover,
+.profile-form textarea:hover { border-color: var(--text-muted); }
+
+.profile-form .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.profile-form .field-hint { font-weight: 400; color: var(--text-muted); }
+
+.profile-exp-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.btn-remove-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  color: var(--rose);
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 0;
+  cursor: pointer;
+}
+.btn-remove-contact:hover { opacity: 0.75; }
+
+.profile-form-actions { display: flex; align-items: center; gap: 12px; }

@@ -189,6 +189,12 @@ export default async function TrackerPage() {
               </div>
             </div>
 
+            <div className="field-group">
+              <Link href="/profil" className="btn-add-contact">
+                <i data-lucide="user-cog"></i>Mon profil candidat
+              </Link>
+            </div>
+
             <form
               action={async () => {
                 'use server';

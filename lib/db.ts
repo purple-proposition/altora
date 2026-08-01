@@ -36,6 +36,7 @@ async function runSchema() {
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_url TEXT`;
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_filename TEXT`;
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_thumbnail_url TEXT`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile JSONB`;
   await sql`
     CREATE TABLE IF NOT EXISTS cards (
       id TEXT PRIMARY KEY,
