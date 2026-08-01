@@ -509,10 +509,9 @@ body {
   width: 32px;
   height: 32px;
   padding: 0;
-  /* .topbar-breadcrumb already applies gap: 8px between all its flex
-     children — this only needs to add the remaining 16px to reach a clean
-     24px total, not another full 24px on top of that gap. */
-  margin-right: 16px;
+  /* .topbar-breadcrumb applies gap: 8px between all its flex children —
+     cancel it here so the button sits flush against the next item. */
+  margin-right: -8px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   background: transparent;

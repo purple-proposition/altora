@@ -46,10 +46,10 @@ function MethodExplanation() {
         <div className="method-card">
           <div className="method-card-head">
             <i data-lucide="scan-search"></i>
-            <h3 className="method-card-title">Conçu pour passer les robots avant les humains</h3>
+            <h3 className="method-card-title">Conçu pour passer les robots</h3>
           </div>
           <p className="method-card-text">
-            Un CV avec plusieurs colonnes, des icônes ou des étoiles de compétences est souvent illisible pour ce logiciel : il finit à la corbeille sans avoir été vu. Ton CV Altora reste en une seule colonne, avec des intitulés de section standards que l&apos;ATS saura lire parfaitement pour faire remonter ton profil.
+            Un CV avec plusieurs colonnes, des icônes ou des étoiles de compétences est souvent illisible pour un ATS : il finit à la corbeille sans avoir été vu. Ton CV Altora reste en une seule colonne, avec des intitulés de section standards que l&apos;ATS lit parfaitement.
           </p>
         </div>
 
@@ -59,7 +59,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Une page sans superflu</h3>
           </div>
           <p className="method-card-text">
-            Un recruteur passe en moyenne <strong>7 secondes</strong> sur un CV. Le tien tient sur une seule page, chaque expérience résumée en verbe d&apos;action, contexte et résultat chiffré, sans jargon creux.
+            Un recruteur passe en moyenne <strong>7 secondes</strong> sur un CV. Le tien tient toujours sur une seule page, chaque expérience résumée en verbe d&apos;action, contexte et résultat chiffré, sans jargon creux, pour faire remonter ton profil au premier coup d&apos;œil.
           </p>
         </div>
 
