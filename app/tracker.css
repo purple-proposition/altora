@@ -387,7 +387,7 @@ body {
 
 .sidebar-submenu-empty {
   padding: 8px 8px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 
@@ -644,13 +644,13 @@ body {
 
 .topbar-notification-text {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.4;
   color: var(--text);
 }
 
 .topbar-notification-time {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
   color: var(--text-muted);
 }
@@ -701,7 +701,7 @@ body {
   border-radius: var(--radius-pill);
   background: var(--indigo);
   color: white;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
 }
@@ -1142,7 +1142,7 @@ body {
   border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--indigo) 15%, transparent);
   color: var(--indigo);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
 }
@@ -1802,7 +1802,7 @@ legend.field-label { padding: 0; }
   background: var(--bg);
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease;
@@ -2604,7 +2604,7 @@ legend.field-label { padding: 0; }
   background: transparent;
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1;
   text-box-trim: trim-both;
@@ -2686,7 +2686,7 @@ legend.field-label { padding: 0; }
   background: color-mix(in srgb, var(--card-bg) 88%, transparent);
   backdrop-filter: blur(2px);
   color: var(--indigo);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   pointer-events: none;
 }
@@ -2869,7 +2869,7 @@ legend.field-label { padding: 0; }
 
 .inbox-message-preview {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--text-muted);
 }
@@ -2967,7 +2967,7 @@ legend.field-label { padding: 0; }
 }
 .generate-textarea:hover { border-color: var(--text-muted); }
 .generate-textarea:focus { outline: none; border-color: var(--indigo); }
-.generate-textarea--small { min-height: 100px; font-size: 13px; }
+.generate-textarea--small { min-height: 100px; font-size: 14px; }
 
 .generate-stored-description {
   display: flex;
@@ -3003,7 +3003,7 @@ legend.field-label { padding: 0; }
   border-radius: var(--radius-input);
   background: var(--rose-tint);
   color: var(--rose);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .generate-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
@@ -3015,7 +3015,7 @@ legend.field-label { padding: 0; }
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 8px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -3056,7 +3056,7 @@ legend.field-label { padding: 0; }
 .ats-score-card--low { background: var(--rose-tint); color: var(--rose); }
 .ats-score-value { flex-shrink: 0; text-align: center; }
 .ats-score-number { font-size: 36px; font-weight: 500; line-height: 1; }
-.ats-score-suffix { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+.ats-score-suffix { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
 .ats-score-card .field-label { color: inherit; opacity: 0.75; }
 
 .generate-downloads { display: flex; gap: 8px; margin-bottom: 24px; }
@@ -3083,7 +3083,7 @@ legend.field-label { padding: 0; }
 .generate-subsection + .generate-subsection { margin-top: 16px; }
 .generate-pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
 
-.generate-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--text); line-height: 1.5; }
+.generate-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--text); line-height: 1.5; }
 .generate-list--muted { color: var(--text-muted); }
 
 /* ── Explication pédagogique ATS Booster ─────────────────────────────── */
@@ -3170,14 +3170,15 @@ legend.field-label { padding: 0; }
 
 .generate-intro { display: flex; flex-direction: column; gap: 24px; }
 .method-card--intro-standalone { padding: 0; }
-.generate-intro-cta { width: 100%; padding: 16px 24px; font-size: 15px; }
+.generate-intro-cta { width: 100%; padding: 16px 24px; font-size: 16px; }
 
 .method-card-head { display: flex; align-items: center; gap: 8px; }
 .method-card-head .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 
 .method-card-title { font-size: 14px; font-weight: 500; line-height: 1; text-box-trim: trim-both; text-box-edge: cap alphabetic; color: var(--text); margin: 0; }
+.method-card-title--intro { font-size: 24px; }
 
-.method-card-text { font-size: 13px; line-height: 1.6; color: var(--text-muted); margin: 0; }
+.method-card-text { font-size: 14px; line-height: 1.6; color: var(--text-muted); margin: 0; }
 .method-card-text strong { color: var(--text); font-weight: 500; }
 .method-card-text a { color: var(--indigo); text-decoration: underline; }
 
@@ -3185,7 +3186,7 @@ legend.field-label { padding: 0; }
 
 .profile-view-header { margin-bottom: 24px; }
 .profile-view-title { font-size: 32px; font-weight: 500; line-height: 1; margin: 0 0 8px; }
-.profile-view-hint { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0; max-width: 640px; }
+.profile-view-hint { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0; max-width: 640px; }
 
 .profile-form { display: flex; flex-direction: column; gap: 24px; max-width: 640px; }
 
@@ -3266,7 +3267,7 @@ legend.field-label { padding: 0; }
 
 .school-view-header { margin-bottom: 24px; }
 .school-view-title { font-size: 32px; font-weight: 500; line-height: 1; margin: 0 0 8px; }
-.school-view-hint { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0; max-width: 640px; }
+.school-view-hint { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0; max-width: 640px; }
 
 .school-readonly-card {
   background: var(--card-bg);
@@ -3302,7 +3303,7 @@ legend.field-label { padding: 0; }
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   overflow: hidden;
-  font-size: 13px;
+  font-size: 14px;
 }
 .school-students-table th,
 .school-students-table td {
@@ -3320,6 +3321,6 @@ legend.field-label { padding: 0; }
   border-radius: var(--radius-pill);
   background: var(--indigo);
   color: white;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.4;
 }

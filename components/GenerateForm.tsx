@@ -35,10 +35,10 @@ function MethodExplanation() {
       <div className="method-card method-card--intro">
         <div className="method-card-head">
           <i data-lucide="bot"></i>
-          <h3 className="method-card-title">C&apos;est quoi un ATS ?</h3>
+          <h3 className="method-card-title method-card-title--intro">C&apos;est quoi un ATS ?</h3>
         </div>
         <p className="method-card-text">
-          Un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures ») est le logiciel que la quasi-totalité des entreprises utilisent pour trier les candidatures reçues. Avant qu&apos;un recruteur ne voie ton CV, l&apos;ATS le scanne, en extrait le texte et cherche les mots-clés de l&apos;offre (compétences, outils, intitulé du poste). <strong>Le premier « lecteur » de ton CV est donc un algorithme</strong>, pas un humain : un CV mal structuré peut être écarté avant d&apos;être lu, même avec un profil parfait pour le poste.
+          Un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures ») est le logiciel que la quasi-totalité des entreprises utilisent pour trier les candidatures reçues. <strong>9 candidatures sur 10 passent d&apos;abord par un ATS</strong> avant qu&apos;un recruteur ne voie le CV : le logiciel le scanne, en extrait le texte et cherche les mots-clés de l&apos;offre (compétences, outils, intitulé du poste). <strong>Le premier « lecteur » de ton CV est donc un algorithme</strong>, pas un humain : un CV mal structuré peut être écarté avant d&apos;être lu, même avec un profil parfait pour le poste.
         </p>
       </div>
 
@@ -46,17 +46,17 @@ function MethodExplanation() {
         <div className="method-card">
           <div className="method-card-head">
             <i data-lucide="scan-search"></i>
-            <h3 className="method-card-title">1. Conçu pour passer les robots avant les humains</h3>
+            <h3 className="method-card-title">Conçu pour passer les robots avant les humains</h3>
           </div>
           <p className="method-card-text">
-            9 candidatures sur 10 passent d&apos;abord par un ATS, et un CV à colonnes, icônes ou étoiles de compétences est souvent illisible pour ce logiciel : il finit à la corbeille sans avoir été vu. Ton CV Altora reste en une seule colonne, avec des intitulés de section standards (« Expériences », « Formation »), que l&apos;ATS lit parfaitement en reprenant automatiquement les mots-clés de l&apos;offre pour faire remonter ton profil.
+            Un CV avec plusieurs colonnes, des icônes ou des étoiles de compétences est souvent illisible pour ce logiciel : il finit à la corbeille sans avoir été vu. Ton CV Altora reste en une seule colonne, avec des intitulés de section standards que l&apos;ATS saura lire parfaitement pour faire remonter ton profil.
           </p>
         </div>
 
         <div className="method-card">
           <div className="method-card-head">
             <i data-lucide="file-check-2"></i>
-            <h3 className="method-card-title">2. Une page, rien de superflu</h3>
+            <h3 className="method-card-title">Une page sans superflu</h3>
           </div>
           <p className="method-card-text">
             Un recruteur passe en moyenne <strong>7 secondes</strong> sur un CV. Le tien tient sur une seule page, chaque expérience résumée en verbe d&apos;action, contexte et résultat chiffré, sans jargon creux.
@@ -66,7 +66,7 @@ function MethodExplanation() {
         <div className="method-card">
           <div className="method-card-head">
             <i data-lucide="target"></i>
-            <h3 className="method-card-title">3. Réordonné pour chaque offre, jamais inventé</h3>
+            <h3 className="method-card-title">Réordonné pour chaque offre, jamais inventé</h3>
           </div>
           <p className="method-card-text">
             Pour chaque fiche de poste, tes expériences, compétences et outils sont réordonnés par pertinence décroissante, jamais supprimés ni inventés. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience fictive, zéro compétence que tu ne pourrais pas justifier en entretien face à un recruteur.
@@ -76,7 +76,7 @@ function MethodExplanation() {
         <div className="method-card">
           <div className="method-card-head">
             <i data-lucide="pen-line"></i>
-            <h3 className="method-card-title">4. Une lettre qui ne recopie pas le CV</h3>
+            <h3 className="method-card-title">Une lettre qui ne recopie pas le CV</h3>
           </div>
           <p className="method-card-text">
             L&apos;erreur la plus fréquente est une lettre qui répète le CV en phrases. La tienne suit une structure en 4 temps : pourquoi ce poste t&apos;intéresse, ta preuve principale, une preuve complémentaire, puis ta disponibilité, sans résumer l&apos;entreprise ni utiliser de formules toutes faites comme « a retenu mon attention ». Ajoute tes propres consignes dans <Link href="/profil">ton profil</Link>, section « Consignes personnalisées » : elles priment sur tout le reste.
