@@ -59,7 +59,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">2. Une page, rien de superflu</h3>
           </div>
           <p className="method-card-text">
-            Un recruteur passe en moyenne <strong>7 secondes</strong> sur un premier CV. Le tien tient sur une seule page, chaque expérience résumée en verbe d&apos;action, contexte et résultat chiffré, sans jargon RH creux (« compétences validées », « fort intérêt pour »). Tout ce qui ne sert pas la candidature est coupé en premier, jamais tes outils ou compétences.
+            Un recruteur passe en moyenne <strong>7 secondes</strong> sur un CV. Le tien tient sur une seule page, chaque expérience résumée en verbe d&apos;action, contexte et résultat chiffré, sans jargon creux.
           </p>
         </div>
 
