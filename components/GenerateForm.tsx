@@ -44,7 +44,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Conçu pour passer les robots</h3>
           </div>
           <p className="method-card-text">
-            Un CV avec plusieurs colonnes ou des icônes est souvent illisible pour un ATS : il finit à la corbeille sans avoir été vu. Ton CV Altora reste en une seule colonne, sur une seule page, avec des intitulés de section standards et des expériences résumées sans jargon creux pour que l&apos;ATS puisse le lire parfaitement.
+            Un CV avec plusieurs colonnes ou des icônes est souvent illisible pour un ATS. Ton CV Altora reste sur une seule page en une seule colonne, avec des intitulés de section standards et des expériences résumées sans jargon creux, pour passer le filtre et être lu par le recruteur.
           </p>
         </div>
 
