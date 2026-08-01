@@ -56,7 +56,7 @@ function MethodExplanation() {
         <div className="method-card">
           <div className="method-card-head">
             <i data-lucide="sliders-horizontal"></i>
-            <h3 className="method-card-title">Adapté à ta façon d&apos;écrire</h3>
+            <h3 className="method-card-title">Tes propres règles sont prioritaires</h3>
           </div>
           <p className="method-card-text">
             Les règles ci-dessus s&apos;appliquent par défaut à tout le monde, mais ton parcours a ses particularités : une formulation à éviter, un fait à toujours mettre en avant, une nuance sur une expérience. Le générateur peut aussi tenir compte de tes propres consignes, prioritaires sur toutes les règles standards, pour que le résultat te ressemble vraiment.
