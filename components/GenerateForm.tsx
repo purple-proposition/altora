@@ -53,7 +53,7 @@ function MethodExplanation() {
 
         <div className="method-card">
           <div className="method-card-head">
-            <h3 className="method-card-title">Tes propres règles sont prioritaires</h3>
+            <h3 className="method-card-title">Tes propres règles en priorité</h3>
           </div>
           <p className="method-card-text">
             Une formulation à éviter, un fait à toujours mettre en avant, une nuance sur ton expérience. Chaque profil est unique, le générateur peut aussi tenir compte de tes propres consignes pour que le résultat te ressemble vraiment.
@@ -65,7 +65,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Sur mesure pour chaque offre</h3>
           </div>
           <p className="method-card-text">
-            Pour chaque fiche de poste, tes expériences, compétences et outils sont réordonnés par pertinence décroissante, jamais supprimés ni inventés. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience fictive, zéro compétence que tu ne pourrais pas justifier en entretien.
+            Tes expériences, compétences et outils sont organisés pour chaque fiche de poste. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience inventée, zéro compétence que tu ne pourrais pas justifier en entretien.
           </p>
         </div>
 
