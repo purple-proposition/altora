@@ -25,7 +25,9 @@ export default async function TrackerLayout({ children }: { children: React.Reac
         </div>
       </SidebarCollapseProvider>
 
-      <div className="grid-overlay" id="grid-overlay"></div>
+      <div className="grid-overlay" id="grid-overlay">
+        {Array.from({ length: 12 }).map((_, i) => <span key={i}></span>)}
+      </div>
       <GridOverlayToggle />
       <SchoolAdminToggle />
 

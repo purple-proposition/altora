@@ -49,6 +49,7 @@ function GenerateForm() {
   const [email, setEmail] = useState<{ to: string; objet: string; corps: string } | null>(null);
   const [emailCopied, setEmailCopied] = useState(false);
   const [poste, setPoste] = useState('');
+  const [methodOpen, setMethodOpen] = useState(false);
 
   // Icons here are React-rendered (not the DOM tracker.js writes directly to),
   // so the shared layout's one-time icon pass can miss ones that only show up
@@ -260,13 +261,14 @@ function GenerateForm() {
 
         {(state === 'idle' || state === 'error') && (
           <>
-            <details className="method-explainer">
-              <summary className="method-explainer-summary">
+            <div className={`method-explainer${methodOpen ? ' method-explainer--open' : ''}`}>
+              <button type="button" className="method-explainer-summary" onClick={() => setMethodOpen(o => !o)}>
                 <i data-lucide="graduation-cap"></i>
-                <span>Pourquoi ce CV et cette lettre sont pensés pour maximiser tes chances</span>
+                <span>Comment ATS Booster est pensé pour maximiser tes chances de décrocher ton alternance</span>
                 <i data-lucide="chevron-down" className="method-explainer-chevron"></i>
-              </summary>
+              </button>
 
+              <div className="method-explainer-collapse">
               <div className="method-explainer-body">
                 <div className="method-card method-card--intro">
                   <div className="method-card-head">
@@ -274,7 +276,7 @@ function GenerateForm() {
                     <h3 className="method-card-title">C&apos;est quoi un ATS ?</h3>
                   </div>
                   <p className="method-card-text">
-                    Un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures ») est un logiciel utilisé par la quasi-totalité des entreprises pour gérer les candidatures qu&apos;elles reçoivent. Concrètement : quand tu postules, ton CV n&apos;atterrit presque jamais directement devant un humain. Il est d&apos;abord scanné automatiquement par ce logiciel, qui en extrait le texte, cherche les mots-clés de l&apos;offre (compétences, outils, intitulé du poste…), et classe ou filtre les candidatures avant qu&apos;un recruteur n&apos;en ouvre une seule. Autrement dit : <strong>le premier « lecteur » de ton CV n&apos;est pas un humain, c&apos;est un algorithme</strong> — et un CV mal structuré peut être recalé avant même d&apos;être vu, même si ton profil est parfait pour le poste.
+                    Un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures ») est le logiciel que la quasi-totalité des entreprises utilisent pour trier les candidatures reçues. Avant qu&apos;un recruteur ne voie ton CV, l&apos;ATS le scanne, en extrait le texte et cherche les mots-clés de l&apos;offre (compétences, outils, intitulé du poste). <strong>Le premier « lecteur » de ton CV est donc un algorithme</strong>, pas un humain : un CV mal structuré peut être écarté avant d&apos;être lu, même avec un profil parfait pour le poste.
                   </p>
                 </div>
 
@@ -328,7 +330,8 @@ function GenerateForm() {
                   </p>
                 </div>
               </div>
-            </details>
+              </div>
+            </div>
 
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>
