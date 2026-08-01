@@ -79,7 +79,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Une lettre qui ne recopie pas le CV</h3>
           </div>
           <p className="method-card-text">
-            L&apos;erreur la plus fréquente : une lettre qui répète le CV en phrases. La tienne suit une structure en 4 temps, motivation, preuve principale, preuve complémentaire, disponibilité, sans clichés ni résumé de l&apos;entreprise. Ajoute tes consignes personnalisées dans <Link href="/profil">ton profil</Link> : elles priment sur le reste.
+            L&apos;erreur la plus fréquente est une lettre qui répète le CV en phrases. La tienne suit une structure en 4 temps : pourquoi ce poste t&apos;intéresse, ta preuve principale, une preuve complémentaire, puis ta disponibilité. Ajoute tes propres consignes dans <Link href="/profil">ton profil</Link>, section « Consignes personnalisées » : elles priment sur tout le reste.
           </p>
         </div>
       </div>
