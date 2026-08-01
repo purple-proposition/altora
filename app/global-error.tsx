@@ -30,7 +30,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         >
           <h1 style={{ fontSize: 24, fontWeight: 500, margin: 0 }}>Une erreur inattendue est survenue</h1>
           <p style={{ fontSize: 14, color: '#a1a1aa', maxWidth: 420, margin: 0 }}>
-            Le reste de tes données est intact — rien n&apos;a été perdu. Tu peux réessayer, ou revenir à l&apos;accueil.
+            Le reste de tes données est intact, rien n&apos;a été perdu. Tu peux réessayer, ou revenir à l&apos;accueil.
           </p>
           <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
             <button

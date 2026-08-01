@@ -789,7 +789,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
 
       try { parsed = JSON.parse(repairJSON(raw)); }
       catch {
-        await send({ error: 'Réponse invalide de Claude — réessaie' }); return;
+        await send({ error: 'Réponse invalide de Claude, réessaie' }); return;
       }
 
       // Step 3 – PDFs
