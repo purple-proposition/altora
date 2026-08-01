@@ -13,10 +13,12 @@
     "@neondatabase/serverless": "^1.1.0",
     "@vercel/blob": "^2.6.1",
     "bcryptjs": "^3.0.3",
+    "mammoth": "^1.12.0",
     "next": "^15.3.0",
     "next-auth": "^5.0.0-beta.32",
     "pdfjs-dist": "^6.2.108",
-    "pdfkit": "^0.15.1"
+    "pdfkit": "^0.15.1",
+    "word-extractor": "^1.0.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

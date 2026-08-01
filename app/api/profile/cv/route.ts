@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 import { renderPdfFirstPageToPng } from '@/lib/pdfThumbnail';
 import { getUserProfile, saveUserProfile, isProfileComplete } from '@/lib/profile';
-import { extractProfileFromPdf } from '@/lib/profileExtraction';
+import { extractProfileFromCV } from '@/lib/profileExtraction';
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
@@ -71,18 +71,17 @@ export async function POST(req: NextRequest) {
   // only — once a user has a real profile (edited or already extracted),
   // re-uploading a CV must never silently overwrite their edits.
   let profileExtracted = false;
-  if (detected.ext === '.pdf') {
-    const existing = await getUserProfile(session.user.id);
-    if (!isProfileComplete(existing)) {
-      const extracted = await extractProfileFromPdf(
-        Buffer.from(await file.arrayBuffer()),
-        session.user.name ?? '',
-        session.user.email ?? '',
-      );
-      if (extracted) {
-        await saveUserProfile(session.user.id, extracted);
-        profileExtracted = true;
-      }
+  const existing = await getUserProfile(session.user.id);
+  if (!isProfileComplete(existing)) {
+    const extracted = await extractProfileFromCV(
+      Buffer.from(await file.arrayBuffer()),
+      ext as '.pdf' | '.docx' | '.doc',
+      session.user.name ?? '',
+      session.user.email ?? '',
+    );
+    if (extracted) {
+      await saveUserProfile(session.user.id, extracted);
+      profileExtracted = true;
     }
   }
 
