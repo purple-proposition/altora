@@ -123,7 +123,7 @@ export default async function TrackerPage() {
             <h2 className="calendar-title" id="calendar-title"></h2>
             <div className="calendar-nav">
               <button type="button" className="calendar-nav-btn" id="calendar-prev" aria-label="Mois précédent"><i data-lucide="chevron-left"></i></button>
-              <button type="button" className="calendar-nav-btn" id="calendar-today" aria-label="Aujourd&apos;hui"><i data-lucide="dot"></i></button>
+              <button type="button" className="calendar-nav-btn" id="calendar-today" aria-label="Aujourd&apos;hui"><i data-lucide="circle"></i></button>
               <button type="button" className="calendar-nav-btn" id="calendar-next" aria-label="Mois suivant"><i data-lucide="chevron-right"></i></button>
               <span className="calendar-legend-trigger-wrap">
                 <button type="button" className="calendar-nav-btn" id="calendar-legend-trigger" aria-label="Légende des couleurs" aria-expanded="false" aria-controls="calendar-legend-popup"><i data-lucide="circle-help"></i></button>
