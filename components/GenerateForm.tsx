@@ -34,18 +34,16 @@ function MethodExplanation() {
     <>
       <div className="method-card method-card--intro">
         <div className="method-card-head">
-          <i data-lucide="bot"></i>
           <h3 className="method-card-title method-card-title--intro">C&apos;est quoi un ATS ?</h3>
         </div>
         <p className="method-card-text">
-          <strong>9 candidatures sur 10</strong> passent d&apos;abord par un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures ») avant qu&apos;un recruteur ne voie le CV : le logiciel le scanne, en extrait le texte et cherche les mots-clés de l&apos;offre, intitulé du poste, compétences, outils. <strong>Le premier « lecteur » de ton CV est donc un algorithme</strong>, pas un humain. Mal structuré, il sera écarté avant même d&apos;être lu, même si ton profil est parfait pour le poste.
+          <strong>9 candidatures sur 10</strong> passent d&apos;abord par un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures »). Avant qu&apos;un recruteur ne voie le CV, le logiciel le scanne, en extrait le texte et cherche les mots-clés de l&apos;offre : intitulé du poste, compétences, outils. <strong>Le premier « lecteur » de ton CV est donc un algorithme</strong>, pas un humain, et mal structuré, il sera écarté avant même d&apos;être lu, même si ton profil est parfait pour le poste.
         </p>
       </div>
 
       <div className="method-explain-grid">
         <div className="method-card">
           <div className="method-card-head">
-            <i data-lucide="scan-search"></i>
             <h3 className="method-card-title">Conçu pour passer les robots</h3>
           </div>
           <p className="method-card-text">
@@ -55,7 +53,6 @@ function MethodExplanation() {
 
         <div className="method-card">
           <div className="method-card-head">
-            <i data-lucide="sliders-horizontal"></i>
             <h3 className="method-card-title">Tes propres règles sont prioritaires</h3>
           </div>
           <p className="method-card-text">
@@ -65,7 +62,6 @@ function MethodExplanation() {
 
         <div className="method-card">
           <div className="method-card-head">
-            <i data-lucide="target"></i>
             <h3 className="method-card-title">Sur mesure pour chaque offre</h3>
           </div>
           <p className="method-card-text">
@@ -75,7 +71,6 @@ function MethodExplanation() {
 
         <div className="method-card">
           <div className="method-card-head">
-            <i data-lucide="pen-line"></i>
             <h3 className="method-card-title">Une motivation qui ne se répète pas</h3>
           </div>
           <p className="method-card-text">
@@ -338,7 +333,6 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
           <>
             <div className={`method-explainer${methodOpen ? ' method-explainer--open' : ''}`}>
               <button type="button" className="method-explainer-summary" onClick={() => setMethodOpen(o => !o)}>
-                <i data-lucide="graduation-cap"></i>
                 <span>Comment ATS Booster est pensé pour maximiser tes chances de décrocher ton alternance</span>
                 <i data-lucide="chevron-down" className="method-explainer-chevron"></i>
               </button>

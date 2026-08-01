@@ -3119,7 +3119,6 @@ legend.field-label { padding: 0; }
   cursor: pointer;
   text-align: left;
 }
-.method-explainer-summary .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 .method-explainer-summary span { flex: 1; }
 
 .method-explainer-chevron {
@@ -3179,7 +3178,6 @@ legend.field-label { padding: 0; }
 .generate-intro-cta { width: 100%; padding: 16px 24px; font-size: 16px; }
 
 .method-card-head { display: flex; align-items: center; gap: 8px; }
-.method-card-head .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 
 .method-card-title { font-size: 14px; font-weight: 500; line-height: 1; text-box-trim: trim-both; text-box-edge: cap alphabetic; color: var(--text); margin: 0; }
 .method-card-title--intro { font-size: 24px; }
