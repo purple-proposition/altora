@@ -509,9 +509,6 @@ body {
   width: 32px;
   height: 32px;
   padding: 0;
-  /* .topbar-breadcrumb applies gap: 8px between all its flex children —
-     cancel it here so the button sits flush against the next item. */
-  margin-right: -8px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   background: transparent;
@@ -525,7 +522,6 @@ body {
 .topbar-breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
   padding-bottom: 24px;
   margin-bottom: 24px;
   border-bottom: 1px solid var(--border);
@@ -535,6 +531,14 @@ body {
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
   color: var(--text-muted);
+}
+
+/* Espacement uniforme entre les enfants directs du fil d'Ariane — le
+   premier enfant (souvent .topbar-collapse-btn) n'a donc jamais de marge
+   parasite à gauche, sans avoir besoin d'une exception codée en dur.
+   .topbar-actions garde son propre margin-left:auto pour se pousser à droite. */
+.topbar-breadcrumb > *:not(:first-child):not(.topbar-actions) {
+  margin-left: 8px;
 }
 
 .breadcrumb-item {
