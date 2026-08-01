@@ -576,7 +576,7 @@ body {
      leave the popover mispositioned. */
   position: fixed;
   width: 320px;
-  padding: 24px;
+  padding: 12px;
   background: color-mix(in srgb, var(--card-bg) 65%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -599,7 +599,7 @@ body {
 }
 
 .topbar-popover-header {
-  padding: 0 0 24px;
+  padding: 0 0 12px;
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
@@ -2083,13 +2083,26 @@ legend.field-label { padding: 0; }
     background: color-mix(in srgb, black 48%, transparent);
   }
 
-  .app { margin: 0; border: none; border-radius: 0; padding: 32px 24px 60px; overflow-y: visible; }
+  /* Tablet keeps the desktop "floating card" look — 24px in from the
+     screen edges with the same border/radius as desktop — since only
+     the sidebar becomes an off-canvas drawer at this width, not the
+     content card itself. True mobile (below) goes edge-to-edge instead. */
+  .app { margin: 24px; border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px 60px; overflow-y: visible; }
   .board { grid-template-columns: repeat(2, 1fr); }
+
+  /* While the drawer is open, the content behind it drops the desktop-style
+     card (margin/border) and goes edge-to-edge like true mobile — the
+     tablet "floating card" look only makes sense when the drawer is closed. */
+  .app-shell:has(.sidebar--mobile-open) .app {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
 }
 
 /* Mobile */
 @media (max-width: 640px) {
-  .app { padding: 20px 16px 100px; }
+  .app { margin: 0; border: none; border-radius: 0; padding: 20px 16px 100px; }
 
   .board { grid-template-columns: 1fr; }
 
@@ -2364,14 +2377,15 @@ legend.field-label { padding: 0; }
   gap: 8px;
 }
 .calendar-day {
-  min-height: 120px;
+  height: 120px;
   padding: 8px;
   border: 1px solid var(--border);
   border-radius: var(--radius-inner);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   background: var(--card-bg);
+  overflow: hidden;
 }
 .calendar-day--muted { background: var(--bg); }
 .calendar-day-number { align-self: center; font-size: 12px; line-height: 1; text-box-trim: trim-both; text-box-edge: cap alphabetic; font-weight: 500; color: var(--text); }
