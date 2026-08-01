@@ -495,6 +495,7 @@ body {
   z-index: 20;
   margin: -24px -24px 0;
   padding: 24px 24px 0;
+  border-radius: 20px 20px 0 0;
   background: color-mix(in srgb, var(--card-bg) 82%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -576,7 +577,7 @@ body {
      leave the popover mispositioned. */
   position: fixed;
   width: 320px;
-  padding: 12px;
+  padding: 24px;
   background: color-mix(in srgb, var(--card-bg) 65%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -599,7 +600,7 @@ body {
 }
 
 .topbar-popover-header {
-  padding: 0 0 12px;
+  padding: 0 0 24px;
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
@@ -2022,6 +2023,17 @@ legend.field-label { padding: 0; }
 @media (max-width: 1000px) {
   body { height: auto; overflow: visible; }
   .app-shell { display: block; height: auto; min-height: 100vh; }
+
+  /* These forms/hints are capped at 640px on desktop for readability
+     next to a lot of spare side space — at tablet/mobile widths the
+     card itself is already narrow, so the cap just wastes the width
+     it has instead of helping legibility. */
+  .generate-view,
+  .profile-view-hint,
+  .profile-form,
+  .school-view-hint {
+    max-width: none;
+  }
 
   /* The sidebar used to just be display:none below this width, with no
      replacement way to reach it at all — Accueil, Mes documents, the whole
