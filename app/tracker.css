@@ -639,7 +639,11 @@ body {
   border-radius: var(--radius-inner);
   transition: background 0.15s ease;
 }
-.topbar-notification-item:hover { background: var(--bg); }
+/* A solid var(--bg) here (as used for hover elsewhere on the site) reads as
+   a flat, mismatched patch against this frosted-glass popover's own blurred
+   translucent background — use a translucent overlay instead so the hover
+   blends with the glass effect. */
+.topbar-notification-item:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
 .topbar-notification-item .lucide { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; margin-top: 2px; }
 
 .topbar-notification-body {
@@ -677,7 +681,9 @@ body {
   color: inherit;
   transition: background 0.15s ease;
 }
-.inbox-message--compact:hover { background: var(--bg); }
+/* Same frosted-glass mismatch as .topbar-notification-item — translucent
+   overlay instead of a solid var(--bg) patch. */
+.inbox-message--compact:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
 
 .topbar-bell {
   position: relative;
@@ -969,7 +975,9 @@ body {
   transition: background 0.15s ease;
 }
 
-.period-option:hover { background: var(--bg); }
+/* Same frosted-glass mismatch as .topbar-notification-item — translucent
+   overlay instead of a solid var(--bg) patch. */
+.period-option:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
 
 .period-option.active {
   background: var(--indigo-tint);
@@ -3166,7 +3174,7 @@ legend.field-label { padding: 0; }
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
-  padding: 16px;
+  padding: 24px;
 }
 @media (max-width: 720px) {
   .method-explain-grid { grid-template-columns: 1fr; }
