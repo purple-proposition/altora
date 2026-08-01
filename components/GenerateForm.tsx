@@ -44,7 +44,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Conçu pour passer les robots</h3>
           </div>
           <p className="method-card-text">
-            Un CV à plusieurs colonnes ou icônes est illisible pour un ATS. Le tien reste sur une seule page, en une seule colonne, avec des intitulés standards et des expériences résumées sans jargon, pour passer le filtre et être lu.
+            Un CV à plusieurs colonnes ou icônes est illisible pour un ATS. Le tien reste sur une seule page, en une seule colonne, avec des intitulés standards et des expériences résumées sans jargon, pour passer le filtre et enfin être lu.
           </p>
         </div>
 
