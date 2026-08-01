@@ -7,6 +7,7 @@ import { readCapped } from '@/lib/cappedFetch';
 import { rateLimit } from '@/lib/rateLimit';
 import { cleanJobPostingHtml } from '@/lib/jobPosting';
 import { getUserProfile, isProfileComplete, type UserProfile } from '@/lib/profile';
+import { ensureUserSchool } from '@/lib/school';
 
 const MAX_JOB_POSTING_RESPONSE_BYTES = 2 * 1024 * 1024;
 
@@ -458,6 +459,10 @@ export async function POST(req: NextRequest) {
   if (!isProfileComplete(profile)) {
     return new Response(JSON.stringify({ error: 'Complète ton profil candidat (au moins une expérience) avant de générer un CV.', code: 'PROFILE_INCOMPLETE' }), { status: 422 });
   }
+  // Rythme et rentrée sont verrouillés au niveau de l'école, jamais du profil candidat.
+  const school = await ensureUserSchool(session.user.id);
+  profile.availability = school.availability;
+  profile.rhythm = school.rhythm;
 
   const { readable, send, close } = makeStream();
 
@@ -493,6 +498,9 @@ export async function POST(req: NextRequest) {
         await send({ error: "Cette offre a l'air d'être un CDI ou un CDD. Altora t'accompagne uniquement sur les alternances et les stages, essaie avec une offre de ce type !" });
         return;
       }
+
+      // Titre CV : "Alternance" puis rentrée et rythme définis par l'école, si renseignés.
+      const titleSuffix = [profile.availability, profile.rhythm].filter(Boolean).map(v => ` · ${v}`).join('');
 
       const civilityLine = profile.civility === 'Mme'
         ? "Le/la candidat·e est une femme : accorder au féminin partout, résoudre toutes les formes épicènes vers le féminin (H/F, (e), (trice), point médian…) — ex: \"Chargé·e\" → \"Chargée\", \"Coordinateur·trice\" → \"Coordinatrice\"."
@@ -544,7 +552,7 @@ Réordonner bullets, compétences et outils par pertinence décroissante pour le
 Profil : 3 phrases max. Jamais de "Fort intérêt pour…" ni d'affinité sectorielle non prouvée par une expérience concrète.
 Interdit dans le profil et les bullets : "compétences validées", "compétences certifiées", "compétences prouvées", "compétences démontrées" — sauf si une certification réelle existe. Une compétence se montre par un résultat ou une action concrète, pas par une auto-déclaration de validation.
 Formation : nom de l'école + diplôme + dates uniquement. Zéro bullet, zéro description pédagogique. "bullets":[] dans le JSON.
-Title : "[intitulé EXACT du poste dans la fiche] · Alternance${profile.availability ? ` · ${profile.availability}` : ''}". Séparateur " · " entre les parties, obligatoire et immuable.
+Title : "[intitulé EXACT du poste dans la fiche] · Alternance${titleSuffix}". Séparateur " · " entre les parties, obligatoire et immuable.
 RÈGLE IMMUABLE — SÉPARATEURS CV : dans les champs structurés du CV (titre sous le nom, intitulés de poste, diplômes, ligne de contact), le séparateur est toujours " · ". Le " – " est réservé aux intervalles de dates uniquement. ❌ "Bac +4 – Manager…" ✅ "Bac +4 · Manager…"
 RÈGLE IMMUABLE — PONCTUATION LETTRE : dans le corps de la lettre de motivation, le point médian " · " est ABSOLUMENT INTERDIT sous toutes ses variantes. Ni tiret d'incise (—), ni parenthèse, ni liste avec séparateur. Toute énumération ou incise doit être reformulée avec : virgule, deux-points, point-virgule, ou point. ❌ "concrètement · la gestion social media" ✅ "concrètement : la gestion social media et l'optimisation e-commerce." Construire des phrases complètes avec sujet-verbe-complément. Ne jamais utiliser · comme deux-points, tiret ou virgule.
 RÈGLE IMMUABLE — UN SEUL DEUX-POINTS PAR PHRASE : jamais deux " : " dans la même phrase, même séparés par une proposition. Un deux-points ouvre une seule fois ; s'il faut annoncer puis détailler, couper en deux phrases distinctes. Avant de finaliser chaque paragraphe, compter les " : " par phrase — si une phrase en contient plus d'un, la scinder.
@@ -720,7 +728,7 @@ ATS : mots-clés pertinents repris, compétences standard, verbes d'action, date
 PROFIL DE BASE DU CANDIDAT
 ${JSON.stringify(profile)}`;
 
-      const cvTitleExample = `[intitulé EXACT du poste dans la fiche] · Alternance${profile.availability ? ` · ${profile.availability}` : ''}`;
+      const cvTitleExample = `[intitulé EXACT du poste dans la fiche] · Alternance${titleSuffix}`;
       const emailObjetExample = 'Candidature au poste de [intitulé] en alternance';
       const emailCorpsExample = `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé] en alternance et je vous adresse ma candidature${profile.availability ? ` pour une prise de poste ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`;
 

@@ -260,6 +260,66 @@ function GenerateForm() {
 
         {(state === 'idle' || state === 'error') && (
           <>
+            <details className="method-explainer">
+              <summary className="method-explainer-summary">
+                <i data-lucide="graduation-cap"></i>
+                <span>Pourquoi ce CV et cette lettre sont pensés pour maximiser tes chances</span>
+                <i data-lucide="chevron-down" className="method-explainer-chevron"></i>
+              </summary>
+
+              <div className="method-explainer-body">
+                <div className="method-card">
+                  <div className="method-card-head">
+                    <i data-lucide="scan-search"></i>
+                    <h3 className="method-card-title">1. Conçu pour passer les robots avant les humains</h3>
+                  </div>
+                  <p className="method-card-text">
+                    9 candidatures sur 10 passent d&apos;abord par un <strong>ATS</strong> (Applicant Tracking System) : un logiciel qui trie les CV avant même qu&apos;un recruteur les ouvre. Un CV avec des colonnes, des icônes ou un tableau de compétences en étoiles est souvent illisible pour ce logiciel — il finit à la corbeille sans avoir été vu. Ton CV Altora utilise une structure texte linéaire, une seule colonne, des intitulés de section standards (« Expériences », « Formation »…) : l&apos;ATS le lit parfaitement, et reprend automatiquement les mots-clés de l&apos;offre pour faire remonter ton profil.
+                  </p>
+                </div>
+
+                <div className="method-card">
+                  <div className="method-card-head">
+                    <i data-lucide="file-check-2"></i>
+                    <h3 className="method-card-title">2. Une page, rien de superflu</h3>
+                  </div>
+                  <p className="method-card-text">
+                    Un recruteur passe en moyenne <strong>7 secondes</strong> sur un premier CV. Le tien tient toujours sur une seule page : chaque expérience est résumée en verbe d&apos;action + contexte + résultat chiffré quand c&apos;est possible, sans blabla ni jargon RH creux (« compétences validées », « fort intérêt pour »…). Ce qui ne sert pas la candidature est coupé en premier, jamais tes outils ou compétences.
+                  </p>
+                </div>
+
+                <div className="method-card">
+                  <div className="method-card-head">
+                    <i data-lucide="target"></i>
+                    <h3 className="method-card-title">3. Réordonné pour chaque offre, jamais inventé</h3>
+                  </div>
+                  <p className="method-card-text">
+                    Pour chaque fiche de poste, tes expériences, compétences et outils sont réordonnés par pertinence décroissante — jamais supprimés, jamais inventés. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience fictive, zéro compétence que tu ne pourrais pas justifier en entretien.
+                  </p>
+                </div>
+
+                <div className="method-card">
+                  <div className="method-card-head">
+                    <i data-lucide="pen-line"></i>
+                    <h3 className="method-card-title">4. Une lettre qui ne recopie pas le CV</h3>
+                  </div>
+                  <p className="method-card-text">
+                    L&apos;erreur la plus fréquente : une lettre qui répète le CV en phrases. La tienne suit une structure éprouvée en 4 temps — pourquoi ce poste t&apos;intéresse, ta preuve principale, une preuve complémentaire, puis ta disponibilité — sans jamais résumer l&apos;activité de l&apos;entreprise (le recruteur la connaît déjà) ni utiliser de formules toutes faites du type « a retenu mon attention » ou « je suis passionné par ».
+                  </p>
+                </div>
+
+                <div className="method-card">
+                  <div className="method-card-head">
+                    <i data-lucide="sliders-horizontal"></i>
+                    <h3 className="method-card-title">5. Personnalisable à ta façon</h3>
+                  </div>
+                  <p className="method-card-text">
+                    Ces règles sont les bases communes, pensées pour être efficaces avec n&apos;importe quel profil. Si tu as tes propres consignes (une formulation à éviter, une info à toujours mentionner…), ajoute-les dans <Link href="/profil">ton profil</Link>, section « Consignes personnalisées » — elles sont prioritaires sur tout le reste.
+                  </p>
+                </div>
+              </div>
+            </details>
+
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>
               {usingStoredDescription ? (

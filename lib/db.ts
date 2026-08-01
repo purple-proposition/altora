@@ -38,6 +38,17 @@ async function runSchema() {
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS cv_thumbnail_url TEXT`;
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile JSONB`;
   await sql`
+    CREATE TABLE IF NOT EXISTS schools (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      rhythm TEXT NOT NULL DEFAULT '',
+      availability TEXT NOT NULL DEFAULT '',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS school_id INTEGER REFERENCES schools(id)`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_school_admin BOOLEAN NOT NULL DEFAULT false`;
+  await sql`
     CREATE TABLE IF NOT EXISTS cards (
       id TEXT PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

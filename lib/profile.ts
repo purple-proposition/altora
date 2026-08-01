@@ -11,7 +11,11 @@ export type UserProfile = {
   portfolio: string;
   city: string;
   civility: '' | 'M' | 'Mme'; // accord masculin/féminin des intitulés de poste et de la lettre
+  // availability et rhythm sont verrouillés par l'admin de l'école du candidat
+  // (voir lib/school.ts) — ces deux champs sont écrasés côté serveur avant
+  // génération, jamais éditables depuis le profil candidat.
   availability: string; // ex: "à partir d'octobre 2026", "immédiate"
+  rhythm: string; // rythme de l'alternance, ex: "4j entreprise / 1j école"
   profil: string;
   experiences: Experience[];
   formation: Formation[];
@@ -27,7 +31,7 @@ export type UserProfile = {
 export function emptyProfile(name = '', email = ''): UserProfile {
   return {
     name, email, phone: '', linkedin: '', portfolio: '', city: '',
-    civility: '', availability: '', profil: '',
+    civility: '', availability: '', rhythm: '', profil: '',
     experiences: [], formation: [],
     competences: '', outils: '', langues: '',
     customInstructions: '',

@@ -3,8 +3,10 @@ import '../tracker.css';
 import { auth } from '@/auth';
 import Sidebar from '@/components/Sidebar';
 import GridOverlayToggle from '@/components/GridOverlayToggle';
+import SchoolAdminToggle from '@/components/SchoolAdminToggle';
 import { SidebarCollapseProvider } from '@/components/SidebarCollapseContext';
 import { assetVersion } from '@/lib/assetVersion';
+import { isUserSchoolAdmin } from '@/lib/school';
 
 export default async function TrackerLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -12,18 +14,20 @@ export default async function TrackerLayout({ children }: { children: React.Reac
   const firstName = fullName.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
   const userExtra = session?.user as { promotion?: string | null } | undefined;
   const promotion = userExtra?.promotion || '';
+  const isSchoolAdmin = session?.user?.id ? await isUserSchoolAdmin(session.user.id) : false;
 
   return (
     <>
       <SidebarCollapseProvider>
         <div className="app-shell">
-          <Sidebar fullName={fullName} firstName={firstName} promotion={promotion} />
+          <Sidebar fullName={fullName} firstName={firstName} promotion={promotion} isSchoolAdmin={isSchoolAdmin} />
           <div className="app">{children}</div>
         </div>
       </SidebarCollapseProvider>
 
       <div className="grid-overlay" id="grid-overlay"></div>
       <GridOverlayToggle />
+      <SchoolAdminToggle />
 
       {/* beforeInteractive only runs on the very first hard page load of the
           whole app — since every session actually starts at /login (outside

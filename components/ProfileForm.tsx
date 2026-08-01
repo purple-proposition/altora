@@ -80,9 +80,6 @@ export default function ProfileForm({ initialProfile }: { initialProfile: UserPr
         <label>Portfolio / site
           <input type="text" value={profile.portfolio} onChange={e => set('portfolio', e.target.value)} />
         </label>
-        <label>Disponibilité
-          <input type="text" value={profile.availability} onChange={e => set('availability', e.target.value)} placeholder="ex: à partir d'octobre 2026, immédiate…" />
-        </label>
       </fieldset>
 
       <fieldset className="field-group">

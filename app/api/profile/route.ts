@@ -29,6 +29,7 @@ export async function PUT(req: NextRequest) {
     city: String(body.city ?? '').slice(0, 100),
     civility: (['M', 'Mme'].includes(body.civility) ? body.civility : '') as '' | 'M' | 'Mme',
     availability: String(body.availability ?? '').slice(0, 200),
+    rhythm: String(body.rhythm ?? '').slice(0, 100),
     profil: String(body.profil ?? '').slice(0, 1000),
     experiences: Array.isArray(body.experiences) ? body.experiences.slice(0, 20).map((e: Record<string, unknown>) => ({
       company: String(e?.company ?? '').slice(0, 200),

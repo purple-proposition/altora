@@ -2993,6 +2993,56 @@ legend.field-label { padding: 0; }
 .generate-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--text); line-height: 1.5; }
 .generate-list--muted { color: var(--text-muted); }
 
+/* ── Explication pédagogique ATS Booster ─────────────────────────────── */
+
+.method-explainer {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  margin-bottom: 24px;
+}
+
+.method-explainer-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+}
+.method-explainer-summary::-webkit-details-marker { display: none; }
+.method-explainer-summary .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
+.method-explainer-summary span { flex: 1; }
+
+.method-explainer-chevron { color: var(--text-muted) !important; transition: transform 0.2s ease; }
+.method-explainer[open] .method-explainer-chevron { transform: rotate(180deg); }
+
+.method-explainer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.method-card { display: flex; flex-direction: column; gap: 8px; }
+
+.method-card-head { display: flex; align-items: center; gap: 8px; }
+.method-card-head .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
+
+.method-card-title { font-size: 14px; font-weight: 500; line-height: 1; text-box-trim: trim-both; text-box-edge: cap alphabetic; color: var(--text); margin: 0; }
+
+.method-card-text { font-size: 13px; line-height: 1.6; color: var(--text-muted); margin: 0; }
+.method-card-text strong { color: var(--text); font-weight: 500; }
+.method-card-text a { color: var(--indigo); text-decoration: underline; }
+
 /* ── Profil candidat ─────────────────────────────────────────────────── */
 
 .profile-view-header { margin-bottom: 24px; }
@@ -3001,10 +3051,13 @@ legend.field-label { padding: 0; }
 
 .profile-form { display: flex; flex-direction: column; gap: 24px; max-width: 640px; }
 
-.profile-form fieldset.field-group { border: none; padding: 0; margin: 0; }
-.profile-form legend.field-label { padding: 0; margin-bottom: 12px; }
+.profile-form fieldset.field-group,
+.school-settings-form fieldset.field-group { border: none; padding: 0; margin: 0; }
+.profile-form legend.field-label,
+.school-settings-form legend.field-label { padding: 0; margin-bottom: 12px; }
 
-.profile-form label {
+.profile-form label,
+.school-settings-form label {
   display: block;
   font-size: 12px;
   line-height: 1;
@@ -3017,7 +3070,10 @@ legend.field-label { padding: 0; }
 
 .profile-form input,
 .profile-form select,
-.profile-form textarea {
+.profile-form textarea,
+.school-settings-form input,
+.school-settings-form select,
+.school-settings-form textarea {
   display: block;
   width: 100%;
   margin-top: 8px;
@@ -3034,10 +3090,14 @@ legend.field-label { padding: 0; }
 }
 
 .profile-form input:hover,
-.profile-form textarea:hover { border-color: var(--text-muted); }
+.profile-form textarea:hover,
+.school-settings-form input:hover,
+.school-settings-form textarea:hover { border-color: var(--text-muted); }
 
-.profile-form .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.profile-form .field-hint { font-weight: 400; color: var(--text-muted); }
+.profile-form .field-row,
+.school-settings-form .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.profile-form .field-hint,
+.school-settings-form .field-hint { font-weight: 400; color: var(--text-muted); }
 
 .profile-exp-card {
   border: 1px solid var(--border);
@@ -3063,3 +3123,65 @@ legend.field-label { padding: 0; }
 .btn-remove-contact:hover { opacity: 0.75; }
 
 .profile-form-actions { display: flex; align-items: center; gap: 12px; }
+
+/* ── École (admin) ────────────────────────────────────────────────────── */
+
+.school-view-header { margin-bottom: 24px; }
+.school-view-title { font-size: 32px; font-weight: 500; line-height: 1; margin: 0 0 8px; }
+.school-view-hint { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0; max-width: 640px; }
+
+.school-readonly-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.school-readonly-value { font-size: 14px; color: var(--text); margin: 8px 0 0; }
+
+.school-class { margin-top: 32px; }
+.school-class-title { font-size: 20px; font-weight: 500; line-height: 1; margin: 0 0 16px; }
+
+.school-class-group { margin-bottom: 24px; }
+.school-class-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.school-class-group-name { font-size: 14px; font-weight: 500; line-height: 1; color: var(--text); }
+.school-class-group-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  line-height: 1.4;
+}
+
+.school-students-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  font-size: 13px;
+}
+.school-students-table th,
+.school-students-table td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.school-students-table th { color: var(--text-muted); font-weight: 500; }
+.school-students-table tr:last-child td { border-bottom: none; }
+
+.school-admin-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--indigo);
+  color: white;
+  font-size: 11px;
+  line-height: 1.4;
+}

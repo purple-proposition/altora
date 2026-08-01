@@ -13,16 +13,19 @@ export default function Sidebar({
   fullName,
   firstName,
   promotion,
+  isSchoolAdmin,
 }: {
   fullName: string;
   firstName: string;
   promotion: string;
+  isSchoolAdmin?: boolean;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isHome = pathname === '/';
   const isDocuments = pathname === '/documents';
   const isInbox = pathname === '/inbox';
+  const isEcole = pathname === '/ecole';
 
   // The toggle button itself now lives in the topbar (SidebarCollapseToggle),
   // shared across pages via context — Sidebar just reads the collapsed state
@@ -287,6 +290,13 @@ export default function Sidebar({
           <span className="sidebar-item-label">Boîte de réception</span>
           {unreadCount > 0 && <span className="sidebar-item-badge">{unreadCount}</span>}
         </Link>
+
+        {isSchoolAdmin && (
+          <Link href="/ecole" className={`sidebar-item${isEcole ? ' sidebar-item--active' : ''}`}>
+            <i data-lucide="graduation-cap"></i>
+            <span className="sidebar-item-label">École</span>
+          </Link>
+        )}
       </nav>
 
       <div className="sidebar-bottom">
