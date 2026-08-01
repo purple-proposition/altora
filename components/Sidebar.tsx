@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -141,7 +142,7 @@ export default function Sidebar({
       {mobileOpen && <div className="sidebar-mobile-backdrop" onClick={closeMobile}></div>}
       <aside className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}${mobileOpen ? ' sidebar--mobile-open' : ''}`}>
       <div className="sidebar-brand">
-        <img className="sidebar-logo" src="/rocket-school-logo.jpg" alt="Rocket School" />
+        <Image className="sidebar-logo" src="/rocket-school-logo.jpg" alt="Rocket School" width={32} height={32} priority />
         <span className="sidebar-brand-text">
           <span className="sidebar-brand-name">Rocket School</span>
           {promotion && <span className="sidebar-brand-promotion">{promotion}</span>}
@@ -307,7 +308,7 @@ export default function Sidebar({
       <div className="sidebar-bottom">
         {isHome ? (
           <button type="button" className="sidebar-user" id="sidebar-profile-btn">
-            <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
+            <Image className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} width={32} height={32} />
             <span className="sidebar-user-text">
               <span className="sidebar-user-name">{fullName || firstName}</span>
               <span className="sidebar-user-email">Étudiant</span>
@@ -316,7 +317,7 @@ export default function Sidebar({
           </button>
         ) : (
           <Link href="/?view=home&profile=1" className="sidebar-user">
-            <img className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} />
+            <Image className="sidebar-user-avatar" src="/avatar.jpg" alt={firstName} width={32} height={32} />
             <span className="sidebar-user-text">
               <span className="sidebar-user-name">{fullName || firstName}</span>
               <span className="sidebar-user-email">Étudiant</span>

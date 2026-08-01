@@ -2582,7 +2582,9 @@ legend.field-label { padding: 0; }
 }
 .doc-thumb-sheet {
   /* Sized to an A4 portrait page (1 : 1.414) and fit to the square's full
-     height so the whole page is visible, letterboxed — never cropped. */
+     height so the whole page is visible, letterboxed — never cropped.
+     position:relative is required for the next/image `fill` thumbnail. */
+  position: relative;
   width: 70.7%;
   height: 100%;
   display: flex;

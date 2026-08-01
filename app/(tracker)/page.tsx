@@ -1,4 +1,5 @@
 import Script from 'next/script';
+import Image from 'next/image';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
@@ -159,7 +160,7 @@ export default async function TrackerPage() {
             <h2 id="profile-modal-title">Profil</h2>
 
             <div className="profile-header">
-              <img className="profile-avatar" src="/avatar.jpg" alt={firstName} />
+              <Image className="profile-avatar" src="/avatar.jpg" alt={firstName} width={56} height={56} />
               <div>
                 <div className="profile-name-row">
                   <span className="profile-name">{fullName || firstName}</span>

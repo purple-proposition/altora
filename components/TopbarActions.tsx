@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
@@ -110,7 +111,7 @@ export default function TopbarActions() {
           <div className="topbar-message-list">
             {INBOX_MESSAGES.map((message, i) => (
               <Link href="/inbox" className="inbox-message inbox-message--compact" onClick={() => setOpen(null)} key={i}>
-                <img className="inbox-message-avatar" src={message.avatar} alt={message.senderName} />
+                <Image className="inbox-message-avatar" src={message.avatar} alt={message.senderName} width={40} height={40} />
                 <div className="inbox-message-body">
                   <div className="inbox-message-top">
                     <span className="inbox-message-sender">{message.senderName}</span>

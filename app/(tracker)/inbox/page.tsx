@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
@@ -25,7 +26,7 @@ export default function InboxPage() {
           <div className="inbox-list">
             {MESSAGES.map((message, i) => (
               <div className={`inbox-message${message.unread ? ' inbox-message--unread' : ''}`} key={i}>
-                <img className="inbox-message-avatar" src={message.avatar} alt={message.senderName} />
+                <Image className="inbox-message-avatar" src={message.avatar} alt={message.senderName} width={40} height={40} />
                 <div className="inbox-message-body">
                   <div className="inbox-message-top">
                     <span className="inbox-message-sender">{message.senderName}</span>

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
@@ -7,9 +8,6 @@ import { getUserProfile, emptyProfile } from '@/lib/profile';
 
 export default async function ProfilPage() {
   const session = await auth();
-  const profile = session?.user?.id
-    ? (await getUserProfile(session.user.id)) ?? emptyProfile(session.user.name ?? '', session.user.email ?? '')
-    : emptyProfile();
 
   return (
     <>
@@ -31,8 +29,17 @@ export default async function ProfilPage() {
             Import un CV depuis la fenêtre « Profil » pour pré-remplir automatiquement, puis corrige ici si besoin.
           </p>
         </div>
-        <ProfileForm initialProfile={profile} />
+        <Suspense fallback={<div className="route-skeleton-bar" style={{ height: 320, borderRadius: 16 }} />}>
+          <ProfileFormData userId={session?.user?.id} userName={session?.user?.name} userEmail={session?.user?.email} />
+        </Suspense>
       </section>
     </>
   );
+}
+
+async function ProfileFormData({ userId, userName, userEmail }: { userId?: string; userName?: string | null; userEmail?: string | null }) {
+  const profile = userId
+    ? (await getUserProfile(userId)) ?? emptyProfile(userName ?? '', userEmail ?? '')
+    : emptyProfile();
+  return <ProfileForm initialProfile={profile} />;
 }

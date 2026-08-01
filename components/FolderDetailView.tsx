@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import type { DocFile } from './DocThumbGrid';
 
 export default function FolderDetailView({ title, docs }: { title: string; docs: DocFile[] }) {
@@ -42,8 +43,7 @@ export default function FolderDetailView({ title, docs }: { title: string; docs:
               <div className="doc-thumb-bare">
                 <div className="doc-thumb-sheet">
                   {doc.thumbnailUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={doc.thumbnailUrl} alt="" draggable={false} />
+                    <Image src={doc.thumbnailUrl} alt="" fill sizes="200px" draggable={false} />
                   ) : (
                     <i data-lucide="file-text"></i>
                   )}

@@ -22,5 +22,8 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|avatar.jpg|tracker.js).*)'],
+  // Exclude every static file under /public (previously only avatar.jpg and
+  // tracker.js were listed by name — lucide.js and the school logo were
+  // still paying the JWT-decode cost of auth() on every request).
+  matcher: ['/((?!_next/static|_next/image|.*\\.(?:ico|jpg|jpeg|png|svg|js|css|map|json)$).*)'],
 };
