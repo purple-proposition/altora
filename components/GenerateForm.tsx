@@ -56,7 +56,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Tes propres règles sont prioritaires</h3>
           </div>
           <p className="method-card-text">
-            Une formulation à éviter, un fait à toujours mettre en avant, une nuance sur ton expérience. Chaque profil est unique, le générateur peut aussi tenir compte de tes propres consignes, prioritaires sur toutes les règles standards, pour que le résultat te ressemble vraiment.
+            Une formulation à éviter, une nuance sur ton expérience. Le générateur peut aussi tenir compte de tes propres consignes, prioritaires sur toutes les règles standards, pour que le résultat te ressemble vraiment.
           </p>
         </div>
 
