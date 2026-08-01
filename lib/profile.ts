@@ -45,7 +45,31 @@ export function isProfileComplete(p: UserProfile | null): p is UserProfile {
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
   await ensureSchema();
   const rows = await sql`SELECT profile FROM users WHERE id = ${userId}`;
-  return (rows[0]?.profile as UserProfile | null) ?? null;
+  const stored = rows[0]?.profile as Partial<UserProfile> | null;
+  if (!stored) return null;
+
+  // Older/partial profile rows (saved before a field existed, or missing
+  // nested keys) must never reach the client as-is: ProfileForm calls
+  // .map()/.join() straight on experiences/formation/bullets, and a
+  // missing array there throws a client-side exception instead of
+  // rendering the form. Merge onto full defaults so every field is
+  // always at least its empty value.
+  return {
+    ...emptyProfile(),
+    ...stored,
+    experiences: (stored.experiences ?? []).map(e => ({
+      company: e?.company ?? '',
+      title: e?.title ?? '',
+      dates: e?.dates ?? '',
+      bullets: e?.bullets ?? [],
+    })),
+    formation: (stored.formation ?? []).map(f => ({
+      school: f?.school ?? '',
+      degree: f?.degree ?? '',
+      dates: f?.dates ?? '',
+      bullets: f?.bullets ?? [],
+    })),
+  };
 }
 
 export async function saveUserProfile(userId: string, profile: UserProfile): Promise<void> {
