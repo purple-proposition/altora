@@ -533,12 +533,15 @@ body {
   color: var(--text-muted);
 }
 
-/* Espacement uniforme entre les enfants directs du fil d'Ariane — le
-   premier enfant (souvent .topbar-collapse-btn) n'a donc jamais de marge
-   parasite à gauche, sans avoir besoin d'une exception codée en dur.
-   .topbar-actions garde son propre margin-left:auto pour se pousser à droite. */
+/* Espacement des enfants directs du fil d'Ariane : 24px entre le bouton de
+   collapse et le premier item (Accueil), 8px partout ailleurs — c'est-à-dire
+   uniquement de part et d'autre du séparateur "/". .topbar-actions garde son
+   propre margin-left:auto pour se pousser à droite. */
 .topbar-breadcrumb > *:not(:first-child):not(.topbar-actions) {
   margin-left: 8px;
+}
+.topbar-breadcrumb > *:not(:first-child):nth-child(2) {
+  margin-left: 24px;
 }
 
 .breadcrumb-item {

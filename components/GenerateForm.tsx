@@ -69,7 +69,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Réordonné pour chaque offre, jamais inventé</h3>
           </div>
           <p className="method-card-text">
-            Pour chaque fiche de poste, tes expériences, compétences et outils sont réordonnés par pertinence décroissante, jamais supprimés ni inventés. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience fictive, zéro compétence que tu ne pourrais pas justifier en entretien face à un recruteur.
+            Pour chaque fiche de poste, tes expériences, compétences et outils sont réordonnés par pertinence décroissante, jamais supprimés ni inventés. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience fictive, zéro compétence que tu ne pourrais pas justifier en entretien.
           </p>
         </div>
 
@@ -79,7 +79,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Une lettre qui ne recopie pas le CV</h3>
           </div>
           <p className="method-card-text">
-            L&apos;erreur la plus fréquente est une lettre qui répète le CV en phrases. La tienne suit une structure en 4 temps : pourquoi ce poste t&apos;intéresse, ta preuve principale, une preuve complémentaire, puis ta disponibilité, sans résumer l&apos;entreprise ni utiliser de formules toutes faites comme « a retenu mon attention ». Ajoute tes propres consignes dans <Link href="/profil">ton profil</Link>, section « Consignes personnalisées » : elles priment sur tout le reste.
+            L&apos;erreur la plus fréquente : une lettre qui répète le CV en phrases. La tienne suit une structure en 4 temps, motivation, preuve principale, preuve complémentaire, disponibilité, sans clichés ni résumé de l&apos;entreprise. Ajoute tes consignes personnalisées dans <Link href="/profil">ton profil</Link> : elles priment sur le reste.
           </p>
         </div>
       </div>
