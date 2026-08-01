@@ -33,9 +33,6 @@ function MethodExplanation() {
   return (
     <>
       <div className="method-card method-card--intro">
-        <div className="method-card-head">
-          <h3 className="method-card-title method-card-title--intro">C&apos;est quoi un ATS ?</h3>
-        </div>
         <p className="method-card-text">
           <strong>9 candidatures sur 10</strong> passent d&apos;abord par un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures »). Avant qu&apos;un recruteur ne voie le CV, le logiciel le scanne, en extrait le texte et cherche les mots-clés de l&apos;offre : intitulé du poste, compétences, outils. <strong>Le premier « lecteur » de ton CV est donc un algorithme</strong>, pas un humain, et mal structuré, il sera écarté avant même d&apos;être lu, même si ton profil est parfait pour le poste.
         </p>

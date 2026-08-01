@@ -3180,7 +3180,6 @@ legend.field-label { padding: 0; }
 .method-card-head { display: flex; align-items: center; gap: 8px; }
 
 .method-card-title { font-size: 14px; font-weight: 500; line-height: 1; text-box-trim: trim-both; text-box-edge: cap alphabetic; color: var(--text); margin: 0; }
-.method-card-title--intro { font-size: 24px; }
 
 .method-card-text { font-size: 14px; line-height: 1.6; color: var(--text-muted); margin: 0; }
 .method-card-text strong { color: var(--text); font-weight: 500; }
