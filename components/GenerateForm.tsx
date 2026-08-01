@@ -49,24 +49,24 @@ function MethodExplanation() {
             <h3 className="method-card-title">Conçu pour passer les robots</h3>
           </div>
           <p className="method-card-text">
-            Un CV avec plusieurs colonnes, des icônes ou des étoiles de compétences est souvent illisible pour un ATS : il finit à la corbeille sans avoir été vu. Ton CV Altora reste en une seule colonne, avec des intitulés de section standards que l&apos;ATS lit parfaitement.
+            Un CV avec plusieurs colonnes, des icônes ou des étoiles de compétences est souvent illisible pour un ATS : il finit à la corbeille sans avoir été vu. Ton CV Altora reste en une seule colonne, sur une seule page, avec des intitulés de section standards et des expériences résumées en verbe d&apos;action, contexte et résultat chiffré, sans jargon creux. L&apos;ATS le lit parfaitement, et un recruteur humain le lit en quelques secondes.
           </p>
         </div>
 
         <div className="method-card">
           <div className="method-card-head">
-            <i data-lucide="file-check-2"></i>
-            <h3 className="method-card-title">Une page sans superflu</h3>
+            <i data-lucide="sliders-horizontal"></i>
+            <h3 className="method-card-title">Adapté à ta façon d&apos;écrire</h3>
           </div>
           <p className="method-card-text">
-            Un recruteur passe en moyenne <strong>7 secondes</strong> sur un CV. Le tien tient toujours sur une seule page, chaque expérience résumée en verbe d&apos;action, contexte et résultat chiffré, sans jargon creux, pour faire remonter ton profil au premier coup d&apos;œil.
+            Les règles ci-dessus s&apos;appliquent par défaut à tout le monde, mais ton parcours a ses particularités : une formulation à éviter, un fait à toujours mettre en avant, une nuance sur une expérience. Le générateur peut aussi tenir compte de tes propres consignes, prioritaires sur toutes les règles standards, pour que le résultat te ressemble vraiment.
           </p>
         </div>
 
         <div className="method-card">
           <div className="method-card-head">
             <i data-lucide="target"></i>
-            <h3 className="method-card-title">Réordonné pour chaque offre, jamais inventé</h3>
+            <h3 className="method-card-title">Sur mesure pour chaque offre</h3>
           </div>
           <p className="method-card-text">
             Pour chaque fiche de poste, tes expériences, compétences et outils sont réordonnés par pertinence décroissante, jamais supprimés ni inventés. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience fictive, zéro compétence que tu ne pourrais pas justifier en entretien.
@@ -76,10 +76,10 @@ function MethodExplanation() {
         <div className="method-card">
           <div className="method-card-head">
             <i data-lucide="pen-line"></i>
-            <h3 className="method-card-title">Une lettre qui ne recopie pas le CV</h3>
+            <h3 className="method-card-title">Une motivation qui ne se répète pas</h3>
           </div>
           <p className="method-card-text">
-            L&apos;erreur la plus fréquente est une lettre qui répète le CV en phrases. La tienne suit une structure en 4 temps : pourquoi ce poste t&apos;intéresse, ta preuve principale, une preuve complémentaire, puis ta disponibilité. Ajoute tes propres consignes dans <Link href="/profil">ton profil</Link>, section « Consignes personnalisées » : elles priment sur tout le reste.
+            L&apos;erreur la plus fréquente est une lettre qui répète le CV en phrases. La tienne suit une structure en 4 temps : pourquoi ce poste t&apos;intéresse, ta preuve principale, une preuve complémentaire, puis ta disponibilité.
           </p>
         </div>
       </div>
