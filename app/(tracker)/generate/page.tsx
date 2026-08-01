@@ -268,13 +268,23 @@ function GenerateForm() {
               </summary>
 
               <div className="method-explainer-body">
+                <div className="method-card method-card--intro">
+                  <div className="method-card-head">
+                    <i data-lucide="bot"></i>
+                    <h3 className="method-card-title">C&apos;est quoi un ATS ?</h3>
+                  </div>
+                  <p className="method-card-text">
+                    Un <strong>ATS</strong> (Applicant Tracking System, « système de suivi des candidatures ») est un logiciel utilisé par la quasi-totalité des entreprises pour gérer les candidatures qu&apos;elles reçoivent. Concrètement : quand tu postules, ton CV n&apos;atterrit presque jamais directement devant un humain. Il est d&apos;abord scanné automatiquement par ce logiciel, qui en extrait le texte, cherche les mots-clés de l&apos;offre (compétences, outils, intitulé du poste…), et classe ou filtre les candidatures avant qu&apos;un recruteur n&apos;en ouvre une seule. Autrement dit : <strong>le premier « lecteur » de ton CV n&apos;est pas un humain, c&apos;est un algorithme</strong> — et un CV mal structuré peut être recalé avant même d&apos;être vu, même si ton profil est parfait pour le poste.
+                  </p>
+                </div>
+
                 <div className="method-card">
                   <div className="method-card-head">
                     <i data-lucide="scan-search"></i>
                     <h3 className="method-card-title">1. Conçu pour passer les robots avant les humains</h3>
                   </div>
                   <p className="method-card-text">
-                    9 candidatures sur 10 passent d&apos;abord par un <strong>ATS</strong> (Applicant Tracking System) : un logiciel qui trie les CV avant même qu&apos;un recruteur les ouvre. Un CV avec des colonnes, des icônes ou un tableau de compétences en étoiles est souvent illisible pour ce logiciel — il finit à la corbeille sans avoir été vu. Ton CV Altora utilise une structure texte linéaire, une seule colonne, des intitulés de section standards (« Expériences », « Formation »…) : l&apos;ATS le lit parfaitement, et reprend automatiquement les mots-clés de l&apos;offre pour faire remonter ton profil.
+                    9 candidatures sur 10 passent d&apos;abord par un ATS. Un CV avec des colonnes, des icônes ou un tableau de compétences en étoiles est souvent illisible pour ce logiciel — il finit à la corbeille sans avoir été vu. Ton CV Altora utilise une structure texte linéaire, une seule colonne, des intitulés de section standards (« Expériences », « Formation »…) : l&apos;ATS le lit parfaitement, et reprend automatiquement les mots-clés de l&apos;offre pour faire remonter ton profil.
                   </p>
                 </div>
 

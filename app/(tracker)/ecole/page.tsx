@@ -3,7 +3,19 @@ import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import SchoolSettingsForm from '@/components/SchoolSettingsForm';
 import { auth } from '@/auth';
-import { ensureUserSchool, isUserSchoolAdmin, listSchoolStudents } from '@/lib/school';
+import { ensureUserSchool, isUserSchoolAdmin, listSchoolStudents, type SchoolStudent } from '@/lib/school';
+
+// Démo : cette promo n'a encore qu'un seul vrai compte inscrit (l'admin qui teste
+// la page) — ces entrées permettent de visualiser la vue "Classe" en attendant
+// les vraies inscriptions.
+const DEMO_STUDENTS: SchoolStudent[] = [
+  { id: 'demo-1', name: 'Lina Bensaïd', email: 'lina.bensaid@spoutnik75.fr', promotion: 'Spoutnik 75', isSchoolAdmin: false, createdAt: '2026-09-02', cardCount: 6 },
+  { id: 'demo-2', name: 'Nathan Perret', email: 'nathan.perret@spoutnik75.fr', promotion: 'Spoutnik 75', isSchoolAdmin: false, createdAt: '2026-09-02', cardCount: 3 },
+  { id: 'demo-3', name: 'Inès Chartier', email: 'ines.chartier@spoutnik75.fr', promotion: 'Spoutnik 75', isSchoolAdmin: false, createdAt: '2026-09-03', cardCount: 9 },
+  { id: 'demo-4', name: 'Yanis Kader', email: 'yanis.kader@spoutnik75.fr', promotion: 'Spoutnik 75', isSchoolAdmin: false, createdAt: '2026-09-04', cardCount: 0 },
+  { id: 'demo-5', name: 'Chloé Fontaine', email: 'chloe.fontaine@spoutnik75.fr', promotion: 'Spoutnik 75', isSchoolAdmin: false, createdAt: '2026-09-04', cardCount: 4 },
+  { id: 'demo-6', name: 'Mehdi Rouault', email: 'mehdi.rouault@spoutnik75.fr', promotion: 'Spoutnik 75', isSchoolAdmin: false, createdAt: '2026-09-05', cardCount: 2 },
+];
 
 export default async function EcolePage() {
   const session = await auth();
@@ -13,13 +25,8 @@ export default async function EcolePage() {
     ensureUserSchool(session.user.id),
     isUserSchoolAdmin(session.user.id),
   ]);
-  const students = isAdmin ? await listSchoolStudents(school.id) : [];
-
-  const byPromotion = students.reduce((acc, s) => {
-    const key = s.promotion?.trim() || 'Sans promo';
-    (acc[key] ||= []).push(s);
-    return acc;
-  }, {} as Record<string, typeof students>);
+  const realStudents = isAdmin ? await listSchoolStudents(school.id) : [];
+  const students = realStudents.length > 1 ? realStudents : [...realStudents, ...DEMO_STUDENTS];
 
   return (
     <>
@@ -59,39 +66,30 @@ export default async function EcolePage() {
 
         {isAdmin && (
           <div className="school-class">
-            <h3 className="school-class-title">Classe</h3>
-            {students.length === 0 ? (
-              <p className="folder-empty">Aucun étudiant inscrit pour le moment.</p>
-            ) : (
-              Object.entries(byPromotion).map(([promo, group]) => (
-                <div key={promo} className="school-class-group">
-                  <div className="school-class-group-header">
-                    <span className="school-class-group-name">{promo}</span>
-                    <span className="school-class-group-count">{group.length}</span>
-                  </div>
-                  <table className="school-students-table">
-                    <thead>
-                      <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Candidatures</th>
-                        <th>Inscrit le</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {group.map((s) => (
-                        <tr key={s.id}>
-                          <td>{s.name || '—'}{s.isSchoolAdmin && <span className="school-admin-badge">admin</span>}</td>
-                          <td>{s.email}</td>
-                          <td>{s.cardCount}</td>
-                          <td>{new Date(s.createdAt).toLocaleDateString('fr-FR')}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ))
-            )}
+            <div className="school-class-group-header">
+              <h3 className="school-class-title">Classe — Spoutnik 75</h3>
+              <span className="school-class-group-count">{students.length}</span>
+            </div>
+            <table className="school-students-table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Email</th>
+                  <th>Candidatures</th>
+                  <th>Inscrit le</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map((s) => (
+                  <tr key={s.id}>
+                    <td>{s.name || '—'}{s.isSchoolAdmin && <span className="school-admin-badge">admin</span>}</td>
+                    <td>{s.email}</td>
+                    <td>{s.cardCount}</td>
+                    <td>{new Date(s.createdAt).toLocaleDateString('fr-FR')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>

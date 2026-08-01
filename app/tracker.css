@@ -3033,6 +3033,12 @@ legend.field-label { padding: 0; }
 }
 
 .method-card { display: flex; flex-direction: column; gap: 8px; }
+.method-card--intro {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  padding: 16px;
+}
 
 .method-card-head { display: flex; align-items: center; gap: 8px; }
 .method-card-head .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
@@ -3143,10 +3149,10 @@ legend.field-label { padding: 0; }
 .school-readonly-value { font-size: 14px; color: var(--text); margin: 8px 0 0; }
 
 .school-class { margin-top: 32px; }
-.school-class-title { font-size: 20px; font-weight: 500; line-height: 1; margin: 0 0 16px; }
+.school-class-title { font-size: 20px; font-weight: 500; line-height: 1; margin: 0; }
 
 .school-class-group { margin-bottom: 24px; }
-.school-class-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.school-class-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
 .school-class-group-name { font-size: 14px; font-weight: 500; line-height: 1; color: var(--text); }
 .school-class-group-count {
   font-size: 12px;
