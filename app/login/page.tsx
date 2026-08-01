@@ -45,6 +45,8 @@ function LoginForm() {
         <input
           type="email"
           required
+          autoComplete="email"
+          name="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
@@ -53,6 +55,8 @@ function LoginForm() {
         <input
           type="password"
           required
+          autoComplete="current-password"
+          name="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
           style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
