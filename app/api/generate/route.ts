@@ -182,7 +182,7 @@ async function buildCVPdf(cv: CVProfile): Promise<Buffer> {
   return generatePDF((doc) => renderCVContent(doc, cv, 0.83));
 }
 
-async function buildLetterPdf(profile: UserProfile, data: { company: string; poste: string; paragraphs: string[] }, isCDI = false): Promise<Buffer> {
+async function buildLetterPdf(profile: UserProfile, data: { company: string; poste: string; paragraphs: string[] }): Promise<Buffer> {
   // Separators: em-dash and en-dash (non-date) → middle dot
   const clean = (s: string) =>
     s.replace(/\s*—\s*/g, ' · ')      // em-dash → point médian
@@ -230,7 +230,7 @@ async function buildLetterPdf(profile: UserProfile, data: { company: string; pos
     // French elision: "de" → "d'" before a vowel or h
     const dePoste = /^[aeiouéèêëàâîïôùûüh]/i.test(posteLower) ? `d'${posteLower}` : `de ${posteLower}`;
     doc.font('Helvetica-Bold').fontSize(10).fillColor('#000');
-    doc.text(`Objet : Candidature au poste ${dePoste}${isCDI ? '' : ' en alternance'}`, M, y, { width: W, lineBreak: true });
+    doc.text(`Objet : Candidature au poste ${dePoste} en alternance`, M, y, { width: W, lineBreak: true });
     y = doc.y + 24;
 
     doc.font('Helvetica').fontSize(10).fillColor('#000');
@@ -438,14 +438,13 @@ export async function POST(req: NextRequest) {
     return new Response(JSON.stringify({ error: 'Trop de générations, réessaie dans une heure.' }), { status: 429 });
   }
 
-  let body: { jobPosting?: string; modifications?: unknown; contractType?: string };
+  let body: { jobPosting?: string; modifications?: unknown };
   try {
     body = await req.json();
   } catch {
     return new Response(JSON.stringify({ error: 'Corps de requête invalide' }), { status: 400 });
   }
-  const { jobPosting, modifications, contractType = 'alternance' } = body;
-  const isCDI = contractType === 'cdi';
+  const { jobPosting, modifications } = body;
   if (!jobPosting?.trim()) {
     return new Response(JSON.stringify({ error: 'Fiche de poste manquante' }), { status: 400 });
   }
@@ -480,6 +479,20 @@ export async function POST(req: NextRequest) {
       await send({ progress: 15, step: 'Analyse de la fiche…' });
 
       const client = new Anthropic({ apiKey });
+
+      // Altora est dédié aux alternances et stages — écarter tôt un CDI/CDD
+      // détecté dans le texte, avant de payer le coût de la génération complète.
+      const contractCheck = await client.messages.create({
+        model: 'claude-haiku-4-5',
+        max_tokens: 10,
+        system: 'Réponds UNIQUEMENT par un mot, sans ponctuation : ALTERNANCE, STAGE, CDI, CDD, ou AUTRE si le type de contrat de cette offre est ambigu ou non précisé.',
+        messages: [{ role: 'user', content: jobText.slice(0, 4000) }],
+      });
+      const contractLabel = (contractCheck.content[0].type === 'text' ? contractCheck.content[0].text : '').trim().toUpperCase();
+      if (contractLabel === 'CDI' || contractLabel === 'CDD') {
+        await send({ error: "Cette offre a l'air d'être un CDI ou un CDD. Altora t'accompagne uniquement sur les alternances et les stages, essaie avec une offre de ce type !" });
+        return;
+      }
 
       const civilityLine = profile.civility === 'Mme'
         ? "Le/la candidat·e est une femme : accorder au féminin partout, résoudre toutes les formes épicènes vers le féminin (H/F, (e), (trice), point médian…) — ex: \"Chargé·e\" → \"Chargée\", \"Coordinateur·trice\" → \"Coordinatrice\"."
@@ -529,12 +542,9 @@ Ordre antichronologique strict : expériences ET formation, du plus récent au p
 Bullets : verbe d'action fort + contexte + outil/méthode + résultat chiffré si disponible. 1 ligne, 2 maximum.
 Réordonner bullets, compétences et outils par pertinence décroissante pour le poste. Ne JAMAIS supprimer un outil ni une compétence — seulement réordonner. Tous les outils et compétences du profil de base doivent apparaître sans exception.
 Profil : 3 phrases max. Jamais de "Fort intérêt pour…" ni d'affinité sectorielle non prouvée par une expérience concrète.
-${isCDI ? "CDI — PROFIL : ne jamais écrire \"alternance\", \"Recherche une alternance\" ni \"en alternance\"." : ''}
 Interdit dans le profil et les bullets : "compétences validées", "compétences certifiées", "compétences prouvées", "compétences démontrées" — sauf si une certification réelle existe. Une compétence se montre par un résultat ou une action concrète, pas par une auto-déclaration de validation.
 Formation : nom de l'école + diplôme + dates uniquement. Zéro bullet, zéro description pédagogique. "bullets":[] dans le JSON.
-${isCDI
-  ? 'Title : "[intitulé EXACT du poste dans la fiche]". Juste le rôle exact, rien d\'autre — jamais de suffixe "Alternance", "CDI" ou de rythme scolaire. ✅ "Chargé de marketing digital"'
-  : `Title : "[intitulé EXACT du poste dans la fiche] · Alternance${profile.availability ? ` · ${profile.availability}` : ''}". Séparateur " · " entre les parties, obligatoire et immuable.`}
+Title : "[intitulé EXACT du poste dans la fiche] · Alternance${profile.availability ? ` · ${profile.availability}` : ''}". Séparateur " · " entre les parties, obligatoire et immuable.
 RÈGLE IMMUABLE — SÉPARATEURS CV : dans les champs structurés du CV (titre sous le nom, intitulés de poste, diplômes, ligne de contact), le séparateur est toujours " · ". Le " – " est réservé aux intervalles de dates uniquement. ❌ "Bac +4 – Manager…" ✅ "Bac +4 · Manager…"
 RÈGLE IMMUABLE — PONCTUATION LETTRE : dans le corps de la lettre de motivation, le point médian " · " est ABSOLUMENT INTERDIT sous toutes ses variantes. Ni tiret d'incise (—), ni parenthèse, ni liste avec séparateur. Toute énumération ou incise doit être reformulée avec : virgule, deux-points, point-virgule, ou point. ❌ "concrètement · la gestion social media" ✅ "concrètement : la gestion social media et l'optimisation e-commerce." Construire des phrases complètes avec sujet-verbe-complément. Ne jamais utiliser · comme deux-points, tiret ou virgule.
 RÈGLE IMMUABLE — UN SEUL DEUX-POINTS PAR PHRASE : jamais deux " : " dans la même phrase, même séparés par une proposition. Un deux-points ouvre une seule fois ; s'il faut annoncer puis détailler, couper en deux phrases distinctes. Avant de finaliser chaque paragraphe, compter les " : " par phrase — si une phrase en contient plus d'un, la scinder.
@@ -654,7 +664,7 @@ Durée d'expérience → ne jamais écrire "depuis X ans", "depuis trois ans", "
 ━━━ EMAIL ━━━
 
 "to" : email détecté dans la fiche, sinon "". Ne jamais inventer.
-${isCDI ? 'Objet : "Candidature au poste de [intitulé en minuscules]".' : 'Objet : si la fiche prescrit un format → l\'utiliser exactement. Sinon : "Candidature au poste de [intitulé en minuscules] en alternance".'}
+Objet : si la fiche prescrit un format → l'utiliser exactement. Sinon : "Candidature au poste de [intitulé en minuscules] en alternance".
 Corps (5 lignes max) :
 1. "Bonjour [Prénom]," ou "Bonjour,"
 2. Candidature + poste${profile.availability ? ' + disponibilité' : ''}.
@@ -710,13 +720,9 @@ ATS : mots-clés pertinents repris, compétences standard, verbes d'action, date
 PROFIL DE BASE DU CANDIDAT
 ${JSON.stringify(profile)}`;
 
-      const cvTitleExample = isCDI
-        ? '[intitulé EXACT du poste dans la fiche]'
-        : `[intitulé EXACT du poste dans la fiche] · Alternance${profile.availability ? ` · ${profile.availability}` : ''}`;
-      const emailObjetExample = isCDI ? 'Candidature au poste de [intitulé]' : 'Candidature au poste de [intitulé] en alternance';
-      const emailCorpsExample = isCDI
-        ? `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé] et je vous adresse ma candidature${profile.availability ? ` pour une disponibilité ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`
-        : `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé] en alternance et je vous adresse ma candidature${profile.availability ? ` pour une prise de poste ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`;
+      const cvTitleExample = `[intitulé EXACT du poste dans la fiche] · Alternance${profile.availability ? ` · ${profile.availability}` : ''}`;
+      const emailObjetExample = 'Candidature au poste de [intitulé] en alternance';
+      const emailCorpsExample = `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé] en alternance et je vous adresse ma candidature${profile.availability ? ` pour une prise de poste ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`;
 
       const userPrompt = `Fiche de poste :
 ${jobText}
@@ -800,15 +806,6 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         return retCount >= baseCount ? noEm(returned) : base;
       };
 
-      // A formation hasn't started yet if its "dates" field opens on a
-      // MM/AAAA in the future — used to drop upcoming schooling from a CDI
-      // application (incompatible with a permanent, full-time contract).
-      const formationStarted = (dates: string): boolean => {
-        const m = dates.match(/(\d{2})\/(\d{4})/);
-        if (!m) return true; // can't parse → keep it, don't guess
-        return new Date(Number(m[2]), Number(m[1]) - 1, 1) <= new Date();
-      };
-
       const rawCV = { ...profile, title: profile.experiences[0]?.title ?? '', ...parsed.cv } as CVProfile;
       const cvData: CVProfile = {
         ...rawCV,
@@ -822,7 +819,6 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
           bullets: (e.bullets ?? []).map(b => sanitizeBullet(noEm(b))),
         })),
         formation: (rawCV.formation ?? profile.formation)
-          .filter((f) => !isCDI || formationStarted(f.dates ?? ''))
           .map((f) => ({ ...f, bullets: [] as string[] })),
         // protectList: si Claude tronque compétences ou outils → on garde la base complète
         competences: protectList(rawCV.competences, profile.competences),
@@ -830,18 +826,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       };
 
       // Sanitize letter + email body: remove any English jargon Claude may have missed
-      let letterParagraphs = sanitizeLetter(parsed.lettre?.paragraphs ?? []);
-      if (isCDI) {
-        // CDI: strip any alternance/école mentions that Claude may have added
-        letterParagraphs = letterParagraphs.map(p =>
-          p.replace(/\ben\s+alternance\b/gi, '')
-           .replace(/\bun\s+poste\s+en\s+alternance\b/gi, 'un poste')
-           .replace(/\bprise\s+de\s+poste\s+en\s+alternance\b/gi, 'prise de poste')
-           .replace(/\b4j\s+entreprise\s*\/\s*1j\s+école\b/gi, '')
-           .replace(/\b4\s+jours\s+en\s+entreprise\b/gi, '')
-           .replace(/\s{2,}/g, ' ').trim()
-        );
-      }
+      const letterParagraphs = sanitizeLetter(parsed.lettre?.paragraphs ?? []);
 
       // Enforce a single, fixed closing sentence in paragraphs[4].
       // Claude always generates two sentences (availability + closing) despite instructions.
@@ -867,7 +852,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       };
 
       // Normalize email subject: extract title, strip any "alternance" from it,
-      // recompute de/d' elision, then rebuild — always ends with " en alternance" for non-CDI.
+      // recompute de/d' elision, then rebuild — always ends with " en alternance".
       const lowerObjet = (s: string) => {
         const stripAlt = (t: string) =>
           t.replace(/^alternance\s*[–\-:]\s*/i, '')
@@ -887,9 +872,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
           /Candidature au poste (?:de |d['''])?(.+?)(\s+en\s+alternance\b.*)?$/ui,
           (_, rawTitle) => {
             const title = stripAlt(rawTitle);
-            return isCDI
-              ? `Candidature au poste ${prep(title)}${title}`
-              : `Candidature au poste ${prep(title)}${title} en alternance`;
+            return `Candidature au poste ${prep(title)}${title} en alternance`;
           }
         );
       };
@@ -901,7 +884,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
             corps: sanitizeLetter([noEm(parsed.email.corps)])[0] }
         : { to: '', objet: '', corps: '' };
 
-      const [cvBuf, lettreBuf] = await Promise.all([buildCVPdf(cvData), buildLetterPdf(profile, lettreData, isCDI)]);
+      const [cvBuf, lettreBuf] = await Promise.all([buildCVPdf(cvData), buildLetterPdf(profile, lettreData)]);
       await send({ progress: 95, step: 'Finalisation…' });
 
       await send({

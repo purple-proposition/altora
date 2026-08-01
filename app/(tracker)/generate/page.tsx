@@ -35,7 +35,6 @@ function GenerateForm() {
   const [jobPosting, setJobPosting] = useState(() => searchParams.get('job') ?? '');
   const [usingStoredDescription, setUsingStoredDescription] = useState(false);
   const [markedSent, setMarkedSent] = useState(false);
-  const [contractType, setContractType] = useState<'alternance' | 'cdi'>('alternance');
   const [state, setState] = useState<State>('idle');
   const [error, setError] = useState('');
   const [duration, setDuration] = useState(0);
@@ -88,7 +87,6 @@ function GenerateForm() {
       .then(record => {
         if (cancelled || !record) return;
         setJobPosting(record.jobDescription || '');
-        setContractType(record.contractType === 'cdi' ? 'cdi' : 'alternance');
         setCvUrl(record.cvUrl);
         setLettreUrl(record.lettreUrl);
         setAnalysis({
@@ -152,7 +150,7 @@ function GenerateForm() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jobPosting, contractType, modifications: modifications.trim() || undefined }),
+        body: JSON.stringify({ jobPosting, modifications: modifications.trim() || undefined }),
       });
 
       if (!res.ok || !res.body) throw new Error('Erreur serveur');
@@ -209,7 +207,6 @@ function GenerateForm() {
                 cardId,
                 company: data.company ?? '',
                 poste: data.poste ?? '',
-                contractType,
                 jobDescription: jobPosting,
                 cv: data.cv,
                 lettre: data.lettre,
@@ -263,21 +260,6 @@ function GenerateForm() {
 
         {(state === 'idle' || state === 'error') && (
           <>
-            <div className="contract-picker" role="radiogroup">
-              {(['alternance', 'cdi'] as const).map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  role="radio"
-                  aria-checked={contractType === type}
-                  className={`contract-btn${contractType === type ? ' active' : ''}`}
-                  onClick={() => setContractType(type)}
-                >
-                  {type === 'alternance' ? 'Alternance' : 'CDI'}
-                </button>
-              ))}
-            </div>
-
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>
               {usingStoredDescription ? (

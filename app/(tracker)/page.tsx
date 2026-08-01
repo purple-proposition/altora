@@ -258,8 +258,6 @@ export default async function TrackerPage() {
               <fieldset className="field-group">
                 <legend className="field-label">Type de contrat</legend>
                 <div className="contract-picker" id="contract-picker" role="radiogroup">
-                  <button type="button" className="contract-btn" data-contract="CDI" role="radio" aria-checked="false">CDI</button>
-                  <button type="button" className="contract-btn" data-contract="CDD" role="radio" aria-checked="false">CDD</button>
                   <button type="button" className="contract-btn" data-contract="Alternance" role="radio" aria-checked="false">Alternance</button>
                   <button type="button" className="contract-btn" data-contract="Stage" role="radio" aria-checked="false">Stage</button>
                   <button type="button" className="contract-btn" data-contract="Freelance" role="radio" aria-checked="false">Freelance</button>
