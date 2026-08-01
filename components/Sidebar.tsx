@@ -167,7 +167,7 @@ export default function Sidebar({
             <div className="sidebar-item" id="sidebar-suivi-toggle" role="button" tabIndex={0}>
               <i data-lucide="list-checks"></i>
               <span className="sidebar-item-label">Mes candidatures</span>
-              <span className="sidebar-item-badge" id="sidebar-tasks-count">{todoCount !== null && todoCount > 0 ? todoCount : ''}</span>
+              <button type="button" className="sidebar-item-badge" id="sidebar-tasks-count" aria-label="Candidatures à envoyer">{todoCount !== null && todoCount > 0 ? todoCount : ''}</button>
               <button
                 type="button"
                 className="sidebar-item-chevron-btn"
@@ -193,7 +193,9 @@ export default function Sidebar({
                 <i data-lucide="list-checks"></i>
                 <span className="sidebar-item-label">Mes candidatures</span>
               </Link>
-              {todoCount !== null && todoCount > 0 && <span className="sidebar-item-badge">{todoCount}</span>}
+              {todoCount !== null && todoCount > 0 && (
+                <button type="button" className="sidebar-item-badge" aria-label="Candidatures à envoyer">{todoCount}</button>
+              )}
               <button
                 type="button"
                 className="sidebar-item-chevron-btn"

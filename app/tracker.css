@@ -318,7 +318,11 @@ body {
 }
 
 .sidebar-item .lucide { width: 16px; height: 16px; flex-shrink: 0; }
-.sidebar-item-label { flex: 1; text-align: left; }
+/* No longer flex:1 — the label now only takes the width of its own text, so
+   the notification badge sits right next to the name instead of being
+   pushed to the far edge. The chevron button's own margin-left:auto is what
+   pushes IT alone to the right now (see .sidebar-item-chevron-btn below). */
+.sidebar-item-label { flex: 0 1 auto; text-align: left; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar-item-chevron { width: 14px !important; height: 14px !important; color: var(--text-muted); transition: transform 0.2s ease; }
 
 .sidebar-item-badge {
@@ -328,6 +332,7 @@ body {
   min-width: 20px;
   height: 20px;
   padding: 0 4px;
+  border: none;
   border-radius: var(--radius-pill);
   background: var(--bg);
   color: var(--text-muted);
@@ -335,8 +340,12 @@ body {
   line-height: 1;
   font-weight: 500;
   flex-shrink: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 .sidebar-item-badge:empty { display: none; }
+.sidebar-item-badge:hover { background: var(--border); color: var(--text); }
 
 .sidebar-item-chevron-btn {
   display: flex;
@@ -345,7 +354,7 @@ body {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  margin: -4px;
+  margin: -4px -4px -4px auto;
   border: none;
   border-radius: 8px;
   background: none;
