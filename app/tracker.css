@@ -2031,7 +2031,8 @@ legend.field-label { padding: 0; }
   .generate-view,
   .profile-view-hint,
   .profile-form,
-  .school-view-hint {
+  .school-view-hint,
+  .school-readonly-card {
     max-width: none;
   }
 
