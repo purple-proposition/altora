@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
@@ -8,6 +9,44 @@ import { sql, ensureSchema } from '@/lib/db';
 import { createFolder } from './actions';
 
 export default async function DocumentsPage() {
+  return (
+    <>
+      <div className="topbar-sticky">
+        <div className="topbar-breadcrumb">
+          <SidebarCollapseToggle />
+          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
+          <span className="breadcrumb-sep">/</span>
+          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="folder"></i>Mes documents</span>
+          <TopbarActions />
+        </div>
+      </div>
+
+      <section className="documents-view">
+        <div className="documents-header">
+          <h1 className="documents-title">Mes documents</h1>
+          <details className="folder-create">
+            <summary className="folder-create-trigger" aria-label="Créer un dossier" title="Créer un dossier">
+              <i data-lucide="plus"></i>
+            </summary>
+            <form action={createFolder} className="folder-create-form">
+              <input type="text" name="name" placeholder="Nom du dossier…" maxLength={100} required />
+              <button type="submit" className="btn-primary">Créer</button>
+            </form>
+          </details>
+        </div>
+
+        {/* The breadcrumb/header above render immediately on navigation —
+            only the grid (3 DB queries) streams in behind this boundary,
+            instead of the whole page waiting on them. */}
+        <Suspense fallback={<div className="documents-grid"><div className="route-skeleton-bar" style={{ height: 160, borderRadius: 16 }} /></div>}>
+          <DocumentsGrid />
+        </Suspense>
+      </section>
+    </>
+  );
+}
+
+async function DocumentsGrid() {
   const session = await auth();
 
   let cvUrl = '';
@@ -39,59 +78,32 @@ export default async function DocumentsPage() {
   const cvDocs: DocFile[] = cvUrl ? [{ url: cvUrl, filename: cvFilename || 'CV.pdf', thumbnailUrl: cvThumbnailUrl }] : [];
 
   return (
-    <>
-      <div className="topbar-sticky">
-        <div className="topbar-breadcrumb">
-          <SidebarCollapseToggle />
-          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
-          <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="folder"></i>Mes documents</span>
-          <TopbarActions />
+    <div className="documents-grid">
+      <div className="folder-card">
+        <div className="folder-card-header">
+          <i data-lucide="folder"></i>
+          <span className="folder-card-name">Mes CV</span>
+          <span className="folder-card-count">{cvDocs.length}</span>
+        </div>
+        <div className="folder-card-body">
+          {cvDocs.length ? <DocThumbGrid docs={cvDocs} href="/documents/cv" /> : <p className="folder-empty">Aucun CV importé pour le moment.</p>}
         </div>
       </div>
 
-      <section className="documents-view">
-        <div className="documents-header">
-          <h1 className="documents-title">Mes documents</h1>
-          <details className="folder-create">
-            <summary className="folder-create-trigger" aria-label="Créer un dossier" title="Créer un dossier">
-              <i data-lucide="plus"></i>
-            </summary>
-            <form action={createFolder} className="folder-create-form">
-              <input type="text" name="name" placeholder="Nom du dossier…" maxLength={100} required />
-              <button type="submit" className="btn-primary">Créer</button>
-            </form>
-          </details>
+      <div className="folder-card">
+        <div className="folder-card-header">
+          <i data-lucide="folder"></i>
+          <span className="folder-card-name">Mes lettres de motivation</span>
+          <span className="folder-card-count">0</span>
         </div>
-
-        <div className="documents-grid">
-          <div className="folder-card">
-            <div className="folder-card-header">
-              <i data-lucide="folder"></i>
-              <span className="folder-card-name">Mes CV</span>
-              <span className="folder-card-count">{cvDocs.length}</span>
-            </div>
-            <div className="folder-card-body">
-              {cvDocs.length ? <DocThumbGrid docs={cvDocs} href="/documents/cv" /> : <p className="folder-empty">Aucun CV importé pour le moment.</p>}
-            </div>
-          </div>
-
-          <div className="folder-card">
-            <div className="folder-card-header">
-              <i data-lucide="folder"></i>
-              <span className="folder-card-name">Mes lettres de motivation</span>
-              <span className="folder-card-count">0</span>
-            </div>
-            <div className="folder-card-body">
-              <p className="folder-empty">Aucune lettre générée pour le moment.</p>
-            </div>
-          </div>
-
-          {folders.map(folder => (
-            <FolderCard key={folder.id} folder={folder} docs={folderFiles[folder.id] || []} />
-          ))}
+        <div className="folder-card-body">
+          <p className="folder-empty">Aucune lettre générée pour le moment.</p>
         </div>
-      </section>
-    </>
+      </div>
+
+      {folders.map(folder => (
+        <FolderCard key={folder.id} folder={folder} docs={folderFiles[folder.id] || []} />
+      ))}
+    </div>
   );
 }

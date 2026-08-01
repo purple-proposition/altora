@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
@@ -20,13 +21,7 @@ const DEMO_STUDENTS: SchoolStudent[] = [
 export default async function EcolePage() {
   const session = await auth();
   if (!session?.user?.id) return null;
-
-  const [school, isAdmin] = await Promise.all([
-    ensureUserSchool(session.user.id),
-    isUserSchoolAdmin(session.user.id),
-  ]);
-  const realStudents = isAdmin ? await listSchoolStudents(school.id) : [];
-  const students = realStudents.length > 1 ? realStudents : [...realStudents, ...DEMO_STUDENTS];
+  const userId = session.user.id;
 
   return (
     <>
@@ -40,59 +35,74 @@ export default async function EcolePage() {
         </div>
       </div>
 
-      <section className="school-view">
-        <div className="school-view-header">
-          <h1 className="school-view-title">{school.name}</h1>
-          <p className="school-view-hint">
-            Le rythme d&apos;alternance et la date de rentrée définis ici s&apos;appliquent automatiquement au CV de tous les étudiants de l&apos;école, ils ne peuvent pas les modifier eux-mêmes.
-          </p>
-        </div>
-
-        {isAdmin ? (
-          <SchoolSettingsForm initialSchool={school} />
-        ) : (
-          <div className="school-readonly-card">
-            <div className="field-group">
-              <span className="field-label">Rythme d&apos;alternance</span>
-              <p className="school-readonly-value">{school.rhythm || 'Non renseigné'}</p>
-            </div>
-            <div className="field-group">
-              <span className="field-label">Rentrée</span>
-              <p className="school-readonly-value">{school.availability || 'Non renseignée'}</p>
-            </div>
-            <p className="field-hint">Seul l&apos;admin de l&apos;école peut modifier ces réglages.</p>
-          </div>
-        )}
-
-        {isAdmin && (
-          <div className="school-class">
-            <div className="school-class-group-header">
-              <h2 className="school-class-title">Classe : Spoutnik 75</h2>
-              <span className="school-class-group-count">{students.length}</span>
-            </div>
-            <table className="school-students-table">
-              <thead>
-                <tr>
-                  <th>Nom</th>
-                  <th>Email</th>
-                  <th>Candidatures</th>
-                  <th>Inscrit le</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((s) => (
-                  <tr key={s.id}>
-                    <td>{s.name || '(nom non renseigné)'}{s.isSchoolAdmin && <span className="school-admin-badge">admin</span>}</td>
-                    <td>{s.email}</td>
-                    <td>{s.cardCount}</td>
-                    <td>{new Date(s.createdAt).toLocaleDateString('fr-FR')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+      <Suspense fallback={<section className="school-view"><div className="route-skeleton-bar" style={{ width: '40%' }} /></section>}>
+        <EcoleContent userId={userId} />
+      </Suspense>
     </>
+  );
+}
+
+async function EcoleContent({ userId }: { userId: string }) {
+  const [school, isAdmin] = await Promise.all([
+    ensureUserSchool(userId),
+    isUserSchoolAdmin(userId),
+  ]);
+  const realStudents = isAdmin ? await listSchoolStudents(school.id) : [];
+  const students = realStudents.length > 1 ? realStudents : [...realStudents, ...DEMO_STUDENTS];
+
+  return (
+    <section className="school-view">
+      <div className="school-view-header">
+        <h1 className="school-view-title">{school.name}</h1>
+        <p className="school-view-hint">
+          Le rythme d&apos;alternance et la date de rentrée définis ici s&apos;appliquent automatiquement au CV de tous les étudiants de l&apos;école, ils ne peuvent pas les modifier eux-mêmes.
+        </p>
+      </div>
+
+      {isAdmin ? (
+        <SchoolSettingsForm initialSchool={school} />
+      ) : (
+        <div className="school-readonly-card">
+          <div className="field-group">
+            <span className="field-label">Rythme d&apos;alternance</span>
+            <p className="school-readonly-value">{school.rhythm || 'Non renseigné'}</p>
+          </div>
+          <div className="field-group">
+            <span className="field-label">Rentrée</span>
+            <p className="school-readonly-value">{school.availability || 'Non renseignée'}</p>
+          </div>
+          <p className="field-hint">Seul l&apos;admin de l&apos;école peut modifier ces réglages.</p>
+        </div>
+      )}
+
+      {isAdmin && (
+        <div className="school-class">
+          <div className="school-class-group-header">
+            <h2 className="school-class-title">Classe : Spoutnik 75</h2>
+            <span className="school-class-group-count">{students.length}</span>
+          </div>
+          <table className="school-students-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Candidatures</th>
+                <th>Inscrit le</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((s) => (
+                <tr key={s.id}>
+                  <td>{s.name || '(nom non renseigné)'}{s.isSchoolAdmin && <span className="school-admin-badge">admin</span>}</td>
+                  <td>{s.email}</td>
+                  <td>{s.cardCount}</td>
+                  <td>{new Date(s.createdAt).toLocaleDateString('fr-FR')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   );
 }

@@ -1,3 +1,4 @@
+import { unstable_cache as cache, revalidateTag } from 'next/cache';
 import { sql, ensureSchema } from './db';
 
 export type School = {
@@ -39,11 +40,20 @@ export async function ensureUserSchool(userId: string): Promise<School> {
   return school;
 }
 
-export async function isUserSchoolAdmin(userId: string): Promise<boolean> {
-  await ensureSchema();
-  const rows = await sql`SELECT is_school_admin FROM users WHERE id = ${userId}`;
-  return !!rows[0]?.is_school_admin;
-}
+// This runs on every single navigation (checked once in the (tracker) layout
+// for every page), so it's cached for a short window instead of hitting the
+// DB on each nav — invalidated immediately via revalidateTag whenever the
+// flag actually changes (toggleSelfSchoolAdmin below).
+export const isUserSchoolAdmin = (userId: string): Promise<boolean> =>
+  cache(
+    async (id: string) => {
+      await ensureSchema();
+      const rows = await sql`SELECT is_school_admin FROM users WHERE id = ${id}`;
+      return !!rows[0]?.is_school_admin;
+    },
+    ['school-admin-flag'],
+    { tags: [`school-admin:${userId}`], revalidate: 60 },
+  )(userId);
 
 // Dev/demo shortcut only (bound to a keyboard chord in the UI) — flips the
 // current user's own admin flag with no other checks. Not the production
@@ -51,6 +61,7 @@ export async function isUserSchoolAdmin(userId: string): Promise<boolean> {
 export async function toggleSelfSchoolAdmin(userId: string): Promise<boolean> {
   await ensureSchema();
   const rows = await sql`UPDATE users SET is_school_admin = NOT is_school_admin WHERE id = ${userId} RETURNING is_school_admin`;
+  revalidateTag(`school-admin:${userId}`);
   return !!rows[0]?.is_school_admin;
 }
 
