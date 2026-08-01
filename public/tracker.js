@@ -1120,7 +1120,7 @@
           return;
         }
         if (result.blocked) {
-          setUrlParseStatus('Ce site bloque l’extraction automatique — colle le texte de l’offre ci-dessous.', 'error');
+          setUrlParseStatus('Ce site bloque l’extraction automatique, colle le texte de l’offre ci-dessous.', 'error');
           jobDescriptionDetails.open = true;
           fieldJobDescription.focus();
           return;
@@ -1680,7 +1680,7 @@
             ev && inMonth ? ev.label : null,
             ...dayInterviews.map(c => `entretien${c.company ? ' chez ' + c.company : ''}`),
           ].filter(Boolean);
-          dayEl.setAttribute('aria-label', labelParts.length ? `${dateLabel} — ${labelParts.join(', ')}` : dateLabel);
+          dayEl.setAttribute('aria-label', labelParts.length ? `${dateLabel}, ${labelParts.join(', ')}` : dateLabel);
           dayEl.innerHTML = `<span class="calendar-day-number">${day}</span>`;
           dayInterviews.forEach(c => {
             const pill = document.createElement('span');

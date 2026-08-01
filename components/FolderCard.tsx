@@ -159,7 +159,7 @@ export default function FolderCard({ folder, docs }: { folder: { id: number; nam
       {confirmingDelete && createPortal(
         <div className="modal-overlay visible" role="dialog" aria-modal="true" aria-label="Supprimer le dossier">
           <div className="modal">
-            <h3>Supprimer &quot;{folder.name}&quot; ?</h3>
+            <h2>Supprimer &quot;{folder.name}&quot; ?</h2>
             <p className="modal-hint">
               {docs.length > 0
                 ? `Ce dossier et son contenu (${docs.length} fichier${docs.length > 1 ? 's' : ''}) seront supprimés définitivement.`

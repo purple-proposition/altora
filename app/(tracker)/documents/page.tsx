@@ -52,7 +52,7 @@ export default async function DocumentsPage() {
 
       <section className="documents-view">
         <div className="documents-header">
-          <h2 className="documents-title">Mes documents</h2>
+          <h1 className="documents-title">Mes documents</h1>
           <details className="folder-create">
             <summary className="folder-create-trigger" aria-label="Créer un dossier" title="Créer un dossier">
               <i data-lucide="plus"></i>

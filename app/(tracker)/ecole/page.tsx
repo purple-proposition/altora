@@ -42,9 +42,9 @@ export default async function EcolePage() {
 
       <section className="school-view">
         <div className="school-view-header">
-          <h2 className="school-view-title">{school.name}</h2>
+          <h1 className="school-view-title">{school.name}</h1>
           <p className="school-view-hint">
-            Le rythme d&apos;alternance et la date de rentrée définis ici s&apos;appliquent automatiquement au CV de tous les étudiants de l&apos;école — ils ne peuvent pas les modifier eux-mêmes.
+            Le rythme d&apos;alternance et la date de rentrée définis ici s&apos;appliquent automatiquement au CV de tous les étudiants de l&apos;école, ils ne peuvent pas les modifier eux-mêmes.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export default async function EcolePage() {
         {isAdmin && (
           <div className="school-class">
             <div className="school-class-group-header">
-              <h3 className="school-class-title">Classe — Spoutnik 75</h3>
+              <h2 className="school-class-title">Classe : Spoutnik 75</h2>
               <span className="school-class-group-count">{students.length}</span>
             </div>
             <table className="school-students-table">
@@ -82,7 +82,7 @@ export default async function EcolePage() {
               <tbody>
                 {students.map((s) => (
                   <tr key={s.id}>
-                    <td>{s.name || '—'}{s.isSchoolAdmin && <span className="school-admin-badge">admin</span>}</td>
+                    <td>{s.name || '(nom non renseigné)'}{s.isSchoolAdmin && <span className="school-admin-badge">admin</span>}</td>
                     <td>{s.email}</td>
                     <td>{s.cardCount}</td>
                     <td>{new Date(s.createdAt).toLocaleDateString('fr-FR')}</td>

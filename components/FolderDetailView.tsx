@@ -14,7 +14,7 @@ export default function FolderDetailView({ title, docs }: { title: string; docs:
   return (
     <>
       <div className="documents-header">
-        <h2 className="documents-title">{title}</h2>
+        <h1 className="documents-title">{title}</h1>
         <div className="folder-detail-sort-group">
           <button
             type="button"

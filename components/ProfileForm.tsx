@@ -162,7 +162,7 @@ export default function ProfileForm({ initialProfile }: { initialProfile: UserPr
         <p className="field-hint">
           Tes propres règles pour la génération (style, formulations interdites, structure de la lettre, faits à ne
           jamais mélanger…). Les règles générales d&apos;écriture et d&apos;optimisation ATS sont déjà appliquées par
-          défaut à tout le monde — n&apos;écris ici que ce qui t&apos;est propre.
+          défaut à tout le monde, n&apos;écris ici que ce qui t&apos;est propre.
         </p>
         <textarea
           rows={8}

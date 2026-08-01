@@ -25,7 +25,7 @@ export default async function ProfilPage() {
 
       <section className="profile-view">
         <div className="profile-view-header">
-          <h2 className="profile-view-title">Mon profil candidat</h2>
+          <h1 className="profile-view-title">Mon profil candidat</h1>
           <p className="profile-view-hint">
             Ces informations servent de base à la génération de ton CV et de tes lettres de motivation.
             Import un CV depuis la fenêtre « Profil » pour pré-remplir automatiquement, puis corrige ici si besoin.

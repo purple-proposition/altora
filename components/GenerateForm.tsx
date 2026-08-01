@@ -310,7 +310,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
 
       <section className={`generate-view${state === 'done' || state === 'intro' ? ' generate-view--wide' : ''}`}>
         <div className="documents-header">
-          <h2 className="documents-title">ATS Booster</h2>
+          <h1 className="documents-title">ATS Booster</h1>
         </div>
 
         {state === 'intro' && (
@@ -346,7 +346,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
               {usingStoredDescription ? (
                 <div className="generate-stored-description">
                   <i data-lucide="check-circle"></i>
-                  <span>Déjà en mémoire depuis le suivi — pas besoin de la recoller.</span>
+                  <span>Déjà en mémoire depuis le suivi, pas besoin de la recoller.</span>
                   <button
                     type="button"
                     className="generate-stored-description-edit"
@@ -400,7 +400,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
           <div className="generate-dashboard">
             <p className="generate-meta">
               {(poste || company) && (
-                <span className="generate-meta-title">{[poste, company].filter(Boolean).join(' chez ')} — </span>
+                <span className="generate-meta-title">{[poste, company].filter(Boolean).join(' chez ')} · </span>
               )}
               {generatedAt
                 ? `Généré le ${new Date(generatedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`

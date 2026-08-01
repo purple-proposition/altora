@@ -18,7 +18,7 @@ export default function InboxPage() {
 
       <section className="documents-view">
         <div className="documents-header">
-          <h2 className="documents-title">Boîte de réception</h2>
+          <h1 className="documents-title">Boîte de réception</h1>
         </div>
 
         {MESSAGES.length ? (

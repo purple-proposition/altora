@@ -41,7 +41,7 @@ export default async function TrackerPage() {
 
           <div className="topbar-toolbar hidden" id="topbar-toolbar">
             <div className="toolbar-left">
-              <span className="toolbar-title">Mes candidatures</span>
+              <h1 className="toolbar-title">Mes candidatures</h1>
               <span className="toolbar-count" id="toolbar-count">0</span>
             </div>
             <div className="toolbar-right">
@@ -56,9 +56,9 @@ export default async function TrackerPage() {
 
         <section className="summary-card" id="view-home">
           <div className="summary-date">{todayLabel}</div>
-          <h2 className="summary-greeting">
+          <h1 className="summary-greeting">
             <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,
-          </h2>
+          </h1>
           <p className="summary-subtitle">
             <span className="period-trigger-wrap">
               <button type="button" className="period-trigger" id="period-trigger">
@@ -120,7 +120,7 @@ export default async function TrackerPage() {
 
         <section className="calendar-view hidden" id="view-calendar">
           <div className="calendar-header">
-            <h2 className="calendar-title" id="calendar-title"></h2>
+            <h1 className="calendar-title" id="calendar-title"></h1>
             <div className="calendar-nav">
               <button type="button" className="calendar-nav-btn" id="calendar-prev" aria-label="Mois précédent"><i data-lucide="chevron-left"></i></button>
               <button type="button" className="calendar-nav-btn" id="calendar-today" aria-label="Aujourd&apos;hui"><i data-lucide="circle"></i></button>
@@ -156,7 +156,7 @@ export default async function TrackerPage() {
         <div className="modal-overlay hidden" id="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
           <div className="modal profile-modal" tabIndex={-1}>
             <button type="button" className="modal-close" id="profile-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
-            <h3 id="profile-modal-title">Profil</h3>
+            <h2 id="profile-modal-title">Profil</h2>
 
             <div className="profile-header">
               <img className="profile-avatar" src="/avatar.jpg" alt={firstName} />
@@ -216,7 +216,7 @@ export default async function TrackerPage() {
         <div className="modal-overlay hidden" id="cv-preview-overlay" role="dialog" aria-modal="true" aria-labelledby="cv-preview-title">
           <div className="modal cv-preview-modal" tabIndex={-1}>
             <button type="button" className="modal-close" id="cv-preview-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
-            <h3 id="cv-preview-title">Ton CV</h3>
+            <h2 id="cv-preview-title">Ton CV</h2>
             <iframe id="cv-preview-frame" className="cv-preview-frame" title="Aperçu du CV"></iframe>
           </div>
         </div>
@@ -224,8 +224,8 @@ export default async function TrackerPage() {
         <div className="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
           <div className="modal" tabIndex={-1}>
             <button type="button" className="modal-close" id="btn-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
-            <h3 id="modal-title">Nouvelle offre</h3>
-            <p className="modal-hint hidden" id="modal-hint">Colle le lien de l&apos;offre — tu pourras compléter les détails juste après.</p>
+            <h2 id="modal-title">Nouvelle offre</h2>
+            <p className="modal-hint hidden" id="modal-hint">Colle le lien de l&apos;offre, tu pourras compléter les détails juste après.</p>
             <form id="card-form">
               <label>Lien de l&apos;offre
                 <input type="url" id="field-url" placeholder="https://..." />
@@ -236,7 +236,7 @@ export default async function TrackerPage() {
                 <textarea
                   id="field-job-description"
                   rows={4}
-                  placeholder="Rempli automatiquement si le lien peut être analysé, ou colle ici le texte de l'offre si le site le bloque. Sert uniquement à générer le CV plus tard — n'apparaît pas sur la carte."
+                  placeholder="Rempli automatiquement si le lien peut être analysé, ou colle ici le texte de l'offre si le site le bloque. Sert uniquement à générer le CV plus tard, n'apparaît pas sur la carte."
                 ></textarea>
               </details>
               <div className="field-row">
