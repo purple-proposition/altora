@@ -316,7 +316,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
         </div>
       </div>
 
-      <section className={`generate-view${state === 'done' ? ' generate-view--wide' : ''}`}>
+      <section className={`generate-view${state === 'done' || state === 'intro' ? ' generate-view--wide' : ''}`}>
         <div className="documents-header">
           <h2 className="documents-title">ATS Booster</h2>
         </div>
