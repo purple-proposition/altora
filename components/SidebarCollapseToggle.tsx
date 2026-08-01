@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSidebarCollapse } from './SidebarCollapseContext';
+import { safeCreateIcons } from '@/lib/icons';
 
 export default function SidebarCollapseToggle() {
   const { collapsed, toggle } = useSidebarCollapse();
@@ -14,12 +15,12 @@ export default function SidebarCollapseToggle() {
   useEffect(() => {
     const w = window as unknown as { lucide?: { createIcons: () => void } };
     if (w.lucide) {
-      w.lucide.createIcons();
+      safeCreateIcons();
       return;
     }
     const id = setInterval(() => {
       if (w.lucide) {
-        w.lucide.createIcons();
+        safeCreateIcons();
         clearInterval(id);
       }
     }, 50);

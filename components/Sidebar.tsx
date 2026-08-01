@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSidebarCollapse } from './SidebarCollapseContext';
 import { INBOX_MESSAGES } from '@/lib/mockInbox';
+import { safeCreateIcons } from '@/lib/icons';
 
 type GenerationSummary = { id: string; company: string; poste: string; createdAt: string };
 type FolderSummary = { id: number; name: string };
@@ -111,12 +112,12 @@ export default function Sidebar({
     w.altoraInitApp?.();
 
     if (w.lucide) {
-      w.lucide.createIcons();
+      safeCreateIcons();
       return;
     }
     const id = setInterval(() => {
       if (w.lucide) {
-        w.lucide.createIcons();
+        safeCreateIcons();
         clearInterval(id);
       }
     }, 50);

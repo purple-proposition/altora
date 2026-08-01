@@ -3151,6 +3151,33 @@ legend.field-label { padding: 0; }
   padding: 16px;
 }
 
+.method-explain-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+@media (max-width: 720px) {
+  .method-explain-grid { grid-template-columns: 1fr; }
+}
+
+/* --- ATS Booster intro screen (before the job-posting form) --- */
+
+.generate-intro { display: flex; flex-direction: column; gap: 24px; }
+.method-card--intro-standalone {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+}
+.method-card--intro-standalone .method-card--intro {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 8px;
+}
+.generate-intro-cta { width: 100%; padding: 16px 24px; font-size: 15px; }
+
 .method-card-head { display: flex; align-items: center; gap: 8px; }
 .method-card-head .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 

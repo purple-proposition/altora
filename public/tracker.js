@@ -41,8 +41,9 @@
     // runs. Every internal call goes through this instead of the raw
     // lucide.createIcons(), retrying until the library is actually there.
     function safeCreateIcons() {
-      if (window.lucide) window.lucide.createIcons();
-      else setTimeout(safeCreateIcons, 50);
+      if (!window.lucide) { setTimeout(safeCreateIcons, 50); return; }
+      try { window.lucide.createIcons(); }
+      catch (e) { console.warn('[lucide] createIcons() failed — check for an invalid data-lucide name', e); }
     }
 
     // Named tuning constants (previously bare literals scattered around the file).
@@ -203,7 +204,7 @@
     const JOB_SOURCES = [
       { match: 'indeed.', label: 'Indeed', icon: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none"><rect width="24" height="24" rx="5" fill="#2557A7"/><text x="12" y="17" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#fff">in</text></svg>' },
       { match: 'welcometothejungle.', label: 'Welcome to the Jungle', icon: '<i data-lucide="palmtree"></i>' },
-      { match: 'linkedin.', label: 'LinkedIn', icon: '<i data-lucide="linkedin"></i>' },
+      { match: 'linkedin.', label: 'LinkedIn', icon: '<i data-lucide="briefcase"></i>' },
       { match: 'apec.', label: 'Apec', icon: '<i data-lucide="briefcase"></i>' },
       { match: 'glassdoor.', label: 'Glassdoor', icon: '<i data-lucide="briefcase"></i>' },
       { match: 'monster.', label: 'Monster', icon: '<i data-lucide="briefcase"></i>' },

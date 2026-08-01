@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { INBOX_MESSAGES } from '@/lib/mockInbox';
+import { safeCreateIcons } from '@/lib/icons';
 
 const NOTIFICATIONS = [
   { icon: 'calendar-clock', text: 'Entretien "Stagiaire en Marketing H/F" demain à 18h00', time: 'Il y a 2h' },
@@ -70,8 +71,7 @@ export default function TopbarActions() {
   }, []);
 
   useEffect(() => {
-    const w = window as unknown as { lucide?: { createIcons: () => void } };
-    w.lucide?.createIcons();
+    safeCreateIcons();
   }, [open]);
 
   return (

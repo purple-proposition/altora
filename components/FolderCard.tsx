@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import DocThumbGrid, { type DocFile } from './DocThumbGrid';
 import { deleteFolder, renameFolder } from '@/app/(tracker)/documents/actions';
+import { safeCreateIcons } from '@/lib/icons';
 
 export default function FolderCard({ folder, docs }: { folder: { id: number; name: string }; docs: DocFile[] }) {
   const router = useRouter();
@@ -32,8 +33,7 @@ export default function FolderCard({ folder, docs }: { folder: { id: number; nam
   }, [renaming]);
 
   useEffect(() => {
-    const w = window as unknown as { lucide?: { createIcons: () => void } };
-    w.lucide?.createIcons();
+    safeCreateIcons();
   }, [menu, confirmingDelete]);
 
   function openMenu(e: React.MouseEvent) {
