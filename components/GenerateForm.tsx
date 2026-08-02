@@ -44,7 +44,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Conçu pour passer les robots</h3>
           </div>
           <p className="method-card-text">
-            Un CV à plusieurs colonnes ou icônes est illisible pour un ATS. Le tien reste sur une seule page, en une seule colonne, avec des intitulés standards et des expériences résumées sans jargon, pour passer le filtre et enfin être lu.
+            Un CV sur une seule page, en une seule colonne, sans jargon, pour passer le filtre et enfin être lu.
           </p>
         </div>
 
@@ -53,7 +53,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Tes propres règles en priorité</h3>
           </div>
           <p className="method-card-text">
-            Une formulation à éviter, un fait à toujours mettre en avant, une nuance sur ton expérience. Chaque profil est unique et notre IA tient aussi compte de tes consignes pour que le résultat te ressemble vraiment.
+            Chaque profil est unique et notre outil tient aussi compte de tes consignes pour que le résultat te ressemble vraiment.
           </p>
         </div>
 
