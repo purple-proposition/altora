@@ -4,7 +4,7 @@ import authConfig from '@/auth.config';
 
 const { auth } = NextAuth(authConfig);
 
-const PUBLIC_PATHS = ['/login', '/signup'];
+const PUBLIC_PATHS = ['/login', '/signup', '/robots.txt'];
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;

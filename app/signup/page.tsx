@@ -44,44 +44,49 @@ export default function SignupPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: '#f5f5f7', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: '#f5f5f7', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '380px', background: '#fff', borderRadius: '20px', padding: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
           <span style={{ fontFamily: '"BBH Hegarty", "Inter", sans-serif', fontSize: '28px', fontWeight: 800 }}>Altora</span>
         </div>
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Prénom</label>
+        <label htmlFor="signup-name" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Prénom</label>
         <input
+          id="signup-name"
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
           style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
         />
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>École</label>
+        <label htmlFor="signup-school" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>École</label>
         <input
+          id="signup-school"
           type="text"
           value={school}
           onChange={e => setSchool(e.target.value)}
           placeholder="Rocket School…"
           style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
         />
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Promotion</label>
+        <label htmlFor="signup-promotion" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Promotion</label>
         <input
+          id="signup-promotion"
           type="text"
           value={promotion}
           onChange={e => setPromotion(e.target.value)}
           placeholder="Spoutnik 75…"
           style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
         />
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Email</label>
+        <label htmlFor="signup-email" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Email</label>
         <input
+          id="signup-email"
           type="email"
           required
           value={email}
           onChange={e => setEmail(e.target.value)}
           style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
         />
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Mot de passe <span style={{ fontWeight: 400 }}>(8 caractères min.)</span></label>
+        <label htmlFor="signup-password" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Mot de passe <span style={{ fontWeight: 400 }}>(8 caractères min.)</span></label>
         <input
+          id="signup-password"
           type="password"
           required
           minLength={8}
@@ -97,6 +102,6 @@ export default function SignupPage() {
           Déjà un compte ? <Link href="/login" style={{ color: '#4f46e5', fontWeight: 600 }}>Se connecter</Link>
         </p>
       </form>
-    </div>
+    </main>
   );
 }
