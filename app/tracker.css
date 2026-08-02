@@ -2045,9 +2045,6 @@ legend.field-label { padding: 0; }
 
 /* Tablet */
 @media (max-width: 1000px) {
-  body { height: auto; overflow: visible; }
-  .app-shell { display: block; height: auto; min-height: 100vh; }
-
   /* These forms/hints are capped at 640px on desktop for readability
      next to a lot of spare side space — at tablet/mobile widths the
      card itself is already narrow, so the cap just wastes the width
@@ -2060,11 +2057,31 @@ legend.field-label { padding: 0; }
     max-width: none;
   }
 
+  /* Tablet keeps the exact desktop layout otherwise — .app-shell stays a
+     flex row and .sidebar stays an in-flow rail that shrinks to icons via
+     .sidebar--collapsed (same rule as desktop, defined outside any media
+     query above), rather than becoming an off-canvas overlay. Only true
+     mobile (below) switches to that. min-height fills the card to the
+     viewport bottom even when the page's content is short, instead of
+     shrink-wrapping and leaving a bare gap below the card. */
+  .app { min-height: calc(100vh - 48px); padding: 32px 24px 60px; }
+  .board { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { height: auto; overflow: visible; }
+  /* Below this width there's no room to show the sidebar and content
+     side by side at all, so it drops out of the flex row entirely and
+     becomes a fixed off-canvas drawer instead (see the .sidebar rules
+     just below) — .app-shell no longer needs to reserve space for it. */
+  .app-shell { display: block; height: auto; min-height: 100vh; }
+
   /* The sidebar used to just be display:none below this width, with no
      replacement way to reach it at all — Accueil, Mes documents, the whole
-     nav was simply unreachable on phones/tablets. It's now an off-canvas
-     drawer instead: hidden by a transform (not display), toggled by the
-     same topbar button that shrinks it to icons on desktop (see
+     nav was simply unreachable on phones. It's now an off-canvas drawer
+     instead: hidden by a transform (not display), toggled by the same
+     topbar button that shrinks it to icons at every wider width (see
      SidebarCollapseContext — that button means something different below
      this breakpoint), and closed by tapping the backdrop or navigating. */
   .sidebar {
@@ -2079,8 +2096,9 @@ legend.field-label { padding: 0; }
     transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
   }
   .sidebar--mobile-open { transform: translateX(0); }
-  /* The desktop icon-rail width doesn't apply here — on mobile the drawer
-     is either fully open (280px) or fully off-screen, never a narrow rail. */
+  /* The tablet/desktop icon-rail width doesn't apply here — on mobile the
+     drawer is either fully open (280px) or fully off-screen, never a
+     narrow rail. */
   .sidebar--collapsed { width: 280px; padding: 24px; }
   .sidebar--collapsed .sidebar-brand-text,
   .sidebar--collapsed .sidebar-nav-label,
@@ -2123,28 +2141,6 @@ legend.field-label { padding: 0; }
     background: color-mix(in srgb, black 48%, transparent);
   }
 
-  /* Tablet keeps the desktop "floating card" look — 24px in from the
-     screen edges with the same border/radius as desktop — since only
-     the sidebar becomes an off-canvas drawer at this width, not the
-     content card itself. True mobile (below) goes edge-to-edge instead.
-     min-height fills the card to the viewport bottom (minus its own
-     24px top/bottom margin) even when the page's content is short,
-     instead of shrink-wrapping and leaving a bare gap below the card. */
-  .app { margin: 24px; min-height: calc(100vh - 48px); border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px 60px; overflow-y: visible; }
-  .board { grid-template-columns: repeat(2, 1fr); }
-
-  /* While the drawer is open, the content behind it drops the desktop-style
-     card (margin/border) and goes edge-to-edge like true mobile — the
-     tablet "floating card" look only makes sense when the drawer is closed. */
-  .app-shell:has(.sidebar--mobile-open) .app {
-    margin: 0;
-    border: none;
-    border-radius: 0;
-  }
-}
-
-/* Mobile */
-@media (max-width: 640px) {
   .app { margin: 0; border: none; border-radius: 0; padding: 20px 16px 100px; }
 
   .board { grid-template-columns: 1fr; }

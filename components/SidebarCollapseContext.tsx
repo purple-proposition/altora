@@ -3,7 +3,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const COLLAPSED_KEY = 'altora-sidebar-collapsed';
-const MOBILE_QUERY = '(max-width: 1000px)';
+// Matches tracker.css's own mobile breakpoint (not the 1000px tablet one) —
+// at tablet widths the sidebar now behaves exactly like desktop (an in-flow
+// rail that shrinks to icons), so the toggle button should mean the same
+// thing there too. Only true mobile still gets the off-canvas drawer.
+const MOBILE_QUERY = '(max-width: 640px)';
 
 type SidebarCollapseValue = { collapsed: boolean; toggle: () => void; mobileOpen: boolean; closeMobile: () => void };
 
