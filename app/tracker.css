@@ -298,7 +298,11 @@ body {
    jump sideways on every collapse/expand. */
 .sidebar--collapsed .sidebar-nav {
   align-items: flex-start;
-  gap: 0;
+  /* Same 4px gap as the base/expanded rule (not 0) — collapsing to icons
+     shouldn't also squeeze adjacent icons' hover boxes flush against each
+     other; they should keep the exact same breathing room the full-width
+     rows have. */
+  gap: 4px;
 }
 .sidebar--collapsed .sidebar-item-group {
   display: flex;
