@@ -62,7 +62,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Sur mesure pour chaque offre</h3>
           </div>
           <p className="method-card-text">
-            Tes expériences, compétences et outils sont organisés pour chaque fiche de poste. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience inventée, zéro compétence que tu ne pourrais pas justifier en entretien.
+            Tes expériences, compétences et outils sont réorganisés pour être pertinent pour chaque fiche de poste. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience inventée, zéro compétence que tu ne pourrais pas justifier en entretien.
           </p>
         </div>
 
