@@ -44,13 +44,22 @@ export default function Sidebar({
     // (via #sidebar-tasks-count) — refetching here too would be a second,
     // redundant DB round-trip on the one page that visits most often.
     if (isHome) return;
-    fetch('/api/cards')
+    // Aborting the previous request on rapid navigation matters here: without
+    // it, quickly clicking through several menu items fires one fetch per
+    // click that all stay in flight, and whichever happens to resolve LAST
+    // wins and overwrites the badge — often with a stale count for a page
+    // the visitor already left. It also means the browser's connection pool
+    // doesn't fill up with abandoned requests that then delay the pages
+    // actually being waited on.
+    const controller = new AbortController();
+    fetch('/api/cards', { signal: controller.signal })
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
         if (!data?.cards) return;
         setTodoCount(data.cards.filter((c: { status?: string }) => c.status === 'todo').length);
       })
       .catch(() => {});
+    return () => controller.abort();
   }, [pathname, isHome]);
 
   const unreadCount = INBOX_MESSAGES.filter(m => m.unread).length;
