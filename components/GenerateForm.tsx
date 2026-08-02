@@ -71,7 +71,7 @@ function MethodExplanation() {
             <h3 className="method-card-title">Une motivation qui ne se répète pas</h3>
           </div>
           <p className="method-card-text">
-            L&apos;erreur la plus fréquente est une lettre de motivation qui répète le CV en phrases. La tienne suit une structure en 4 temps : pourquoi ce poste t&apos;intéresse, ta preuve principale, une preuve complémentaire, puis ta disponibilité.
+            Ta lettre de motivation ne répète pas le CV en phrases et suit une structure en 4 temps pour capter directement l&apos;attention du recruteur.
           </p>
         </div>
       </div>
