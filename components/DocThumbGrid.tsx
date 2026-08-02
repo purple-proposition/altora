@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Icon from '@/components/Icon';
 
 export type DocFile = { url: string; filename: string; thumbnailUrl?: string | null; createdAt?: number };
 
@@ -18,7 +19,7 @@ function Sheet({ doc }: { doc: DocFile }) {
       {doc.thumbnailUrl ? (
         <Image src={doc.thumbnailUrl} alt="" fill sizes="160px" draggable={false} />
       ) : (
-        <i data-lucide="file-text"></i>
+        <Icon name="file-text" />
       )}
     </div>
   );

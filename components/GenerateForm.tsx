@@ -1,11 +1,11 @@
 'use client';
+import Icon from '@/components/Icon';
 
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
-import { safeCreateIcons } from '@/lib/icons';
 
 type State = 'intro' | 'idle' | 'loading' | 'done' | 'error';
 
@@ -105,13 +105,6 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
   const [emailCopied, setEmailCopied] = useState(false);
   const [poste, setPoste] = useState('');
   const [methodOpen, setMethodOpen] = useState(false);
-
-  // Icons here are React-rendered (not the DOM tracker.js writes directly to),
-  // so the shared layout's one-time icon pass can miss ones that only show up
-  // after a state change (e.g. entering "done"). Re-run it on every change.
-  useEffect(() => {
-    safeCreateIcons();
-  }, [state, usingStoredDescription]);
 
   // A card imported from a URL already has its posting text saved (see the
   // import modal) — reuse it here instead of asking the user to paste it
@@ -301,9 +294,9 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
       <div className="topbar-sticky">
         <div className="topbar-breadcrumb">
           <SidebarCollapseToggle />
-          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
+          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><Icon name="home" />Accueil</Link>
           <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="file-text"></i>ATS Booster</span>
+          <span className="breadcrumb-item breadcrumb-item--active"><Icon name="file-text" />ATS Booster</span>
           <TopbarActions />
         </div>
       </div>
@@ -331,7 +324,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
             <div className={`method-explainer${methodOpen ? ' method-explainer--open' : ''}`}>
               <button type="button" className="method-explainer-summary" onClick={() => setMethodOpen(o => !o)}>
                 <span>Comment ATS Booster est pensé pour maximiser tes chances de décrocher ton alternance</span>
-                <i data-lucide="chevron-down" className="method-explainer-chevron"></i>
+                <Icon name="chevron-down" className="method-explainer-chevron" />
               </button>
 
               <div className="method-explainer-collapse">
@@ -345,7 +338,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
               <span className="field-label">Fiche de poste</span>
               {usingStoredDescription ? (
                 <div className="generate-stored-description">
-                  <i data-lucide="check-circle"></i>
+                  <Icon name="check-circle" />
                   <span>Déjà en mémoire depuis le suivi, pas besoin de la recoller.</span>
                   <button
                     type="button"
@@ -426,7 +419,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
               )}
 
               <a className="dash-tile dash-tile--download" href={cvUrl} download={`Jesse_Sotomayor_CV_${normalizeFilename(company)}.pdf`}>
-                <span className="dash-tile-icon"><i data-lucide="file-text"></i></span>
+                <span className="dash-tile-icon"><Icon name="file-text" /></span>
                 <span className="dash-tile-body">
                   <span className="dash-tile-title">Télécharger le CV</span>
                   <span className="dash-tile-subtitle">CV.pdf</span>
@@ -434,7 +427,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
               </a>
 
               <a className="dash-tile dash-tile--download" href={lettreUrl} download={`Jesse_Sotomayor_Lettre_${normalizeFilename(company)}.pdf`}>
-                <span className="dash-tile-icon"><i data-lucide="mail"></i></span>
+                <span className="dash-tile-icon"><Icon name="mail" /></span>
                 <span className="dash-tile-body">
                   <span className="dash-tile-title">Télécharger la lettre</span>
                   <span className="dash-tile-subtitle">Lettre.pdf</span>

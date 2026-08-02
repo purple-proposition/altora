@@ -5,6 +5,7 @@ import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import SchoolSettingsForm from '@/components/SchoolSettingsForm';
 import { auth } from '@/auth';
 import { ensureUserSchool, isUserSchoolAdmin, listSchoolStudents, type SchoolStudent } from '@/lib/school';
+import Icon from '@/components/Icon';
 
 // Démo : cette promo n'a encore qu'un seul vrai compte inscrit (l'admin qui teste
 // la page) — ces entrées permettent de visualiser la vue "Classe" en attendant
@@ -28,9 +29,9 @@ export default async function EcolePage() {
       <div className="topbar-sticky">
         <div className="topbar-breadcrumb">
           <SidebarCollapseToggle />
-          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
+          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><Icon name="home" />Accueil</Link>
           <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="graduation-cap"></i>École</span>
+          <span className="breadcrumb-item breadcrumb-item--active"><Icon name="graduation-cap" />École</span>
           <TopbarActions />
         </div>
       </div>

@@ -1,4 +1,5 @@
 'use client';
+import Icon from '@/components/Icon';
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -6,7 +7,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import DocThumbGrid, { type DocFile } from './DocThumbGrid';
 import { deleteFolder, renameFolder } from '@/app/(tracker)/documents/actions';
-import { safeCreateIcons } from '@/lib/icons';
 
 export default function FolderCard({ folder, docs }: { folder: { id: number; name: string }; docs: DocFile[] }) {
   const router = useRouter();
@@ -31,10 +31,6 @@ export default function FolderCard({ folder, docs }: { folder: { id: number; nam
   useEffect(() => {
     if (renaming) inputRef.current?.select();
   }, [renaming]);
-
-  useEffect(() => {
-    safeCreateIcons();
-  }, [menu, confirmingDelete]);
 
   function openMenu(e: React.MouseEvent) {
     e.preventDefault();
@@ -102,7 +98,7 @@ export default function FolderCard({ folder, docs }: { folder: { id: number; nam
       onDrop={handleDrop}
     >
       <div className="folder-card-header">
-        <i data-lucide="folder"></i>
+        <Icon name="folder" />
         {renaming ? (
           <input
             ref={inputRef}
@@ -136,7 +132,7 @@ export default function FolderCard({ folder, docs }: { folder: { id: number; nam
 
       {dragOver && (
         <div className="folder-card-drop-hint">
-          <i data-lucide="upload"></i>
+          <Icon name="upload" />
           Déposer pour importer
         </div>
       )}
@@ -144,13 +140,13 @@ export default function FolderCard({ folder, docs }: { folder: { id: number; nam
       {menu && createPortal(
         <div className="folder-context-menu" style={{ top: menu.y, left: menu.x }}>
           <Link href={`/documents/folder/${folder.id}`} className="folder-context-item" onClick={() => setMenu(null)}>
-            <i data-lucide="folder-open"></i>Ouvrir
+            <Icon name="folder-open" />Ouvrir
           </Link>
           <button type="button" className="folder-context-item" onClick={() => { setMenu(null); setRenaming(true); }}>
-            <i data-lucide="pencil"></i>Renommer
+            <Icon name="pencil" />Renommer
           </button>
           <button type="button" className="folder-context-item folder-context-item--danger" onClick={() => { setMenu(null); setConfirmingDelete(true); }}>
-            <i data-lucide="trash-2"></i>Supprimer
+            <Icon name="trash-2" />Supprimer
           </button>
         </div>,
         document.body

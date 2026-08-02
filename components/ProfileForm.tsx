@@ -1,4 +1,5 @@
 'use client';
+import Icon from '@/components/Icon';
 
 import { useState } from 'react';
 import type { UserProfile, Experience, Formation } from '@/lib/profile';
@@ -115,7 +116,7 @@ export default function ProfileForm({ initialProfile }: { initialProfile: UserPr
           </div>
         ))}
         <button type="button" className="btn-add-contact" onClick={() => set('experiences', [...profile.experiences, emptyExperience()])}>
-          <i data-lucide="plus"></i>Ajouter une expérience
+          <Icon name="plus" />Ajouter une expérience
         </button>
       </fieldset>
 
@@ -140,7 +141,7 @@ export default function ProfileForm({ initialProfile }: { initialProfile: UserPr
           </div>
         ))}
         <button type="button" className="btn-add-contact" onClick={() => set('formation', [...profile.formation, emptyFormation()])}>
-          <i data-lucide="plus"></i>Ajouter une formation
+          <Icon name="plus" />Ajouter une formation
         </button>
       </fieldset>
 

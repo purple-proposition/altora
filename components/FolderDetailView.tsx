@@ -1,4 +1,5 @@
 'use client';
+import Icon from '@/components/Icon';
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -45,7 +46,7 @@ export default function FolderDetailView({ title, docs }: { title: string; docs:
                   {doc.thumbnailUrl ? (
                     <Image src={doc.thumbnailUrl} alt="" fill sizes="200px" draggable={false} />
                   ) : (
-                    <i data-lucide="file-text"></i>
+                    <Icon name="file-text" />
                   )}
                 </div>
               </div>

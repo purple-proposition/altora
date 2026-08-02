@@ -5,6 +5,7 @@ import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import ProfileForm from '@/components/ProfileForm';
 import { auth } from '@/auth';
 import { getUserProfile, emptyProfile } from '@/lib/profile';
+import Icon from '@/components/Icon';
 
 export default async function ProfilPage() {
   const session = await auth();
@@ -14,9 +15,9 @@ export default async function ProfilPage() {
       <div className="topbar-sticky">
         <div className="topbar-breadcrumb">
           <SidebarCollapseToggle />
-          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
+          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><Icon name="home" />Accueil</Link>
           <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="user-cog"></i>Mon profil candidat</span>
+          <span className="breadcrumb-item breadcrumb-item--active"><Icon name="user-cog" />Mon profil candidat</span>
           <TopbarActions />
         </div>
       </div>

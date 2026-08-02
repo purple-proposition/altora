@@ -6,6 +6,7 @@ import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import { auth, signOut } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 import { assetVersion } from '@/lib/assetVersion';
+import Icon from '@/components/Icon';
 
 export default async function TrackerPage() {
   const session = await auth();
@@ -34,9 +35,9 @@ export default async function TrackerPage() {
         <div className="topbar-sticky">
           <div className="topbar-breadcrumb">
             <SidebarCollapseToggle />
-            <button type="button" className="breadcrumb-item breadcrumb-item--link" id="breadcrumb-home-btn"><i data-lucide="home"></i>Accueil</button>
+            <button type="button" className="breadcrumb-item breadcrumb-item--link" id="breadcrumb-home-btn"><Icon name="home" />Accueil</button>
             <span className="breadcrumb-sep">/</span>
-            <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="users"></i><span id="breadcrumb-active-label">Accueil</span></span>
+            <span className="breadcrumb-item breadcrumb-item--active"><Icon name="users" /><span id="breadcrumb-active-label">Accueil</span></span>
             <TopbarActions />
           </div>
 
@@ -47,10 +48,10 @@ export default async function TrackerPage() {
             </div>
             <div className="toolbar-right">
               <div className="toolbar-search">
-                <i data-lucide="search"></i>
+                <Icon name="search" />
                 <input type="text" id="board-search" placeholder="Rechercher une candidature..." />
               </div>
-              <button type="button" className="toolbar-filter" title="Filtrer" aria-label="Filtrer"><i data-lucide="sliders-horizontal"></i></button>
+              <button type="button" className="toolbar-filter" title="Filtrer" aria-label="Filtrer"><Icon name="sliders-horizontal" /></button>
             </div>
           </div>
         </div>
@@ -63,24 +64,24 @@ export default async function TrackerPage() {
           <p className="summary-subtitle">
             <span className="period-trigger-wrap">
               <button type="button" className="period-trigger" id="period-trigger">
-                <span id="period-label">Aujourd&apos;hui</span><i data-lucide="chevron-down"></i>
+                <span id="period-label">Aujourd&apos;hui</span><Icon name="chevron-down" />
               </button>
               <span className="period-popup hidden" id="period-popup">
                 <button type="button" className="period-option active" data-period="today">Aujourd&apos;hui</button>
                 <button type="button" className="period-option" data-period="week">Cette semaine</button>
                 <button type="button" className="period-option" data-period="month">Ce mois-ci</button>
               </span>
-            </span>, tu as <span className="inline-pill inline-pill--slate"><i data-lucide="circle-dashed"></i><span id="summary-todo">0</span></span> <span id="label-todo">offres à postuler</span>,
-            <span className="inline-pill inline-pill--amber"><i data-lucide="hourglass"></i><span id="summary-sent">0</span></span> <span id="label-sent">candidatures envoyées</span>,
-            <span className="inline-pill inline-pill--green"><i data-lucide="target"></i><span id="summary-interview">0</span></span> <span id="label-interview">entretiens planifiés</span> et
-            <span className="inline-pill inline-pill--rose"><i data-lucide="folder-x"></i><span id="summary-rejected">0</span></span> <span id="label-rejected">refus reçus</span>.
+            </span>, tu as <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" /><span id="summary-todo">0</span></span> <span id="label-todo">offres à postuler</span>,
+            <span className="inline-pill inline-pill--amber"><Icon name="hourglass" /><span id="summary-sent">0</span></span> <span id="label-sent">candidatures envoyées</span>,
+            <span className="inline-pill inline-pill--green"><Icon name="target" /><span id="summary-interview">0</span></span> <span id="label-interview">entretiens planifiés</span> et
+            <span className="inline-pill inline-pill--rose"><Icon name="folder-x" /><span id="summary-rejected">0</span></span> <span id="label-rejected">refus reçus</span>.
           </p>
         </section>
 
         <main className="board hidden" id="board">
           <div className="column" data-status="todo">
             <div className="column-header column-header--slate">
-              <i data-lucide="circle-dashed"></i>
+              <Icon name="circle-dashed" />
               <span className="column-header-label">À postuler</span>
               <span className="column-header-count" id="count-todo">0</span>
             </div>
@@ -90,7 +91,7 @@ export default async function TrackerPage() {
 
           <div className="column" data-status="sent">
             <div className="column-header column-header--amber">
-              <i data-lucide="hourglass"></i>
+              <Icon name="hourglass" />
               <span className="column-header-label">Envoyé</span>
               <span className="column-header-count" id="count-sent">0</span>
             </div>
@@ -100,7 +101,7 @@ export default async function TrackerPage() {
 
           <div className="column" data-status="interview">
             <div className="column-header column-header--green">
-              <i data-lucide="target"></i>
+              <Icon name="target" />
               <span className="column-header-label">Entretien</span>
               <span className="column-header-count" id="count-interview">0</span>
             </div>
@@ -110,7 +111,7 @@ export default async function TrackerPage() {
 
           <div className="column" data-status="rejected">
             <div className="column-header column-header--rose">
-              <i data-lucide="folder-x"></i>
+              <Icon name="folder-x" />
               <span className="column-header-label">Refus</span>
               <span className="column-header-count" id="count-rejected">0</span>
             </div>
@@ -123,11 +124,11 @@ export default async function TrackerPage() {
           <div className="calendar-header">
             <h1 className="calendar-title" id="calendar-title"></h1>
             <div className="calendar-nav">
-              <button type="button" className="calendar-nav-btn" id="calendar-prev" aria-label="Mois précédent"><i data-lucide="chevron-left"></i></button>
-              <button type="button" className="calendar-nav-btn" id="calendar-today" aria-label="Aujourd&apos;hui"><i data-lucide="circle"></i></button>
-              <button type="button" className="calendar-nav-btn" id="calendar-next" aria-label="Mois suivant"><i data-lucide="chevron-right"></i></button>
+              <button type="button" className="calendar-nav-btn" id="calendar-prev" aria-label="Mois précédent"><Icon name="chevron-left" /></button>
+              <button type="button" className="calendar-nav-btn" id="calendar-today" aria-label="Aujourd&apos;hui"><Icon name="circle" /></button>
+              <button type="button" className="calendar-nav-btn" id="calendar-next" aria-label="Mois suivant"><Icon name="chevron-right" /></button>
               <span className="calendar-legend-trigger-wrap">
-                <button type="button" className="calendar-nav-btn" id="calendar-legend-trigger" aria-label="Légende des couleurs" aria-expanded="false" aria-controls="calendar-legend-popup"><i data-lucide="circle-help"></i></button>
+                <button type="button" className="calendar-nav-btn" id="calendar-legend-trigger" aria-label="Légende des couleurs" aria-expanded="false" aria-controls="calendar-legend-popup"><Icon name="circle-help" /></button>
                 <div className="calendar-legend-popup hidden" id="calendar-legend-popup">
                   <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--entreprise"></span>Semaine en entreprise</span>
                   <span className="calendar-legend-item"><span className="calendar-legend-dot calendar-legend-dot--formation"></span>Journée de formation</span>
@@ -156,7 +157,7 @@ export default async function TrackerPage() {
 
         <div className="modal-overlay hidden" id="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
           <div className="modal profile-modal" tabIndex={-1}>
-            <button type="button" className="modal-close" id="profile-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
+            <button type="button" className="modal-close" id="profile-close" title="Fermer" aria-label="Fermer"><Icon name="x" /></button>
             <h2 id="profile-modal-title">Profil</h2>
 
             <div className="profile-header">
@@ -173,9 +174,9 @@ export default async function TrackerPage() {
               <span className="field-label">Ton CV</span>
               <div className="cv-upload-row">
                 <input type="file" id="cv-file-input" accept=".pdf,.doc,.docx" hidden />
-                <button type="button" className="btn-add-contact" id="cv-import-btn"><i data-lucide="upload"></i>Importer</button>
+                <button type="button" className="btn-add-contact" id="cv-import-btn"><Icon name="upload" />Importer</button>
                 <button type="button" className="cv-filename-btn hidden" id="cv-filename-btn">
-                  <i data-lucide="file-text"></i>
+                  <Icon name="file-text" />
                   <span id="cv-filename-text"></span>
                 </button>
               </div>
@@ -184,15 +185,15 @@ export default async function TrackerPage() {
             <div className="field-group">
               <span className="field-label">Thème</span>
               <div className="theme-picker-inline" id="theme-picker-inline">
-                <button type="button" className="theme-option" data-theme="system"><i data-lucide="monitor"></i>Système</button>
-                <button type="button" className="theme-option" data-theme="light"><i data-lucide="sun"></i>Clair</button>
-                <button type="button" className="theme-option" data-theme="dark"><i data-lucide="moon"></i>Sombre</button>
+                <button type="button" className="theme-option" data-theme="system"><Icon name="monitor" />Système</button>
+                <button type="button" className="theme-option" data-theme="light"><Icon name="sun" />Clair</button>
+                <button type="button" className="theme-option" data-theme="dark"><Icon name="moon" />Sombre</button>
               </div>
             </div>
 
             <div className="field-group">
               <Link href="/profil" className="btn-add-contact">
-                <i data-lucide="user-cog"></i>Mon profil candidat
+                <Icon name="user-cog" />Mon profil candidat
               </Link>
             </div>
 
@@ -202,21 +203,21 @@ export default async function TrackerPage() {
                 await signOut({ redirectTo: '/login' });
               }}
             >
-              <button type="submit" className="profile-logout"><i data-lucide="log-out"></i>Se déconnecter</button>
+              <button type="submit" className="profile-logout"><Icon name="log-out" />Se déconnecter</button>
             </form>
           </div>
         </div>
 
         <div className="modal-overlay hidden" id="detail-overlay" role="dialog" aria-modal="true" aria-label="Détail de l'offre">
           <div className="modal detail-modal" tabIndex={-1}>
-            <button type="button" className="modal-close" id="detail-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
+            <button type="button" className="modal-close" id="detail-close" title="Fermer" aria-label="Fermer"><Icon name="x" /></button>
             <div id="detail-content"></div>
           </div>
         </div>
 
         <div className="modal-overlay hidden" id="cv-preview-overlay" role="dialog" aria-modal="true" aria-labelledby="cv-preview-title">
           <div className="modal cv-preview-modal" tabIndex={-1}>
-            <button type="button" className="modal-close" id="cv-preview-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
+            <button type="button" className="modal-close" id="cv-preview-close" title="Fermer" aria-label="Fermer"><Icon name="x" /></button>
             <h2 id="cv-preview-title">Ton CV</h2>
             <iframe id="cv-preview-frame" className="cv-preview-frame" title="Aperçu du CV"></iframe>
           </div>
@@ -224,7 +225,7 @@ export default async function TrackerPage() {
 
         <div className="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
           <div className="modal" tabIndex={-1}>
-            <button type="button" className="modal-close" id="btn-close" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
+            <button type="button" className="modal-close" id="btn-close" title="Fermer" aria-label="Fermer"><Icon name="x" /></button>
             <h2 id="modal-title">Nouvelle offre</h2>
             <p className="modal-hint hidden" id="modal-hint">Colle le lien de l&apos;offre, tu pourras compléter les détails juste après.</p>
             <form id="card-form">
@@ -267,15 +268,15 @@ export default async function TrackerPage() {
               <fieldset className="field-group">
                 <legend className="field-label">Statut</legend>
                 <div className="status-picker" id="status-picker" role="radiogroup">
-                  <button type="button" className="status-btn status-btn--slate" data-status="todo" role="radio" aria-checked="false"><i data-lucide="circle-dashed"></i>À postuler</button>
-                  <button type="button" className="status-btn status-btn--amber" data-status="sent" role="radio" aria-checked="false"><i data-lucide="hourglass"></i>Envoyé</button>
-                  <button type="button" className="status-btn status-btn--green" data-status="interview" role="radio" aria-checked="false"><i data-lucide="target"></i>Entretien</button>
-                  <button type="button" className="status-btn status-btn--rose" data-status="rejected" role="radio" aria-checked="false"><i data-lucide="folder-x"></i>Refus</button>
+                  <button type="button" className="status-btn status-btn--slate" data-status="todo" role="radio" aria-checked="false"><Icon name="circle-dashed" />À postuler</button>
+                  <button type="button" className="status-btn status-btn--amber" data-status="sent" role="radio" aria-checked="false"><Icon name="hourglass" />Envoyé</button>
+                  <button type="button" className="status-btn status-btn--green" data-status="interview" role="radio" aria-checked="false"><Icon name="target" />Entretien</button>
+                  <button type="button" className="status-btn status-btn--rose" data-status="rejected" role="radio" aria-checked="false"><Icon name="folder-x" />Refus</button>
                 </div>
               </fieldset>
               <div className="field-group">
                 <button type="button" className="school-toggle-btn" id="field-school-toggle" data-school="false" role="switch" aria-checked="false">
-                  <i data-lucide="graduation-cap"></i>
+                  <Icon name="graduation-cap" />
                   <span>Offre proposée par l&apos;école</span>
                   <span className="school-toggle-switch"></span>
                 </button>
@@ -297,7 +298,7 @@ export default async function TrackerPage() {
               <div className="field-group">
                 <span className="field-label">Contact</span>
                 <div id="contacts-list"></div>
-                <button type="button" id="btn-add-contact" className="btn-add-contact"><i data-lucide="plus"></i>Ajouter un contact</button>
+                <button type="button" id="btn-add-contact" className="btn-add-contact"><Icon name="plus" />Ajouter un contact</button>
               </div>
               <label>Notes
                 <textarea id="field-notes" rows={3} placeholder="Contact, prochaine étape..."></textarea>

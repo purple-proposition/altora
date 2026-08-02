@@ -1,4 +1,5 @@
 'use client';
+import Icon from '@/components/Icon';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,7 +7,6 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSidebarCollapse } from './SidebarCollapseContext';
 import { INBOX_MESSAGES } from '@/lib/mockInbox';
-import { safeCreateIcons } from '@/lib/icons';
 
 type GenerationSummary = { id: string; company: string; poste: string; createdAt: string };
 type FolderSummary = { id: number; name: string };
@@ -100,33 +100,15 @@ export default function Sidebar({
     });
   }
 
-  // This layout (and this Sidebar) stays mounted across client-side
-  // navigations between "/", "/documents", "/generate" — Next.js doesn't
-  // remount a shared layout on every route change, so a one-shot
-  // lucide.createIcons() call in the layout only ever renders whichever
-  // page happened to be there when it first fired. Re-running it on every
-  // route change is what actually keeps icons rendered on every page.
+  // The home page's own content (board, sidebar view-toggle buttons, modals)
+  // fully unmounts and remounts every time the route leaves "/" and comes
+  // back, so tracker.js's bindings need to be redone against the fresh DOM —
+  // altoraInitApp() (defined in tracker.js) is a no-op if we're not on the
+  // home route or if this exact mount is already bound, and handles its own
+  // icon rendering for the markup it builds internally.
   useEffect(() => {
-    const w = window as unknown as { lucide?: { createIcons: () => void }; altoraInitApp?: () => void };
-
-    // Same root cause as the icons above: the home page's own content (board,
-    // sidebar view-toggle buttons, modals) fully remounts every time the route
-    // leaves "/" and comes back, so tracker.js's bindings need to be redone
-    // against the fresh DOM — altoraInitApp() is a no-op if we're not on the
-    // home route or if this exact mount is already bound.
+    const w = window as unknown as { altoraInitApp?: () => void };
     w.altoraInitApp?.();
-
-    if (w.lucide) {
-      safeCreateIcons();
-      return;
-    }
-    const id = setInterval(() => {
-      if (w.lucide) {
-        safeCreateIcons();
-        clearInterval(id);
-      }
-    }, 50);
-    return () => clearInterval(id);
   }, [pathname, searchParams, collapsed]);
 
   // A route change is the clearest signal the visitor picked something —
@@ -152,12 +134,12 @@ export default function Sidebar({
       <nav className="sidebar-nav">
         {isHome ? (
           <button type="button" className="sidebar-item sidebar-item--active" id="sidebar-home-btn">
-            <i data-lucide="home"></i>
+            <Icon name="home" />
             <span className="sidebar-item-label">Accueil</span>
           </button>
         ) : (
           <Link href="/?view=home" className="sidebar-item">
-            <i data-lucide="home"></i>
+            <Icon name="home" />
             <span className="sidebar-item-label">Accueil</span>
           </Link>
         )}
@@ -165,7 +147,7 @@ export default function Sidebar({
         {isHome ? (
           <div className="sidebar-item-group">
             <div className="sidebar-item" id="sidebar-suivi-toggle" role="button" tabIndex={0}>
-              <i data-lucide="list-checks"></i>
+              <Icon name="list-checks" />
               <span className="sidebar-item-label">Mes candidatures</span>
               <button type="button" className="sidebar-item-badge" id="sidebar-tasks-count" aria-label="Candidatures à envoyer">{todoCount !== null && todoCount > 0 ? todoCount : ''}</button>
               <button
@@ -176,21 +158,21 @@ export default function Sidebar({
                 aria-controls="sidebar-submenu"
                 aria-label="Afficher les catégories de Mes candidatures"
               >
-                <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+                <Icon name="chevron-down" className="sidebar-item-chevron" />
               </button>
             </div>
             <div className="sidebar-submenu" id="sidebar-submenu">
-              <button type="button" className="sidebar-subitem" data-scroll-to="list-todo"><i data-lucide="circle-dashed"></i>À postuler</button>
-              <button type="button" className="sidebar-subitem" data-scroll-to="list-sent"><i data-lucide="hourglass"></i>Envoyé</button>
-              <button type="button" className="sidebar-subitem" data-scroll-to="list-interview"><i data-lucide="target"></i>Entretien</button>
-              <button type="button" className="sidebar-subitem" data-scroll-to="list-rejected"><i data-lucide="folder-x"></i>Refus</button>
+              <button type="button" className="sidebar-subitem" data-scroll-to="list-todo"><Icon name="circle-dashed" />À postuler</button>
+              <button type="button" className="sidebar-subitem" data-scroll-to="list-sent"><Icon name="hourglass" />Envoyé</button>
+              <button type="button" className="sidebar-subitem" data-scroll-to="list-interview"><Icon name="target" />Entretien</button>
+              <button type="button" className="sidebar-subitem" data-scroll-to="list-rejected"><Icon name="folder-x" />Refus</button>
             </div>
           </div>
         ) : (
           <div className={`sidebar-item-group${suiviOpen ? ' expanded' : ''}`}>
             <div className="sidebar-item">
               <Link href="/?view=tasks" className="sidebar-item-link-inner">
-                <i data-lucide="list-checks"></i>
+                <Icon name="list-checks" />
                 <span className="sidebar-item-label">Mes candidatures</span>
               </Link>
               {todoCount !== null && todoCount > 0 && (
@@ -204,26 +186,26 @@ export default function Sidebar({
                 aria-controls="sidebar-suivi-submenu-links"
                 aria-label="Afficher les catégories de Mes candidatures"
               >
-                <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+                <Icon name="chevron-down" className="sidebar-item-chevron" />
               </button>
             </div>
             <div className="sidebar-submenu" id="sidebar-suivi-submenu-links">
-              <Link href="/?view=tasks&scroll=list-todo" className="sidebar-subitem"><i data-lucide="circle-dashed"></i>À postuler</Link>
-              <Link href="/?view=tasks&scroll=list-sent" className="sidebar-subitem"><i data-lucide="hourglass"></i>Envoyé</Link>
-              <Link href="/?view=tasks&scroll=list-interview" className="sidebar-subitem"><i data-lucide="target"></i>Entretien</Link>
-              <Link href="/?view=tasks&scroll=list-rejected" className="sidebar-subitem"><i data-lucide="folder-x"></i>Refus</Link>
+              <Link href="/?view=tasks&scroll=list-todo" className="sidebar-subitem"><Icon name="circle-dashed" />À postuler</Link>
+              <Link href="/?view=tasks&scroll=list-sent" className="sidebar-subitem"><Icon name="hourglass" />Envoyé</Link>
+              <Link href="/?view=tasks&scroll=list-interview" className="sidebar-subitem"><Icon name="target" />Entretien</Link>
+              <Link href="/?view=tasks&scroll=list-rejected" className="sidebar-subitem"><Icon name="folder-x" />Refus</Link>
             </div>
           </div>
         )}
 
         {isHome ? (
           <button type="button" className="sidebar-item" id="sidebar-calendar-btn">
-            <i data-lucide="calendar"></i>
+            <Icon name="calendar" />
             <span className="sidebar-item-label">Calendrier</span>
           </button>
         ) : (
           <Link href="/?view=calendar" className="sidebar-item">
-            <i data-lucide="calendar"></i>
+            <Icon name="calendar" />
             <span className="sidebar-item-label">Calendrier</span>
           </Link>
         )}
@@ -231,7 +213,7 @@ export default function Sidebar({
         <div className={`sidebar-item-group${historyOpen ? ' expanded' : ''}`}>
           <div className={`sidebar-item${isGeneratePage ? ' sidebar-item--active' : ''}`}>
             <Link href="/generate" className="sidebar-item-link-inner">
-              <i data-lucide="file-text"></i>
+              <Icon name="file-text" />
               <span className="sidebar-item-label">ATS Booster</span>
             </Link>
             <button
@@ -242,7 +224,7 @@ export default function Sidebar({
               aria-controls="sidebar-generate-submenu"
               aria-label="Afficher les CV générés"
             >
-              <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+              <Icon name="chevron-down" className="sidebar-item-chevron" />
             </button>
           </div>
           <div className="sidebar-submenu" id="sidebar-generate-submenu">
@@ -251,7 +233,7 @@ export default function Sidebar({
             )}
             {history.map(g => (
               <Link key={g.id} href={`/generate?historyId=${g.id}`} className="sidebar-subitem" title={[g.poste, g.company].filter(Boolean).join(' chez ')}>
-                <i data-lucide="file-text"></i>
+                <Icon name="file-text" />
                 <span className="sidebar-subitem-label">{[g.poste, g.company].filter(Boolean).join(' chez ') || 'CV généré'}</span>
               </Link>
             ))}
@@ -261,7 +243,7 @@ export default function Sidebar({
         <div className={`sidebar-item-group${foldersOpen ? ' expanded' : ''}`}>
           <div className={`sidebar-item${isDocuments ? ' sidebar-item--active' : ''}`}>
             <Link href="/documents" className="sidebar-item-link-inner">
-              <i data-lucide="folder"></i>
+              <Icon name="folder" />
               <span className="sidebar-item-label">Mes documents</span>
             </Link>
             <button
@@ -272,21 +254,21 @@ export default function Sidebar({
               aria-controls="sidebar-folders-submenu"
               aria-label="Afficher les dossiers"
             >
-              <i data-lucide="chevron-down" className="sidebar-item-chevron"></i>
+              <Icon name="chevron-down" className="sidebar-item-chevron" />
             </button>
           </div>
           <div className="sidebar-submenu" id="sidebar-folders-submenu">
             <Link href="/documents/cv" className="sidebar-subitem">
-              <i data-lucide="folder"></i>
+              <Icon name="folder" />
               <span className="sidebar-subitem-label">Mes CV</span>
             </Link>
             <Link href="/documents/lettres" className="sidebar-subitem">
-              <i data-lucide="folder"></i>
+              <Icon name="folder" />
               <span className="sidebar-subitem-label">Mes lettres de motivation</span>
             </Link>
             {folders.map(f => (
               <Link key={f.id} href={`/documents/folder/${f.id}`} className="sidebar-subitem" title={f.name}>
-                <i data-lucide="folder"></i>
+                <Icon name="folder" />
                 <span className="sidebar-subitem-label">{f.name}</span>
               </Link>
             ))}
@@ -294,14 +276,14 @@ export default function Sidebar({
         </div>
 
         <Link href="/inbox" className={`sidebar-item${isInbox ? ' sidebar-item--active' : ''}`}>
-          <i data-lucide="mail"></i>
+          <Icon name="mail" />
           <span className="sidebar-item-label">Boîte de réception</span>
           {unreadCount > 0 && <span className="sidebar-item-badge">{unreadCount}</span>}
         </Link>
 
         {isSchoolAdmin && (
           <Link href="/ecole" className={`sidebar-item${isEcole ? ' sidebar-item--active' : ''}`}>
-            <i data-lucide="graduation-cap"></i>
+            <Icon name="graduation-cap" />
             <span className="sidebar-item-label">École</span>
           </Link>
         )}
@@ -315,7 +297,7 @@ export default function Sidebar({
               <span className="sidebar-user-name">{fullName || firstName}</span>
               <span className="sidebar-user-email">Étudiant</span>
             </span>
-            <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>
+            <Icon name="chevron-right" className="sidebar-user-chevron" />
           </button>
         ) : (
           <Link href="/?view=home&profile=1" className="sidebar-user">
@@ -324,7 +306,7 @@ export default function Sidebar({
               <span className="sidebar-user-name">{fullName || firstName}</span>
               <span className="sidebar-user-email">Étudiant</span>
             </span>
-            <i data-lucide="chevron-right" className="sidebar-user-chevron"></i>
+            <Icon name="chevron-right" className="sidebar-user-chevron" />
           </Link>
         )}
       </div>

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import { INBOX_MESSAGES as MESSAGES } from '@/lib/mockInbox';
+import Icon from '@/components/Icon';
 
 export default function InboxPage() {
   return (
@@ -10,9 +11,9 @@ export default function InboxPage() {
       <div className="topbar-sticky">
         <div className="topbar-breadcrumb">
           <SidebarCollapseToggle />
-          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
+          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><Icon name="home" />Accueil</Link>
           <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="mail"></i>Boîte de réception</span>
+          <span className="breadcrumb-item breadcrumb-item--active"><Icon name="mail" />Boîte de réception</span>
           <TopbarActions />
         </div>
       </div>

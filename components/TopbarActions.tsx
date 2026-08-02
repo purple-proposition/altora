@@ -1,11 +1,11 @@
 'use client';
+import Icon from '@/components/Icon';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { INBOX_MESSAGES } from '@/lib/mockInbox';
-import { safeCreateIcons } from '@/lib/icons';
 
 const NOTIFICATIONS = [
   { icon: 'calendar-clock', text: 'Entretien "Stagiaire en Marketing H/F" demain à 18h00', time: 'Il y a 2h' },
@@ -71,10 +71,6 @@ export default function TopbarActions() {
     return () => document.removeEventListener('mousedown', onPointerDown);
   }, []);
 
-  useEffect(() => {
-    safeCreateIcons();
-  }, [open]);
-
   return (
     <div className="topbar-actions">
       <div className="topbar-action-wrap" ref={mailWrapRef}>
@@ -85,7 +81,7 @@ export default function TopbarActions() {
           aria-label="Messagerie"
           onClick={() => setOpen(open === 'mail' ? null : 'mail')}
         >
-          <i data-lucide="mail"></i>
+          <Icon name="mail" />
           {unreadCount > 0 && <span className="topbar-bell-badge">{unreadCount}</span>}
         </button>
       </div>
@@ -98,7 +94,7 @@ export default function TopbarActions() {
           aria-label="Notifications"
           onClick={() => setOpen(open === 'bell' ? null : 'bell')}
         >
-          <i data-lucide="bell"></i>
+          <Icon name="bell" />
         </button>
       </div>
 
@@ -137,7 +133,7 @@ export default function TopbarActions() {
           <div className="topbar-notification-list">
             {NOTIFICATIONS.map((n, i) => (
               <div className="topbar-notification-item" key={i}>
-                <i data-lucide={n.icon}></i>
+                <Icon name={n.icon} />
                 <div className="topbar-notification-body">
                   <p className="topbar-notification-text">{n.text}</p>
                   <span className="topbar-notification-time">{n.time}</span>

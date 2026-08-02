@@ -4,6 +4,7 @@ import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import FolderDetailView from '@/components/FolderDetailView';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
+import Icon from '@/components/Icon';
 
 export default async function CvFolderPage() {
   const session = await auth();
@@ -26,11 +27,11 @@ export default async function CvFolderPage() {
       <div className="topbar-sticky">
         <div className="topbar-breadcrumb">
           <SidebarCollapseToggle />
-          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><i data-lucide="home"></i>Accueil</Link>
+          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><Icon name="home" />Accueil</Link>
           <span className="breadcrumb-sep">/</span>
-          <Link className="breadcrumb-item breadcrumb-item--link" href="/documents"><i data-lucide="folder"></i>Mes documents</Link>
+          <Link className="breadcrumb-item breadcrumb-item--link" href="/documents"><Icon name="folder" />Mes documents</Link>
           <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-item breadcrumb-item--active"><i data-lucide="folder"></i>Mes CV</span>
+          <span className="breadcrumb-item breadcrumb-item--active"><Icon name="folder" />Mes CV</span>
           <TopbarActions />
         </div>
       </div>
