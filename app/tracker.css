@@ -198,8 +198,12 @@ body {
 
 /* The faded-out (opacity 0) brand text still holds its intrinsic width, and
    the flex gap adds on top — both were nudging the logo ~6px off the rail's
-   centerline compared to the nav icons below it. */
-.sidebar--collapsed .sidebar-brand { justify-content: center; gap: 0; }
+   centerline compared to the nav icons below it. Padding-top is also reset
+   to 0 here (the base rule has an 8px top / 20px bottom split, meant for
+   breathing room next to the promotion text) — collapsed, that extra 8px
+   made the logo sit 8px further from the rail's top edge than the avatar
+   sits from its bottom edge, once .sidebar-user's own gap is fixed below. */
+.sidebar--collapsed .sidebar-brand { justify-content: center; gap: 0; padding: 0 0 20px; }
 .sidebar--collapsed .sidebar-brand-text { width: 0; }
 
 .sidebar-brand-text,
@@ -248,6 +252,27 @@ body {
   width: 32px;
   height: 32px;
   padding: 0;
+  /* .sidebar-user's own gap (8px, for the avatar/name/chevron row) still
+     applies even though the name text is opacity:0 — an invisible flex
+     item with zero width still keeps its gap on either side, so the
+     visible content (avatar + nothing) came out 8px wider than its 32px
+     box and got centered as that wider box, landing 4px left of true
+     center. Same fix already applied to .sidebar-brand above. */
+  gap: 0;
+  /* Circular instead of the base 12px-rounded-square — matches the avatar
+     below it, and reads as a proper icon-button hover target instead of
+     an odd in-between shape at this size. */
+  border-radius: var(--radius-pill);
+}
+
+/* --card-bg (the default .sidebar-item hover/active background) sits only
+   one step above the sidebar's own background and reads as barely-there
+   at this small, icon-only size — --border gives real, visible contrast
+   without changing anything about the wider expanded rail's hover style. */
+.sidebar--collapsed .sidebar-item:hover,
+.sidebar--collapsed .sidebar-item--active,
+.sidebar--collapsed .sidebar-user:hover {
+  background: var(--border);
 }
 
 .sidebar--collapsed .sidebar-item-link-inner {
