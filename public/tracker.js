@@ -1416,21 +1416,12 @@
       }
     }
 
-    // --- Grid overlay ---
-
-    const gridOverlay = document.getElementById('grid-overlay');
-    for (let i = 0; i < 12; i++) {
-      gridOverlay.appendChild(document.createElement('span'));
-    }
-
-    trackDocListener('keydown', e => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const tag = document.activeElement.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-      if (e.key.toLowerCase() === 'g') {
-        gridOverlay.classList.toggle('visible');
-      }
-    });
+    // Grid overlay ("g" shortcut) is handled by components/GridOverlayToggle.tsx
+    // (rendered in the shared (tracker) layout, so it's already active on every
+    // page including this one) — this used to duplicate that same listener and
+    // append a second set of 12 spans into #grid-overlay on top of React's own,
+    // so every "g" press toggled the class twice (once per listener) and
+    // silently canceled itself out.
 
     // --- Greeting (based on the visitor's local system time) ---
 

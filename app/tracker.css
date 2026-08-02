@@ -211,7 +211,21 @@ body {
    override: default flex-start already puts the logo flush at that fixed
    left inset instead of centering it — centering was the actual source of
    drift, not something to fix the centering math of. */
-.sidebar--collapsed .sidebar-brand { gap: 0; padding-top: 0; }
+/* padding-right:0 (not the base rule's 8px) — the logo itself is already
+   32px, so 8px of left padding to keep the same inset as expanded (24 +
+   8 = 32px) plus 8px of right padding left no room at all for the logo
+   inside this narrower rail: it overflowed its own box by 8px and
+   .sidebar-brand's overflow:hidden clipped that overflow off, cropping
+   the image. Dropping the right padding (brand's width isn't fixed, so
+   it just grows to fit: 8px left padding + 32px logo = 40px) removes the
+   crop without touching the left inset that keeps its position stable. */
+/* align-self:flex-start — .sidebar-brand is a direct child of .sidebar
+   (a column flex container with default 'stretch' cross-axis sizing), so
+   without this it gets stretched to the rail's full 36px content width
+   regardless of its own padding, right back to not having room for the
+   32px logo. This lets it size to its own content (8px padding + 32px
+   logo = 40px) instead. */
+.sidebar--collapsed .sidebar-brand { gap: 0; padding: 0 0 20px 8px; align-self: flex-start; }
 .sidebar--collapsed .sidebar-brand-text { width: 0; }
 
 .sidebar-brand-text,
@@ -261,11 +275,30 @@ body {
    within the narrower rail at a different offset. 8(pad)+16(icon)+8(pad)
    also just happens to equal the 32px box on its own, with no need for
    align-self/justify-content centering tricks at all. */
-.sidebar--collapsed .sidebar-item,
-.sidebar--collapsed .sidebar-user {
+.sidebar--collapsed .sidebar-item {
   width: 32px;
   height: 32px;
   padding: 8px;
+}
+
+/* .sidebar-user can't share the rule above: its content is the 32px
+   avatar image itself (not a 16px icon), so 8px of padding on every side
+   left no room for it in a 32px box — it overflowed and got cropped by
+   overflow:hidden, same issue .sidebar-brand's logo had. Dropping the
+   right padding (like .sidebar-brand) gives it room to grow to the width
+   it actually needs (8px left inset + 32px avatar = 40px) without
+   touching the left inset that keeps it aligned with the icons above it. */
+.sidebar--collapsed .sidebar-user {
+  height: 32px;
+  padding: 8px 0 8px 8px;
+  /* The base rule's width:100% otherwise wins regardless of align-self —
+     that's an explicit size, not a stretch default, so it has to be
+     overridden directly. Explicit 40px (not fit-content/auto): the hidden
+     name/email text is opacity:0 but still has real, non-zero intrinsic
+     width, and fit-content would size the button to fit THAT too. 40px is
+     exactly what's actually visible: 8px padding + 32px avatar. */
+  width: 40px;
+  align-self: flex-start;
   /* .sidebar-user's own gap (8px, for the avatar/name/chevron row) still
      applies even though the name text is opacity:0 — an invisible flex
      item with zero width still keeps its gap on either side, so the
