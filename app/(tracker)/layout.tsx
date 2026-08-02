@@ -5,7 +5,6 @@ import Sidebar from '@/components/Sidebar';
 import GridOverlayToggle from '@/components/GridOverlayToggle';
 import SchoolAdminToggle from '@/components/SchoolAdminToggle';
 import { SidebarCollapseProvider } from '@/components/SidebarCollapseContext';
-import { assetVersion } from '@/lib/assetVersion';
 import { isUserSchoolAdmin } from '@/lib/school';
 
 export default async function TrackerLayout({ children }: { children: React.ReactNode }) {
@@ -21,7 +20,7 @@ export default async function TrackerLayout({ children }: { children: React.Reac
       <SidebarCollapseProvider>
         <div className="app-shell">
           <Sidebar fullName={fullName} firstName={firstName} promotion={promotion} isSchoolAdmin={isSchoolAdmin} />
-          <div className="app">{children}</div>
+          <main className="app">{children}</main>
         </div>
       </SidebarCollapseProvider>
 
@@ -45,10 +44,14 @@ export default async function TrackerLayout({ children }: { children: React.Reac
           }
         `}
       </Script>
-      {/* Sidebar.tsx renders icons itself (on every route change, via
-          useEffect) since a one-shot script here would only ever catch
-          whichever page was current the one time it fired. */}
-      <Script id="altora-lucide" src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="afterInteractive" />
+      {/* lucide.js (the global runtime, ~98KB gzipped) used to load here on
+          every single route — but every React-rendered icon now goes through
+          lucide-react (see components/Icon.tsx), and the only markup still
+          using data-lucide + this global runtime is the kanban board/
+          calendar that tracker.js builds imperatively, which only ever
+          exists on the home page. Loading it on Documents/École/Profil/Inbox
+          was pure dead weight; it's now loaded there instead (see
+          app/(tracker)/page.tsx). */}
     </>
   );
 }

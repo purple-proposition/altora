@@ -87,7 +87,7 @@ async function DocumentsGrid() {
           <span className="folder-card-count">{cvDocs.length}</span>
         </div>
         <div className="folder-card-body">
-          {cvDocs.length ? <DocThumbGrid docs={cvDocs} href="/documents/cv" /> : <p className="folder-empty">Aucun CV importé pour le moment.</p>}
+          {cvDocs.length ? <DocThumbGrid docs={cvDocs} href="/documents/cv" label="Ouvrir Mes CV" /> : <p className="folder-empty">Aucun CV importé pour le moment.</p>}
         </div>
       </div>
 

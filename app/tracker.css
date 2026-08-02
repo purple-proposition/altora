@@ -3301,6 +3301,19 @@ legend.field-label { padding: 0; }
 }
 .btn-remove-contact:hover { opacity: 0.75; }
 
+/* --rose/--indigo are tuned for text-on-tint or filled-button use (light
+   backgrounds either way) — used as plain text directly on --card-bg here,
+   they fall to ~2.4:1 in dark mode (card-bg is dark too), well under WCAG
+   AA's 4.5:1 for normal-weight text. Lighter dark-mode-only overrides fix
+   the contrast without touching --indigo/--rose everywhere else they're
+   used as a background or against a tint. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .btn-add-contact { color: #818cf8; }
+  :root:not([data-theme="light"]) .btn-remove-contact { color: #fb7185; }
+}
+:root[data-theme="dark"] .btn-add-contact { color: #818cf8; }
+:root[data-theme="dark"] .btn-remove-contact { color: #fb7185; }
+
 .profile-form-actions { display: flex; align-items: center; gap: 12px; }
 
 /* ── École (admin) ────────────────────────────────────────────────────── */

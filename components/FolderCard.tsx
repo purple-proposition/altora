@@ -124,7 +124,7 @@ export default function FolderCard({ folder, docs }: { folder: { id: number; nam
         {uploading ? (
           <p className="folder-empty">Import en cours…</p>
         ) : docs.length ? (
-          <DocThumbGrid docs={docs} href={`/documents/folder/${folder.id}`} />
+          <DocThumbGrid docs={docs} href={`/documents/folder/${folder.id}`} label={`Ouvrir le dossier ${folder.name}`} />
         ) : (
           <p className="folder-empty">Glisse un fichier ici pour l&apos;importer, ou clique-droit pour renommer/supprimer.</p>
         )}

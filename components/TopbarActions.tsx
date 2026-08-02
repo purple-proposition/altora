@@ -78,7 +78,7 @@ export default function TopbarActions() {
           type="button"
           className="topbar-bell"
           title="Messagerie"
-          aria-label="Messagerie"
+          aria-label={unreadCount > 0 ? `Messagerie, ${unreadCount} non lus` : 'Messagerie'}
           onClick={() => setOpen(open === 'mail' ? null : 'mail')}
         >
           <Icon name="mail" />

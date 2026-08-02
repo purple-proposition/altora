@@ -25,12 +25,12 @@ function Sheet({ doc }: { doc: DocFile }) {
   );
 }
 
-export default function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: string }) {
+export default function DocThumbGrid({ docs, href, label }: { docs: DocFile[]; href: string; label: string }) {
   if (docs.length === 0) return null;
 
   if (docs.length === 1) {
     return (
-      <Link href={href} className="doc-thumb-grid">
+      <Link href={href} className="doc-thumb-grid" aria-label={label}>
         <div className="doc-thumb-bare">
           <Sheet doc={docs[0]} />
         </div>
@@ -39,7 +39,7 @@ export default function DocThumbGrid({ docs, href }: { docs: DocFile[]; href: st
   }
 
   return (
-    <Link href={href} className="doc-thumb-grid">
+    <Link href={href} className="doc-thumb-grid" aria-label={label}>
       <div className="doc-thumb-bare doc-thumb-fan">
         {docs.slice(0, 3).map((doc, i) => (
           <div className={`doc-thumb-fan-layer doc-thumb-fan-layer--${i}`} key={doc.url}>

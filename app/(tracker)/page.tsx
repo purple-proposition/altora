@@ -319,6 +319,11 @@ export default async function TrackerPage() {
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{ __html: `window.__ALTORA_CV__ = ${cvDataJson};` }}
       />
+      {/* Only the home page's kanban board/calendar (built imperatively by
+          tracker.js) still uses data-lucide + this global runtime — every
+          other page's icons are real lucide-react components now, so this
+          no longer needs to load anywhere else (see (tracker)/layout.tsx). */}
+      <Script id="altora-lucide" src={`/lucide.js?v=${assetVersion('lucide.js')}`} strategy="afterInteractive" />
       <Script src={`/tracker.js?v=${assetVersion('tracker.js')}`} strategy="afterInteractive" />
     </>
   );
