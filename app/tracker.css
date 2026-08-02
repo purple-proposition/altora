@@ -259,10 +259,6 @@ body {
      box and got centered as that wider box, landing 4px left of true
      center. Same fix already applied to .sidebar-brand above. */
   gap: 0;
-  /* Circular instead of the base 12px-rounded-square — matches the avatar
-     below it, and reads as a proper icon-button hover target instead of
-     an odd in-between shape at this size. */
-  border-radius: var(--radius-pill);
 }
 
 /* --card-bg (the default .sidebar-item hover/active background) sits only
