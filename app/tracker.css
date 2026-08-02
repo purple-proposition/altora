@@ -627,14 +627,12 @@ body {
      leave the popover mispositioned. */
   position: fixed;
   width: 320px;
-  /* No horizontal padding here on purpose (standard for any popup with a
-     scrollable list inside — see .topbar-notification-list below): the
-     scrollable area needs to span the popover's full width so its
-     scrollbar sits flush against the edge instead of stranded 24px in,
-     and each row's hover needs to reach that same edge instead of being
-     boxed in by the popover's own margin. Horizontal inset is applied per
-     element instead (header, rows) so text still lines up correctly. */
-  padding: 16px 0;
+  /* Same 8px padding as .context-menu — the site's standard treatment for
+     this kind of popup is a small uniform inset around the whole card,
+     with each row keeping its own rounded-corner hover inside that inset
+     (see .topbar-notification-item), not a row that bleeds to the card's
+     own edge. */
+  padding: 8px;
   background: color-mix(in srgb, var(--card-bg) 65%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -657,7 +655,7 @@ body {
 }
 
 .topbar-popover-header {
-  padding: 0 24px 16px;
+  padding: 4px 12px 8px;
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
@@ -675,26 +673,18 @@ body {
   gap: 2px;
   max-height: 280px;
   overflow-y: auto;
-  /* Zero horizontal padding — this is the scrollable element, so this is
-     what actually puts its scrollbar flush against the popover's own
-     edge. Each row supplies its own 24px horizontal inset instead (see
-     .topbar-notification-item), so text still lines up with the header
-     above it. */
-  padding: 0;
 }
 
-/* No dividers between items on purpose — just a hover highlight per row.
-   No margin/negative-margin trick needed: with the popover and list both
-   at 0 horizontal padding, the row's own 24px padding IS the only inset in
-   play, and its hover background (drawn on the row itself, full list
-   width) reaches all the way to the popover's edges on both sides instead
-   of stopping short at some inner margin. */
+/* No dividers between items on purpose — just a rounded hover highlight
+   per row, same treatment as .context-item: the popover's own 8px padding
+   is the only outer inset, and each row gets its own rounded corners
+   inside that, instead of a row that spans edge-to-edge. */
 .topbar-notification-item {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  padding: 8px 24px;
-  border-radius: 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-inner);
   transition: background 0.15s ease;
 }
 /* A solid var(--bg) here (as used for hover elsewhere on the site) reads as
@@ -726,15 +716,14 @@ body {
 /* Doubled up with .inbox-message (equal specificity to that base rule) so
    this reliably wins regardless of source order and actually clears the
    card-style border/background .inbox-message carries on the full inbox
-   page. Same edge-to-edge hover pattern as .topbar-notification-item —
-   no margin, 24px horizontal padding on the row itself, 0 padding on the
-   scrollable list around it. */
+   page. Same rounded-corner-inside-the-popover's-padding treatment as
+   .topbar-notification-item. */
 .inbox-message.inbox-message--compact {
   display: flex;
   margin: 0;
-  padding: 8px 24px;
+  padding: 8px 12px;
   border: none;
-  border-radius: 0;
+  border-radius: var(--radius-inner);
   background: none;
   text-decoration: none;
   color: inherit;
