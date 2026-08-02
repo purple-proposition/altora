@@ -194,16 +194,24 @@ body {
    sit half-legible at a half-collapsed width — same asymmetric timing idea
    as the reference component, just done with plain opacity transitions
    instead of a spring/motion library. */
-.sidebar--collapsed { width: 84px; padding: 24px 12px; }
+/* Same 24px padding as expanded (not a narrower 12px) — the whole point
+   below is that the logo/icons/avatar keep the EXACT same left inset
+   (sidebar padding + the element's own padding) in both states, so nothing
+   visibly shifts position when the rail collapses or expands. Centering
+   icons within a narrower rail was what caused the drift the previous
+   approach had: a 12px-padding centering formula doesn't land on the same
+   pixel as a 24px-padding left-aligned one. */
+.sidebar--collapsed { width: 84px; padding: 24px; }
 
-/* The faded-out (opacity 0) brand text still holds its intrinsic width, and
-   the flex gap adds on top — both were nudging the logo ~6px off the rail's
-   centerline compared to the nav icons below it. Padding-top is also reset
-   to 0 here (the base rule has an 8px top / 20px bottom split, meant for
-   breathing room next to the promotion text) — collapsed, that extra 8px
-   made the logo sit 8px further from the rail's top edge than the avatar
-   sits from its bottom edge, once .sidebar-user's own gap is fixed below. */
-.sidebar--collapsed .sidebar-brand { justify-content: center; gap: 0; padding: 0 0 20px; }
+/* Only padding-top is overridden (to 0, matching the avatar's own 24px gap
+   from the rail's bottom edge) — left/right stay at the base rule's 8px,
+   same as expanded, so the logo's left edge doesn't move. gap:0 keeps the
+   faded-out (opacity 0, but still flex-participating) brand text from
+   adding its 8px gap on top of the logo's own width. No justify-content
+   override: default flex-start already puts the logo flush at that fixed
+   left inset instead of centering it — centering was the actual source of
+   drift, not something to fix the centering math of. */
+.sidebar--collapsed .sidebar-brand { gap: 0; padding-top: 0; }
 .sidebar--collapsed .sidebar-brand-text { width: 0; }
 
 .sidebar-brand-text,
@@ -245,19 +253,24 @@ body {
   overflow: hidden;
 }
 
+/* width/height stay 32px (same fixed hover-box size as before) but padding
+   is now 8px — same as the base/expanded rule — instead of 0. Combined
+   with dropping the centering below, this keeps the icon at EXACTLY the
+   same left inset (sidebar padding 24 + item padding 8 = 32px from the
+   rail's edge) as its expanded-state position, instead of recentering it
+   within the narrower rail at a different offset. 8(pad)+16(icon)+8(pad)
+   also just happens to equal the 32px box on its own, with no need for
+   align-self/justify-content centering tricks at all. */
 .sidebar--collapsed .sidebar-item,
 .sidebar--collapsed .sidebar-user {
-  justify-content: center;
-  align-self: center;
   width: 32px;
   height: 32px;
-  padding: 0;
+  padding: 8px;
   /* .sidebar-user's own gap (8px, for the avatar/name/chevron row) still
      applies even though the name text is opacity:0 — an invisible flex
      item with zero width still keeps its gap on either side, so the
-     visible content (avatar + nothing) came out 8px wider than its 32px
-     box and got centered as that wider box, landing 4px left of true
-     center. Same fix already applied to .sidebar-brand above. */
+     visible content (avatar + nothing) came out 8px wider than intended.
+     Same fix already applied to .sidebar-brand above. */
   gap: 0;
 }
 
@@ -274,25 +287,26 @@ body {
 .sidebar--collapsed .sidebar-item-link-inner {
   flex: 0;
   gap: 0;
-  justify-content: center;
 }
 
-/* align-self:center on the items only centers direct flex children of
-   .sidebar-nav — items wrapped in a .sidebar-item-group (ATS Booster,
-   Mes documents) sit inside a plain block div and were staying stuck to
-   the left, and the avatar had the same problem inside .sidebar-bottom.
-   Centering has to happen at every container level. */
+/* flex-start (not center) at every container level below — the icons'
+   fixed 32px boxes now carry their own correct left inset via padding
+   (see .sidebar-item/.sidebar-user above), so nothing here should
+   recenter them within the rail's slightly wider content area. Centering
+   was the actual bug: it math'd out to a different offset than the
+   expanded rail's padding-based inset, which is what made icons visibly
+   jump sideways on every collapse/expand. */
 .sidebar--collapsed .sidebar-nav {
-  align-items: center;
+  align-items: flex-start;
   gap: 0;
 }
 .sidebar--collapsed .sidebar-item-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 .sidebar--collapsed .sidebar-bottom {
-  align-items: center;
+  align-items: flex-start;
 }
 
 .sidebar-nav {
