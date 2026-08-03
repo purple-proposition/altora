@@ -211,9 +211,9 @@ export default function LandingPage() {
           <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
         </div>
       </Reveal>
-      </div>
 
       <SiteFooter />
+      </div>
     </div>
   );
 }
