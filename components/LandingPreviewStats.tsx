@@ -4,25 +4,28 @@ import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 
 // Decorative counter for the landing hero's dashboard mockup: "offres à
-// postuler" ticks down and "entretien" ticks up once the mockup scrolls
-// into view, and reverts when it scrolls back out — a cheap way to imply
-// "this board moves" without a real animation timeline. IntersectionObserver
-// (not scroll direction tracking) drives it: entering the viewport downward
-// or upward both just flip the same in/out boolean, which already produces
-// the forward/reverse effect the user asked for.
+// postuler" ticks down and "entretien" ticks up once the user scrolls the
+// page down a bit, and reverts when they scroll back up — a cheap way to
+// imply "this board moves" without a real animation timeline.
+//
+// Tracks the actual scroll position of .landing-card (not
+// IntersectionObserver on visibility) — the hero + mockup already fit
+// entirely inside the initial viewport on most screens, so an observer
+// watching "is this element visible" would report true from the very
+// first paint and never toggle as the user scrolls. A scrollTop threshold
+// only flips once the user has actually scrolled past it, in either
+// direction.
 export default function LandingPreviewStats() {
   const ref = useRef<HTMLParagraphElement>(null);
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setRevealed(entry.isIntersecting),
-      { threshold: 0.6 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    const scrollContainer = ref.current?.closest('.landing-card') as HTMLElement | null;
+    if (!scrollContainer) return;
+    const onScroll = () => setRevealed(scrollContainer.scrollTop > 80);
+    onScroll();
+    scrollContainer.addEventListener('scroll', onScroll, { passive: true });
+    return () => scrollContainer.removeEventListener('scroll', onScroll);
   }, []);
 
   const todo = revealed ? 7 : 8;

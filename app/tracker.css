@@ -3479,13 +3479,12 @@ legend.field-label { padding: 0; }
      different widths (a short wordmark vs. two buttons), so space-between
      would push the middle nav-links off true center. Two equal 1fr side
      columns keep the middle column mathematically centered regardless.
-     Width matches .landing-preview-shell exactly (calc(66.6667vw - 8px),
-     the same 8-of-12 grid columns) — was a fixed 1120px, so the logo and
-     "Essayer Altora" button sat well inside those columns instead of
-     spanning their full width like the mockup below. No horizontal
-     padding: with the width already matching the grid columns exactly,
-     any inset here would pull the logo/button back in from the column
-     edges. */
+     Spans 8/12 grid columns (calc(66.6667vw - 8px), wider than
+     .landing-preview-shell's 6/12 below by design) — was a fixed 1120px,
+     so the logo and "Essayer Altora" button sat well inside those
+     columns instead of spanning their full width. No horizontal padding:
+     with the width already matching the grid columns exactly, any inset
+     here would pull the logo/button back in from the column edges. */
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -3662,14 +3661,15 @@ legend.field-label { padding: 0; }
    shadow just lift the illustration off the hero as a self-contained
    "screenshot"; the actual card look lives on .landing-preview-card. */
 .landing-preview-shell {
-  /* True 8-of-12 viewport grid columns (matches the "g" debug overlay:
-     repeat(12,1fr); gap:24px over the full viewport). For k columns out
-     of N with gap g over width W: span = (k/N)*W + g*[(k-1) - (k/N)(N-1)].
-     For k=8, N=12, g=24 that simplifies to exactly (2/3)W - 8px. No upper
-     clamp: capping at a fixed px value breaks the column match on any
-     viewport wide enough to exceed it, so the window would silently fall
-     short of the grid instead of tracking it. */
-  width: calc(66.6667vw - 8px);
+  /* True 6-of-12 viewport grid columns (matches the "g" debug overlay:
+     repeat(12,1fr); gap:24px over the full viewport) — half the width of
+     .landing-nav above, which spans 8/12. For k columns out of N with
+     gap g over width W: span = (k/N)*W + g*[(k-1) - (k/N)(N-1)]. For k=6,
+     N=12, g=24 that simplifies to exactly (1/2)W - 12px. No upper clamp:
+     capping at a fixed px value breaks the column match on any viewport
+     wide enough to exceed it, so the window would silently fall short of
+     the grid instead of tracking it. */
+  width: calc(50vw - 12px);
   display: flex;
   gap: 12px;
   padding: 12px;
@@ -3842,7 +3842,7 @@ legend.field-label { padding: 0; }
 .landing-preview-greeting-title {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   font-family: 'Gloock', Georgia, serif;
   font-synthesis: none;
   font-size: 22px;
@@ -3860,6 +3860,15 @@ legend.field-label { padding: 0; }
   line-height: 1.6;
   color: var(--text-muted);
   margin: 0;
+}
+/* Tighter pill sizing scoped to this mockup only — .inline-pill is the
+   real dashboard's own shared component (app/(tracker)/page.tsx's
+   summary-subtitle), so its own padding/gap/margin stay untouched; this
+   override only affects the decorative landing preview. */
+.landing-preview-greeting-text .inline-pill {
+  gap: 4px;
+  padding: 4px 8px;
+  margin: 0 2px;
 }
 /* Real subtitle opens with an "Aujourd'hui ⌄" period-selector button
    before "tu as ..." (components/... period-trigger in page.tsx). */
