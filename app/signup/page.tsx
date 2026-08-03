@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
+import AltoraLogo from '@/components/AltoraLogo';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function SignupPage() {
     <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: '#f5f5f7', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '380px', background: '#fff', borderRadius: '20px', padding: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
-          <span style={{ fontFamily: '"BBH Hegarty", "Inter", sans-serif', fontSize: '28px', fontWeight: 800 }}>Altora</span>
+          <AltoraLogo style={{ width: '128px', height: '32px' }} />
         </div>
         <label htmlFor="signup-name" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Prénom</label>
         <input

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import './fonts.css';
 
 // Self-hosted via next/font instead of a <link> to fonts.googleapis.com —
 // that external stylesheet cost a DNS lookup + connection to
@@ -7,10 +8,11 @@ import { Inter } from 'next/font/google';
 // woff2 files, all on the critical path before body text could render with
 // its real font. next/font downloads the font at build time and serves it
 // from the same origin, with the right file preloaded automatically — one
-// fewer render-blocking round trip on every single page. ("BBH Hegarty" in
-// the old URL wasn't a real Google Fonts family and Google silently ignored
-// it, so dropping it changes nothing visually — login/signup's inline
-// fallback to "Inter" already covers that logo text.)
+// fewer render-blocking round trip on every single page.
+//
+// fonts.css is imported here (rather than tracker.css, which only loads
+// inside the (tracker) layout) so the Gloock brand font reaches every page,
+// including login/signup.
 const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], display: 'swap' });
 
 export const metadata: Metadata = {

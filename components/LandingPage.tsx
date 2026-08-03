@@ -23,21 +23,19 @@ export default function LandingPage() {
       <SiteNav />
 
       <main className="landing-hero">
-        <span className="landing-eyebrow landing-in landing-in--1">CRM &amp; copilote IA de l&apos;alternance</span>
-        <h1 className="landing-title landing-in landing-in--2">
+        <h1 className="landing-title landing-in landing-in--1">
           Le copilote IA qui optimise<br />le taux de placement de votre promotion.
         </h1>
-        <p className="landing-subtitle landing-in landing-in--3">
+        <p className="landing-subtitle landing-in landing-in--2">
           Altora connecte étudiants, équipes pédagogiques et entreprises dans une
           seule plateforme : suivi des candidatures, matching IA, et pilotage de
           toute la promotion en temps réel.
         </p>
-        <div className="landing-hero-actions landing-in landing-in--4">
+        <div className="landing-hero-actions landing-in landing-in--3">
           <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
-          <Link href="/login" className="landing-hero-secondary">Se connecter <Icon name="chevron-right" /></Link>
         </div>
 
-        <div className="landing-preview landing-in landing-in--5" aria-hidden="true">
+        <div className="landing-preview landing-in landing-in--4" aria-hidden="true">
           <div className="landing-preview-card">
             <div className="landing-preview-row">
               <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />3</span>
@@ -208,7 +206,6 @@ export default function LandingPage() {
         </p>
         <div className="landing-closing-actions">
           <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
-          <Link href="/login" className="landing-hero-secondary">Se connecter <Icon name="chevron-right" /></Link>
         </div>
       </Reveal>
 

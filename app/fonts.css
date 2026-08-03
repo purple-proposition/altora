@@ -1,0 +1,16 @@
+/* Self-hosted brand font, loaded from the root layout so it reaches every
+   page — including login/signup, which don't import tracker.css. Only the
+   Regular weight ships, so font-synthesis:none stops the browser from
+   faking a bold/italic face that doesn't exist and would distort the
+   letterforms wherever a heavier weight is requested. */
+@font-face {
+  font-family: 'Gloock';
+  src: url('/fonts/Gloock-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+h1 {
+  font-family: 'Gloock', Georgia, serif;
+  font-synthesis: none;
+}

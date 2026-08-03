@@ -3478,13 +3478,6 @@ legend.field-label { padding: 0; }
 
 /* --- Public landing page (app/(tracker)/page.tsx when signed out) --- */
 
-@font-face {
-  font-family: 'BBH Hegarty';
-  src: url('/fonts/BBHHegarty-Regular.ttf') format('truetype');
-  font-weight: 400 800;
-  font-display: swap;
-}
-
 .landing {
   height: 100vh;
   overflow-y: auto;
@@ -3523,10 +3516,10 @@ legend.field-label { padding: 0; }
   gap: 8px;
 }
 
-.landing-nav-word {
-  font-family: 'BBH Hegarty', 'Inter', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
+.landing-nav-logo {
+  display: block;
+  width: 96px;
+  height: 24px;
   color: var(--text);
 }
 
@@ -3578,7 +3571,6 @@ legend.field-label { padding: 0; }
 .landing-in--2 { animation-delay: 0.15s; }
 .landing-in--3 { animation-delay: 0.25s; }
 .landing-in--4 { animation-delay: 0.35s; }
-.landing-in--5 { animation-delay: 0.45s; }
 
 /* Scroll reveal: sections fade/slide in the first time they enter the
    viewport (see components/Reveal.tsx), then stay visible. */
@@ -3645,18 +3637,6 @@ legend.field-label { padding: 0; }
 }
 
 .landing-hero-cta { padding: 16px 28px; font-size: 16px; }
-
-.landing-hero-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-  text-decoration: none;
-}
-.landing-hero-secondary .lucide { width: 16px; height: 16px; }
-.landing-hero-secondary:hover { color: var(--indigo); }
 
 .landing-preview {
   width: 100%;
@@ -4051,42 +4031,14 @@ legend.field-label { padding: 0; }
   color: var(--text);
 }
 
-.pricing-toggle {
-  display: inline-flex;
-  gap: 4px;
-  margin-top: 32px;
-  padding: 4px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-}
-
-.pricing-toggle-btn {
-  padding: 8px 20px;
-  border: none;
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.pricing-toggle-btn--active { background: var(--card-bg); color: var(--text); box-shadow: var(--shadow); }
-
 .pricing-plans {
-  max-width: 800px;
+  max-width: 1120px;
   width: 100%;
   margin: 0 auto;
   padding: 32px 24px 96px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-}
-.pricing-plans--single {
-  max-width: 400px;
-  grid-template-columns: 1fr;
 }
 
 .pricing-plan {
@@ -4200,6 +4152,10 @@ legend.field-label { padding: 0; }
   line-height: 1.6;
   color: var(--text-muted);
   margin: 0;
+}
+
+@media (max-width: 960px) {
+  .pricing-plans { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
