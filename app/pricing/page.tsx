@@ -111,9 +111,9 @@ export default function PricingPage() {
           </p>
         </div>
       </section>
+      </div>
 
       <SiteFooter />
-      </div>
     </div>
   );
 }
