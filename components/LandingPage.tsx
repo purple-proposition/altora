@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import Reveal from '@/components/Reveal';
+import SiteNav from '@/components/SiteNav';
+import SiteFooter from '@/components/SiteFooter';
 
 // Public marketing landing page, shown at "/" only when signed out (see
 // app/(tracker)/page.tsx and middleware.ts). Built entirely from the
@@ -8,36 +10,30 @@ import Reveal from '@/components/Reveal';
 // --radius-card/--radius-pill, etc.) rather than new one-off colors, so it
 // stays visually identical to the rest of the app and follows the same
 // light/dark theme switch instead of hardcoding one look like /login does.
+//
+// Hero and category order lead with écoles, not étudiants: per
+// Altora_Concept_Projet.docx the paying decision-maker is a school's
+// "responsable des relations entreprises / pédagogique", not the student —
+// the doc explicitly warns against mirroring a candidate-first competitor's
+// positioning, since Altora's real differentiation is being the CRM/copilot
+// the school runs its whole promotion on.
 export default function LandingPage() {
   return (
     <div className="landing">
-      <header className="landing-nav">
-        <div className="landing-nav-brand">
-          <span className="landing-nav-word">Altora</span>
-        </div>
-        <nav className="landing-nav-links">
-          <a href="#etudiants" className="landing-nav-link">Étudiants</a>
-          <a href="#ecoles" className="landing-nav-link">Écoles</a>
-          <a href="#fonctionnalites" className="landing-nav-link">Fonctionnalités</a>
-        </nav>
-        <div className="landing-nav-actions">
-          <Link href="/login" className="landing-nav-login">Se connecter</Link>
-          <Link href="/signup" className="landing-nav-cta">S&apos;inscrire</Link>
-        </div>
-      </header>
+      <SiteNav />
 
       <main className="landing-hero">
-        <span className="landing-eyebrow landing-in landing-in--1">Pour les étudiants en alternance</span>
+        <span className="landing-eyebrow landing-in landing-in--1">CRM &amp; copilote IA de l&apos;alternance</span>
         <h1 className="landing-title landing-in landing-in--2">
-          Toutes tes candidatures,<br />un seul endroit.
+          Le copilote IA qui optimise<br />le taux de placement de votre promotion.
         </h1>
         <p className="landing-subtitle landing-in landing-in--3">
-          Suis tes candidatures, génère un CV et une lettre de motivation adaptés
-          à chaque offre, et passe les filtres ATS avant même d&apos;être lu par
-          un recruteur.
+          Altora connecte étudiants, équipes pédagogiques et entreprises dans une
+          seule plateforme : suivi des candidatures, matching IA, et pilotage de
+          toute la promotion en temps réel.
         </p>
         <div className="landing-hero-actions landing-in landing-in--4">
-          <Link href="/signup" className="landing-nav-cta landing-hero-cta">Créer mon compte</Link>
+          <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
           <Link href="/login" className="landing-hero-secondary">Se connecter <Icon name="chevron-right" /></Link>
         </div>
 
@@ -69,6 +65,21 @@ export default function LandingPage() {
       </main>
 
       <section className="landing-categories">
+        <Reveal id="ecoles" className="landing-category">
+          <div className="landing-category-icon"><Icon name="users" /></div>
+          <h2 className="landing-category-title">Écoles &amp; organismes de formation</h2>
+          <p className="landing-category-text">
+            Suis la recherche d&apos;alternance de toute une promotion, sans
+            relancer chaque étudiant un par un pour savoir où il en est.
+          </p>
+          <ul className="landing-category-list">
+            <li><Icon name="check-circle" />Vue d&apos;ensemble de toute la promotion</li>
+            <li><Icon name="check-circle" />Rythme d&apos;alternance de l&apos;école appliqué automatiquement</li>
+            <li><Icon name="check-circle" />Suivi des candidatures de chaque alternant</li>
+          </ul>
+          <Link href="/signup" className="landing-category-cta">Essayer Altora <Icon name="chevron-right" /></Link>
+        </Reveal>
+
         <Reveal id="etudiants" className="landing-category">
           <div className="landing-category-icon"><Icon name="list-checks" /></div>
           <h2 className="landing-category-title">Étudiants en alternance</h2>
@@ -85,19 +96,73 @@ export default function LandingPage() {
           <Link href="/signup" className="landing-category-cta">Créer mon compte <Icon name="chevron-right" /></Link>
         </Reveal>
 
-        <Reveal id="ecoles" className="landing-category">
-          <div className="landing-category-icon"><Icon name="users" /></div>
-          <h2 className="landing-category-title">Écoles &amp; organismes de formation</h2>
+        <Reveal className="landing-category">
+          <div className="landing-category-icon"><Icon name="file-check-2" /></div>
+          <h2 className="landing-category-title">Entreprises partenaires</h2>
           <p className="landing-category-text">
-            Suis la recherche d&apos;alternance de toute une promotion, sans
-            relancer chaque étudiant un par un pour savoir où il en est.
+            Publiez vos offres d&apos;alternance et échangez directement avec les
+            écoles qui vous envoient des profils qualifiés.
           </p>
           <ul className="landing-category-list">
-            <li><Icon name="check-circle" />Vue d&apos;ensemble de toute la promotion</li>
-            <li><Icon name="check-circle" />Rythme d&apos;alternance de l&apos;école appliqué automatiquement</li>
-            <li><Icon name="check-circle" />Suivi des candidatures de chaque alternant</li>
+            <li><Icon name="check-circle" />Recevoir des profils qualifiés par les écoles</li>
+            <li><Icon name="check-circle" />Consulter les candidatures, programmer les entretiens</li>
+            <li><Icon name="check-circle" />Suivre vos recrutements en alternance</li>
           </ul>
-          <Link href="/signup" className="landing-category-cta">Découvrir l&apos;espace école <Icon name="chevron-right" /></Link>
+          <span className="landing-category-cta landing-category-cta--soon">Bientôt disponible</span>
+        </Reveal>
+      </section>
+
+      <section className="landing-showcase">
+        <Reveal className="landing-showcase-row">
+          <div className="landing-showcase-text">
+            <span className="landing-showcase-eyebrow">Matching IA</span>
+            <h3 className="landing-showcase-title">Un score de compatibilité, pas juste une liste d&apos;offres</h3>
+            <p className="landing-showcase-body">
+              Chaque offre reçoit un score calculé à partir des compétences, de
+              l&apos;expérience, du niveau d&apos;études et de la localisation de
+              l&apos;étudiant &mdash; et l&apos;IA explique ce score au lieu de se
+              contenter de l&apos;afficher.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-match-card">
+              <div className="landing-match-score">92%</div>
+              <div className="landing-match-label">de compatibilité</div>
+              <ul className="landing-match-notes">
+                <li className="is-positive"><Icon name="check-circle" />Profil très adapté</li>
+                <li className="is-warning"><Icon name="circle-help" />Une compétence CRM augmenterait votre score</li>
+                <li className="is-warning"><Icon name="circle-help" />+12% avec un projet marketing en plus</li>
+              </ul>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row">
+          <div className="landing-showcase-visual">
+            <div className="landing-copilot-card">
+              <div className="landing-copilot-item">
+                <Icon name="target" />
+                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
+              </div>
+              <div className="landing-copilot-item">
+                <Icon name="check-circle" />
+                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
+              </div>
+              <div className="landing-copilot-item">
+                <Icon name="circle-help" />
+                <p>Cet étudiant n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
+              </div>
+            </div>
+          </div>
+          <div className="landing-showcase-text">
+            <span className="landing-showcase-eyebrow">Copilote pour votre équipe pédagogique</span>
+            <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
+            <p className="landing-showcase-body">
+              Altora analyse en continu les candidatures de la promotion et
+              suggère les actions à mener en priorité, pour accompagner chaque
+              étudiant avant qu&apos;il ne décroche.
+            </p>
+          </div>
         </Reveal>
       </section>
 
@@ -136,10 +201,18 @@ export default function LandingPage() {
         </Reveal>
       </section>
 
-      <footer className="landing-footer">
-        <span>© {new Date().getFullYear()} Altora</span>
-        <Link href="/login" className="landing-footer-link">Se connecter</Link>
-      </footer>
+      <Reveal className="landing-closing">
+        <h2 className="landing-closing-title">Prêt à piloter toute votre promotion depuis un seul endroit ?</h2>
+        <p className="landing-closing-text">
+          Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
+        </p>
+        <div className="landing-closing-actions">
+          <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
+          <Link href="/login" className="landing-hero-secondary">Se connecter <Icon name="chevron-right" /></Link>
+        </div>
+      </Reveal>
+
+      <SiteFooter />
     </div>
   );
 }
