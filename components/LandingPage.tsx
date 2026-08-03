@@ -95,13 +95,22 @@ export default function LandingPage() {
                   </div>
                   <div className="landing-preview-panel">
                     <div className="landing-preview-panel-title-row">
-                      <div className="landing-preview-panel-title">Événements à venir</div>
+                      <div className="landing-preview-panel-title">Calendrier</div>
                       <span className="landing-preview-panel-badge">3</span>
                     </div>
                     <div className="landing-preview-panel-list">
                       <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien chez Sephora</span>
                       <span className="inline-pill inline-pill--cyan"><Icon name="briefcase" />Job dating entreprise</span>
                       <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée en formation</span>
+                    </div>
+                  </div>
+                  <div className="landing-preview-panel">
+                    <div className="landing-preview-panel-title-row">
+                      <div className="landing-preview-panel-title"><Icon name="mail" />Boîte de réception</div>
+                    </div>
+                    <div className="landing-preview-panel-list">
+                      <span className="inline-pill inline-pill--slate">École : rentrée décalée d&apos;une semaine</span>
+                      <span className="inline-pill inline-pill--slate">Recrutement : nouvelle offre disponible</span>
                     </div>
                   </div>
                 </div>

@@ -3873,26 +3873,38 @@ legend.field-label { padding: 0; }
 
 .landing-preview-panel-row {
   display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 16px;
   margin-top: 16px;
 }
-/* Small bordered widget used for both "À faire" and "Événements à
-   venir" below the greeting — same card treatment, different content. */
+/* Small bordered widget used for "À faire", "Événements à venir" and
+   "Boîte de réception" below the greeting — same card treatment,
+   different content. No fixed height: each card hugs its own list
+   (align-items:flex-start on the row keeps a shorter list from being
+   stretched to match its taller sibling). Grows/shrinks between 160
+   and 220px instead of a fixed width, and the row wraps (flex-wrap)
+   so a 3rd/4th panel drops to its own line rather than overflowing
+   past the mockup's own edge on narrower viewports. */
 .landing-preview-panel {
-  width: 220px;
-  flex-shrink: 0;
+  flex: 1 1 160px;
+  max-width: 220px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   padding: 12px;
 }
 .landing-preview-panel-title {
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-muted);
   padding-bottom: 8px;
   margin-bottom: 8px;
   border-bottom: 1px solid var(--border);
 }
+.landing-preview-panel-title .lucide { width: 14px; height: 14px; flex-shrink: 0; }
 /* When a panel needs a count badge next to its title (see
    .landing-preview-panel-badge), the border/separator moves onto this
    row instead of the title alone. */
@@ -3932,7 +3944,8 @@ legend.field-label { padding: 0; }
 .landing-preview-panel-list .inline-pill {
   margin: 0;
   gap: 4px;
-  padding: 4px 8px;
+  height: 28px;
+  padding: 0 8px;
   width: 100%;
   align-items: center;
   justify-content: space-between;
@@ -3940,9 +3953,10 @@ legend.field-label { padding: 0; }
   text-align: left;
 }
 .landing-preview-panel-list .inline-pill .lucide { flex-shrink: 0; }
-/* Task-count marker at the end of an "À faire" pill, same subtle pill
-   badge as .sidebar-item-badge (muted bg, not the row's own accent
-   color) so it reads as a count, not another status. */
+/* Task-count marker at the end of an "À faire" pill — deliberately a
+   flat neutral gray (not a design-system token) rather than the row's
+   own accent color, so it reads as a plain count instead of another
+   status. */
 .landing-preview-panel-count {
   display: inline-flex;
   align-items: center;
@@ -3951,8 +3965,8 @@ legend.field-label { padding: 0; }
   height: 18px;
   padding: 0 5px;
   border-radius: var(--radius-pill);
-  background: var(--card-bg);
-  color: inherit;
+  background: #525252;
+  color: #f5f5f5;
   font-size: 11px;
   font-weight: 600;
   flex-shrink: 0;
