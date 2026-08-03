@@ -3479,8 +3479,8 @@ legend.field-label { padding: 0; }
      different widths (a short wordmark vs. two buttons), so space-between
      would push the middle nav-links off true center. Two equal 1fr side
      columns keep the middle column mathematically centered regardless.
-     Width matches .landing-preview-shell exactly (calc(50vw - 12px), the
-     same 6-of-12 grid columns) — was a fixed 1120px, so the logo and
+     Width matches .landing-preview-shell exactly (calc(66.6667vw - 8px),
+     the same 8-of-12 grid columns) — was a fixed 1120px, so the logo and
      "Essayer Altora" button sat well inside those columns instead of
      spanning their full width like the mockup below. No horizontal
      padding: with the width already matching the grid columns exactly,
@@ -3489,7 +3489,7 @@ legend.field-label { padding: 0; }
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  max-width: calc(50vw - 12px);
+  max-width: calc(66.6667vw - 8px);
   width: 100%;
   margin: 0 auto;
   padding: 24px 0;
@@ -3662,15 +3662,14 @@ legend.field-label { padding: 0; }
    shadow just lift the illustration off the hero as a self-contained
    "screenshot"; the actual card look lives on .landing-preview-card. */
 .landing-preview-shell {
-  /* True 6-of-12 viewport grid columns (matches the "g" debug overlay:
-     repeat(12,1fr); gap:24px over the full viewport) rather than half of
-     the narrower 1120px content column — for N equal columns with (N-1)
-     gaps of g over width W, 6 columns + 5 gaps simplifies to exactly
-     50vw - g/2. No upper clamp: capping at a fixed px value (e.g. 720px)
-     breaks the 6-column match on any viewport wide enough for
-     50vw - 12px to exceed it (already true above ~1465px), so the
-     window silently fell short of the grid instead of tracking it. */
-  width: calc(50vw - 12px);
+  /* True 8-of-12 viewport grid columns (matches the "g" debug overlay:
+     repeat(12,1fr); gap:24px over the full viewport). For k columns out
+     of N with gap g over width W: span = (k/N)*W + g*[(k-1) - (k/N)(N-1)].
+     For k=8, N=12, g=24 that simplifies to exactly (2/3)W - 8px. No upper
+     clamp: capping at a fixed px value breaks the column match on any
+     viewport wide enough to exceed it, so the window would silently fall
+     short of the grid instead of tracking it. */
+  width: calc(66.6667vw - 8px);
   display: flex;
   gap: 12px;
   padding: 12px;
@@ -3779,12 +3778,15 @@ legend.field-label { padding: 0; }
   padding: 4px 0;
 }
 
+/* Same 32px box as .landing-preview-sidebar-icon/-avatar below — every
+   element stacked in this rail (logo, nav icons, avatar) shares one
+   consistent width so they all line up on the same vertical axis. */
 .landing-preview-sidebar-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
   background: var(--indigo-tint);
   color: var(--indigo);
@@ -3811,8 +3813,8 @@ legend.field-label { padding: 0; }
 .landing-preview-sidebar-icon .lucide { width: 16px; height: 16px; }
 
 .landing-preview-sidebar-avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;

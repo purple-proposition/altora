@@ -4,6 +4,7 @@ import Icon from '@/components/Icon';
 import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
+import LandingPreviewStats from '@/components/LandingPreviewStats';
 
 // Public marketing landing page, shown at "/" only when signed out (see
 // app/(tracker)/page.tsx and middleware.ts). Built entirely from the
@@ -82,9 +83,7 @@ export default function LandingPage() {
                 <div className="landing-preview-greeting-title">
                   Bonjour <Image className="landing-preview-greeting-avatar" src="/landing-preview-avatar.jpg" alt="Camille" width={20} height={20} /> Camille,
                 </div>
-                <p className="landing-preview-greeting-text">
-                  <span className="landing-preview-period">Aujourd&apos;hui<Icon name="chevron-down" /></span>, tu as <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />8</span> offres à postuler, <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />4</span> envoyées, <span className="inline-pill inline-pill--green"><Icon name="target" />1</span> entretien et <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />0</span> refus.
-                </p>
+                <LandingPreviewStats />
               </div>
             </div>
           </div>
