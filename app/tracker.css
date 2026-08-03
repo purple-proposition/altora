@@ -3811,16 +3811,10 @@ legend.field-label { padding: 0; }
 .landing-preview-sidebar-icon .lucide { width: 16px; height: 16px; }
 
 .landing-preview-sidebar-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--indigo);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
+  object-fit: cover;
   flex-shrink: 0;
   margin-top: auto;
 }
@@ -3854,17 +3848,10 @@ legend.field-label { padding: 0; }
   margin: 0 0 8px;
 }
 .landing-preview-greeting-avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--indigo);
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
+  object-fit: cover;
 }
 .landing-preview-greeting-text {
   font-size: 14px;
