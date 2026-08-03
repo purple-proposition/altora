@@ -1310,8 +1310,8 @@ body {
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
   font-weight: 500;
-  color: var(--green);
-  background: var(--green-tint);
+  color: #065f46;
+  background: #d1fae5;
 }
 .card-interview-pill .lucide { width: 12px; height: 12px; }
 
