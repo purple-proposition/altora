@@ -4278,13 +4278,19 @@ legend.field-label { padding: 0; }
   font-weight: 600;
   color: #fff;
 }
-.landing-talent-tag--status { top: 12px; left: 12px; background: var(--indigo); }
 .landing-talent-tag--location { bottom: 12px; right: 12px; background: color-mix(in srgb, black 60%, var(--indigo) 40%); }
 .landing-talent-body { padding: 20px; }
-.landing-talent-name { font-size: 14px; font-weight: 700; color: var(--indigo); margin-bottom: 8px; }
-.landing-talent-degree { font-family: 'Gloock', Georgia, serif; font-synthesis: none; font-size: 20px; color: var(--text); }
-.landing-talent-specialty { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+/* First name is the card's title (everyone shown here is on an
+   alternance contract, so that tag/status line was redundant) —
+   the degree becomes a plain muted subtitle underneath instead. */
+.landing-talent-name { font-family: 'Gloock', Georgia, serif; font-synthesis: none; font-size: 20px; color: var(--text); margin-bottom: 4px; }
+.landing-talent-degree { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+/* Row that wraps to a 2nd line once it runs out of width, instead of
+   one skill per row — override .inline-pill's own margin:0 8px (meant
+   for pills sitting inline in a sentence) since it ate into the
+   available row width here. */
 .landing-talent-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+.landing-talent-skills .inline-pill { margin: 0; }
 .landing-talent-footer {
   display: flex;
   border-top: 1px solid var(--border);

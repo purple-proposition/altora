@@ -228,23 +228,23 @@ export default function LandingPage() {
             <span className="landing-showcase-eyebrow">Pour les entreprises partenaires</span>
             <h3 className="landing-showcase-title">L&apos;annuaire de toute une promotion, ouvert à vos recruteurs</h3>
             <p className="landing-showcase-body">
-              Chaque école décide de rendre sa promotion visible à ses entreprises
-              partenaires : photo, formation, compétences, CV, LinkedIn et email
-              directement accessibles, pour contacter le bon profil sans passer par
-              un intermédiaire.
+              Les recruteurs peuvent poster leurs offres et voir aussitôt leur taux
+              de matching avec les profils de la promotion. Chaque école décide de
+              rendre sa promotion visible à ses entreprises partenaires : photo,
+              formation, compétences, CV, LinkedIn et email directement
+              accessibles, pour contacter le bon profil sans passer par un
+              intermédiaire.
             </p>
           </div>
           <div className="landing-showcase-visual">
             <div className="landing-talent-card">
               <div className="landing-talent-photo">
                 <Image src="/landing-preview-avatar.jpg" alt="Camille" fill sizes="200px" />
-                <span className="landing-talent-tag landing-talent-tag--status">Alternance</span>
                 <span className="landing-talent-tag landing-talent-tag--location">Lyon</span>
               </div>
               <div className="landing-talent-body">
-                <div className="landing-talent-name">Camille GORIN</div>
-                <div className="landing-talent-degree">Bachelor 3</div>
-                <div className="landing-talent-specialty">Communication &amp; Marketing</div>
+                <div className="landing-talent-name">Camille</div>
+                <div className="landing-talent-degree">Bachelor Business Development</div>
                 <div className="landing-talent-skills">
                   <span className="inline-pill inline-pill--slate">Suite Adobe</span>
                   <span className="inline-pill inline-pill--slate">Relations clients</span>
