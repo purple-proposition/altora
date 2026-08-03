@@ -39,78 +39,38 @@ export default function LandingPage() {
         <div className="landing-preview landing-in landing-in--4" aria-hidden="true">
           <div className="landing-preview-window">
             <div className="landing-preview-titlebar">
+              <span className="landing-preview-collapse-btn"><Icon name="panel-left-close" /></span>
               <span className="landing-preview-crumb"><Icon name="home" />Accueil</span>
+              <span className="landing-preview-crumb-sep">/</span>
+              <span className="landing-preview-crumb landing-preview-crumb--active"><Icon name="users" />Accueil</span>
               <div className="landing-preview-window-actions">
-                <Icon name="mail" />
-                <Icon name="bell" />
+                <span className="landing-preview-window-btn">
+                  <Icon name="mail" />
+                  <span className="landing-preview-window-badge">2</span>
+                </span>
+                <span className="landing-preview-window-btn"><Icon name="bell" /></span>
               </div>
             </div>
             <div className="landing-preview-body">
               <div className="landing-preview-sidebar">
-                <div className="landing-preview-sidebar-brand">
-                  <span className="landing-preview-sidebar-logo"><Icon name="graduation-cap" /></span>
-                  <span className="landing-preview-sidebar-brand-text">Votre école</span>
-                </div>
+                <span className="landing-preview-sidebar-logo"><Icon name="graduation-cap" /></span>
                 <nav className="landing-preview-sidebar-nav">
-                  <span className="landing-preview-sidebar-item is-active"><Icon name="home" />Accueil</span>
-                  <span className="landing-preview-sidebar-item"><Icon name="list-checks" />Mes candidatures<span className="landing-preview-sidebar-badge">8</span></span>
-                  <span className="landing-preview-sidebar-item"><Icon name="calendar" />Calendrier</span>
-                  <span className="landing-preview-sidebar-item"><Icon name="target" />ATS Booster</span>
-                  <span className="landing-preview-sidebar-item"><Icon name="file-text" />Mes documents</span>
-                  <span className="landing-preview-sidebar-item"><Icon name="mail" />Boîte de réception<span className="landing-preview-sidebar-badge">2</span></span>
+                  <span className="landing-preview-sidebar-icon is-active"><Icon name="home" /></span>
+                  <span className="landing-preview-sidebar-icon"><Icon name="list-checks" /></span>
+                  <span className="landing-preview-sidebar-icon"><Icon name="calendar" /></span>
+                  <span className="landing-preview-sidebar-icon"><Icon name="file-text" /></span>
+                  <span className="landing-preview-sidebar-icon"><Icon name="folder" /></span>
+                  <span className="landing-preview-sidebar-icon"><Icon name="mail" /></span>
                 </nav>
-                <div className="landing-preview-sidebar-user">
-                  <span className="landing-preview-sidebar-avatar">C</span>
-                  <span className="landing-preview-sidebar-user-text">
-                    <span className="landing-preview-sidebar-user-name">Camille</span>
-                    <span className="landing-preview-sidebar-user-role">Étudiante</span>
-                  </span>
-                </div>
+                <span className="landing-preview-sidebar-avatar">C</span>
               </div>
               <div className="landing-preview-content">
-              <div className="landing-preview-greeting">
-                <div className="landing-preview-greeting-title">Bonjour, Camille</div>
+                <div className="landing-preview-greeting-title">
+                  Bonjour <span className="landing-preview-greeting-avatar">C</span> Camille,
+                </div>
                 <p className="landing-preview-greeting-text">
-                  Aujourd&apos;hui, tu as <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />8</span> offres à postuler, <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />4</span> envoyées, <span className="inline-pill inline-pill--green"><Icon name="target" />1</span> entretien et <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />0</span> refus.
+                  <span className="landing-preview-period">Aujourd&apos;hui<Icon name="chevron-down" /></span>, tu as <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />8</span> offres à postuler, <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />4</span> envoyées, <span className="inline-pill inline-pill--green"><Icon name="target" />1</span> entretien et <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />0</span> refus.
                 </p>
-              </div>
-              <div className="landing-preview-cols">
-                <div className="landing-preview-col">
-                  <div className="column-header column-header--slate">
-                    <Icon name="circle-dashed" />
-                    <span className="column-header-label">À postuler</span>
-                    <span className="column-header-count">8</span>
-                  </div>
-                  <div className="landing-preview-chip">Chargé·e de marketing digital</div>
-                  <div className="landing-preview-chip">Growth &amp; Acquisition</div>
-                </div>
-                <div className="landing-preview-col">
-                  <div className="column-header column-header--amber">
-                    <Icon name="hourglass" />
-                    <span className="column-header-label">Envoyé</span>
-                    <span className="column-header-count">4</span>
-                  </div>
-                  <div className="landing-preview-chip landing-preview-chip--source">Assistant chef de projet</div>
-                </div>
-                <div className="landing-preview-col">
-                  <div className="column-header column-header--green">
-                    <Icon name="target" />
-                    <span className="column-header-label">Entretien</span>
-                    <span className="column-header-count">1</span>
-                  </div>
-                  <div className="landing-preview-chip landing-preview-chip--arrived">
-                    Assistant chef de projet
-                    <span className="landing-preview-chip-pill"><Icon name="calendar" />Entretien le 12 nov à 14h</span>
-                  </div>
-                </div>
-                <div className="landing-preview-col">
-                  <div className="column-header column-header--rose">
-                    <Icon name="folder-x" />
-                    <span className="column-header-label">Refus</span>
-                    <span className="column-header-count">0</span>
-                  </div>
-                </div>
-              </div>
               </div>
             </div>
           </div>

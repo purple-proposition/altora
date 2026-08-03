@@ -8,15 +8,15 @@ import type { CSSProperties } from 'react';
 export default function AltoraLogo({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
     <svg
-      viewBox="0 0 104 28"
-      width="104"
+      viewBox="0 0 112 28"
+      width="112"
       height="28"
       role="img"
       aria-label="Altora"
       className={className}
       style={{ overflow: 'visible', ...style }}
     >
-      <text x="0" y="21" fontFamily="Gloock, Georgia, serif" fontSize="24" letterSpacing="-4" fill="currentColor">
+      <text x="0" y="21" fontFamily="Gloock, Georgia, serif" fontSize="24" letterSpacing="-0.4" fill="currentColor">
         Altora
       </text>
     </svg>

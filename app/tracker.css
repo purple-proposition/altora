@@ -3579,9 +3579,6 @@ legend.field-label { padding: 0; }
     opacity: 1;
     transform: none;
   }
-  .landing-preview-chip--source { animation: none; opacity: 0.2; transform: none; }
-  .landing-preview-chip--arrived,
-  .landing-preview-chip-pill { animation: none; opacity: 1; transform: none; }
 }
 
 .landing-hero {
@@ -3670,107 +3667,135 @@ legend.field-label { padding: 0; }
 .landing-preview-titlebar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
 }
 
+/* Matches .topbar-collapse-btn: a 32px bordered square button rendered
+   right before the breadcrumb (components/SidebarCollapseToggle.tsx). */
+.landing-preview-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  color: var(--text-muted);
+  margin-right: 16px;
+}
+.landing-preview-collapse-btn .lucide { width: 12px; height: 12px; }
+
+/* Real breadcrumb (app/(tracker)/page.tsx) shows two segments on the home
+   page: "Accueil" (home icon, link-styled) then a separator then a second
+   "Accueil" (users icon, active/current-page styled, plain color change —
+   no pill background). */
 .landing-preview-crumb {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--text);
+  color: var(--text-muted);
 }
+.landing-preview-crumb--active { color: var(--text); }
 .landing-preview-crumb .lucide { width: 14px; height: 14px; }
+.landing-preview-crumb-sep { margin: 0 8px; color: var(--border); font-size: 12px; }
 
-.landing-preview-window-actions { display: flex; align-items: center; gap: 12px; }
-.landing-preview-window-actions .lucide { width: 14px; height: 14px; color: var(--text-muted); }
+.landing-preview-window-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.landing-preview-window-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  color: var(--text-muted);
+}
+.landing-preview-window-btn .lucide { width: 12px; height: 12px; }
+/* Only the mail button gets a badge on the real topbar — the bell never
+   does (see components/TopbarActions.tsx). */
+.landing-preview-window-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 12px;
+  height: 12px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--indigo);
+  color: #fff;
+  font-size: 12px;
+  line-height: 12px;
+  text-align: center;
+}
 
-.landing-preview-body { display: flex; }
+.landing-preview-body { display: flex; min-height: 320px; }
 
-/* Full labeled sidebar (not just a collapsed icon rail), matching the
-   real Sidebar component's shape: brand row, nav items with counts, a
-   user card pinned to the bottom. The school's own name is a generic
-   placeholder here on purpose, not a specific partner school's logo. */
+/* Collapsed icon-only sidebar rail (the real Sidebar's .sidebar--collapsed
+   state), not the fully labeled expanded one — logo only (no brand text),
+   icon-only nav items, avatar pinned to the bottom via margin-top:auto.
+   The logo is a generic placeholder, not any specific partner school's. */
 .landing-preview-sidebar {
   display: flex;
   flex-direction: column;
-  width: 168px;
+  align-items: center;
+  width: 64px;
   flex-shrink: 0;
   gap: 16px;
   padding: 16px 12px;
   border-right: 1px solid var(--border);
 }
 
-.landing-preview-sidebar-brand { display: flex; align-items: center; gap: 8px; padding: 0 4px; }
 .landing-preview-sidebar-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 8px;
   background: var(--indigo-tint);
   color: var(--indigo);
   flex-shrink: 0;
 }
-.landing-preview-sidebar-logo .lucide { width: 14px; height: 14px; }
-.landing-preview-sidebar-brand-text { font-size: 12px; font-weight: 600; color: var(--text); }
+.landing-preview-sidebar-logo .lucide { width: 16px; height: 16px; }
 
-.landing-preview-sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
-.landing-preview-sidebar-item {
+.landing-preview-sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
+.landing-preview-sidebar-icon {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-input);
-  font-size: 12px;
-  font-weight: 500;
   color: var(--text-muted);
 }
-.landing-preview-sidebar-item.is-active { background: var(--indigo-tint); color: var(--indigo); }
-.landing-preview-sidebar-item .lucide { width: 14px; height: 14px; flex-shrink: 0; }
-.landing-preview-sidebar-badge {
-  margin-left: auto;
-  font-size: 12px;
-  font-weight: 600;
-  opacity: 0.75;
-}
+/* Real active state is a neutral background (var(--card-bg), same as
+   hover), not an indigo tint — no color change beyond bg + text darkening. */
+.landing-preview-sidebar-icon.is-active { background: var(--bg); color: var(--text); }
+.landing-preview-sidebar-icon .lucide { width: 16px; height: 16px; }
 
-.landing-preview-sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: auto;
-  padding: 8px;
-  border-top: 1px solid var(--border);
-}
 .landing-preview-sidebar-avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--indigo);
   color: #fff;
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
+  margin-top: auto;
 }
-.landing-preview-sidebar-user-text { display: flex; flex-direction: column; }
-.landing-preview-sidebar-user-name { font-size: 12px; font-weight: 600; color: var(--text); }
-.landing-preview-sidebar-user-role { font-size: 12px; color: var(--text-muted); }
 
 .landing-preview-content {
   flex: 1;
   min-width: 0;
   padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 /* Same serif display font as every real h1 (see app/fonts.css), applied
@@ -3778,11 +3803,27 @@ legend.field-label { padding: 0; }
    aria-hidden mockup, and the page's real hero title is the only <h1>
    that should exist here. */
 .landing-preview-greeting-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-family: 'Gloock', Georgia, serif;
   font-synthesis: none;
   font-size: 22px;
   color: var(--text);
-  margin: 0 0 4px;
+  margin: 0 0 8px;
+}
+.landing-preview-greeting-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--indigo);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
 }
 .landing-preview-greeting-text {
   font-size: 14px;
@@ -3790,85 +3831,16 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
   margin: 0;
 }
-
-.landing-preview-cols {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.landing-preview-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Column headers reuse .column-header verbatim (see the real board in
-   app/(tracker)/page.tsx) instead of a landing-only lookalike, so this
-   mockup shows the actual product's own component, not an approximation. */
-.landing-preview-col .column-header { padding: 8px; font-size: 12px; }
-.landing-preview-col .column-header .lucide { width: 14px; height: 14px; }
-
-.landing-preview-chip {
-  padding: 8px 12px;
-  border-radius: var(--radius-inner);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-/* Scroll-triggered "card move" from Envoyé to Entretien: the source chip
-   fades out where it sits, the arrived chip (already in place in the
-   Entretien column) fades in just after, then its interview-date pill —
-   staged with plain animation-delay on top of the hero's own entrance
-   stagger (.landing-in--4 finishes around 0.95s) rather than a real
-   cross-column translate, which would need per-breakpoint column-width
-   math for a purely decorative, aria-hidden illustration. */
-.landing-preview-chip--source {
-  animation: preview-chip-fade-out 0.6s ease forwards;
-  animation-delay: 1.3s;
-}
-
-.landing-preview-chip--arrived {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  opacity: 0;
-  animation: preview-chip-fade-in 0.6s ease forwards;
-  animation-delay: 1.7s;
-}
-
-.landing-preview-chip-pill {
+/* Real subtitle opens with an "Aujourd'hui ⌄" period-selector button
+   before "tu as ..." (components/... period-trigger in page.tsx). */
+.landing-preview-period {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 8px;
-  border-radius: var(--radius-pill);
-  background: var(--green-tint);
-  color: var(--green);
-  font-size: 12px;
+  color: var(--text);
   font-weight: 600;
-  opacity: 0;
-  animation: preview-pill-fade-in 0.5s ease forwards;
-  animation-delay: 2.3s;
 }
-.landing-preview-chip-pill .lucide { width: 12px; height: 12px; }
-
-@keyframes preview-chip-fade-out {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0.2; transform: translateX(6px); }
-}
-@keyframes preview-chip-fade-in {
-  from { opacity: 0; transform: translateX(-6px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes preview-pill-fade-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.landing-preview-period .lucide { width: 12px; height: 12px; }
 
 
 /* Audience categories: Altora serves two distinct audiences (see
