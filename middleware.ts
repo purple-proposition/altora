@@ -28,6 +28,11 @@ export default auth((req) => {
 export const config = {
   // Exclude every static file under /public (previously only avatar.jpg and
   // tracker.js were listed by name — lucide.js and the school logo were
-  // still paying the JWT-decode cost of auth() on every request).
-  matcher: ['/((?!_next/static|_next/image|.*\\.(?:ico|jpg|jpeg|png|svg|js|css|map|json)$).*)'],
+  // still paying the JWT-decode cost of auth() on every request). Font
+  // extensions were missing entirely: signed-out visitors got Gloock-
+  // Regular.ttf silently redirected to /login instead of served, so the
+  // browser fell back to Georgia at whatever weight each element asked
+  // for — Georgia has a real bold, Gloock only ships Regular, hence the
+  // headings and the logo looking like two unrelated typefaces.
+  matcher: ['/((?!_next/static|_next/image|.*\\.(?:ico|jpg|jpeg|png|svg|js|css|map|json|ttf|otf|woff|woff2)$).*)'],
 };
