@@ -3845,7 +3845,7 @@ legend.field-label { padding: 0; }
   gap: 8px;
   font-family: 'Gloock', Georgia, serif;
   font-synthesis: none;
-  font-size: 22px;
+  font-size: 24px;
   color: var(--text);
   margin: 0 0 8px;
 }
@@ -3944,19 +3944,21 @@ legend.field-label { padding: 0; }
 .landing-preview-panel-list .inline-pill {
   margin: 0;
   gap: 4px;
-  height: 28px;
-  padding: 0 8px;
+  min-height: 28px;
+  padding: 6px 8px;
   width: 100%;
   align-items: center;
-  justify-content: space-between;
   white-space: normal;
   text-align: left;
 }
 .landing-preview-panel-list .inline-pill .lucide { flex-shrink: 0; }
-/* Task-count marker at the end of an "À faire" pill — deliberately a
-   flat neutral gray (not a design-system token) rather than the row's
-   own accent color, so it reads as a plain count instead of another
-   status. */
+/* Task-count marker at the end of an "À faire" pill: inverted from its
+   own pill's colors (background = the pill's own text color, text =
+   the pill's own background tint) instead of one flat gray for every
+   variant. Each inline-pill--* modifier below supplies its matching
+   pair explicitly, since the badge's own `color` is already spoken
+   for (the count digit) and can't double as a currentColor source for
+   its own background. */
 .landing-preview-panel-count {
   display: inline-flex;
   align-items: center;
@@ -3965,13 +3967,16 @@ legend.field-label { padding: 0; }
   height: 18px;
   padding: 0 5px;
   border-radius: var(--radius-pill);
-  background: #525252;
-  color: #f5f5f5;
+  background: var(--text-muted);
+  color: var(--bg);
   font-size: 11px;
   font-weight: 600;
   flex-shrink: 0;
   margin-left: auto;
 }
+.inline-pill--amber .landing-preview-panel-count { background: var(--amber); color: var(--amber-tint); }
+.inline-pill--green .landing-preview-panel-count { background: var(--green); color: var(--green-tint); }
+.inline-pill--rose .landing-preview-panel-count { background: var(--rose); color: var(--rose-tint); }
 /* Real subtitle opens with an "Aujourd'hui ⌄" period-selector button
    before "tu as ..." (components/... period-trigger in page.tsx). */
 .landing-preview-period {
