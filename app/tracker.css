@@ -3515,10 +3515,12 @@ legend.field-label { padding: 0; }
   gap: 8px;
 }
 
+/* Same height as .landing-nav-cta ("Essayer Altora", 41px) — width
+   scaled proportionally from the SVG's own 112:28 (4:1) viewBox ratio. */
 .landing-nav-logo {
   display: block;
-  width: 96px;
-  height: 24px;
+  width: 164px;
+  height: 41px;
   color: var(--text);
 }
 
