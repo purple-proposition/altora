@@ -3673,7 +3673,11 @@ legend.field-label { padding: 0; }
   width: calc(50vw - 12px);
   display: flex;
   gap: 12px;
-  padding: 12px;
+  /* Left/right at 0 (was 12px): the sidebar's own 16px padding is now
+     the only space between an icon and the shell's border on that
+     side, instead of stacking on top of this shell padding (16+12=28px
+     total). Top/bottom keep their 12px. */
+  padding: 12px 0;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
