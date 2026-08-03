@@ -3499,6 +3499,7 @@ legend.field-label { padding: 0; }
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .landing-nav-brand {
@@ -3631,15 +3632,18 @@ legend.field-label { padding: 0; }
 
 .landing-preview {
   /* Breaks out of .landing-hero's narrower 720px text column so the
-     window can size against the page's wider 1120px content grid (the
-     same one .landing-categories/.landing-features use below, and what
-     the "g" debug overlay checks against) instead of being capped by the
-     hero's own reading-width column. */
-  width: 100%;
-  max-width: 1120px;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
+     window can size against the full viewport width instead of being
+     capped by the hero's own reading-width column. Uses the calc(50% -
+     50vw) full-bleed technique rather than left:50%/translateX(-50%):
+     that older approach resolves its percentage against the nearest
+     block containing block (.landing-hero, 720px wide), not the
+     viewport, so it silently re-centered on the wrong box and pushed
+     the window right past .landing-card's edge instead of centering it
+     on the page. calc(50% - 50vw) always centers on the true viewport
+     regardless of ancestor width. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   display: flex;
   justify-content: center;
 }
