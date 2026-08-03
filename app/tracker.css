@@ -1091,6 +1091,7 @@ body {
 .inline-pill--amber  { background: var(--amber-tint);  color: var(--amber); }
 .inline-pill--green  { background: var(--green-tint);  color: var(--green); }
 .inline-pill--rose   { background: var(--rose-tint);   color: var(--rose); }
+.inline-pill--cyan   { background: var(--cyan-tint);   color: var(--cyan); }
 
 /* --- Board --- */
 
@@ -3772,10 +3773,9 @@ legend.field-label { padding: 0; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 64px;
   flex-shrink: 0;
   gap: 16px;
-  padding: 4px 0;
+  padding: 4px 18px;
 }
 
 /* Same 32px box as .landing-preview-sidebar-icon/-avatar below — every
@@ -3870,6 +3870,40 @@ legend.field-label { padding: 0; }
   padding: 4px 8px;
   margin: 0 2px;
 }
+
+.landing-preview-events {
+  margin-top: 24px;
+  width: 220px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  padding: 12px;
+}
+.landing-preview-events-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+/* Chronological list (Sephora interview, then the job dating that
+   precedes it, then the training term start), stacked one per row
+   instead of wrapped inline pills. */
+.landing-preview-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.landing-preview-events-list .inline-pill {
+  margin: 0;
+  gap: 4px;
+  padding: 4px 8px;
+  width: 100%;
+  align-items: flex-start;
+  white-space: normal;
+  text-align: left;
+}
+.landing-preview-events-list .inline-pill .lucide { flex-shrink: 0; margin-top: 1px; }
 /* Real subtitle opens with an "Aujourd'hui ⌄" period-selector button
    before "tu as ..." (components/... period-trigger in page.tsx). */
 .landing-preview-period {
@@ -4038,14 +4072,14 @@ legend.field-label { padding: 0; }
 .landing-showcase-title {
   font-family: 'Gloock', Georgia, serif;
   font-synthesis: none;
-  font-size: 24px;
+  font-size: 32px;
   line-height: 1.2;
   color: var(--text);
   margin: 0 0 12px;
 }
 
 .landing-showcase-body {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--text-muted);
   margin: 0;

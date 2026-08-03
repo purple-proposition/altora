@@ -1,5 +1,6 @@
 import {
   Bell,
+  Briefcase,
   Calendar,
   CalendarClock,
   CheckCircle,
@@ -45,6 +46,7 @@ import {
 // page's client bundle, undoing the earlier perf work.
 const ICONS: Record<string, React.ComponentType<LucideProps>> = {
   bell: Bell,
+  briefcase: Briefcase,
   calendar: Calendar,
   'calendar-clock': CalendarClock,
   'check-circle': CheckCircle,

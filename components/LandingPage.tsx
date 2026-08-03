@@ -85,6 +85,14 @@ export default function LandingPage() {
                   Bonjour <Image className="landing-preview-greeting-avatar" src="/landing-preview-avatar.jpg" alt="Camille" width={20} height={20} /> Camille,
                 </div>
                 <LandingPreviewStats />
+                <div className="landing-preview-events">
+                  <div className="landing-preview-events-title">Événements à venir</div>
+                  <div className="landing-preview-events-list">
+                    <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien chez Sephora</span>
+                    <span className="inline-pill inline-pill--cyan"><Icon name="briefcase" />Job dating entreprise</span>
+                    <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée en formation</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
