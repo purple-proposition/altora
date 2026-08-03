@@ -3264,6 +3264,7 @@ legend.field-label { padding: 0; }
 /* "C'est quoi un ATS ?" stays plain, full-width text — only the 4
    numbered cards below it get a frame (see .method-explain-grid). */
 .method-card--intro { padding: 0; }
+.method-card--intro .method-card-text { font-size: 16px; }
 
 .method-explain-grid {
   display: grid;
