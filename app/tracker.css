@@ -1217,9 +1217,9 @@ body {
 /* Each card is tinted to match its column's own color, so a board full
    of cards reads as one coherent set instead of plain white boxes. */
 .card--slate { background: var(--bg); }
-.card--amber { background: var(--amber-track); }
-.card--green { background: var(--green-track); }
-.card--rose  { background: var(--rose-track); }
+.card--amber { background: var(--amber-tint); }
+.card--green { background: var(--green-tint); }
+.card--rose  { background: var(--rose-tint); }
 .card.dragging { opacity: 0.4; }
 .card:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--indigo); }
 
@@ -3268,7 +3268,7 @@ legend.field-label { padding: 0; }
 
 .method-explain-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin-top: 24px;
 }
@@ -3279,7 +3279,10 @@ legend.field-label { padding: 0; }
   padding: 28px;
   gap: 16px;
 }
-@media (max-width: 720px) {
+@media (max-width: 1000px) {
+  .method-explain-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
   .method-explain-grid { grid-template-columns: 1fr; }
 }
 
@@ -3306,7 +3309,10 @@ legend.field-label { padding: 0; }
 
 .generate-intro { display: flex; flex-direction: column; gap: 24px; }
 .method-card--intro-standalone { padding: 0; }
-.generate-intro-cta { width: 100%; padding: 16px 24px; font-size: 16px; }
+.generate-intro-cta { padding: 16px 32px; font-size: 16px; }
+@media (max-width: 1000px) {
+  .generate-intro-cta { width: 100%; }
+}
 
 .method-card-head { display: flex; align-items: center; gap: 8px; }
 

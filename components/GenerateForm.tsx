@@ -313,7 +313,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
             </div>
             <div className="generate-actions">
               <button type="button" className="btn-primary generate-intro-cta" onClick={() => setState('idle')}>
-                {hasCv ? 'Génère ton CV optimisé →' : 'Génère ton premier CV optimisé →'}
+                {hasCv ? 'Génère ton CV optimisé' : 'Génère ton premier CV optimisé'}
               </button>
             </div>
           </div>
