@@ -3743,7 +3743,7 @@ legend.field-label { padding: 0; }
   font-weight: 500;
   color: var(--text-muted);
 }
-.landing-preview-crumb--active { color: var(--text); }
+.landing-preview-crumb--active { color: var(--text-muted); }
 .landing-preview-crumb .lucide { width: 14px; height: 14px; }
 
 .landing-preview-window-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
