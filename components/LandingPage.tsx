@@ -46,18 +46,32 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="landing-preview-body">
-              <div className="landing-preview-rail">
-                <span className="landing-preview-rail-icon is-active"><Icon name="home" /></span>
-                <span className="landing-preview-rail-icon"><Icon name="list-checks" /></span>
-                <span className="landing-preview-rail-icon"><Icon name="users" /></span>
-                <span className="landing-preview-rail-icon"><Icon name="file-text" /></span>
-                <span className="landing-preview-rail-icon"><Icon name="calendar" /></span>
+              <div className="landing-preview-sidebar">
+                <div className="landing-preview-sidebar-brand">
+                  <span className="landing-preview-sidebar-logo"><Icon name="graduation-cap" /></span>
+                  <span className="landing-preview-sidebar-brand-text">Votre école</span>
+                </div>
+                <nav className="landing-preview-sidebar-nav">
+                  <span className="landing-preview-sidebar-item is-active"><Icon name="home" />Accueil</span>
+                  <span className="landing-preview-sidebar-item"><Icon name="list-checks" />Mes candidatures<span className="landing-preview-sidebar-badge">8</span></span>
+                  <span className="landing-preview-sidebar-item"><Icon name="calendar" />Calendrier</span>
+                  <span className="landing-preview-sidebar-item"><Icon name="target" />ATS Booster</span>
+                  <span className="landing-preview-sidebar-item"><Icon name="file-text" />Mes documents</span>
+                  <span className="landing-preview-sidebar-item"><Icon name="mail" />Boîte de réception<span className="landing-preview-sidebar-badge">2</span></span>
+                </nav>
+                <div className="landing-preview-sidebar-user">
+                  <span className="landing-preview-sidebar-avatar">C</span>
+                  <span className="landing-preview-sidebar-user-text">
+                    <span className="landing-preview-sidebar-user-name">Camille</span>
+                    <span className="landing-preview-sidebar-user-role">Étudiante</span>
+                  </span>
+                </div>
               </div>
               <div className="landing-preview-content">
               <div className="landing-preview-greeting">
                 <div className="landing-preview-greeting-title">Bonjour, Camille</div>
                 <p className="landing-preview-greeting-text">
-                  Tu as 8 offres à postuler, 4 candidatures envoyées, 1 entretien planifié et 0 refus.
+                  Aujourd&apos;hui, tu as <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />8</span> offres à postuler, <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />4</span> envoyées, <span className="inline-pill inline-pill--green"><Icon name="target" />1</span> entretien et <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />0</span> refus.
                 </p>
               </div>
               <div className="landing-preview-cols">

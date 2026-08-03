@@ -3633,7 +3633,16 @@ legend.field-label { padding: 0; }
 .landing-hero-cta { padding: 16px 28px; font-size: 16px; }
 
 .landing-preview {
+  /* Breaks out of .landing-hero's narrower 720px text column so the
+     window can size against the page's wider 1120px content grid (the
+     same one .landing-categories/.landing-features use below, and what
+     the "g" debug overlay checks against) instead of being capped by the
+     hero's own reading-width column. */
   width: 100%;
+  max-width: 1120px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
 }
@@ -3643,10 +3652,13 @@ legend.field-label { padding: 0; }
    reads as an actual screenshot of the product rather than an abstract
    illustration. */
 .landing-preview-window {
-  /* ~6 of the landing's 12 grid columns (half of the 1120px content
-     width). */
+  /* True 6-of-12 viewport grid columns (matches the "g" debug overlay:
+     repeat(12,1fr); gap:24px over the full viewport) rather than half of
+     the narrower 1120px content column — for N equal columns with (N-1)
+     gaps of g over width W, 6 columns + 5 gaps simplifies to exactly
+     50vw - g/2. Capped so it doesn't balloon on ultra-wide monitors. */
   width: 100%;
-  max-width: 560px;
+  max-width: min(calc(50vw - 12px), 720px);
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -3678,24 +3690,79 @@ legend.field-label { padding: 0; }
 
 .landing-preview-body { display: flex; }
 
-.landing-preview-rail {
+/* Full labeled sidebar (not just a collapsed icon rail), matching the
+   real Sidebar component's shape: brand row, nav items with counts, a
+   user card pinned to the bottom. The school's own name is a generic
+   placeholder here on purpose, not a specific partner school's logo. */
+.landing-preview-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  width: 168px;
+  flex-shrink: 0;
+  gap: 16px;
   padding: 16px 12px;
   border-right: 1px solid var(--border);
 }
-.landing-preview-rail-icon {
+
+.landing-preview-sidebar-brand { display: flex; align-items: center; gap: 8px; padding: 0 4px; }
+.landing-preview-sidebar-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: var(--indigo-tint);
+  color: var(--indigo);
+  flex-shrink: 0;
+}
+.landing-preview-sidebar-logo .lucide { width: 14px; height: 14px; }
+.landing-preview-sidebar-brand-text { font-size: 12px; font-weight: 600; color: var(--text); }
+
+.landing-preview-sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+.landing-preview-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
   border-radius: var(--radius-input);
+  font-size: 12px;
+  font-weight: 500;
   color: var(--text-muted);
 }
-.landing-preview-rail-icon.is-active { background: var(--indigo-tint); color: var(--indigo); }
-.landing-preview-rail-icon .lucide { width: 16px; height: 16px; }
+.landing-preview-sidebar-item.is-active { background: var(--indigo-tint); color: var(--indigo); }
+.landing-preview-sidebar-item .lucide { width: 14px; height: 14px; flex-shrink: 0; }
+.landing-preview-sidebar-badge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.landing-preview-sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding: 8px;
+  border-top: 1px solid var(--border);
+}
+.landing-preview-sidebar-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--indigo);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.landing-preview-sidebar-user-text { display: flex; flex-direction: column; }
+.landing-preview-sidebar-user-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.landing-preview-sidebar-user-role { font-size: 12px; color: var(--text-muted); }
 
 .landing-preview-content {
   flex: 1;
@@ -3706,15 +3773,20 @@ legend.field-label { padding: 0; }
   gap: 16px;
 }
 
+/* Same serif display font as every real h1 (see app/fonts.css), applied
+   directly rather than via an actual <h1> tag — this is a decorative,
+   aria-hidden mockup, and the page's real hero title is the only <h1>
+   that should exist here. */
 .landing-preview-greeting-title {
-  font-size: 14px;
-  font-weight: 600;
+  font-family: 'Gloock', Georgia, serif;
+  font-synthesis: none;
+  font-size: 22px;
   color: var(--text);
   margin: 0 0 4px;
 }
 .landing-preview-greeting-text {
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.6;
   color: var(--text-muted);
   margin: 0;
 }
