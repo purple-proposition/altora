@@ -28,9 +28,10 @@ export default function LandingPage() {
           Le copilote IA qui optimise<br />le taux de placement de votre promotion.
         </h1>
         <p className="landing-subtitle landing-in landing-in--2">
-          Aujourd&apos;hui, vos étudiants jonglent entre Excel, LinkedIn et les mails
-          pour chercher leur alternance. Avec Altora, ils suivent leurs candidatures,
-          génèrent CV et lettre par IA et passent les filtres ATS au même endroit.
+          Aujourd&apos;hui, écoles et étudiants jonglent entre Slack ou Teams et les
+          job boards. Chaque étudiant suit seul ses candidatures, parfois perdu
+          face aux filtres ATS. Avec Altora, il suit ses candidatures, génère CV
+          et lettre par IA, et passe enfin ces filtres, le tout au même endroit.
           Votre équipe pédagogique, elle, voit toute la promotion avancer en temps réel.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">

@@ -3496,9 +3496,13 @@ legend.field-label { padding: 0; }
 }
 
 .landing-nav {
-  display: flex;
+  /* Grid, not flex space-between: the brand and the actions groups are
+     different widths (a short wordmark vs. two buttons), so space-between
+     would push the middle nav-links off true center. Two equal 1fr side
+     columns keep the middle column mathematically centered regardless. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   max-width: 1120px;
   width: 100%;
   margin: 0 auto;
@@ -3539,7 +3543,7 @@ legend.field-label { padding: 0; }
 }
 .landing-nav-link:hover { color: var(--text); }
 
-.landing-nav-actions { display: flex; align-items: center; gap: 16px; }
+.landing-nav-actions { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
 
 .landing-nav-login {
   font-size: 14px;
