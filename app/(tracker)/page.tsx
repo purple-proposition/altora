@@ -58,7 +58,7 @@ export default async function TrackerPage() {
         <section className="summary-card" id="view-home">
           <div className="summary-date">{todayLabel}</div>
           <h1 className="summary-greeting">
-            <span id="greeting">Bonjour</span> <img className="avatar" src="/avatar.jpg" alt={firstName} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,
+            <span id="greeting">Bonjour</span> <Image className="avatar" src="/avatar.jpg" alt={firstName} width={32} height={32} /> <button type="button" className="greeting-name-btn" id="greeting-name-btn">{firstName}</button>,
           </h1>
           <p className="summary-subtitle">
             <span className="period-trigger-wrap">
