@@ -18,6 +18,12 @@ import SiteFooter from '@/components/SiteFooter';
 // positioning, since Altora's real differentiation is being the CRM/copilot
 // the school runs its whole promotion on.
 export default function LandingPage() {
+  // Same formatting as the real summary-date (app/(tracker)/page.tsx) —
+  // computed at request time, so it always reads as "today" rather than
+  // being hardcoded to whatever date this mockup was written on.
+  const rawPreviewDate = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const previewDateLabel = rawPreviewDate.charAt(0).toUpperCase() + rawPreviewDate.slice(1);
+
   return (
     <div className="landing">
       <SiteNav />
@@ -58,18 +64,14 @@ export default function LandingPage() {
             <div className="landing-preview-card">
               <div className="landing-preview-titlebar">
                 <span className="landing-preview-collapse-btn"><Icon name="panel-left-close" /></span>
-                <span className="landing-preview-crumb"><Icon name="home" />Accueil</span>
-                <span className="landing-preview-crumb-sep">/</span>
-                <span className="landing-preview-crumb landing-preview-crumb--active"><Icon name="users" />Accueil</span>
+                <span className="landing-preview-crumb landing-preview-crumb--active"><Icon name="home" />Accueil</span>
                 <div className="landing-preview-window-actions">
-                  <span className="landing-preview-window-btn">
-                    <Icon name="mail" />
-                    <span className="landing-preview-window-badge">2</span>
-                  </span>
+                  <span className="landing-preview-window-btn"><Icon name="mail" /></span>
                   <span className="landing-preview-window-btn"><Icon name="bell" /></span>
                 </div>
               </div>
               <div className="landing-preview-content">
+                <div className="landing-preview-date">{previewDateLabel}</div>
                 <div className="landing-preview-greeting-title">
                   Bonjour <span className="landing-preview-greeting-avatar">C</span> Camille,
                 </div>

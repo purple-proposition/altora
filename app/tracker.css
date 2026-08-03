@@ -3668,6 +3668,7 @@ legend.field-label { padding: 0; }
   gap: 12px;
   padding: 12px;
   background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
   text-align: left;
@@ -3721,14 +3722,12 @@ legend.field-label { padding: 0; }
 }
 .landing-preview-crumb--active { color: var(--text); }
 .landing-preview-crumb .lucide { width: 14px; height: 14px; }
-.landing-preview-crumb-sep { margin: 0 8px; color: var(--border); font-size: 12px; }
 
 .landing-preview-window-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
 /* Matches the real .topbar-bell exactly: 32px bordered square, same
    radius/icon size as .landing-preview-collapse-btn, so every button in
    the titlebar reads as one consistent family instead of two sizes. */
 .landing-preview-window-btn {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3740,24 +3739,6 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
 }
 .landing-preview-window-btn .lucide { width: 16px; height: 16px; }
-/* Only the mail button gets a badge on the real topbar — the bell never
-   does (see components/TopbarActions.tsx). */
-.landing-preview-window-badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-pill);
-  background: var(--indigo);
-  color: #fff;
-  font-size: 12px;
-  line-height: 1;
-}
 
 /* Collapsed icon-only sidebar rail (the real Sidebar's .sidebar--collapsed
    state), not the fully labeled expanded one — logo only (no brand text),
@@ -3800,7 +3781,10 @@ legend.field-label { padding: 0; }
 }
 /* Real active state is a neutral background (var(--card-bg), same as
    hover), not an indigo tint — no color change beyond bg + text darkening. */
-.landing-preview-sidebar-icon.is-active { background: var(--bg); color: var(--text); }
+/* Matches the real collapsed rail's own active/hover background exactly
+   (.sidebar--collapsed .sidebar-item--active) — var(--border), not
+   var(--bg), which reads as barely-there at this icon-only size. */
+.landing-preview-sidebar-icon.is-active { background: var(--border); color: var(--text); }
 .landing-preview-sidebar-icon .lucide { width: 16px; height: 16px; }
 
 .landing-preview-sidebar-avatar {
@@ -3822,6 +3806,14 @@ legend.field-label { padding: 0; }
   flex: 1;
   min-width: 0;
   padding: 16px;
+}
+
+/* Matches the real .summary-date exactly (scaled font-size aside). */
+.landing-preview-date {
+  margin-bottom: 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* Same serif display font as every real h1 (see app/fonts.css), applied
