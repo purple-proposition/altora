@@ -85,7 +85,7 @@ export default function LandingPage() {
                 </div>
                 <div className="landing-preview-panel-row">
                   <div className="landing-preview-panel">
-                    <div className="landing-preview-panel-title">À faire</div>
+                    <div className="landing-preview-panel-title"><Icon name="list-checks" />À faire</div>
                     <div className="landing-preview-panel-list">
                       <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />À postuler<span className="landing-preview-panel-count">8</span></span>
                       <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />Envoyé<span className="landing-preview-panel-count">4</span></span>
@@ -95,7 +95,7 @@ export default function LandingPage() {
                   </div>
                   <div className="landing-preview-panel">
                     <div className="landing-preview-panel-title-row">
-                      <div className="landing-preview-panel-title">Calendrier</div>
+                      <div className="landing-preview-panel-title"><Icon name="calendar" />Calendrier</div>
                       <span className="landing-preview-panel-badge">3</span>
                     </div>
                     <div className="landing-preview-panel-list">
@@ -107,10 +107,11 @@ export default function LandingPage() {
                   <div className="landing-preview-panel">
                     <div className="landing-preview-panel-title-row">
                       <div className="landing-preview-panel-title"><Icon name="mail" />Boîte de réception</div>
+                      <span className="landing-preview-panel-badge">2</span>
                     </div>
                     <div className="landing-preview-panel-list">
-                      <span className="inline-pill inline-pill--slate">École : rentrée décalée d&apos;une semaine</span>
-                      <span className="inline-pill inline-pill--slate">Recrutement : nouvelle offre disponible</span>
+                      <span className="inline-pill inline-pill--slate"><Icon name="mail" />Rentrée le 4 octobre</span>
+                      <span className="inline-pill inline-pill--slate"><Icon name="mail" />Une nouvelle offre est disponible</span>
                     </div>
                   </div>
                 </div>
