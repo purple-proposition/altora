@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
+import LandingPage from '@/components/LandingPage';
 import { auth, signOut } from '@/auth';
 import { getUserCv } from '@/lib/db';
 import { assetVersion } from '@/lib/assetVersion';
@@ -10,6 +11,14 @@ import Icon from '@/components/Icon';
 
 export default async function TrackerPage() {
   const session = await auth();
+
+  // Signed out, "/" is the public marketing landing page instead of the
+  // dashboard (see middleware.ts, which lets "/" through without a session,
+  // and layout.tsx, which skips the sidebar shell in that same case).
+  if (!session) {
+    return <LandingPage />;
+  }
+
   const fullName = session?.user?.name || '';
   const firstName = fullName.split(' ')[0] || session?.user?.email?.split('@')[0] || '';
   const email = session?.user?.email || '';

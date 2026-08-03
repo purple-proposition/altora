@@ -8,7 +8,11 @@ const PUBLIC_PATHS = ['/login', '/signup', '/robots.txt'];
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
-  const isPublic = PUBLIC_PATHS.some(p => pathname.startsWith(p)) || pathname.startsWith('/api/auth');
+  // "/" is the one exception: signed out, it's the public marketing landing
+  // page (see app/(tracker)/page.tsx and layout.tsx, both branch on session);
+  // signed in, it's the dashboard, same as always. Every other route still
+  // requires a session.
+  const isPublic = pathname === '/' || PUBLIC_PATHS.some(p => pathname.startsWith(p)) || pathname.startsWith('/api/auth');
 
   if (!req.auth && !isPublic) {
     const loginUrl = new URL('/login', req.nextUrl.origin);

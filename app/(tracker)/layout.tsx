@@ -15,6 +15,28 @@ export default async function TrackerLayout({ children }: { children: React.Reac
   const promotion = userExtra?.promotion || '';
   const isSchoolAdmin = session?.user?.id ? await isUserSchoolAdmin(session.user.id) : false;
 
+  // "/" is reachable signed out too (see middleware.ts) as the public
+  // marketing landing page (app/(tracker)/page.tsx renders it directly when
+  // there's no session) — none of the app shell (Sidebar, grid overlay,
+  // school-admin dev toggle) makes sense for a visitor who isn't signed in,
+  // so skip straight to the page's own markup instead of wrapping it in a
+  // sidebar that would just show empty/blank fields.
+  if (!session) {
+    return (
+      <>
+        {children}
+        <Script id="altora-theme" strategy="afterInteractive">
+          {`
+            var theme = localStorage.getItem('altora-theme') || 'system';
+            if (theme === 'dark' || theme === 'light') {
+              document.documentElement.setAttribute('data-theme', theme);
+            }
+          `}
+        </Script>
+      </>
+    );
+  }
+
   return (
     <>
       <SidebarCollapseProvider>
