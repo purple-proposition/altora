@@ -3511,6 +3511,17 @@ legend.field-label { padding: 0; }
   color: var(--text);
 }
 
+.landing-nav-links { display: flex; align-items: center; gap: 24px; }
+
+.landing-nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.landing-nav-link:hover { color: var(--text); }
+
 .landing-nav-actions { display: flex; align-items: center; gap: 16px; }
 
 .landing-nav-login {
@@ -3536,6 +3547,37 @@ legend.field-label { padding: 0; }
   transition: background 0.15s ease;
 }
 .landing-nav-cta:hover { background: var(--indigo-fill); }
+
+/* Hero entrance: each element fades/slides in on page load, staggered by
+   .landing-in--N so they arrive one after another instead of all at once. */
+@keyframes landing-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.landing-in { opacity: 0; animation: landing-fade-up 0.6s ease forwards; }
+.landing-in--1 { animation-delay: 0.05s; }
+.landing-in--2 { animation-delay: 0.15s; }
+.landing-in--3 { animation-delay: 0.25s; }
+.landing-in--4 { animation-delay: 0.35s; }
+.landing-in--5 { animation-delay: 0.45s; }
+
+/* Scroll reveal: sections fade/slide in the first time they enter the
+   viewport (see components/Reveal.tsx), then stay visible. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal--visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-in, .reveal {
+    animation: none;
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
 
 .landing-hero {
   max-width: 720px;
@@ -3651,6 +3693,87 @@ legend.field-label { padding: 0; }
   color: var(--text);
 }
 
+/* Audience categories: Altora serves two distinct audiences (see
+   app/(tracker)/ecole/page.tsx for the school-admin dashboard this mirrors)
+   — students tracking their own applications, and schools overseeing a
+   whole promotion. Each gets its own card, bullet points, and CTA rather
+   than a single generic "features" list, so each visitor sees their own
+   use case first. */
+.landing-categories {
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.landing-category {
+  scroll-margin-top: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 32px;
+}
+
+.landing-category-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-input);
+  background: var(--indigo-tint);
+  color: var(--indigo);
+  margin-bottom: 16px;
+}
+.landing-category-icon .lucide { width: 20px; height: 20px; }
+
+.landing-category-title {
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+
+.landing-category-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+}
+
+.landing-category-list {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.landing-category-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+.landing-category-list .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
+
+.landing-category-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--indigo);
+  text-decoration: none;
+}
+.landing-category-cta:hover { color: var(--indigo-fill); }
+.landing-category-cta .lucide { width: 16px; height: 16px; }
+
 .landing-features {
   max-width: 1120px;
   width: 100%;
@@ -3715,8 +3838,10 @@ legend.field-label { padding: 0; }
 @media (max-width: 720px) {
   .landing-title { font-size: 32px; }
   .landing-preview-cols { grid-template-columns: 1fr; }
+  .landing-categories { grid-template-columns: 1fr; }
   .landing-features { grid-template-columns: repeat(2, 1fr); }
   .landing-hero { padding: 64px 20px 40px; }
+  .landing-nav-links { display: none; }
 }
 
 @media (max-width: 480px) {
