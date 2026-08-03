@@ -4,7 +4,6 @@ import Icon from '@/components/Icon';
 import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
-import LandingPreviewStats from '@/components/LandingPreviewStats';
 import CountUpPercent from '@/components/CountUpPercent';
 
 // Public marketing landing page, shown at "/" only when signed out (see
@@ -84,10 +83,21 @@ export default function LandingPage() {
                 <div className="landing-preview-greeting-title">
                   Bonjour <Image className="landing-preview-greeting-avatar" src="/landing-preview-avatar.jpg" alt="Camille" width={20} height={20} /> Camille,
                 </div>
-                <LandingPreviewStats />
-                <div className="landing-preview-events">
-                  <div className="landing-preview-events-title">Événements à venir</div>
-                  <div className="landing-preview-events-list">
+                <div className="landing-preview-panel">
+                  <div className="landing-preview-panel-title">À faire</div>
+                  <div className="landing-preview-panel-list">
+                    <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />À postuler</span>
+                    <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />Envoyé</span>
+                    <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien</span>
+                    <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />Refus</span>
+                  </div>
+                </div>
+                <div className="landing-preview-panel">
+                  <div className="landing-preview-panel-title-row">
+                    <div className="landing-preview-panel-title">Événements à venir</div>
+                    <span className="landing-preview-panel-badge">3</span>
+                  </div>
+                  <div className="landing-preview-panel-list">
                     <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien chez Sephora</span>
                     <span className="inline-pill inline-pill--cyan"><Icon name="briefcase" />Job dating entreprise</span>
                     <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée en formation</span>
