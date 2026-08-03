@@ -3775,7 +3775,11 @@ legend.field-label { padding: 0; }
   align-items: center;
   flex-shrink: 0;
   gap: 16px;
-  padding: 4px 18px;
+  /* Same 16px used as the gap between the "À faire"/"Calendrier"/
+     "Boîte de réception" panels (.landing-preview-panel-row) — one
+     consistent spacing value reused instead of a different ad hoc one
+     here. */
+  padding: 4px 16px;
 }
 
 /* Same 32px box as .landing-preview-sidebar-icon/-avatar below — every
