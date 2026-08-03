@@ -3476,38 +3476,43 @@ legend.field-label { padding: 0; }
   line-height: 1.4;
 }
 
-/* --- Public landing page (app/(tracker)/page.tsx when signed out) --- */
-
+/* --- Public landing page (app/(tracker)/page.tsx when signed out) ---
+   Same composition as the dashboard's .app-shell (.sidebar + .app), just
+   rotated 90°: the nav sits flat on the page background like .sidebar
+   does (transparent, no card), and .landing-card is the bordered, rounded
+   content card like .app, touching the nav with zero gap (negative top
+   margin cancelling .landing's own gap, exactly like .app's negative
+   left margin cancels .app-shell's gap against .sidebar) while keeping
+   24px on its other 3 sides. Only .landing-card scrolls — the nav is a
+   flex sibling outside it, so it never needs position:sticky. */
 .landing {
   height: 100vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   background: var(--bg);
   color: var(--text);
   font-family: inherit;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Sticky nav: reuses the dashboard's ".app" floating-card look (card-bg,
-   border, radius-card, shadow) instead of a plain flush header, and stays
-   pinned to the top of .landing's own scroll (position: sticky is relative
-   to .landing since that's the nearest scrolling ancestor, not the
-   viewport). */
 .landing-nav {
-  position: sticky;
-  top: 16px;
-  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
   max-width: 1120px;
-  width: calc(100% - 48px);
-  margin: 16px auto 0;
-  padding: 12px 20px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+}
+
+.landing-card {
+  flex: 1;
+  min-height: 0;
+  margin: -24px 24px 24px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow);
+  overflow-y: auto;
 }
 
 .landing-nav-brand {
@@ -3709,9 +3714,6 @@ legend.field-label { padding: 0; }
 }
 
 .landing-category {
-  /* Clears the sticky floating nav (~72px tall incl. its own top offset)
-     when jumping here via the #ecoles/#etudiants nav anchors. */
-  scroll-margin-top: 96px;
   display: flex;
   flex-direction: column;
   background: var(--card-bg);
@@ -3895,7 +3897,6 @@ legend.field-label { padding: 0; }
 .landing-copilot-item p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text); }
 
 .landing-features {
-  scroll-margin-top: 96px;
   max-width: 1120px;
   width: 100%;
   margin: 0 auto;
