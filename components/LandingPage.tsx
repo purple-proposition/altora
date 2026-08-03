@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import Icon from '@/components/Icon';
 
 // Public marketing landing page, shown at "/" only when signed out (see
@@ -13,7 +12,6 @@ export default function LandingPage() {
     <div className="landing">
       <header className="landing-nav">
         <div className="landing-nav-brand">
-          <Image src="/rocket-school-logo.jpg" alt="Rocket School" width={32} height={32} className="landing-nav-logo" priority />
           <span className="landing-nav-word">Altora</span>
         </div>
         <div className="landing-nav-actions">
