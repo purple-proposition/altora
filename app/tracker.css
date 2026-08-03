@@ -3871,11 +3871,16 @@ legend.field-label { padding: 0; }
   margin: 0 2px;
 }
 
+.landing-preview-panel-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
 /* Small bordered widget used for both "À faire" and "Événements à
    venir" below the greeting — same card treatment, different content. */
 .landing-preview-panel {
-  margin-top: 16px;
   width: 220px;
+  flex-shrink: 0;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   padding: 12px;
@@ -3930,10 +3935,29 @@ legend.field-label { padding: 0; }
   padding: 4px 8px;
   width: 100%;
   align-items: center;
+  justify-content: space-between;
   white-space: normal;
   text-align: left;
 }
 .landing-preview-panel-list .inline-pill .lucide { flex-shrink: 0; }
+/* Task-count marker at the end of an "À faire" pill, same subtle pill
+   badge as .sidebar-item-badge (muted bg, not the row's own accent
+   color) so it reads as a count, not another status. */
+.landing-preview-panel-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  color: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-left: auto;
+}
 /* Real subtitle opens with an "Aujourd'hui ⌄" period-selector button
    before "tu as ..." (components/... period-trigger in page.tsx). */
 .landing-preview-period {

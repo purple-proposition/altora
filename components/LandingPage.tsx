@@ -83,24 +83,26 @@ export default function LandingPage() {
                 <div className="landing-preview-greeting-title">
                   Bonjour <Image className="landing-preview-greeting-avatar" src="/landing-preview-avatar.jpg" alt="Camille" width={20} height={20} /> Camille,
                 </div>
-                <div className="landing-preview-panel">
-                  <div className="landing-preview-panel-title">À faire</div>
-                  <div className="landing-preview-panel-list">
-                    <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />À postuler</span>
-                    <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />Envoyé</span>
-                    <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien</span>
-                    <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />Refus</span>
+                <div className="landing-preview-panel-row">
+                  <div className="landing-preview-panel">
+                    <div className="landing-preview-panel-title">À faire</div>
+                    <div className="landing-preview-panel-list">
+                      <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />À postuler<span className="landing-preview-panel-count">8</span></span>
+                      <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />Envoyé<span className="landing-preview-panel-count">4</span></span>
+                      <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien<span className="landing-preview-panel-count">1</span></span>
+                      <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />Refus<span className="landing-preview-panel-count">0</span></span>
+                    </div>
                   </div>
-                </div>
-                <div className="landing-preview-panel">
-                  <div className="landing-preview-panel-title-row">
-                    <div className="landing-preview-panel-title">Événements à venir</div>
-                    <span className="landing-preview-panel-badge">3</span>
-                  </div>
-                  <div className="landing-preview-panel-list">
-                    <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien chez Sephora</span>
-                    <span className="inline-pill inline-pill--cyan"><Icon name="briefcase" />Job dating entreprise</span>
-                    <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée en formation</span>
+                  <div className="landing-preview-panel">
+                    <div className="landing-preview-panel-title-row">
+                      <div className="landing-preview-panel-title">Événements à venir</div>
+                      <span className="landing-preview-panel-badge">3</span>
+                    </div>
+                    <div className="landing-preview-panel-list">
+                      <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien chez Sephora</span>
+                      <span className="inline-pill inline-pill--cyan"><Icon name="briefcase" />Job dating entreprise</span>
+                      <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée en formation</span>
+                    </div>
                   </div>
                 </div>
               </div>
