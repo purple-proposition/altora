@@ -3677,11 +3677,13 @@ legend.field-label { padding: 0; }
      that one side) instead of leaving a visible space between the
      sidebar and the content card. */
   gap: 0;
-  /* Left/right at 0 (was 12px): the sidebar's own 16px padding is now
-     the only space between an icon and the shell's border on that
-     side, instead of stacking on top of this shell padding (16+12=28px
-     total). Top/bottom keep their 12px. */
-  padding: 12px 0;
+  /* Left at 0: the sidebar's own 16px padding is the only space
+     between an icon and the shell's border on that side (was stacking
+     on top of this shell's own padding, 16+12=28px total). Right keeps
+     its 12px — the content card has no padding of its own on that
+     side, so removing it too left the card flush against the shell's
+     border with no inset at all. */
+  padding: 12px 12px 12px 0;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
