@@ -1,0 +1,23 @@
+/* Grid overlay (toggle with "g", see components/GridOverlayToggle.tsx).
+   Loaded from the root layout so it works on every single route — login,
+   signup, pricing, the landing page, the dashboard — instead of living
+   inside tracker.css, which several of those routes don't even import. */
+
+.grid-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.grid-overlay.visible { display: grid; }
+
+.grid-overlay span {
+  height: 100%;
+  background: rgba(79, 70, 229, 0.08);
+  border-left: 1px solid rgba(79, 70, 229, 0.25);
+  border-right: 1px solid rgba(79, 70, 229, 0.25);
+}

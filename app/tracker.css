@@ -2244,27 +2244,6 @@ legend.field-label { padding: 0; }
   50% { opacity: 1; }
 }
 
-/* --- Grid overlay (toggle with "G") --- */
-
-.grid-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 24px;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-.grid-overlay.visible { display: grid; }
-
-.grid-overlay span {
-  height: 100%;
-  background: rgba(79, 70, 229, 0.08);
-  border-left: 1px solid rgba(79, 70, 229, 0.25);
-  border-right: 1px solid rgba(79, 70, 229, 0.25);
-}
-
 /* --- Card context menu (right-click) --- */
 
 .context-menu {
@@ -3659,18 +3638,85 @@ legend.field-label { padding: 0; }
   justify-content: center;
 }
 
-.landing-preview-card {
+/* A miniature app window (titlebar + sidebar rail + the real "Accueil"
+   home screen) instead of just a floating board fragment, so the hero
+   reads as an actual screenshot of the product rather than an abstract
+   illustration. */
+.landing-preview-window {
   /* ~6 of the landing's 12 grid columns (half of the 1120px content
-     width), now that the mockup is a compact status strip rather than a
-     wide 3-column board. */
+     width). */
   width: 100%;
   max-width: 560px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
-  padding: 24px;
+  overflow: hidden;
   text-align: left;
+}
+
+.landing-preview-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-preview-crumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+.landing-preview-crumb .lucide { width: 14px; height: 14px; }
+
+.landing-preview-window-actions { display: flex; align-items: center; gap: 12px; }
+.landing-preview-window-actions .lucide { width: 14px; height: 14px; color: var(--text-muted); }
+
+.landing-preview-body { display: flex; }
+
+.landing-preview-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border);
+}
+.landing-preview-rail-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-input);
+  color: var(--text-muted);
+}
+.landing-preview-rail-icon.is-active { background: var(--indigo-tint); color: var(--indigo); }
+.landing-preview-rail-icon .lucide { width: 16px; height: 16px; }
+
+.landing-preview-content {
+  flex: 1;
+  min-width: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.landing-preview-greeting-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+.landing-preview-greeting-text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .landing-preview-cols {

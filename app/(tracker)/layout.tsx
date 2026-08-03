@@ -2,7 +2,6 @@ import Script from 'next/script';
 import '../tracker.css';
 import { auth } from '@/auth';
 import Sidebar from '@/components/Sidebar';
-import GridOverlayToggle from '@/components/GridOverlayToggle';
 import SchoolAdminToggle from '@/components/SchoolAdminToggle';
 import { SidebarCollapseProvider } from '@/components/SidebarCollapseContext';
 import { isUserSchoolAdmin } from '@/lib/school';
@@ -20,17 +19,12 @@ export default async function TrackerLayout({ children }: { children: React.Reac
   // there's no session) — the Sidebar and school-admin dev toggle don't make
   // sense for a visitor who isn't signed in, so skip straight to the page's
   // own markup instead of wrapping it in a sidebar that would just show
-  // empty/blank fields. The "g" grid overlay is kept though — it's a
-  // full-viewport dev tool (position: fixed, independent of any shell), so
-  // it's just as useful for checking the landing page's own 4px grid.
+  // empty/blank fields. The "g" grid overlay lives in the root layout now
+  // (app/layout.tsx), not here, so every route gets it exactly once.
   if (!session) {
     return (
       <>
         {children}
-        <div className="grid-overlay" id="grid-overlay">
-          {Array.from({ length: 12 }).map((_, i) => <span key={i}></span>)}
-        </div>
-        <GridOverlayToggle />
         <Script id="altora-theme" strategy="afterInteractive">
           {`
             var theme = localStorage.getItem('altora-theme') || 'system';
@@ -52,10 +46,6 @@ export default async function TrackerLayout({ children }: { children: React.Reac
         </div>
       </SidebarCollapseProvider>
 
-      <div className="grid-overlay" id="grid-overlay">
-        {Array.from({ length: 12 }).map((_, i) => <span key={i}></span>)}
-      </div>
-      <GridOverlayToggle />
       <SchoolAdminToggle />
 
       {/* beforeInteractive only runs on the very first hard page load of the
