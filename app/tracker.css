@@ -4248,6 +4248,60 @@ legend.field-label { padding: 0; }
 .landing-copilot-item .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 .landing-copilot-item p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text); }
 
+/* Student directory card ("annuaire de promotion" for partner
+   companies) — same card shell as .landing-match-card/.landing-
+   copilot-card (border, radius, shadow), built entirely from existing
+   tokens instead of the flat navy/white reference mockup. */
+.landing-talent-card {
+  width: 100%;
+  max-width: 280px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.landing-talent-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--bg);
+}
+.landing-talent-photo img { object-fit: cover; }
+.landing-talent-tag {
+  position: absolute;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+.landing-talent-tag--status { top: 12px; left: 12px; background: var(--indigo); }
+.landing-talent-tag--location { bottom: 12px; right: 12px; background: color-mix(in srgb, black 60%, var(--indigo) 40%); }
+.landing-talent-body { padding: 20px; }
+.landing-talent-name { font-size: 14px; font-weight: 700; color: var(--indigo); margin-bottom: 8px; }
+.landing-talent-degree { font-family: 'Gloock', Georgia, serif; font-synthesis: none; font-size: 20px; color: var(--text); }
+.landing-talent-specialty { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+.landing-talent-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+.landing-talent-footer {
+  display: flex;
+  border-top: 1px solid var(--border);
+}
+.landing-talent-action {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--indigo);
+  border-right: 1px solid var(--border);
+}
+.landing-talent-action:last-child { border-right: none; }
+.landing-talent-action .lucide { width: 16px; height: 16px; }
+
 .landing-features {
   max-width: 1120px;
   width: 100%;

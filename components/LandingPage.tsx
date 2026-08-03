@@ -33,12 +33,12 @@ export default function LandingPage() {
       <div className="landing-card">
       <main className="landing-hero">
         <h1 className="landing-title landing-in landing-in--1">
-          Le copilote IA qui optimise<br />le taux de placement de votre promotion.
+          Le copilote IA qui optimise<br />votre taux de placement.
         </h1>
         <p className="landing-subtitle landing-in landing-in--2">
-          Écoles et étudiants jonglent aujourd&apos;hui entre Slack, Teams et les job
-          boards. Avec Altora, tout se gère au même endroit : candidatures, CV par
-          IA, suivi de la promotion.
+          Les écoles et leurs apprenants jonglent aujourd&apos;hui entre une multitude
+          d&apos;outils. Avec Altora, tout se gère au même endroit pour les
+          accompagner vers la réussite de leur alternance.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
           <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
@@ -220,6 +220,43 @@ export default function LandingPage() {
               suggère les actions à mener en priorité, pour accompagner chaque
               étudiant avant qu&apos;il ne décroche.
             </p>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row">
+          <div className="landing-showcase-text">
+            <span className="landing-showcase-eyebrow">Pour les entreprises partenaires</span>
+            <h3 className="landing-showcase-title">L&apos;annuaire de toute une promotion, ouvert à vos recruteurs</h3>
+            <p className="landing-showcase-body">
+              Chaque école décide de rendre sa promotion visible à ses entreprises
+              partenaires : photo, formation, compétences, CV, LinkedIn et email
+              directement accessibles, pour contacter le bon profil sans passer par
+              un intermédiaire.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-talent-card">
+              <div className="landing-talent-photo">
+                <Image src="/landing-preview-avatar.jpg" alt="Camille" fill sizes="200px" />
+                <span className="landing-talent-tag landing-talent-tag--status">Alternance</span>
+                <span className="landing-talent-tag landing-talent-tag--location">Lyon</span>
+              </div>
+              <div className="landing-talent-body">
+                <div className="landing-talent-name">Camille GORIN</div>
+                <div className="landing-talent-degree">Bachelor 3</div>
+                <div className="landing-talent-specialty">Communication &amp; Marketing</div>
+                <div className="landing-talent-skills">
+                  <span className="inline-pill inline-pill--slate">Suite Adobe</span>
+                  <span className="inline-pill inline-pill--slate">Relations clients</span>
+                  <span className="inline-pill inline-pill--slate">Communication</span>
+                </div>
+              </div>
+              <div className="landing-talent-footer">
+                <span className="landing-talent-action"><Icon name="file-text" />CV</span>
+                <span className="landing-talent-action"><Icon name="external-link" />LinkedIn</span>
+                <span className="landing-talent-action"><Icon name="mail" />Email</span>
+              </div>
+            </div>
           </div>
         </Reveal>
       </section>
