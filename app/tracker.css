@@ -3672,7 +3672,11 @@ legend.field-label { padding: 0; }
      the grid instead of tracking it. */
   width: calc(50vw - 12px);
   display: flex;
-  gap: 12px;
+  /* No gap: matches the real .app-shell, where .sidebar and .app touch
+     directly (a negative margin on .app cancels the shell's own gap on
+     that one side) instead of leaving a visible space between the
+     sidebar and the content card. */
+  gap: 0;
   /* Left/right at 0 (was 12px): the sidebar's own 16px padding is now
      the only space between an icon and the shell's border on that
      side, instead of stacking on top of this shell padding (16+12=28px
