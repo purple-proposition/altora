@@ -3943,7 +3943,7 @@ legend.field-label { padding: 0; }
 }
 .landing-preview-panel-list .inline-pill {
   margin: 0;
-  gap: 4px;
+  gap: 8px;
   min-height: 28px;
   padding: 6px 8px;
   width: 100%;
