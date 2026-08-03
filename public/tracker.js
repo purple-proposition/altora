@@ -195,6 +195,7 @@
     const STAGE_LABELS = { '1': '1er entretien', '2': '2e entretien', final: 'Entretien final' };
     const STATUS_LABELS = { todo: 'À postuler', sent: 'Envoyé', interview: 'Entretien', rejected: 'Refus' };
     const STATUS_ICONS = { todo: 'circle-dashed', sent: 'hourglass', interview: 'target', rejected: 'folder-x' };
+    const STATUS_TINTS = { todo: 'slate', sent: 'amber', interview: 'green', rejected: 'rose' };
 
     let cards = [];
     let editingId = null;
@@ -303,7 +304,7 @@
 
     function renderCard(card) {
       const el = document.createElement('div');
-      el.className = 'card' + (card.schoolProposed ? ' card--school' : '');
+      el.className = 'card' + ` card--${STATUS_TINTS[card.status] || 'slate'}` + (card.schoolProposed ? ' card--school' : '');
       el.draggable = true;
       el.dataset.id = card.id;
       el.tabIndex = 0;

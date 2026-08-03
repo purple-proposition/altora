@@ -1214,6 +1214,13 @@ body {
 
 .card:hover { border-color: var(--text-muted); }
 .card:active { cursor: grabbing; }
+
+/* Each card is tinted to match its column's own color, so a board full
+   of cards reads as one coherent set instead of plain white boxes. */
+.card--slate { background: var(--bg); }
+.card--amber { background: var(--amber-tint); border-color: var(--amber-track); }
+.card--green { background: var(--green-tint); border-color: var(--green-track); }
+.card--rose  { background: var(--rose-tint);  border-color: var(--rose-track); }
 .card.dragging { opacity: 0.4; }
 .card:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--indigo); }
 
@@ -3272,13 +3279,33 @@ legend.field-label { padding: 0; }
 }
 .method-explain-grid .method-card {
   background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  padding: 24px;
+  border: none;
+  border-radius: var(--radius-card);
+  padding: 28px;
+  gap: 16px;
 }
 @media (max-width: 720px) {
   .method-explain-grid { grid-template-columns: 1fr; }
 }
+
+/* Icon stacked above the title (not inline) and enlarged, like a
+   feature-card pattern — icon, bold title, muted paragraph below. */
+.method-explain-grid .method-card-head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.method-explain-grid .method-card-head .lucide {
+  width: 32px;
+  height: 32px;
+  color: var(--indigo);
+}
+.method-explain-grid .method-card-title {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.method-explain-grid .method-card-text { font-size: 14px; }
 
 /* --- ATS Booster intro screen (before the job-posting form) --- */
 
