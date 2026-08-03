@@ -3879,24 +3879,26 @@ legend.field-label { padding: 0; }
   margin: 0 2px;
 }
 
+/* Grid, not flex-wrap: with flex-grow, a wrapped row's items can end up
+   consuming slightly more or less than the exact remaining space,
+   leaving the last item's right edge flush against the card border
+   instead of the intended 16px — grid's auto-fit/minmax columns divide
+   the row's own width (already inset by .landing-preview-content's
+   16px padding) exactly, with a real 16px gap between and at both
+   edges, at any container width. */
 .landing-preview-panel-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  align-items: start;
   gap: 16px;
   margin-top: 16px;
 }
 /* Small bordered widget used for "À faire", "Événements à venir" and
    "Boîte de réception" below the greeting — same card treatment,
    different content. No fixed height: each card hugs its own list
-   (align-items:flex-start on the row keeps a shorter list from being
-   stretched to match its taller sibling). Grows/shrinks between 160
-   and 220px instead of a fixed width, and the row wraps (flex-wrap)
-   so a 3rd/4th panel drops to its own line rather than overflowing
-   past the mockup's own edge on narrower viewports. */
+   (align-items:start on the row keeps a shorter list from being
+   stretched to match its taller sibling). */
 .landing-preview-panel {
-  flex: 1 1 160px;
-  max-width: 220px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   padding: 12px;
