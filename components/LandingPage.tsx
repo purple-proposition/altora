@@ -28,11 +28,9 @@ export default function LandingPage() {
           Le copilote IA qui optimise<br />le taux de placement de votre promotion.
         </h1>
         <p className="landing-subtitle landing-in landing-in--2">
-          Aujourd&apos;hui, écoles et étudiants jonglent entre Slack ou Teams et les
-          job boards. Chaque étudiant suit seul ses candidatures, parfois perdu
-          face aux filtres ATS. Avec Altora, il suit ses candidatures, génère CV
-          et lettre par IA, et passe enfin ces filtres, le tout au même endroit.
-          Votre équipe pédagogique, elle, voit toute la promotion avancer en temps réel.
+          Écoles et étudiants jonglent aujourd&apos;hui entre Slack, Teams et les job
+          boards. Avec Altora, tout se gère au même endroit : candidatures, CV par
+          IA, suivi de la promotion.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
           <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
@@ -40,25 +38,41 @@ export default function LandingPage() {
 
         <div className="landing-preview landing-in landing-in--4" aria-hidden="true">
           <div className="landing-preview-card">
-            <div className="landing-preview-row">
-              <span className="inline-pill inline-pill--slate"><Icon name="circle-dashed" />3</span>
-              <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />2</span>
-              <span className="inline-pill inline-pill--green"><Icon name="target" />1</span>
-              <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />0</span>
-            </div>
             <div className="landing-preview-cols">
               <div className="landing-preview-col">
-                <div className="landing-preview-col-head"><Icon name="circle-dashed" />À postuler</div>
+                <div className="column-header column-header--slate">
+                  <Icon name="circle-dashed" />
+                  <span className="column-header-label">À postuler</span>
+                  <span className="column-header-count">8</span>
+                </div>
                 <div className="landing-preview-chip">Chargé·e de marketing digital</div>
                 <div className="landing-preview-chip">Growth &amp; Acquisition</div>
               </div>
               <div className="landing-preview-col">
-                <div className="landing-preview-col-head"><Icon name="hourglass" />Envoyé</div>
-                <div className="landing-preview-chip">Assistant chef de projet</div>
+                <div className="column-header column-header--amber">
+                  <Icon name="hourglass" />
+                  <span className="column-header-label">Envoyé</span>
+                  <span className="column-header-count">4</span>
+                </div>
+                <div className="landing-preview-chip landing-preview-chip--source">Assistant chef de projet</div>
               </div>
               <div className="landing-preview-col">
-                <div className="landing-preview-col-head"><Icon name="target" />Entretien</div>
-                <div className="landing-preview-chip">Alternant·e communication</div>
+                <div className="column-header column-header--green">
+                  <Icon name="target" />
+                  <span className="column-header-label">Entretien</span>
+                  <span className="column-header-count">1</span>
+                </div>
+                <div className="landing-preview-chip landing-preview-chip--arrived">
+                  Assistant chef de projet
+                  <span className="landing-preview-chip-pill"><Icon name="calendar" />Entretien le 12 nov à 14h</span>
+                </div>
+              </div>
+              <div className="landing-preview-col">
+                <div className="column-header column-header--rose">
+                  <Icon name="folder-x" />
+                  <span className="column-header-label">Refus</span>
+                  <span className="column-header-count">0</span>
+                </div>
               </div>
             </div>
           </div>
@@ -91,7 +105,7 @@ export default function LandingPage() {
           </p>
           <ul className="landing-category-list">
             <li><Icon name="check-circle" />Un tableau pour suivre chaque candidature</li>
-            <li><Icon name="check-circle" />CV et lettre générés pour chaque offre</li>
+            <li><Icon name="check-circle" />CV et lettre de motivation générés pour chaque offre</li>
             <li><Icon name="check-circle" />Un CV structuré pour passer les ATS</li>
           </ul>
           <Link href="/signup" className="landing-category-cta">Créer mon compte <Icon name="chevron-right" /></Link>
@@ -178,7 +192,7 @@ export default function LandingPage() {
         </Reveal>
         <Reveal className="landing-feature">
           <div className="landing-feature-icon"><Icon name="file-text" /></div>
-          <h3 className="landing-feature-title">CV et lettre sur mesure</h3>
+          <h3 className="landing-feature-title">CV et lettre de motivation sur mesure</h3>
           <p className="landing-feature-text">
             Une fiche de poste collée, et ton CV comme ta lettre de motivation
             se réorganisent pour elle, sans jamais inventer une expérience.

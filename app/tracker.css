@@ -3600,6 +3600,9 @@ legend.field-label { padding: 0; }
     opacity: 1;
     transform: none;
   }
+  .landing-preview-chip--source { animation: none; opacity: 0.2; transform: none; }
+  .landing-preview-chip--arrived,
+  .landing-preview-chip-pill { animation: none; opacity: 1; transform: none; }
 }
 
 .landing-hero {
@@ -3657,8 +3660,11 @@ legend.field-label { padding: 0; }
 }
 
 .landing-preview-card {
+  /* ~6 of the landing's 12 grid columns (half of the 1120px content
+     width), now that the mockup is a compact status strip rather than a
+     wide 3-column board. */
   width: 100%;
-  max-width: 640px;
+  max-width: 560px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -3667,13 +3673,10 @@ legend.field-label { padding: 0; }
   text-align: left;
 }
 
-.landing-preview-row { display: flex; gap: 8px; margin-bottom: 20px; }
-.landing-preview-row .lucide { width: 16px; height: 16px; }
-
 .landing-preview-cols {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
 }
 
 .landing-preview-col {
@@ -3682,17 +3685,11 @@ legend.field-label { padding: 0; }
   gap: 8px;
 }
 
-.landing-preview-col-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-.landing-preview-col-head .lucide { width: 12px; height: 12px; }
+/* Column headers reuse .column-header verbatim (see the real board in
+   app/(tracker)/page.tsx) instead of a landing-only lookalike, so this
+   mockup shows the actual product's own component, not an approximation. */
+.landing-preview-col .column-header { padding: 8px; font-size: 12px; }
+.landing-preview-col .column-header .lucide { width: 14px; height: 14px; }
 
 .landing-preview-chip {
   padding: 8px 12px;
@@ -3703,6 +3700,58 @@ legend.field-label { padding: 0; }
   font-weight: 500;
   color: var(--text);
 }
+
+/* Scroll-triggered "card move" from Envoyé to Entretien: the source chip
+   fades out where it sits, the arrived chip (already in place in the
+   Entretien column) fades in just after, then its interview-date pill —
+   staged with plain animation-delay on top of the hero's own entrance
+   stagger (.landing-in--4 finishes around 0.95s) rather than a real
+   cross-column translate, which would need per-breakpoint column-width
+   math for a purely decorative, aria-hidden illustration. */
+.landing-preview-chip--source {
+  animation: preview-chip-fade-out 0.6s ease forwards;
+  animation-delay: 1.3s;
+}
+
+.landing-preview-chip--arrived {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  opacity: 0;
+  animation: preview-chip-fade-in 0.6s ease forwards;
+  animation-delay: 1.7s;
+}
+
+.landing-preview-chip-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  animation: preview-pill-fade-in 0.5s ease forwards;
+  animation-delay: 2.3s;
+}
+.landing-preview-chip-pill .lucide { width: 12px; height: 12px; }
+
+@keyframes preview-chip-fade-out {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0.2; transform: translateX(6px); }
+}
+@keyframes preview-chip-fade-in {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes preview-pill-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 
 /* Audience categories: Altora serves two distinct audiences (see
    app/(tracker)/ecole/page.tsx for the school-admin dashboard this mirrors)
