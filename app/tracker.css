@@ -3648,11 +3648,13 @@ legend.field-label { padding: 0; }
   justify-content: center;
 }
 
-/* A miniature app window (titlebar + sidebar rail + the real "Accueil"
-   home screen) instead of just a floating board fragment, so the hero
-   reads as an actual screenshot of the product rather than an abstract
-   illustration. */
-.landing-preview-window {
+/* Mirrors the real .app-shell/.sidebar/.app split exactly: a transparent
+   sidebar rail flat on the page background (var(--bg)), next to a
+   separate white bordered card (.landing-preview-card, standing in for
+   .app) — not one single box wrapping both. The shell's own bg/radius/
+   shadow just lift the illustration off the hero as a self-contained
+   "screenshot"; the actual card look lives on .landing-preview-card. */
+.landing-preview-shell {
   /* True 6-of-12 viewport grid columns (matches the "g" debug overlay:
      repeat(12,1fr); gap:24px over the full viewport) rather than half of
      the narrower 1120px content column — for N equal columns with (N-1)
@@ -3662,12 +3664,22 @@ legend.field-label { padding: 0; }
      50vw - 12px to exceed it (already true above ~1465px), so the
      window silently fell short of the grid instead of tracking it. */
   width: calc(50vw - 12px);
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+
+.landing-preview-card {
+  flex: 1;
+  min-width: 0;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow);
   overflow: hidden;
-  text-align: left;
 }
 
 .landing-preview-titlebar {
@@ -3747,12 +3759,12 @@ legend.field-label { padding: 0; }
   line-height: 1;
 }
 
-.landing-preview-body { display: flex; min-height: 320px; }
-
 /* Collapsed icon-only sidebar rail (the real Sidebar's .sidebar--collapsed
    state), not the fully labeled expanded one — logo only (no brand text),
    icon-only nav items, avatar pinned to the bottom via margin-top:auto.
-   The logo is a generic placeholder, not any specific partner school's. */
+   The logo is a generic placeholder, not any specific partner school's.
+   Transparent, no border — same as the real .sidebar, it just sits flat
+   on .landing-preview-shell's own var(--bg) background. */
 .landing-preview-sidebar {
   display: flex;
   flex-direction: column;
@@ -3760,9 +3772,7 @@ legend.field-label { padding: 0; }
   width: 64px;
   flex-shrink: 0;
   gap: 16px;
-  padding: 16px 12px;
-  background: #f6f6f6;
-  border-right: 1px solid var(--border);
+  padding: 4px 0;
 }
 
 .landing-preview-sidebar-logo {

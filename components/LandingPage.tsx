@@ -37,32 +37,37 @@ export default function LandingPage() {
         </div>
 
         <div className="landing-preview landing-in landing-in--4" aria-hidden="true">
-          <div className="landing-preview-window">
-            <div className="landing-preview-titlebar">
-              <span className="landing-preview-collapse-btn"><Icon name="panel-left-close" /></span>
-              <span className="landing-preview-crumb"><Icon name="home" />Accueil</span>
-              <span className="landing-preview-crumb-sep">/</span>
-              <span className="landing-preview-crumb landing-preview-crumb--active"><Icon name="users" />Accueil</span>
-              <div className="landing-preview-window-actions">
-                <span className="landing-preview-window-btn">
-                  <Icon name="mail" />
-                  <span className="landing-preview-window-badge">2</span>
-                </span>
-                <span className="landing-preview-window-btn"><Icon name="bell" /></span>
-              </div>
+          {/* Mirrors the real .app-shell exactly: a transparent sidebar rail
+              sitting flat on the page background, next to a separate white
+              bordered card (.app) that holds the topbar + content — not one
+              single box wrapping both, which is not how the real dashboard
+              is built. */}
+          <div className="landing-preview-shell">
+            <div className="landing-preview-sidebar">
+              <span className="landing-preview-sidebar-logo"><Icon name="graduation-cap" /></span>
+              <nav className="landing-preview-sidebar-nav">
+                <span className="landing-preview-sidebar-icon is-active"><Icon name="home" /></span>
+                <span className="landing-preview-sidebar-icon"><Icon name="list-checks" /></span>
+                <span className="landing-preview-sidebar-icon"><Icon name="calendar" /></span>
+                <span className="landing-preview-sidebar-icon"><Icon name="file-text" /></span>
+                <span className="landing-preview-sidebar-icon"><Icon name="folder" /></span>
+                <span className="landing-preview-sidebar-icon"><Icon name="mail" /></span>
+              </nav>
+              <span className="landing-preview-sidebar-avatar">C</span>
             </div>
-            <div className="landing-preview-body">
-              <div className="landing-preview-sidebar">
-                <span className="landing-preview-sidebar-logo"><Icon name="graduation-cap" /></span>
-                <nav className="landing-preview-sidebar-nav">
-                  <span className="landing-preview-sidebar-icon is-active"><Icon name="home" /></span>
-                  <span className="landing-preview-sidebar-icon"><Icon name="list-checks" /></span>
-                  <span className="landing-preview-sidebar-icon"><Icon name="calendar" /></span>
-                  <span className="landing-preview-sidebar-icon"><Icon name="file-text" /></span>
-                  <span className="landing-preview-sidebar-icon"><Icon name="folder" /></span>
-                  <span className="landing-preview-sidebar-icon"><Icon name="mail" /></span>
-                </nav>
-                <span className="landing-preview-sidebar-avatar">C</span>
+            <div className="landing-preview-card">
+              <div className="landing-preview-titlebar">
+                <span className="landing-preview-collapse-btn"><Icon name="panel-left-close" /></span>
+                <span className="landing-preview-crumb"><Icon name="home" />Accueil</span>
+                <span className="landing-preview-crumb-sep">/</span>
+                <span className="landing-preview-crumb landing-preview-crumb--active"><Icon name="users" />Accueil</span>
+                <div className="landing-preview-window-actions">
+                  <span className="landing-preview-window-btn">
+                    <Icon name="mail" />
+                    <span className="landing-preview-window-badge">2</span>
+                  </span>
+                  <span className="landing-preview-window-btn"><Icon name="bell" /></span>
+                </div>
               </div>
               <div className="landing-preview-content">
                 <div className="landing-preview-greeting-title">
