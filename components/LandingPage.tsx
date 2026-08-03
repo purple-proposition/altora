@@ -19,6 +19,33 @@ import CountUpPercent from '@/components/CountUpPercent';
 // the doc explicitly warns against mirroring a candidate-first competitor's
 // positioning, since Altora's real differentiation is being the CRM/copilot
 // the school runs its whole promotion on.
+// The fanned-out card stack in the "annuaire de promotion" showcase —
+// index 1 (Camille) is the front/main card, 0 and 2 sit behind it,
+// fanned left/right (see .landing-talent-card--left/--right/--front).
+const TALENT_CARDS = [
+  {
+    name: 'Inès',
+    degree: 'Bachelor Marketing Digital',
+    city: 'Paris',
+    photo: '/landing-preview-avatar-2.jpg',
+    skills: ['SEO', 'Réseaux sociaux', 'Growth'],
+  },
+  {
+    name: 'Camille',
+    degree: 'Bachelor Business Development',
+    city: 'Lyon',
+    photo: '/landing-preview-avatar.jpg',
+    skills: ['Suite Adobe', 'Relations clients', 'Communication'],
+  },
+  {
+    name: 'Thomas Sanchez',
+    degree: 'Master of Science Business Management & Growth Strategy',
+    city: 'Bordeaux',
+    photo: '/landing-preview-avatar-3.jpg',
+    skills: ['Analyse de données', 'Stratégie', 'Anglais courant'],
+  },
+];
+
 export default function LandingPage() {
   // Same formatting as the real summary-date (app/(tracker)/page.tsx) —
   // computed at request time, so it always reads as "today" rather than
@@ -237,25 +264,29 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="landing-showcase-visual">
-            <div className="landing-talent-card">
-              <div className="landing-talent-photo">
-                <Image src="/landing-preview-avatar.jpg" alt="Camille" fill sizes="200px" />
-                <span className="landing-talent-tag landing-talent-tag--location">Lyon</span>
-              </div>
-              <div className="landing-talent-body">
-                <div className="landing-talent-name">Camille</div>
-                <div className="landing-talent-degree">Bachelor Business Development</div>
-                <div className="landing-talent-skills">
-                  <span className="inline-pill inline-pill--slate">Suite Adobe</span>
-                  <span className="inline-pill inline-pill--slate">Relations clients</span>
-                  <span className="inline-pill inline-pill--slate">Communication</span>
+            <div className="landing-talent-stack">
+              {TALENT_CARDS.map((talent, i) => (
+                <div key={talent.name} className={`landing-talent-card landing-talent-card--${i === 1 ? 'front' : i === 0 ? 'left' : 'right'}`}>
+                  <div className="landing-talent-photo">
+                    <Image src={talent.photo} alt={talent.name} fill sizes="200px" />
+                    <span className="landing-talent-tag landing-talent-tag--location">{talent.city}</span>
+                  </div>
+                  <div className="landing-talent-body">
+                    <div className="landing-talent-name">{talent.name}</div>
+                    <div className="landing-talent-degree">{talent.degree}</div>
+                    <div className="landing-talent-skills">
+                      {talent.skills.map((skill) => (
+                        <span key={skill} className="inline-pill inline-pill--slate">{skill}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="landing-talent-footer">
+                    <span className="landing-talent-action"><Icon name="file-text" />CV</span>
+                    <span className="landing-talent-action"><Icon name="external-link" />LinkedIn</span>
+                    <span className="landing-talent-action"><Icon name="mail" />Email</span>
+                  </div>
                 </div>
-              </div>
-              <div className="landing-talent-footer">
-                <span className="landing-talent-action"><Icon name="file-text" />CV</span>
-                <span className="landing-talent-action"><Icon name="external-link" />LinkedIn</span>
-                <span className="landing-talent-action"><Icon name="mail" />Email</span>
-              </div>
+              ))}
             </div>
           </div>
         </Reveal>

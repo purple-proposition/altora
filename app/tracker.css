@@ -4250,18 +4250,61 @@ legend.field-label { padding: 0; }
 .landing-copilot-item .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 .landing-copilot-item p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text); }
 
+/* Fanned stack of 3 talent cards: the front one sits in normal flow
+   (centering the whole stack), the other two are absolutely positioned
+   off its left/right edge, rotated, and spread further apart on
+   hover/focus — a hover-driven reveal is the standard interaction for
+   a decorative card fan like this (vs. requiring a click on a purely
+   illustrative element). */
+.landing-talent-stack {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 32px 48px;
+}
 /* Student directory card ("annuaire de promotion" for partner
    companies) — same card shell as .landing-match-card/.landing-
    copilot-card (border, radius, shadow), built entirely from existing
-   tokens instead of the flat navy/white reference mockup. */
+   tokens instead of the flat navy/white reference mockup. True 2-of-12
+   viewport grid columns (matches the "g" debug overlay): for k columns
+   out of N with gap g, span = (k/N)*W + g*[(k-1) - (k/N)(N-1)], which
+   for k=2, N=12, g=24 simplifies to exactly (1/6)W - 20px. */
 .landing-talent-card {
-  width: 100%;
-  max-width: 280px;
+  width: calc(16.6667vw - 20px);
+  min-width: 190px;
+  max-width: 240px;
+  flex-shrink: 0;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
   overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+}
+.landing-talent-card--front { position: relative; z-index: 3; }
+.landing-talent-stack:hover .landing-talent-card--front,
+.landing-talent-stack:focus-within .landing-talent-card--front {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px color-mix(in srgb, black 20%, transparent);
+}
+.landing-talent-card--left,
+.landing-talent-card--right {
+  position: absolute;
+  top: 0;
+  left: 50%;
+}
+.landing-talent-card--left { z-index: 1; transform: translateX(-72%) rotate(-9deg); }
+.landing-talent-card--right { z-index: 2; transform: translateX(-28%) rotate(9deg); }
+.landing-talent-stack:hover .landing-talent-card--left,
+.landing-talent-stack:focus-within .landing-talent-card--left {
+  transform: translateX(-98%) rotate(-14deg);
+}
+.landing-talent-stack:hover .landing-talent-card--right,
+.landing-talent-stack:focus-within .landing-talent-card--right {
+  transform: translateX(-2%) rotate(14deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-talent-card { transition: none; }
 }
 .landing-talent-photo {
   position: relative;
