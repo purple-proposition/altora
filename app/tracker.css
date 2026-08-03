@@ -1208,36 +1208,30 @@ body {
   border-radius: var(--radius-inner);
   padding: 12px 16px;
   cursor: grab;
-  border: 1px solid var(--border); /* neutral-200, #e5e5e5 */
-  transition: border-color 0.15s ease;
+  border: none;
 }
 
-.card:hover { border-color: var(--text-muted); }
+.card:hover { filter: brightness(0.97); }
 .card:active { cursor: grabbing; }
 
 /* Each card is tinted to match its column's own color, so a board full
    of cards reads as one coherent set instead of plain white boxes. */
 .card--slate { background: var(--bg); }
-.card--amber { background: var(--amber-tint); border-color: var(--amber-track); }
-.card--green { background: var(--green-tint); border-color: var(--green-track); }
-.card--rose  { background: var(--rose-tint);  border-color: var(--rose-track); }
+.card--amber { background: var(--amber-track); }
+.card--green { background: var(--green-track); }
+.card--rose  { background: var(--rose-track); }
 .card.dragging { opacity: 0.4; }
 .card:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--indigo); }
 
-/* A card flagged as proposed by the school stands out with a shimmering
-   gradient border and a slow pulsing glow, instead of just another badge
-   among the meta chips — this one's meant to catch the eye first. */
-.card--school {
-  border: 1.5px solid transparent;
-  background:
-    linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
-    linear-gradient(120deg, var(--indigo), #b9a6fb, var(--indigo)) border-box;
+/* A card flagged as proposed by the school stands out with a slow
+   pulsing glow on its "Proposée par l'école" badge, instead of a
+   border (cards no longer have one at all — see .card above). */
+.card--school .card-school-badge {
   animation: card-school-glow 3s ease-in-out infinite;
 }
-.card--school:hover { border-color: transparent; }
 @keyframes card-school-glow {
   0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--indigo) 35%, transparent); }
-  50% { box-shadow: 0 0 18px 2px color-mix(in srgb, var(--indigo) 45%, transparent); }
+  50% { box-shadow: 0 0 12px 2px color-mix(in srgb, var(--indigo) 45%, transparent); }
 }
 
 .card-school-badge {
@@ -1256,7 +1250,7 @@ body {
 .card-school-badge .lucide { width: 12px; height: 12px; }
 
 .card-heading {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
@@ -1345,7 +1339,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1;
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
