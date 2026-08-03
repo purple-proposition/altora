@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import Reveal from '@/components/Reveal';
@@ -59,7 +60,13 @@ export default function LandingPage() {
                 <span className="landing-preview-sidebar-icon"><Icon name="folder" /></span>
                 <span className="landing-preview-sidebar-icon"><Icon name="mail" /></span>
               </nav>
-              <span className="landing-preview-sidebar-avatar">C</span>
+              <Image
+                className="landing-preview-sidebar-avatar"
+                src="/landing-preview-avatar.jpg"
+                alt="Camille"
+                width={28}
+                height={28}
+              />
             </div>
             <div className="landing-preview-card">
               <div className="landing-preview-titlebar">

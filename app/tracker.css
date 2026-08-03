@@ -3478,14 +3478,21 @@ legend.field-label { padding: 0; }
   /* Grid, not flex space-between: the brand and the actions groups are
      different widths (a short wordmark vs. two buttons), so space-between
      would push the middle nav-links off true center. Two equal 1fr side
-     columns keep the middle column mathematically centered regardless. */
+     columns keep the middle column mathematically centered regardless.
+     Width matches .landing-preview-shell exactly (calc(50vw - 12px), the
+     same 6-of-12 grid columns) — was a fixed 1120px, so the logo and
+     "Essayer Altora" button sat well inside those columns instead of
+     spanning their full width like the mockup below. No horizontal
+     padding: with the width already matching the grid columns exactly,
+     any inset here would pull the logo/button back in from the column
+     edges. */
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  max-width: 1120px;
+  max-width: calc(50vw - 12px);
   width: 100%;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px 0;
 }
 
 .landing-card {
@@ -3683,11 +3690,27 @@ legend.field-label { padding: 0; }
   overflow: hidden;
 }
 
+/* border-bottom on a pseudo-element inset by the same amount as the
+   horizontal padding — a plain border-bottom on this box spans its full
+   width edge-to-edge, past the buttons on either side (which stop short
+   at that same padding). The real .topbar-breadcrumb never has this
+   problem since its border lives on the row itself with no padding of
+   its own; here the row and the padding are the same element, so the
+   line needs its own explicit inset instead. */
 .landing-preview-titlebar {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
+}
+.landing-preview-titlebar::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 0;
+  height: 1px;
+  background: var(--border);
 }
 
 /* Matches the real .topbar-collapse-btn exactly: 32px bordered square,
