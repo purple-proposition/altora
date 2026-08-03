@@ -1,6 +1,25 @@
+import { unstable_cache as nextCache, revalidateTag } from 'next/cache';
 import { neon } from '@neondatabase/serverless';
 
 export const sql = neon(process.env.DATABASE_URL!);
+
+// Same pattern as lib/school.ts's isUserSchoolAdmin: cv_url/cv_filename
+// used to be re-fetched from the DB on every single navigation to "/" or
+// "/generate" — cached for a short window instead, invalidated immediately
+// via revalidateTag the moment a CV is actually uploaded (see
+// app/api/profile/cv/route.ts), so a reload during that window is instant
+// instead of paying a full round-trip for a value that almost never changes.
+export const getUserCv = (userId: string): Promise<{ cvUrl: string; cvFilename: string }> =>
+  nextCache(
+    async (id: string) => {
+      const rows = await sql`SELECT cv_url, cv_filename FROM users WHERE id = ${id}`;
+      return { cvUrl: rows[0]?.cv_url || '', cvFilename: rows[0]?.cv_filename || '' };
+    },
+    ['user-cv'],
+    { tags: [`user-cv:${userId}`], revalidate: 60 },
+  )(userId);
+
+export const invalidateUserCv = (userId: string) => revalidateTag(`user-cv:${userId}`);
 
 // Schema only needs to be checked/created once per warm server instance —
 // re-running 7 CREATE/ALTER/INDEX statements on every single page load was

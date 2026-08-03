@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 import { auth } from '@/auth';
-import { sql, ensureSchema } from '@/lib/db';
+import { sql, ensureSchema, invalidateUserCv } from '@/lib/db';
 import { renderPdfFirstPageToPng } from '@/lib/pdfThumbnail';
 import { getUserProfile, saveUserProfile, isProfileComplete } from '@/lib/profile';
 import { extractProfileFromCV } from '@/lib/profileExtraction';
@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
 
   await ensureSchema();
   await sql`UPDATE users SET cv_url = ${blob.url}, cv_filename = ${safeName}, cv_thumbnail_url = ${thumbnailUrl} WHERE id = ${session.user.id}`;
+  invalidateUserCv(session.user.id);
 
   // Pre-fill the structured profile from the uploaded CV the first time
   // only — once a user has a real profile (edited or already extracted),

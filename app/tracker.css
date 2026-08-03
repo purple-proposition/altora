@@ -1104,7 +1104,7 @@ body {
 .column {
   background: var(--card-bg);
   border-radius: var(--radius-card);
-  padding: 12px 0;
+  padding: 12px 0 24px;
   min-height: 200px;
 }
 

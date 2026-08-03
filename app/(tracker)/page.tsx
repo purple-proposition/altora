@@ -4,7 +4,7 @@ import Link from 'next/link';
 import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import { auth, signOut } from '@/auth';
-import { sql, ensureSchema } from '@/lib/db';
+import { getUserCv } from '@/lib/db';
 import { assetVersion } from '@/lib/assetVersion';
 import Icon from '@/components/Icon';
 
@@ -17,10 +17,9 @@ export default async function TrackerPage() {
   let cvUrl = '';
   let cvFilename = '';
   if (session?.user?.id) {
-    await ensureSchema();
-    const rows = await sql`SELECT cv_url, cv_filename FROM users WHERE id = ${session.user.id}`;
-    cvUrl = rows[0]?.cv_url || '';
-    cvFilename = rows[0]?.cv_filename || '';
+    const cv = await getUserCv(session.user.id);
+    cvUrl = cv.cvUrl;
+    cvFilename = cv.cvFilename;
   }
 
   const rawDate = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });

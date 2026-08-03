@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { sql, ensureSchema } from '@/lib/db';
+import { getUserCv } from '@/lib/db';
 import GenerateForm from '@/components/GenerateForm';
 
 export default async function GeneratePage() {
@@ -7,9 +7,8 @@ export default async function GeneratePage() {
   let hasCv = false;
 
   if (session?.user?.id) {
-    await ensureSchema();
-    const rows = await sql`SELECT cv_url FROM users WHERE id = ${session.user.id}`;
-    hasCv = Boolean(rows[0]?.cv_url);
+    const cv = await getUserCv(session.user.id);
+    hasCv = Boolean(cv.cvUrl);
   }
 
   return <GenerateForm hasCv={hasCv} />;
