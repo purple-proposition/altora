@@ -3881,6 +3881,40 @@ legend.field-label { padding: 0; }
 }
 .landing-preview-period .lucide { width: 12px; height: 12px; }
 
+/* Odometer-style roll (matches rollNumber() in public/tracker.js, the
+   real board's own counter animation): the old digit slides fully out —
+   up if the value rose, down if it fell — while the new one slides in
+   from the opposite edge, instead of the text just snapping. */
+.landing-preview-count { display: inline-block; }
+.landing-preview-count-roll {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 1em;
+  vertical-align: bottom;
+}
+.landing-preview-count-old,
+.landing-preview-count-new {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+}
+.landing-preview-count-old.is-rising { animation: landing-roll-out-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.landing-preview-count-old.is-falling { animation: landing-roll-out-down 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.landing-preview-count-new.is-rising { animation: landing-roll-in-from-bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.landing-preview-count-new.is-falling { animation: landing-roll-in-from-top 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+@keyframes landing-roll-out-up { to { transform: translateY(-100%); } }
+@keyframes landing-roll-out-down { to { transform: translateY(100%); } }
+@keyframes landing-roll-in-from-bottom { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes landing-roll-in-from-top { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-preview-count-old,
+  .landing-preview-count-new { animation: none; }
+}
+
 
 /* Audience categories: Altora serves two distinct audiences (see
    app/(tracker)/ecole/page.tsx for the school-admin dashboard this mirrors)
@@ -4002,9 +4036,10 @@ legend.field-label { padding: 0; }
 }
 
 .landing-showcase-title {
+  font-family: 'Gloock', Georgia, serif;
+  font-synthesis: none;
   font-size: 24px;
-  line-height: 1;
-  font-weight: 700;
+  line-height: 1.2;
   color: var(--text);
   margin: 0 0 12px;
 }
@@ -4029,11 +4064,20 @@ legend.field-label { padding: 0; }
   text-align: center;
 }
 .landing-match-score {
+  font-family: 'Gloock', Georgia, serif;
+  font-synthesis: none;
   font-size: 48px;
   line-height: 1;
-  font-weight: 800;
   color: var(--indigo);
 }
+/* Same tone thresholds as the real ATS score card (GenerateForm.tsx's
+   scoreTone: >=80 good, >=60 mid, else low) — own modifier classes
+   rather than reusing .ats-score-card--good/--mid/--low, whose own
+   background would otherwise show through behind this plain display
+   number instead of a tinted pill/tile. */
+.landing-match-score--good { color: var(--green); }
+.landing-match-score--mid { color: var(--amber); }
+.landing-match-score--low { color: var(--rose); }
 .landing-match-label {
   font-size: 14px;
   color: var(--text-muted);

@@ -5,6 +5,7 @@ import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
 import LandingPreviewStats from '@/components/LandingPreviewStats';
+import CountUpPercent from '@/components/CountUpPercent';
 
 // Public marketing landing page, shown at "/" only when signed out (see
 // app/(tracker)/page.tsx and middleware.ts). Built entirely from the
@@ -141,19 +142,20 @@ export default function LandingPage() {
       <section className="landing-showcase">
         <Reveal className="landing-showcase-row">
           <div className="landing-showcase-text">
-            <span className="landing-showcase-eyebrow">Matching IA</span>
-            <h3 className="landing-showcase-title">Un score de compatibilité, pas juste une liste d&apos;offres</h3>
+            <span className="landing-showcase-eyebrow">Pour les étudiants</span>
+            <h3 className="landing-showcase-title">Ton CV généré, avec un score ATS avant même de l&apos;envoyer</h3>
             <p className="landing-showcase-body">
-              Chaque offre reçoit un score calculé à partir des compétences, de
-              l&apos;expérience, du niveau d&apos;études et de la localisation de
-              l&apos;étudiant &mdash; et l&apos;IA explique ce score au lieu de se
-              contenter de l&apos;afficher.
+              Quand tu choisis une offre et lances la génération, Altora produit
+              ton CV et te donne aussitôt son score de compatibilité avec cette
+              offre &mdash; compétences, expérience, niveau d&apos;études,
+              localisation &mdash; en expliquant ce qui le fait monter ou
+              baisser, pas juste un chiffre brut.
             </p>
           </div>
           <div className="landing-showcase-visual">
             <div className="landing-match-card">
-              <div className="landing-match-score">92%</div>
-              <div className="landing-match-label">de compatibilité</div>
+              <CountUpPercent value={92} />
+              <div className="landing-match-label">de compatibilité avec l&apos;offre</div>
               <ul className="landing-match-notes">
                 <li className="is-positive"><Icon name="check-circle" />Profil très adapté</li>
                 <li className="is-warning"><Icon name="circle-help" />Une compétence CRM augmenterait votre score</li>

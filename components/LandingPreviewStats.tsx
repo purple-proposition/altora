@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
+import RollingNumber from '@/components/RollingNumber';
 
 // Decorative counter for the landing hero's dashboard mockup: "offres à
 // postuler" ticks down and "entretien" ticks up once the user scrolls the
@@ -36,13 +37,13 @@ export default function LandingPreviewStats() {
       <span className="landing-preview-period">Aujourd&apos;hui<Icon name="chevron-down" /></span>, tu as{' '}
       <span className="inline-pill inline-pill--slate">
         <Icon name="circle-dashed" />
-        <span key={todo} className="landing-preview-count">{todo}</span>
+        <RollingNumber value={todo} />
       </span>{' '}
       offres à postuler,{' '}
       <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />4</span> envoyées,{' '}
       <span className="inline-pill inline-pill--green">
         <Icon name="target" />
-        <span key={interview} className="landing-preview-count">{interview}</span>
+        <RollingNumber value={interview} />
       </span>{' '}
       entretien et <span className="inline-pill inline-pill--rose"><Icon name="folder-x" />0</span> refus.
     </p>
