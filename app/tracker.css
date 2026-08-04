@@ -4372,30 +4372,15 @@ legend.field-label { padding: 0; }
   display: flex;
   gap: 24px;
   overflow-x: auto;
-  /* The carousel's own box starts wherever normal flow puts it — right
-     after the row's padding-left, i.e. column 3 — and overflow-x:auto
-     clips exactly at that box edge. That made a card sliding left during
-     drag get cut off at column 3 instead of at the page's own margin.
-     Bleeding the box itself back out to the row's left edge (the true
-     margin, same one .landing-card clips at) while restoring the visual
-     column-3 start via matching padding-left moves the clip boundary to
-     where it's meant to be, without shifting where the first card sits
-     at rest. */
-  margin-left: calc(-1 * (16.6667vw - 4px));
-  /* mandatory, not proximity: proximity let scrolling come to rest with a
-     card half cut off at the edge instead of settling cleanly on a card
-     boundary. mandatory guarantees the visible strip always ends up
-     aligned to a full card (and so to the grid, since width/gap are
-     already grid-derived values) once the scroll/drag stops — sliding
-     through a partial card mid-drag is still fine, only the resting
-     position needs to land clean. */
+  /* Simple, no bleed trick: the carousel sits in normal flow right after
+     the row's own padding-left, so its first card starts exactly at
+     column 3 at rest, unambiguously — a previous attempt to also bleed
+     this element's own box further left (for the drag-clip edge case)
+     risked shifting that column-3 start itself, which is the one thing
+     that must never move. */
   scroll-snap-type: x mandatory;
-  /* padding-top/bottom only from here — the shadow just needs room
-     vertically. padding-left is set last, after the padding shorthand
-     above it would otherwise reset it back to 0. */
   padding-top: 8px;
   padding-bottom: 8px;
-  padding-left: calc(16.6667vw - 4px);
   cursor: grab;
   /* Drag-to-scroll (components/DragScrollCarousel.tsx) replaces the
      visible scrollbar as the way to move this — hidden on every engine
