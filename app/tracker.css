@@ -4361,10 +4361,13 @@ legend.field-label { padding: 0; }
    --annuaire/--priorise above (k=4, g=24 -> 33.3333vw - 32px), just
    anchored at the left edge (24px) instead of centered on columns 3-10. */
 .landing-showcase-row--kanban {
+  /* Left edge of column 3 (same offset as --annuaire/--priorise above),
+     not the page's own left margin (column 1) — text and carousel both
+     stay pinned there at their fixed 4-column width, so there's no need
+     to mirror this as right padding too. */
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: calc(16.6667vw + 20px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
