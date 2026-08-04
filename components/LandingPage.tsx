@@ -175,13 +175,12 @@ export default function LandingPage() {
       <section className="landing-showcase">
         <Reveal className="landing-showcase-row--kanban">
           <div className="landing-showcase-text landing-showcase-text--right">
-            <h3 className="landing-showcase-title">Une même palette d&apos;outils, pour l&apos;apprenant et pour l&apos;équipe pédagogique</h3>
+            <h3 className="landing-showcase-title">Une seule boîte à outils, deux façons de s&apos;en servir</h3>
             <p className="landing-showcase-body">
-              Kanban de candidatures, boîte de réception, calendrier,
-              documents : l&apos;apprenant y gère son quotidien, l&apos;école y
-              retrouve les mêmes informations pour faire le point avec lui et
-              intervenir au bon moment &mdash; jamais plus que ce que
-              l&apos;apprenant partage lui-même.
+              Côté apprenant, c&apos;est le cockpit de son alternance. Côté
+              école, c&apos;est le même espace qui devient un vrai levier de
+              suivi et d&apos;accompagnement &mdash; jamais plus que ce que
+              l&apos;apprenant choisit de partager.
             </p>
           </div>
           <DragScrollCarousel className="landing-showcase-carousel">
