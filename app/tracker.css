@@ -105,6 +105,15 @@ body {
   color: var(--text);
   transition: background 0.2s ease, color 0.2s ease;
 }
+/* The app dashboard (.app-shell) owns its own internal scroll and needs
+   body pinned to exactly 100vh/hidden above. The public landing/pricing
+   pages (.landing) scroll normally at the document level instead (see
+   .landing below) — body needs to allow that here, or nothing scrolls
+   at all now that .landing-card no longer has its own nested scroll. */
+body:has(.landing) {
+  height: auto;
+  overflow: visible;
+}
 
 /* --- App shell: the sidebar sits flat on the page background, full
    height/width; the content area is its own bordered, rounded card
@@ -3493,6 +3502,7 @@ legend.field-label { padding: 0; }
   margin: -24px 24px 24px;
   background: var(--card-bg);
   border: 1px solid var(--border);
+  border-radius: var(--radius-card);
   /* No overflow-y here (see .landing above) — the page scrolls normally
      now. overflow-x:hidden stays: the showcase carousel rows' bleed-past-
      the-margin drag effect clips against this exact boundary. */
