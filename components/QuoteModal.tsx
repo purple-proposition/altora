@@ -61,16 +61,22 @@ export default function QuoteModal() {
               formation, un expert Altora revient vers vous rapidement.
             </p>
             <form className="quote-modal-form" onSubmit={onSubmit}>
+              <div className="quote-modal-field-row">
+                <label className="quote-modal-field">
+                  <span>Prénom *</span>
+                  <input type="text" name="firstName" required />
+                </label>
+                <label className="quote-modal-field">
+                  <span>Nom *</span>
+                  <input type="text" name="lastName" required />
+                </label>
+              </div>
               <label className="quote-modal-field">
-                <span>Nom complet</span>
-                <input type="text" name="name" required />
-              </label>
-              <label className="quote-modal-field">
-                <span>Email professionnel</span>
+                <span>Email professionnel *</span>
                 <input type="email" name="email" required />
               </label>
               <label className="quote-modal-field">
-                <span>École ou organisme</span>
+                <span>École ou organisme *</span>
                 <input type="text" name="organization" required />
               </label>
               <label className="quote-modal-field">
