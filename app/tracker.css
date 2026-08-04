@@ -4326,15 +4326,6 @@ legend.field-label { padding: 0; }
   background: var(--bg);
 }
 .landing-talent-photo img { object-fit: cover; }
-.landing-talent-tag {
-  position: absolute;
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
-  font-size: 12px;
-  font-weight: 600;
-  color: #fff;
-}
-.landing-talent-tag--location { bottom: 12px; right: 12px; background: color-mix(in srgb, black 60%, var(--indigo) 40%); }
 .landing-talent-body { padding: 20px; }
 /* First name is the card's title (everyone shown here is on an
    alternance contract, so that tag/status line was redundant) —

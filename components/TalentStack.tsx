@@ -10,21 +10,18 @@ const TALENTS = [
   {
     name: 'Inès',
     degree: 'Bachelor Marketing Digital',
-    city: 'Paris',
     photo: '/landing-preview-avatar-2.jpg',
     skills: ['SEO', 'Réseaux sociaux', 'Growth'],
   },
   {
     name: 'Camille',
     degree: 'Bachelor Business Development',
-    city: 'Lyon',
     photo: '/landing-preview-avatar.jpg',
     skills: ['Suite Adobe', 'Relations clients', 'Communication'],
   },
   {
     name: 'Thomas',
     degree: 'Master of Science Business Management & Growth Strategy',
-    city: 'Bordeaux',
     photo: '/landing-preview-avatar-3.jpg',
     skills: ['Analyse de données', 'Stratégie', 'Anglais courant'],
   },
@@ -43,7 +40,6 @@ function TalentCard({ talent, role, onSelect }: { talent: typeof TALENTS[number]
     >
       <div className="landing-talent-photo">
         <Image src={talent.photo} alt={talent.name} fill sizes="200px" />
-        <span className="landing-talent-tag landing-talent-tag--location">{talent.city}</span>
       </div>
       <div className="landing-talent-body">
         <div className="landing-talent-name">{talent.name}</div>
