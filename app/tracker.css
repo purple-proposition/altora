@@ -4373,21 +4373,21 @@ legend.field-label { padding: 0; }
   gap: 24px;
   overflow-x: auto;
   box-sizing: border-box;
-  /* Explicit width (not auto/shrink-to-fit) reclaiming exactly the row's
-     own padding-left as extra width, so this box spans the row's full
-     true-margin-to-true-margin span (border-box keeps that width fixed
-     even once padding is added below) — then a matching negative
-     margin-left shifts the box itself back to the row's left edge, and
-     padding-left shifts the *content* right by that same amount. Net
-     visual position at rest is unchanged (still column 3): the two
-     opposite offsets on box-position vs. content-position cancel out.
-     What does change is the clip boundary itself (overflow-x:auto clips
-     at this box's own edge) — it now sits at the true page margin, so a
-     card sliding out during drag stays visible until it reaches that
-     margin instead of getting cut off early at column 3. */
-  width: calc(100% + (16.6667vw - 4px));
-  margin-left: calc(-1 * (16.6667vw - 4px));
+  /* Explicit width (not auto/shrink-to-fit), reclaiming extra width on the
+     left so this box's own edge — where overflow-x:auto actually clips —
+     sits a full grid column further left than the row's true page
+     margin (grid 0), at grid -1, fully off-screen. padding-left still
+     rests the content at column 3 at scroll=0 (net visual position at
+     rest is unchanged); the negative margin-left just moves the *clip
+     boundary* further out, so a card dragged past grid 0 keeps sliding
+     out of view instead of getting stuck visible right at that edge. */
+  width: calc(100% + (25vw - 6px));
+  margin-left: calc(-1 * (25vw - 6px));
   padding-left: calc(16.6667vw - 4px);
+  /* Matching slack on the right: without it, there isn't enough total
+     scrollable range left for the drag to actually reach that far-left
+     clip boundary before running into the native end-of-scroll stop. */
+  padding-right: calc(25vw - 6px);
   /* overflow-x:auto forces overflow-y to compute as auto too (can't mix
      auto with visible on one box), so the cards' own box-shadow (0 10px
      24px blur below) was getting clipped flat by that y-clip — 8px of
