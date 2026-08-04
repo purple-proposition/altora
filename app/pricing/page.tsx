@@ -17,8 +17,9 @@ import '../tracker.css';
 export default function PricingPage() {
   return (
     <div className="landing">
-      <div className="landing-card">
       <SiteNav />
+
+      <div className="landing-card">
       <main className="pricing-hero">
         <span className="landing-eyebrow">Tarifs</span>
         <h1 className="pricing-title">Un tarif pour chaque acteur de l&apos;alternance</h1>

@@ -29,8 +29,9 @@ export default function LandingPage() {
 
   return (
     <div className="landing">
-      <div className="landing-card">
       <SiteNav />
+
+      <div className="landing-card">
       <main className="landing-hero">
         <h1 className="landing-title landing-in landing-in--1">
           Le copilote IA qui optimise<br />votre taux de placement.
@@ -172,7 +173,6 @@ export default function LandingPage() {
       <section className="landing-showcase">
         <Reveal className="landing-showcase-row">
           <div className="landing-showcase-text">
-            <span className="landing-showcase-eyebrow">Pour les étudiants</span>
             <h3 className="landing-showcase-title">Ton CV généré, avec un score ATS avant même de l&apos;envoyer</h3>
             <p className="landing-showcase-body">
               Quand tu choisis une offre et lances la génération, Altora produit
@@ -213,7 +213,6 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="landing-showcase-text">
-            <span className="landing-showcase-eyebrow">Copilote pour votre équipe pédagogique</span>
             <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
             <p className="landing-showcase-body">
               Altora analyse en continu les candidatures de la promotion et

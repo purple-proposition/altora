@@ -5,16 +5,15 @@ import Link from 'next/link';
 import Icon from '@/components/Icon';
 import AltoraLogo from '@/components/AltoraLogo';
 
-// Shared sticky nav for every public marketing page (landing, pricing) —
-// see .landing-nav in tracker.css for the floating-card styling. Anchor
-// links go through "/" explicitly so they work correctly from /pricing too.
+// Shared nav for every public marketing page (landing, pricing) — see
+// .landing-nav in tracker.css for the floating-card styling. Anchor links
+// go through "/" explicitly so they work correctly from /pricing too.
 //
-// Sits inside .landing-card (the actual scroll container — .landing itself
-// never scrolls) so it can stick to the top of it. Standardized scroll
-// reaction past a small threshold: the nav compacts (half its vertical
-// padding, a smaller logo) and the links/actions collapse into a hamburger
-// popup, so content passes behind a frosted-glass bar instead of a hard
-// edge.
+// Stays a flex sibling above .landing-card (the actual scroll container —
+// .landing itself never scrolls) rather than moving into it. It only reads
+// that scroll to react to it: past a small threshold, the nav compacts
+// (half its vertical padding, a smaller logo) and the links/actions
+// collapse into a hamburger popup — the nav's own position never changes.
 export default function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
