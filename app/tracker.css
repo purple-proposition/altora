@@ -4417,11 +4417,23 @@ legend.field-label { padding: 0; }
   flex: 0 0 calc(33.3333vw - 32px);
   min-width: 0;
   max-width: calc(33.3333vw - 32px);
+  display: flex;
+  flex-direction: column;
+  /* Exactly 48px between the mockup and its caption below — a plain
+     flex gap, not a margin on the caption, so nothing needs subtracting
+     back out. Caption lives inside the same carousel item as its
+     mockup (not a separate element below the whole carousel) so it
+     scrolls together with it instead of staying fixed under whichever
+     slide happened to be first. */
+  gap: 48px;
 }
 
-/* Caption under the current slide (icon, title, text) — same width as
-   one carousel item so it reads as belonging to the first slide. */
-.landing-showcase-caption { width: calc(33.3333vw - 32px); }
+.landing-showcase-caption-header { display: flex; align-items: center; gap: 16px; }
+/* Icon keeps its square/tint styling from .landing-feature-icon but
+   loses that class's own margin-bottom — here it sits beside the title
+   in a row instead of stacked above it. */
+.landing-showcase-caption-header .landing-feature-icon { margin-bottom: 0; flex-shrink: 0; }
+.landing-showcase-caption-title { font-size: 32px; line-height: 1.2; font-weight: 600; color: var(--text); margin: 0; }
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 

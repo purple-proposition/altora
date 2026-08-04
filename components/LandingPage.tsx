@@ -183,7 +183,8 @@ export default function LandingPage() {
             </p>
           </div>
           <DragScrollCarousel className="landing-showcase-carousel">
-            <div className="landing-kanban-board landing-showcase-carousel-item">
+            <div className="landing-showcase-carousel-item">
+            <div className="landing-kanban-board">
               <div className="column">
                 <div className="column-header column-header--slate">
                   <Icon name="circle-dashed" />
@@ -337,6 +338,19 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+            <div className="landing-showcase-caption">
+              <div className="landing-showcase-caption-header">
+                <div className="landing-feature-icon"><Icon name="list-checks" /></div>
+                <h3 className="landing-showcase-caption-title">À faire</h3>
+              </div>
+              <p className="landing-feature-text">
+                Chaque étudiant gère son propre tableau kanban, avec les offres
+                qu&apos;il ajoute et celles que l&apos;école lui suggère. L&apos;équipe
+                pédagogique consulte ce même tableau pour voir où il en est, à
+                quoi il a déjà postulé, et intervenir au bon moment.
+              </p>
+            </div>
+            </div>
 
             <div className="landing-messaging-board landing-showcase-carousel-item">
               <div className="inbox-message landing-inbox-message landing-inbox-message--unread">
@@ -419,16 +433,6 @@ export default function LandingPage() {
               </div>
             </div>
           </DragScrollCarousel>
-          <div className="landing-showcase-caption">
-            <div className="landing-feature-icon"><Icon name="list-checks" /></div>
-            <h3 className="landing-feature-title">À faire</h3>
-            <p className="landing-feature-text">
-              Chaque étudiant gère son propre tableau kanban, avec les offres
-              qu&apos;il ajoute et celles que l&apos;école lui suggère. L&apos;équipe
-              pédagogique consulte ce même tableau pour voir où il en est, à
-              quoi il a déjà postulé, et intervenir au bon moment.
-            </p>
-          </div>
         </Reveal>
 
         <Reveal className="landing-showcase-row">
