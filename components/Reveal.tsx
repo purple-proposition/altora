@@ -23,7 +23,18 @@ export default function Reveal({ children, className = '', id }: { children: Rea
       { threshold: 0.15 }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    // Safari's "Export as PDF" renders the page without ever actually
+    // scrolling it, so sections below the fold never intersect and stay
+    // invisible forever — a blank gap instead of content. This fallback
+    // reveals everything anyway after a couple of seconds regardless of
+    // intersection, so any tool that renders the page and waits (export,
+    // a crawler, a screenshot tool) eventually gets the real content;
+    // real visitors will have scrolled well before this fires.
+    const fallback = setTimeout(() => setVisible(true), 2000);
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallback);
+    };
   }, []);
 
   return (
