@@ -4678,6 +4678,28 @@ legend.field-label { padding: 0; }
   overflow: hidden;
 }
 .landing-calendar-day--muted { background: var(--bg); color: var(--text-muted); }
+/* Jour férié: red number on the plain background, not a filled tint —
+   matches the real reference, where the holiday marker is a text color
+   change, unlike every other category's solid fill. */
+.landing-calendar-day--ferie { color: var(--rose); font-weight: 600; }
+
+/* Cross-references the "Le 5 août à 10h30" interview pill on the L'Oréal
+   card in .landing-kanban-board — same target icon as the real
+   "Entretien" column, so the two mockups read as the same data. */
+.landing-calendar-day--has-event { flex-direction: column; gap: 2px; }
+.landing-calendar-day-event {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.landing-calendar-day-event .lucide { width: 10px; height: 10px; }
 /* Thin border in the cell's own category color (darker shade), plus a soft
    colored drop-shadow instead of a thick inset ring — a standard "this
    card is highlighted" treatment rather than a heavy outline. Falls back
