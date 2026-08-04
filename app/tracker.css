@@ -4453,13 +4453,13 @@ legend.field-label { padding: 0; }
   scroll-snap-stop: always;
   display: flex;
   flex-direction: column;
-  /* Exactly 48px between the mockup and its caption below — a plain
+  /* Exactly 24px between the mockup and its caption below — a plain
      flex gap, not a margin on the caption, so nothing needs subtracting
      back out. Caption lives inside the same carousel item as its
      mockup (not a separate element below the whole carousel) so it
      scrolls together with it instead of staying fixed under whichever
      slide happened to be first. */
-  gap: 48px;
+  gap: 24px;
 }
 /* Every item is already stretched to the tallest one (default flex
    align-items:stretch on the row), but that only affects the item box
