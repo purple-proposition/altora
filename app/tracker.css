@@ -4687,8 +4687,21 @@ legend.field-label { padding: 0; }
    swap in the column direction, so justify-content (not align-items)
    is what keeps this group at the top now. */
 .landing-calendar-day--has-event { flex-direction: column; justify-content: flex-start; align-items: center; gap: 2px; }
-.landing-calendar-day-event { margin-top: 0; padding: 1px 4px; font-size: 10px; gap: 2px; white-space: nowrap; }
-.landing-calendar-day-event .lucide { width: 9px; height: 9px; }
+/* max-width + ellipsis: "L'Oréal" plus its icon is wider than this cell
+   can ever be, so without a clamp the centered pill was overflowing and
+   getting clipped unevenly by the cell's own overflow:hidden instead of
+   just shrinking cleanly in place. */
+.landing-calendar-day-event {
+  margin-top: 0;
+  max-width: 100%;
+  padding: 0 3px;
+  font-size: 9px;
+  gap: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.landing-calendar-day-event .lucide { width: 8px; height: 8px; flex-shrink: 0; }
 /* Thin border in the cell's own category color (darker shade), plus a soft
    colored drop-shadow instead of a thick inset ring — a standard "this
    card is highlighted" treatment rather than a heavy outline. Falls back
