@@ -63,17 +63,31 @@ function TalentCard({ talent, role, onSelect }: { talent: typeof TALENTS[number]
   );
 }
 
+// Role is derived per talent (not per slot) so each card keeps its own
+// identity across a swap — React reconciles by the `key` below, so the
+// same DOM node/photo just gets a new transform to animate to instead
+// of two slots instantly exchanging their content mid-transition.
+function roleFor(index: number, activeIndex: number, n: number): 'left' | 'front' | 'right' {
+  const diff = ((index - activeIndex) % n + n) % n;
+  if (diff === 0) return 'front';
+  if (diff === 1) return 'right';
+  return 'left';
+}
+
 export default function TalentStack() {
   const [activeIndex, setActiveIndex] = useState(1);
   const n = TALENTS.length;
-  const leftIndex = (activeIndex - 1 + n) % n;
-  const rightIndex = (activeIndex + 1) % n;
 
   return (
     <div className="landing-talent-stack">
-      <TalentCard talent={TALENTS[leftIndex]} role="left" onSelect={() => setActiveIndex(leftIndex)} />
-      <TalentCard talent={TALENTS[rightIndex]} role="right" onSelect={() => setActiveIndex(rightIndex)} />
-      <TalentCard talent={TALENTS[activeIndex]} role="front" />
+      {TALENTS.map((talent, i) => (
+        <TalentCard
+          key={talent.name}
+          talent={talent}
+          role={roleFor(i, activeIndex, n)}
+          onSelect={() => setActiveIndex(i)}
+        />
+      ))}
     </div>
   );
 }
