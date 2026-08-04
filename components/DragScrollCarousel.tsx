@@ -14,14 +14,46 @@ import { useEffect, useRef } from 'react';
 // express an arbitrary step like this, so it's done in JS: whatever
 // gesture moved it (mouse drag or native touch/trackpad scroll), once
 // movement stops we round the resting scrollLeft to the nearest multiple
-// of that 3-column step and animate there.
+// of that 3-column step and animate there ourselves (requestAnimationFrame
+// + an eased curve) rather than the browser's own scrollTo(behavior:
+// 'smooth'), whose easing is a plain linear-ish ramp on most engines —
+// the animation below uses the same "premium" ease-out curve as the rest
+// of the site's motion (cubic-bezier(0.32, 0.72, 0, 1)-equivalent).
 export default function DragScrollCarousel({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, startX: 0, startScroll: 0 });
   const scrollEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const animation = useRef<number | null>(null);
 
   function stepSize() {
     return window.innerWidth * 0.25 - 30;
+  }
+
+  // Cubic ease-out with no overshoot — fast start, gentle settle, matching
+  // the site's other "organic" transitions instead of a linear scroll.
+  function easeOutCubic(t: number) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function animateTo(target: number) {
+    const el = ref.current;
+    if (!el) return;
+    if (animation.current) cancelAnimationFrame(animation.current);
+    const start = el.scrollLeft;
+    const distance = target - start;
+    const duration = 500;
+    const startTime = performance.now();
+
+    function tick(now: number) {
+      const elapsed = Math.min((now - startTime) / duration, 1);
+      el!.scrollLeft = start + distance * easeOutCubic(elapsed);
+      if (elapsed < 1) {
+        animation.current = requestAnimationFrame(tick);
+      } else {
+        animation.current = null;
+      }
+    }
+    animation.current = requestAnimationFrame(tick);
   }
 
   function snapToGrid() {
@@ -29,7 +61,7 @@ export default function DragScrollCarousel({ children, className }: { children: 
     if (!el) return;
     const step = stepSize();
     const target = Math.round(el.scrollLeft / step) * step;
-    el.scrollTo({ left: target, behavior: 'smooth' });
+    animateTo(target);
   }
 
   function onMouseDown(e: React.MouseEvent) {
@@ -40,6 +72,7 @@ export default function DragScrollCarousel({ children, className }: { children: 
     // click-dragging across the caption's text selects it instead of
     // panning the carousel.
     if ((e.target as HTMLElement).closest('.landing-showcase-caption')) return;
+    if (animation.current) cancelAnimationFrame(animation.current);
     drag.current = { active: true, startX: e.clientX, startScroll: el.scrollLeft };
     el.classList.add('is-dragging');
   }
@@ -62,13 +95,23 @@ export default function DragScrollCarousel({ children, className }: { children: 
   // been quiet for a beat, since there's no single "scroll finished"
   // native event supported everywhere yet.
   function onScroll() {
-    if (drag.current.active) return;
+    if (drag.current.active || animation.current) return;
     if (scrollEndTimer.current) clearTimeout(scrollEndTimer.current);
     scrollEndTimer.current = setTimeout(snapToGrid, 120);
   }
 
-  useEffect(() => () => {
-    if (scrollEndTimer.current) clearTimeout(scrollEndTimer.current);
+  useEffect(() => {
+    const el = ref.current;
+    // Guards against the browser's own scroll-anchoring: as web fonts and
+    // images finish loading after first paint, layout shifts inside this
+    // scroll container can make the browser silently adjust scrollLeft to
+    // "keep the same content in view", landing the carousel a step or two
+    // off zero on reload instead of resting at column 3 like it should.
+    if (el) el.scrollLeft = 0;
+    return () => {
+      if (scrollEndTimer.current) clearTimeout(scrollEndTimer.current);
+      if (animation.current) cancelAnimationFrame(animation.current);
+    };
   }, []);
 
   return (

@@ -4372,6 +4372,10 @@ legend.field-label { padding: 0; }
   display: flex;
   gap: 24px;
   overflow-x: auto;
+  /* Stops the browser's own scroll-anchoring from nudging scrollLeft as
+     fonts/images finish loading post-paint — belt-and-suspenders with
+     the scrollLeft=0 reset in DragScrollCarousel's mount effect. */
+  overflow-anchor: none;
   box-sizing: border-box;
   /* Explicit width (not auto/shrink-to-fit), reclaiming extra width on the
      left so this box's own edge — where overflow-x:auto actually clips —
