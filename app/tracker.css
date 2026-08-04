@@ -4361,14 +4361,37 @@ legend.field-label { padding: 0; }
   gap: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-bottom: 8px;
+  /* Padding on every side, not just the bottom: the scroll container's
+     overflow clips box-shadow right at its own content edge, so a card's
+     shadow only had room to render at the bottom and got cut off flat on
+     the top/left/right — this is what read as a "buggy" shadow. */
+  padding: 8px;
+  margin: -8px;
+  cursor: grab;
+  /* Drag-to-scroll (components/DragScrollCarousel.tsx) replaces the
+     visible scrollbar as the way to move this — hidden on every engine
+     instead of just styled thin, since a thin bar still reads as "here's
+     a strip to scroll," not "grab and drag anywhere". */
+  scrollbar-width: none;
 }
-/* min-width:0 forces the 4-column width to actually hold: flex items
-   default to auto min-width (their content's min-content size), so the
-   3-up kanban board inside — non-wrapping card headings, fixed-ish
-   column minimums — was pushing this past its set width instead of
-   respecting it. */
-.landing-showcase-carousel-item { flex: 0 0 auto; width: calc(33.3333vw - 32px); min-width: 0; scroll-snap-align: start; }
+.landing-showcase-carousel::-webkit-scrollbar { display: none; }
+.landing-showcase-carousel.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+/* flex-basis via the shorthand (not a separate width) + min-width/max-width
+   both pinned to the same value: belt-and-suspenders against flex's
+   default auto min-width (content's min-content size) — the 3-up kanban
+   board's non-wrapping headings/fixed-ish column minimums were pushing
+   this past 4 grid columns despite an explicit width. */
+.landing-showcase-carousel-item {
+  flex: 0 0 calc(33.3333vw - 32px);
+  min-width: 0;
+  max-width: calc(33.3333vw - 32px);
+  scroll-snap-align: start;
+}
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 

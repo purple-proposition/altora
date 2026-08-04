@@ -6,6 +6,7 @@ import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
 import CountUpPercent from '@/components/CountUpPercent';
 import TalentStack from '@/components/TalentStack';
+import DragScrollCarousel from '@/components/DragScrollCarousel';
 
 // Public marketing landing page, shown at "/" only when signed out (see
 // app/(tracker)/page.tsx and middleware.ts). Built entirely from the
@@ -181,7 +182,7 @@ export default function LandingPage() {
               quoi il a déjà postulé, et intervenir au bon moment.
             </p>
           </div>
-          <div className="landing-showcase-carousel">
+          <DragScrollCarousel className="landing-showcase-carousel">
             <div className="landing-kanban-board landing-showcase-carousel-item">
               <div className="column">
                 <div className="column-header column-header--slate">
@@ -350,7 +351,7 @@ export default function LandingPage() {
                 <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />Rappel : complétez votre candidature BlaBlaCar</span>
               </div>
             </div>
-          </div>
+          </DragScrollCarousel>
         </Reveal>
 
         <Reveal className="landing-showcase-row">
