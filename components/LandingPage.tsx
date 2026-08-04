@@ -175,12 +175,13 @@ export default function LandingPage() {
       <section className="landing-showcase">
         <Reveal className="landing-showcase-row--kanban">
           <div className="landing-showcase-text landing-showcase-text--right">
-            <h3 className="landing-showcase-title">Le suivi pédagogique voit où en est chaque étudiant</h3>
+            <h3 className="landing-showcase-title">Une même palette d&apos;outils, pour l&apos;apprenant et pour l&apos;équipe pédagogique</h3>
             <p className="landing-showcase-body">
-              Chaque étudiant gère son propre tableau kanban, avec les offres
-              qu&apos;il ajoute et celles que l&apos;école lui suggère. L&apos;équipe
-              pédagogique consulte ce même tableau pour voir où il en est, à
-              quoi il a déjà postulé, et intervenir au bon moment.
+              Kanban de candidatures, boîte de réception, calendrier,
+              documents : l&apos;apprenant y gère son quotidien, l&apos;école y
+              retrouve les mêmes informations pour faire le point avec lui et
+              intervenir au bon moment &mdash; jamais plus que ce que
+              l&apos;apprenant partage lui-même.
             </p>
           </div>
           <DragScrollCarousel className="landing-showcase-carousel">
@@ -347,8 +348,9 @@ export default function LandingPage() {
               <p className="landing-feature-text">
                 Chaque apprenant gère son propre tableau kanban, avec les
                 offres qu&apos;il ajoute et celles que l&apos;école lui suggère.
-                L&apos;équipe pédagogique consulte ce même tableau pour voir
-                l&apos;avancement de ses démarches et intervenir au bon moment.
+                Pour l&apos;équipe pédagogique, c&apos;est le même tableau qui sert
+                de base aux points de suivi : où en est-il, à quoi a-t-il déjà
+                postulé, faut-il relancer.
               </p>
             </div>
             </div>
@@ -414,9 +416,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Boîte de réception</h3>
               </div>
               <p className="landing-feature-text">
-                Les messages de l&apos;école et les rappels de candidature
-                arrivent directement dans la boîte de réception de
-                l&apos;étudiant, au même endroit que son tableau de suivi.
+                Rappels de candidature, mais aussi toute la communication
+                interne de l&apos;école : informations, événements à venir,
+                consignes. Un canal direct vers chaque apprenant, sans
+                dépendre de sa messagerie personnelle.
               </p>
             </div>
             </div>
@@ -480,10 +483,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Calendrier</h3>
               </div>
               <p className="landing-feature-text">
-                Rentrées, périodes en entreprise, examens et entretiens
-                s&apos;affichent sur le même calendrier, mis à jour
-                automatiquement par l&apos;école et par les candidatures en
-                cours.
+                L&apos;apprenant y suit son planning, ses dates butoirs et ses
+                entretiens à venir. L&apos;école y programme les rentrées, les
+                périodes en entreprise et les points de suivi, sur le même
+                calendrier partagé.
               </p>
             </div>
             </div>
@@ -552,9 +555,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Mes documents</h3>
               </div>
               <p className="landing-feature-text">
-                CV, lettres de motivation et supports de cours rangés dans
-                des dossiers, accessibles à tout moment sans les chercher
-                dans sa boîte mail.
+                L&apos;apprenant y range ses CV et lettres de motivation, avec
+                les conseils de l&apos;école dessus. L&apos;école y dépose ses
+                cours et documents administratifs &mdash; tout au même
+                endroit, sans passer par la boîte mail.
               </p>
             </div>
             </div>
