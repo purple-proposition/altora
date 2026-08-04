@@ -81,17 +81,31 @@ export default function DragScrollCarousel({ children, className }: { children: 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    // Guards against the browser's own scroll-anchoring: as web fonts
-    // finish loading after first paint, layout shifts inside this scroll
-    // container can make the browser silently adjust scrollLeft, landing
-    // the carousel a card off zero on reload instead of resting on the
-    // first card. Reset once at mount and again once fonts have actually
-    // finished loading, since that's the layout shift most likely to
-    // trigger it here.
+    // scroll-snap-type stays off (see .carousel-snap-ready in tracker.css)
+    // until this runs, and only turns on right after the last scrollLeft
+    // reset below — otherwise the browser's own "snap to nearest point"
+    // pass can fire while the web font and Cassandra's photo are still
+    // loading and item positions are still shifting, landing the
+    // carousel a card or two off the first card on reload instead of
+    // resting on it. Reset at mount, again once fonts have actually
+    // finished loading (the layout shift most likely to move things),
+    // and once more shortly after so any late reflow from that font swap
+    // is also settled before snapping turns on — a plain setTimeout
+    // rather than requestAnimationFrame, since rAF never fires in a
+    // backgrounded or not-yet-painted tab and would leave snap off.
     el.scrollLeft = 0;
-    document.fonts?.ready?.then(() => {
-      if (el) el.scrollLeft = 0;
-    });
+    const fontsReady = document.fonts?.ready ?? Promise.resolve();
+    fontsReady
+      .then(() => {
+        if (!el) return;
+        el.scrollLeft = 0;
+        return new Promise((resolve) => setTimeout(resolve, 50));
+      })
+      .then(() => {
+        if (!el) return;
+        el.scrollLeft = 0;
+        el.classList.add('carousel-snap-ready');
+      });
   }, []);
 
   return (

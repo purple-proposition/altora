@@ -4379,8 +4379,13 @@ legend.field-label { padding: 0; }
      robust than reimplementing it — no more drift when card widths
      change. scroll-padding-left matches the row's own padding-left so a
      snapped card rests at the same inset as the resting (scrollLeft: 0)
-     position instead of flush against the container edge. */
-  scroll-snap-type: x mandatory;
+     position instead of flush against the container edge.
+     scroll-snap-type only turns on once DragScrollCarousel adds
+     .carousel-snap-ready (mount + fonts loaded + a settle frame) — left
+     off before that so the browser's own "snap to nearest point" pass
+     can't fire mid-layout, while the web font and Cassandra's photo are
+     still loading and item positions are still shifting, and land the
+     rest position a card or two off from the first card on reload. */
   scroll-padding-left: calc(16.6667vw - 4px);
   /* Stops the browser's own scroll-anchoring from nudging scrollLeft as
      fonts/images finish loading post-paint — belt-and-suspenders with
@@ -4417,6 +4422,7 @@ legend.field-label { padding: 0; }
   scrollbar-width: none;
 }
 .landing-showcase-carousel::-webkit-scrollbar { display: none; }
+.landing-showcase-carousel.carousel-snap-ready { scroll-snap-type: x mandatory; }
 /* The grab cursor (and the drag it implies) only applies to the mockups
    themselves — see DragScrollCarousel's mousedown guard, which already
    skips starting a drag from here. The caption text below stays a normal
