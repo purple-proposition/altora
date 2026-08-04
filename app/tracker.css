@@ -4331,8 +4331,11 @@ legend.field-label { padding: 0; }
   margin-left: calc(50% - 50vw);
   padding-left: calc(16.6667vw + 20px);
   padding-right: calc(16.6667vw + 20px);
-  grid-template-columns: calc(33.3333vw - 32px) calc(33.3333vw - 32px);
-  gap: 24px;
+  /* 48px gap here instead of the usual 24px gutter, so columns shrink
+     to compensate and keep the row's total content width pinned to the
+     3rd-10th column span: (66.6667vw - 40px - 48px) / 2. */
+  grid-template-columns: calc(33.3333vw - 44px) calc(33.3333vw - 44px);
+  gap: 48px;
 }
 .landing-showcase-row--kanban .landing-showcase-visual { justify-content: flex-start; }
 
