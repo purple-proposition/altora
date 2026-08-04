@@ -4388,6 +4388,11 @@ legend.field-label { padding: 0; }
   width: calc(100% + (16.6667vw - 4px));
   margin-left: calc(-1 * (16.6667vw - 4px));
   padding-left: calc(16.6667vw - 4px);
+  /* Without this, scroll-snap-align:start on the first item ignores the
+     container's own padding and snaps flush to the content edge instead
+     — the page loaded already auto-scrolled past the padding, so the
+     first card sat at true grid 0 instead of column 3. */
+  scroll-padding-left: calc(16.6667vw - 4px);
   scroll-snap-type: x mandatory;
   padding-top: 8px;
   padding-bottom: 8px;
