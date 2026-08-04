@@ -4307,11 +4307,16 @@ legend.field-label { padding: 0; }
    N=12, g=24 simplifies to (1/6)*W + 4px. */
 .landing-showcase-row--annuaire {
   /* calc(100vw - 48px), not true 100vw: see .landing-preview's comment
-     above — .landing-card clips overflow-x at its own 24px-inset edge. */
+     above — .landing-card clips overflow-x at its own 24px-inset edge.
+     padding-left/right dropped by that same 24px (20px -> -4px): the
+     16.6667vw+20px offset to column 3 was measured from the true
+     viewport edge, but this row's own box now starts 24px later (at
+     .landing-card's edge), so the unadjusted padding overshot column 3
+     by 24px. */
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw + 20px);
-  padding-right: calc(16.6667vw + 20px);
+  padding-left: calc(16.6667vw - 4px);
+  padding-right: calc(16.6667vw - 4px);
   /* Text and visual each span exactly 4 of the 12 grid columns (columns
      3-6 and 7-10), with the real 24px inter-column gutter between them —
      not an even 50/50 split of the row's own content width with an
@@ -4329,8 +4334,8 @@ legend.field-label { padding: 0; }
 .landing-showcase-row--priorise {
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw + 20px);
-  padding-right: calc(16.6667vw + 20px);
+  padding-left: calc(16.6667vw - 4px);
+  padding-right: calc(16.6667vw - 4px);
   grid-template-columns: calc(33.3333vw - 32px) calc(33.3333vw - 32px);
   gap: 24px;
 }
@@ -4351,7 +4356,7 @@ legend.field-label { padding: 0; }
      to mirror this as right padding too. */
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw + 20px);
+  padding-left: calc(16.6667vw - 4px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
