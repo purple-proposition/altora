@@ -351,6 +351,19 @@ export default function LandingPage() {
                 <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />Rappel : complétez votre candidature BlaBlaCar</span>
               </div>
             </div>
+
+            <div className="landing-messaging-board landing-showcase-carousel-item">
+              <div className="column-header column-header--green">
+                <Icon name="calendar" />
+                <span className="column-header-label">Calendrier</span>
+                <span className="column-header-count">3</span>
+              </div>
+              <div className="landing-preview-panel-list">
+                <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien chez Sephora, le 31 juillet à 18h00</span>
+                <span className="inline-pill inline-pill--cyan"><Icon name="briefcase" />Job dating entreprise, le 12 septembre</span>
+                <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée en formation, le 4 octobre</span>
+              </div>
+            </div>
           </DragScrollCarousel>
         </Reveal>
 
