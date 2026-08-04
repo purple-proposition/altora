@@ -3,7 +3,7 @@
   --bg: #f5f5f5;           /* neutral-100 */
   --card-bg: #ffffff;
   --text: #171717;        /* neutral-900 */
-  --text-muted: #737373;  /* neutral-500 */
+  --text-muted: #525252;  /* neutral-600 — neutral-500 (#737373) is closer to #636363 but only hits 4.34:1 against --bg, just under WCAG AA's 4.5:1; neutral-600 clears it at 7.17:1 */
   --border: #e5e5e5;      /* neutral-200 */
   --shadow: 0 2px 8px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.05);
 
@@ -3590,10 +3590,20 @@ legend.field-label { padding: 0; }
    out (rather than an instant display:none swap) — always mounted,
    absolutely positioned at the same right edge so the swap reads as one
    control replacing the other in place instead of a layout jump. */
-.landing-nav-menu-btn {
+/* Wrapper carries the absolute right:0/top:50% placement that used to
+   live on the button itself — the button is now a normal static child of
+   it, so .landing-nav-popup below can anchor its "24px under the icon"
+   offset to this same box (i.e. the icon's own bounds) instead of to
+   .landing-nav-actions, whose height doesn't match the button's. */
+.landing-nav-menu-wrap {
   position: absolute;
   right: 0;
   top: 50%;
+  width: 36px;
+  height: 36px;
+  transform: translateY(-50%);
+}
+.landing-nav-menu-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3606,33 +3616,48 @@ legend.field-label { padding: 0; }
   color: var(--text);
   cursor: pointer;
   opacity: 0;
-  transform: translateY(-50%) scale(0.85) rotate(-45deg);
+  transform: scale(0.85) rotate(-45deg);
   pointer-events: none;
   transition: opacity 0.35s cubic-bezier(0.48, 0.72, 0, 1), transform 0.35s cubic-bezier(0.48, 0.72, 0, 1);
 }
 .landing-nav--scrolled .landing-nav-menu-btn {
   opacity: 1;
-  transform: translateY(-50%) scale(1) rotate(0deg);
+  transform: scale(1) rotate(0deg);
   pointer-events: auto;
 }
 
+/* Frosted glass + spring-in, matching the real CRM's own dropdown
+   (.period-popup): translucent blurred background, and a slight
+   overshoot on the way in (cubic-bezier(0.34, 1.56, 0.64, 1), the same
+   "bounce" curve) rather than a plain ease. Sits exactly 24px under the
+   hamburger icon — top: calc(100% + 24px) off .landing-nav-menu-wrap,
+   which is sized to match the icon exactly, not the taller nav row. */
 .landing-nav-popup {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 24px);
   right: 0;
   z-index: 20;
-  margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 200px;
   padding: 8px;
-  background: color-mix(in srgb, var(--card-bg) 88%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: color-mix(in srgb, var(--card-bg) 65%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 24px color-mix(in srgb, black 16%, transparent);
+  transform-origin: top right;
+  opacity: 0;
+  transform: scale(0.85) translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.landing-nav-popup--visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
 }
 .landing-nav-popup-link {
   padding: 8px 12px;
@@ -4289,8 +4314,22 @@ legend.field-label { padding: 0; }
   margin-left: calc(50% - 50vw);
   padding-left: calc(16.6667vw + 4px);
   padding-right: calc(16.6667vw + 4px);
+  grid-template-columns: calc(33.3333vw - 16px) calc(33.3333vw - 16px);
+  gap: 24px;
 }
 .landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
+
+/* Same full-bleed columns-3-to-10 treatment, visual on the left like
+   --priorise. */
+.landing-showcase-row--kanban {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding-left: calc(16.6667vw + 4px);
+  padding-right: calc(16.6667vw + 4px);
+  grid-template-columns: calc(33.3333vw - 16px) calc(33.3333vw - 16px);
+  gap: 24px;
+}
+.landing-showcase-row--kanban .landing-showcase-visual { justify-content: flex-start; }
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 
@@ -4402,7 +4441,7 @@ legend.field-label { padding: 0; }
    3-column grid are new. */
 .landing-kanban-board {
   width: 100%;
-  background: var(--bg);
+  background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);

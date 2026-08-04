@@ -171,73 +171,7 @@ export default function LandingPage() {
       </section>
 
       <section className="landing-showcase">
-        <Reveal className="landing-showcase-row">
-          <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Ton CV généré, avec un score ATS avant même de l&apos;envoyer</h3>
-            <p className="landing-showcase-body">
-              Quand tu choisis une offre et lances la génération, Altora produit
-              ton CV et te donne aussitôt son score de compatibilité avec cette
-              offre &mdash; compétences, expérience, niveau d&apos;études,
-              localisation &mdash; en expliquant ce qui le fait monter ou
-              baisser, pas juste un chiffre brut.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <div className="landing-match-card">
-              <CountUpPercent value={92} />
-              <div className="landing-match-label">de compatibilité avec l&apos;offre</div>
-              <ul className="landing-match-notes">
-                <li className="is-positive"><Icon name="check-circle" />Profil très adapté</li>
-                <li className="is-warning"><Icon name="circle-help" />Une compétence CRM augmenterait votre score</li>
-                <li className="is-warning"><Icon name="circle-help" />+12% avec un projet marketing en plus</li>
-              </ul>
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal className="landing-showcase-row landing-showcase-row--priorise">
-          <div className="landing-showcase-visual">
-            <div className="landing-copilot-card">
-              <div className="landing-copilot-item">
-                <Icon name="target" />
-                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
-              </div>
-              <div className="landing-copilot-item">
-                <Icon name="check-circle" />
-                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
-              </div>
-              <div className="landing-copilot-item">
-                <Icon name="circle-help" />
-                <p>Cet étudiant n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
-              </div>
-            </div>
-          </div>
-          <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
-            <p className="landing-showcase-body">
-              Altora analyse en continu les candidatures de la promotion et
-              suggère les actions à mener en priorité, pour accompagner chaque
-              étudiant avant qu&apos;il ne décroche.
-            </p>
-          </div>
-        </Reveal>
-
-        <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
-          <div className="landing-showcase-text">
-            <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
-            <p className="landing-showcase-body">
-              Vos entreprises partenaires postent une offre et grâce à notre
-              système de matching repèrent aussitôt les profils qui leur
-              correspondent le mieux et les contactent directement sans
-              passer par un intermédiaire.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <TalentStack />
-          </div>
-        </Reveal>
-
-        <Reveal className="landing-showcase-row">
+        <Reveal className="landing-showcase-row landing-showcase-row--kanban">
           <div className="landing-showcase-visual">
             <div className="landing-kanban-board">
               <div className="column">
@@ -336,6 +270,72 @@ export default function LandingPage() {
               pédagogique consulte ce même tableau pour voir où il en est, à
               quoi il a déjà postulé, et intervenir au bon moment.
             </p>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row">
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">Ton CV généré, avec un score ATS avant même de l&apos;envoyer</h3>
+            <p className="landing-showcase-body">
+              Quand tu choisis une offre et lances la génération, Altora produit
+              ton CV et te donne aussitôt son score de compatibilité avec cette
+              offre &mdash; compétences, expérience, niveau d&apos;études,
+              localisation &mdash; en expliquant ce qui le fait monter ou
+              baisser, pas juste un chiffre brut.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-match-card">
+              <CountUpPercent value={92} />
+              <div className="landing-match-label">de compatibilité avec l&apos;offre</div>
+              <ul className="landing-match-notes">
+                <li className="is-positive"><Icon name="check-circle" />Profil très adapté</li>
+                <li className="is-warning"><Icon name="circle-help" />Une compétence CRM augmenterait votre score</li>
+                <li className="is-warning"><Icon name="circle-help" />+12% avec un projet marketing en plus</li>
+              </ul>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row landing-showcase-row--priorise">
+          <div className="landing-showcase-visual">
+            <div className="landing-copilot-card">
+              <div className="landing-copilot-item">
+                <Icon name="target" />
+                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
+              </div>
+              <div className="landing-copilot-item">
+                <Icon name="check-circle" />
+                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
+              </div>
+              <div className="landing-copilot-item">
+                <Icon name="circle-help" />
+                <p>Cet étudiant n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
+              </div>
+            </div>
+          </div>
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
+            <p className="landing-showcase-body">
+              Altora analyse en continu les candidatures de la promotion et
+              suggère les actions à mener en priorité, pour accompagner chaque
+              étudiant avant qu&apos;il ne décroche.
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
+          <div className="landing-showcase-text">
+            <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
+            <p className="landing-showcase-body">
+              Vos entreprises partenaires postent une offre et grâce à notre
+              système de matching repèrent aussitôt les profils qui leur
+              correspondent le mieux et les contactent directement sans
+              passer par un intermédiaire.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <TalentStack />
           </div>
         </Reveal>
       </section>

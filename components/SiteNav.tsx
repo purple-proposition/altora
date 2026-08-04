@@ -45,24 +45,24 @@ export default function SiteNav() {
       <div className="landing-nav-actions">
         <Link href="/login" className="landing-nav-login">Se connecter</Link>
         <Link href="/signup" className="landing-nav-cta">Essayer Altora</Link>
-        <button
-          type="button"
-          className="landing-nav-menu-btn"
-          aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          <Icon name={menuOpen ? 'x' : 'menu'} />
-        </button>
-      </div>
-      {menuOpen && (
-        <div className="landing-nav-popup">
-          <Link href="/#fonctionnalites" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Fonctionnalités</Link>
-          <Link href="/pricing" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Tarifs</Link>
-          <Link href="/login" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Se connecter</Link>
-          <Link href="/signup" className="landing-nav-cta landing-nav-popup-cta" onClick={() => setMenuOpen(false)}>Essayer Altora</Link>
+        <div className="landing-nav-menu-wrap">
+          <button
+            type="button"
+            className="landing-nav-menu-btn"
+            aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <Icon name={menuOpen ? 'x' : 'menu'} />
+          </button>
+          <div className={`landing-nav-popup${menuOpen ? ' landing-nav-popup--visible' : ''}`}>
+            <Link href="/#fonctionnalites" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Fonctionnalités</Link>
+            <Link href="/pricing" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Tarifs</Link>
+            <Link href="/login" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Se connecter</Link>
+            <Link href="/signup" className="landing-nav-cta landing-nav-popup-cta" onClick={() => setMenuOpen(false)}>Essayer Altora</Link>
+          </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }
