@@ -352,16 +352,41 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="landing-messaging-board landing-showcase-carousel-item">
-              <div className="column-header column-header--green">
-                <Icon name="calendar" />
-                <span className="column-header-label">Calendrier</span>
-                <span className="column-header-count">3</span>
+            <div className="landing-calendar-board landing-showcase-carousel-item">
+              <div className="landing-calendar-header">
+                <span className="landing-calendar-title">Août 2026</span>
+                <div className="landing-calendar-nav">
+                  <span className="landing-calendar-nav-btn"><Icon name="chevron-left" /></span>
+                  <span className="landing-calendar-nav-btn"><Icon name="circle" /></span>
+                  <span className="landing-calendar-nav-btn"><Icon name="chevron-right" /></span>
+                  <span className="landing-calendar-nav-btn"><Icon name="circle-help" /></span>
+                </div>
               </div>
-              <div className="landing-preview-panel-list">
-                <span className="inline-pill inline-pill--green"><Icon name="target" />Entretien chez Sephora, le 31 juillet à 18h00</span>
-                <span className="inline-pill inline-pill--cyan"><Icon name="briefcase" />Job dating entreprise, le 12 septembre</span>
-                <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée en formation, le 4 octobre</span>
+              <div className="landing-calendar-weekdays">
+                <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+              </div>
+              <div className="landing-calendar-grid">
+                <span className="landing-calendar-day landing-calendar-day--muted">27</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">28</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">29</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">30</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">31</span>
+                <span className="landing-calendar-day">1</span>
+                <span className="landing-calendar-day">2</span>
+                <span className="landing-calendar-day landing-calendar-day--formation">3</span>
+                <span className="landing-calendar-day landing-calendar-day--formation landing-calendar-day--today">4</span>
+                <span className="landing-calendar-day landing-calendar-day--formation">5</span>
+                <span className="landing-calendar-day landing-calendar-day--formation">6</span>
+                <span className="landing-calendar-day landing-calendar-day--formation">7</span>
+                <span className="landing-calendar-day">8</span>
+                <span className="landing-calendar-day">9</span>
+                <span className="landing-calendar-day landing-calendar-day--conges">10</span>
+                <span className="landing-calendar-day landing-calendar-day--conges">11</span>
+                <span className="landing-calendar-day landing-calendar-day--conges">12</span>
+                <span className="landing-calendar-day landing-calendar-day--conges">13</span>
+                <span className="landing-calendar-day landing-calendar-day--conges">14</span>
+                <span className="landing-calendar-day landing-calendar-day--examen">15</span>
+                <span className="landing-calendar-day">16</span>
               </div>
             </div>
           </DragScrollCarousel>

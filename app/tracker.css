@@ -4564,6 +4564,75 @@ legend.field-label { padding: 0; }
   gap: 12px;
 }
 
+/* Third carousel slide: a scaled-down but faithful copy of the real
+   calendar view (app/(tracker)/page.tsx .calendar-*), not an invented
+   layout — same title/nav row, same Lun-Dim weekday header, same
+   per-category tint tokens and inset-ring "today" treatment. Two weeks
+   instead of the real month grid's five to six: at 4 grid columns wide,
+   7 day-columns already makes each cell tiny, and the real grid's
+   120px-tall cells would never fit at any row count. */
+.landing-calendar-board {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.landing-calendar-header { display: flex; align-items: center; justify-content: space-between; }
+.landing-calendar-title {
+  font-family: 'Gloock', Georgia, serif;
+  font-synthesis: none;
+  font-size: 16px;
+  color: var(--text);
+  text-transform: capitalize;
+}
+.landing-calendar-nav { display: flex; align-items: center; gap: 4px; }
+.landing-calendar-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--card-bg);
+  color: var(--text-muted);
+}
+.landing-calendar-nav-btn .lucide { width: 12px; height: 12px; }
+
+.landing-calendar-weekdays,
+.landing-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.landing-calendar-weekdays span {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.landing-calendar-day {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 28px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--card-bg);
+  font-size: 12px;
+  color: var(--text);
+}
+.landing-calendar-day--muted { background: var(--bg); color: var(--text-muted); }
+.landing-calendar-day--today { box-shadow: inset 0 0 0 2px var(--indigo); color: var(--indigo); font-weight: 600; }
+.landing-calendar-day--formation { background: var(--indigo-tint); }
+.landing-calendar-day--conges { background: var(--amber-tint); }
+.landing-calendar-day--examen { background: var(--green-tint); }
+
 /* Fanned stack of 3 talent cards: the front one sits in normal flow
    (centering the whole stack), the other two are absolutely positioned
    off its left/right edge, rotated, and spread further apart on
