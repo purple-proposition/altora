@@ -3538,12 +3538,27 @@ legend.field-label { padding: 0; }
 .landing-nav--scrolled .landing-nav-logo { width: 55px; height: 16px; }
 
 /* Explicit grid-column (rather than relying on source order) so that
-   hiding this element in the scrolled state doesn't make grid
+   fading this element out in the scrolled state can't make grid
    auto-placement slide .landing-nav-actions into its now-empty middle
-   track — display:none removes an item from grid placement entirely,
-   not just from view. */
-.landing-nav-links { grid-column: 2; display: flex; align-items: center; gap: 24px; }
-.landing-nav--scrolled .landing-nav-links { display: none; }
+   track. */
+.landing-nav-links {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.35s cubic-bezier(0.48, 0.72, 0, 1), transform 0.35s cubic-bezier(0.48, 0.72, 0, 1);
+}
+/* Scaling down from the right (not the center) reads as the links
+   gathering into the hamburger button that replaces them there, rather
+   than just shrinking in place. */
+.landing-nav--scrolled .landing-nav-links {
+  opacity: 0;
+  transform: scale(0.92);
+  transform-origin: right center;
+  pointer-events: none;
+}
 
 .landing-nav-link {
   font-size: 14px;
@@ -3554,15 +3569,32 @@ legend.field-label { padding: 0; }
 }
 .landing-nav-link:hover { color: var(--text); }
 
-.landing-nav-actions { grid-column: 3; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+/* position:relative so the hamburger button (below) can sit absolutely
+   pinned to this cell's right edge and crossfade over the login/CTA
+   links in place, instead of the grid reflowing when they disappear. */
+.landing-nav-actions { grid-column: 3; position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.landing-nav-actions .landing-nav-login,
+.landing-nav-actions .landing-nav-cta {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.35s cubic-bezier(0.48, 0.72, 0, 1), transform 0.35s cubic-bezier(0.48, 0.72, 0, 1);
+}
 .landing-nav--scrolled .landing-nav-actions .landing-nav-login,
-.landing-nav--scrolled .landing-nav-actions .landing-nav-cta { display: none; }
+.landing-nav--scrolled .landing-nav-actions .landing-nav-cta {
+  opacity: 0;
+  transform: scale(0.92);
+  pointer-events: none;
+}
 
-/* Hamburger trigger: hidden until the nav is in its scrolled/compact
-   state, where the links and CTA above are hidden and this becomes the
-   only way to reach them. */
+/* Hamburger trigger: crossfades in over the login/CTA links as they fade
+   out (rather than an instant display:none swap) — always mounted,
+   absolutely positioned at the same right edge so the swap reads as one
+   control replacing the other in place instead of a layout jump. */
 .landing-nav-menu-btn {
-  display: none;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 36px;
@@ -3573,8 +3605,16 @@ legend.field-label { padding: 0; }
   background: var(--card-bg);
   color: var(--text);
   cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.85) rotate(-45deg);
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.48, 0.72, 0, 1), transform 0.35s cubic-bezier(0.48, 0.72, 0, 1);
 }
-.landing-nav--scrolled .landing-nav-menu-btn { display: inline-flex; }
+.landing-nav--scrolled .landing-nav-menu-btn {
+  opacity: 1;
+  transform: translateY(-50%) scale(1) rotate(0deg);
+  pointer-events: auto;
+}
 
 .landing-nav-popup {
   position: absolute;
@@ -4367,8 +4407,14 @@ legend.field-label { padding: 0; }
      whole fan's center point (the left:50% anchor the left/right cards
      peek out from) left just enough that the right card's own visible
      edge — not this container's box — lands flush on the row's right
-     edge (10th grid column). */
-  padding: 32px 107px 32px 48px;
+     edge (10th grid column), across viewport widths, not just the one
+     it was eyeballed at. Because the card is rotated, its rightmost
+     point depends on both its width (which scales with vw) and height
+     (mostly fixed px, since only the photo portion scales) via
+     0.5*(W*cos9° + H*sin9°) — worked back from the card's actual
+     geometry (equal-height cards, W = 16.6667vw - 20px) into a
+     vw+px expression instead of a single fixed px value. */
+  padding: 32px calc(9.08vw - 11px) 32px 48px;
 }
 /* Student directory card ("annuaire de promotion" for partner
    companies) — same card shell as .landing-match-card/.landing-
