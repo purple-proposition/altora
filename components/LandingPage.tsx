@@ -356,7 +356,9 @@ export default function LandingPage() {
             <div className="landing-showcase-carousel-item">
             <div className="landing-messaging-board">
               <div className="inbox-message landing-inbox-message landing-inbox-message--unread">
-                <span className="landing-inbox-avatar landing-inbox-avatar--person">C</span>
+                <span className="landing-inbox-avatar landing-inbox-avatar--person">
+                  <Image src="/landing-preview-avatar-cassandra.jpg" alt="Cassandra" fill sizes="28px" />
+                </span>
                 <div className="inbox-message-body">
                   <div className="inbox-message-top">
                     <span className="inbox-message-sender">Cassandra de Lumina School</span>
@@ -365,6 +367,19 @@ export default function LandingPage() {
                   </div>
                   <p className="inbox-message-subject">Ton CV a été mis à jour, tout est prêt pour BlaBlaCar</p>
                   <p className="inbox-message-preview">J&apos;ai relu ta candidature, n&apos;oublie pas d&apos;ajouter ton projet marketing avant de l&apos;envoyer.</p>
+                </div>
+                <span className="inbox-message-unread-dot" />
+              </div>
+              <div className="inbox-message landing-inbox-message landing-inbox-message--unread">
+                <span className="landing-inbox-avatar landing-inbox-avatar--school"><Icon name="target" /></span>
+                <div className="inbox-message-body">
+                  <div className="inbox-message-top">
+                    <span className="inbox-message-sender">Altora</span>
+                    <span className="inbox-message-email">notifications@altora.fr</span>
+                    <span className="inbox-message-time">11:02</span>
+                  </div>
+                  <p className="inbox-message-subject">Nouvelle offre compatible à 92% avec ton profil</p>
+                  <p className="inbox-message-preview">Alternance Growth Marketing chez Doctolib, à Paris 9e. Génère ton CV en un clic.</p>
                 </div>
                 <span className="inbox-message-unread-dot" />
               </div>
@@ -378,6 +393,18 @@ export default function LandingPage() {
                   </div>
                   <p className="inbox-message-subject">Rappel : évaluations B3 les 24, 25 et 26 juin</p>
                   <p className="inbox-message-preview">Le planning détaillé des évaluations est disponible sur ton espace élève.</p>
+                </div>
+              </div>
+              <div className="inbox-message landing-inbox-message landing-inbox-message--read">
+                <span className="landing-inbox-avatar landing-inbox-avatar--school"><Icon name="calendar-clock" /></span>
+                <div className="inbox-message-body">
+                  <div className="inbox-message-top">
+                    <span className="inbox-message-sender">Lumina School</span>
+                    <span className="inbox-message-email">contact@lumina-school.fr</span>
+                    <span className="inbox-message-time">Lundi</span>
+                  </div>
+                  <p className="inbox-message-subject">Entretien confirmé chez Sephora le 31 juillet</p>
+                  <p className="inbox-message-preview">Pense à préparer tes questions et à relire la fiche de poste avant l&apos;entretien.</p>
                 </div>
               </div>
             </div>
@@ -460,6 +487,61 @@ export default function LandingPage() {
               </p>
             </div>
             </div>
+
+            <div className="landing-showcase-carousel-item">
+            <div className="documents-grid landing-documents-board">
+              <div className="folder-card">
+                <div className="folder-card-header">
+                  <Icon name="folder" />
+                  <span className="folder-card-name">Mes CV</span>
+                  <span className="folder-card-count">1</span>
+                </div>
+                <div className="folder-card-body">
+                  <div className="doc-thumb-grid">
+                    <div className="doc-thumb-bare">
+                      <div className="doc-thumb-sheet"><Icon name="file-text" /></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="folder-card">
+                <div className="folder-card-header">
+                  <Icon name="folder" />
+                  <span className="folder-card-name">Mes lettres de motivation</span>
+                  <span className="folder-card-count">0</span>
+                </div>
+                <div className="folder-card-body">
+                  <p className="folder-empty">Aucune lettre générée pour le moment.</p>
+                </div>
+              </div>
+              <div className="folder-card">
+                <div className="folder-card-header">
+                  <Icon name="folder" />
+                  <span className="folder-card-name">Cours</span>
+                  <span className="folder-card-count">2</span>
+                </div>
+                <div className="folder-card-body">
+                  <div className="doc-thumb-grid">
+                    <div className="doc-thumb-bare doc-thumb-fan">
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--0"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--1"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="landing-showcase-caption">
+              <div className="landing-showcase-caption-header">
+                <div className="landing-feature-icon"><Icon name="folder" /></div>
+                <h3 className="landing-showcase-caption-title">Mes documents</h3>
+              </div>
+              <p className="landing-feature-text">
+                CV, lettres de motivation et supports de cours rangés dans
+                des dossiers, accessibles à tout moment sans les chercher
+                dans sa boîte mail.
+              </p>
+            </div>
+            </div>
           </DragScrollCarousel>
         </Reveal>
 
@@ -527,42 +609,6 @@ export default function LandingPage() {
           <div className="landing-showcase-visual">
             <TalentStack />
           </div>
-        </Reveal>
-      </section>
-
-      <section id="fonctionnalites" className="landing-features">
-        <Reveal className="landing-feature">
-          <div className="landing-feature-icon"><Icon name="list-checks" /></div>
-          <h3 className="landing-feature-title">Un tableau pour tout suivre</h3>
-          <p className="landing-feature-text">
-            À postuler, envoyé, entretien, refus : chaque candidature a sa place,
-            sans tableur ni post-it.
-          </p>
-        </Reveal>
-        <Reveal className="landing-feature">
-          <div className="landing-feature-icon"><Icon name="file-text" /></div>
-          <h3 className="landing-feature-title">CV et lettre de motivation sur mesure</h3>
-          <p className="landing-feature-text">
-            Une fiche de poste collée, et votre CV comme votre lettre de
-            motivation se réorganisent pour elle, sans jamais inventer une
-            expérience.
-          </p>
-        </Reveal>
-        <Reveal className="landing-feature">
-          <div className="landing-feature-icon"><Icon name="target" /></div>
-          <h3 className="landing-feature-title">Conçu pour passer les robots</h3>
-          <p className="landing-feature-text">
-            Avant un recruteur, un ATS lit votre CV. Le vôtre est structuré
-            pour qu&apos;il le comprenne, et pour être lu jusqu&apos;au bout.
-          </p>
-        </Reveal>
-        <Reveal className="landing-feature">
-          <div className="landing-feature-icon landing-feature-icon--school"><Icon name="graduation-cap" /></div>
-          <h3 className="landing-feature-title">Pensé pour votre école</h3>
-          <p className="landing-feature-text">
-            Rythme d&apos;alternance et rentrée définis par votre école,
-            appliqués automatiquement à vos documents.
-          </p>
         </Reveal>
       </section>
 

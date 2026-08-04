@@ -4407,6 +4407,11 @@ legend.field-label { padding: 0; }
   scrollbar-width: none;
 }
 .landing-showcase-carousel::-webkit-scrollbar { display: none; }
+/* The grab cursor (and the drag it implies) only applies to the mockups
+   themselves — see DragScrollCarousel's mousedown guard, which already
+   skips starting a drag from here. The caption text below stays a normal
+   cursor so it doesn't look draggable/unselectable. */
+.landing-showcase-caption { cursor: auto; }
 .landing-showcase-carousel.is-dragging {
   cursor: grabbing;
   user-select: none;
@@ -4441,7 +4446,8 @@ legend.field-label { padding: 0; }
    same height regardless of how much content each one has. */
 .landing-showcase-carousel-item > .landing-kanban-board,
 .landing-showcase-carousel-item > .landing-messaging-board,
-.landing-showcase-carousel-item > .landing-calendar-board {
+.landing-showcase-carousel-item > .landing-calendar-board,
+.landing-showcase-carousel-item > .landing-documents-board {
   flex: 1 1 auto;
 }
 
@@ -4665,7 +4671,8 @@ legend.field-label { padding: 0; }
   font-size: 12px;
   font-weight: 600;
 }
-.landing-inbox-avatar--person { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+.landing-inbox-avatar--person { position: relative; overflow: hidden; }
+.landing-inbox-avatar--person img { object-fit: cover; }
 .landing-inbox-avatar--school { background: var(--indigo-tint); color: var(--indigo); }
 .landing-inbox-avatar--school .lucide { width: 14px; height: 14px; }
 
@@ -4769,6 +4776,12 @@ legend.field-label { padding: 0; }
 .landing-calendar-day--examen { background: var(--green-tint); }
 .landing-calendar-day--entreprise { background: var(--cyan-tint); }
 .landing-calendar-day--examen-oral { background: var(--violet-tint); }
+
+/* 4th carousel mockup: reuses the real .documents-grid/.folder-card/
+   .doc-thumb-* classes from app/(tracker)/documents, stacked in a single
+   column instead of the real page's 3-up grid — this mockup is only as
+   wide as one carousel slide, same width as the other 3 mockups. */
+.landing-documents-board { grid-template-columns: 1fr; gap: 16px; }
 
 /* Fanned stack of 3 talent cards: the front one sits in normal flow
    (centering the whole stack), the other two are absolutely positioned
