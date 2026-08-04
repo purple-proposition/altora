@@ -488,7 +488,7 @@ export default function LandingPage() {
             </div>
             </div>
 
-            <div className="landing-showcase-carousel-item">
+            <div className="landing-showcase-carousel-item landing-showcase-carousel-item--tail">
             <div className="documents-grid landing-documents-board">
               <div className="folder-card">
                 <div className="folder-card-header">

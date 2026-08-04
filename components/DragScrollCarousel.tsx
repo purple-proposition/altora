@@ -26,7 +26,12 @@ export default function DragScrollCarousel({ children, className }: { children: 
   function snapToNearestItem() {
     const el = ref.current;
     if (!el) return;
-    const items = Array.from(el.children) as HTMLElement[];
+    // The tail item (e.g. "Mes documents") is CSS scroll-snap-align:none
+    // — it should never become a resting point of its own, so it's
+    // excluded here too, matching the browser's own native snap behavior.
+    const items = (Array.from(el.children) as HTMLElement[]).filter(
+      (item) => !item.classList.contains('landing-showcase-carousel-item--tail')
+    );
     if (!items.length) return;
     // offsetLeft is relative to the nearest *positioned* ancestor, which
     // isn't necessarily this scroll container — getBoundingClientRect

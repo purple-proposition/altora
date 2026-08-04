@@ -4392,7 +4392,7 @@ legend.field-label { padding: 0; }
      can't fire mid-layout, while the web font and Cassandra's photo are
      still loading and item positions are still shifting, and land the
      rest position a card or two off from the first card on reload. */
-  scroll-padding-left: calc(16.6667vw - 4px);
+  scroll-padding-left: calc(25vw - 6px);
   /* Stops the browser's own scroll-anchoring from nudging scrollLeft as
      fonts/images finish loading post-paint — belt-and-suspenders with
      the scrollLeft=0 reset in DragScrollCarousel's mount effect. */
@@ -4408,7 +4408,11 @@ legend.field-label { padding: 0; }
      out of view instead of getting stuck visible right at that edge. */
   width: calc(100% + (25vw - 6px));
   margin-left: calc(-1 * (25vw - 6px));
-  padding-left: calc(16.6667vw - 4px);
+  /* Must exactly cancel margin-left above (same magnitude, opposite
+     sign) so the rest position (scrollLeft: 0) lands back at column 3
+     — the position already set by the row's own padding-left — instead
+     of drifting further left than that. */
+  padding-left: calc(25vw - 6px);
   /* No matching slack on the right, on purpose: the last item should
      block once it reaches column 3 (its normal scroll-snap-align:start
      rest position), not be draggable further past it into empty space
@@ -4468,6 +4472,11 @@ legend.field-label { padding: 0; }
      slide happened to be first. */
   gap: 24px;
 }
+/* Last item ("Mes documents") is never a snap stop: the carousel
+   should block once the item before it (the calendar) rests at
+   column 3, with this one just visible trailing off to the right —
+   not become a further resting point of its own. */
+.landing-showcase-carousel-item--tail { scroll-snap-align: none; }
 /* Every item is already stretched to the tallest one (default flex
    align-items:stretch on the row), but that only affects the item box
    itself — its mockup child still only took its own content height,
