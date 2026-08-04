@@ -4422,6 +4422,24 @@ legend.field-label { padding: 0; }
   scroll-snap-align: start;
 }
 
+.drag-scroll-carousel { display: flex; flex-direction: column; gap: 16px; }
+.drag-scroll-carousel-controls { display: flex; gap: 8px; align-self: flex-end; }
+.drag-scroll-carousel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.drag-scroll-carousel-btn:hover { background: var(--bg); }
+.drag-scroll-carousel-btn .lucide { width: 18px; height: 18px; }
+
 .landing-showcase-text { display: flex; flex-direction: column; }
 
 .landing-showcase-eyebrow {
