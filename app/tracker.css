@@ -4279,7 +4279,7 @@ legend.field-label { padding: 0; }
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
   overflow: hidden;
-  transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 0.6s cubic-bezier(0.48, 0.72, 0, 1), box-shadow 0.6s cubic-bezier(0.48, 0.72, 0, 1);
 }
 .landing-talent-card--front { position: relative; z-index: 3; }
 .landing-talent-stack:hover .landing-talent-card--front,
