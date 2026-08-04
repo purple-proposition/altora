@@ -171,9 +171,18 @@ export default function LandingPage() {
       </section>
 
       <section className="landing-showcase">
-        <Reveal className="landing-showcase-row landing-showcase-row--kanban">
-          <div className="landing-showcase-visual">
-            <div className="landing-kanban-board">
+        <Reveal className="landing-showcase-row--kanban">
+          <div className="landing-showcase-text landing-showcase-text--right">
+            <h3 className="landing-showcase-title">Le suivi pédagogique voit où en est chaque étudiant</h3>
+            <p className="landing-showcase-body">
+              Chaque étudiant gère son propre tableau kanban, avec les offres
+              qu&apos;il ajoute et celles que l&apos;école lui suggère. L&apos;équipe
+              pédagogique consulte ce même tableau pour voir où il en est, à
+              quoi il a déjà postulé, et intervenir au bon moment.
+            </p>
+          </div>
+          <div className="landing-showcase-carousel">
+            <div className="landing-kanban-board landing-showcase-carousel-item">
               <div className="column">
                 <div className="column-header column-header--slate">
                   <Icon name="circle-dashed" />
@@ -328,15 +337,6 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Le suivi pédagogique voit où en est chaque étudiant</h3>
-            <p className="landing-showcase-body">
-              Chaque étudiant gère son propre tableau kanban, avec les offres
-              qu&apos;il ajoute et celles que l&apos;école lui suggère. L&apos;équipe
-              pédagogique consulte ce même tableau pour voir où il en est, à
-              quoi il a déjà postulé, et intervenir au bon moment.
-            </p>
-          </div>
         </Reveal>
 
         <Reveal className="landing-showcase-row">
@@ -433,7 +433,7 @@ export default function LandingPage() {
           </p>
         </Reveal>
         <Reveal className="landing-feature">
-          <div className="landing-feature-icon"><Icon name="graduation-cap" /></div>
+          <div className="landing-feature-icon landing-feature-icon--school"><Icon name="graduation-cap" /></div>
           <h3 className="landing-feature-title">Pensé pour votre école</h3>
           <p className="landing-feature-text">
             Rythme d&apos;alternance et rentrée définis par votre école,

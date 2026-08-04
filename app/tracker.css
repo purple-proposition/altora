@@ -8,7 +8,7 @@
   --shadow: 0 2px 8px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.05);
 
   /* Accent colors follow Tailwind's default palette (50/100/500/600) */
-  --indigo: #4f46e5;       /* indigo-600 */
+  --indigo: #171717;       /* was #4f46e5 (indigo-600) — replaced site-wide per request, kept only on the "école" feature icon (see .landing-feature-icon--school) */
   --indigo-fill: #6366f1;  /* indigo-500 */
   --indigo-tint: #eef2ff;  /* indigo-50 */
   --indigo-track: #e0e7ff; /* indigo-100 */
@@ -4324,20 +4324,33 @@ legend.field-label { padding: 0; }
 }
 .landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
 
-/* Same full-bleed columns-3-to-10 treatment, visual on the left like
-   --priorise. */
+/* Stacked layout (not the shared 2-column .landing-showcase-row grid):
+   right-aligned text on top, a horizontally-scrollable carousel of
+   mockups below — room to add more slides later instead of a single
+   fixed visual next to the text, like the alternating rows above. Still
+   full-bleed across columns 3-10. */
 .landing-showcase-row--kanban {
   width: 100vw;
   margin-left: calc(50% - 50vw);
   padding-left: calc(16.6667vw + 20px);
   padding-right: calc(16.6667vw + 20px);
-  /* 48px gap here instead of the usual 24px gutter, so columns shrink
-     to compensate and keep the row's total content width pinned to the
-     3rd-10th column span: (66.6667vw - 40px - 48px) / 2. */
-  grid-template-columns: calc(33.3333vw - 44px) calc(33.3333vw - 44px);
-  gap: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
-.landing-showcase-row--kanban .landing-showcase-visual { justify-content: flex-start; }
+.landing-showcase-row--kanban .landing-showcase-text--right { text-align: right; align-items: flex-end; }
+
+.landing-showcase-carousel {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+  margin: 0 calc(-1 * (16.6667vw + 20px));
+  padding-left: calc(16.6667vw + 20px);
+  padding-right: calc(16.6667vw + 20px);
+}
+.landing-showcase-carousel-item { flex: 0 0 auto; width: min(700px, 85vw); scroll-snap-align: start; }
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 
@@ -4624,6 +4637,10 @@ legend.field-label { padding: 0; }
   margin-bottom: 16px;
 }
 .landing-feature-icon .lucide { width: 20px; height: 20px; }
+/* Sole exception to the site-wide --indigo -> #171717 swap: this icon
+   keeps the original indigo-600 (#4f46e5), hardcoded since --indigo
+   itself is now #171717. */
+.landing-feature-icon--school { color: #4f46e5; }
 
 .landing-feature-title {
   font-size: 16px;
