@@ -4428,12 +4428,21 @@ legend.field-label { padding: 0; }
   gap: 48px;
 }
 
+.landing-showcase-caption { display: flex; flex-direction: column; gap: 24px; }
 .landing-showcase-caption-header { display: flex; align-items: center; gap: 16px; }
-/* Icon keeps its square/tint styling from .landing-feature-icon but
-   loses that class's own margin-bottom — here it sits beside the title
-   in a row instead of stacked above it. */
-.landing-showcase-caption-header .landing-feature-icon { margin-bottom: 0; flex-shrink: 0; }
+/* Icon keeps its square styling from .landing-feature-icon but loses
+   that class's own margin-bottom (sits beside the title in a row here,
+   not stacked above it) and swaps its indigo tint for a plain neutral
+   look: #525252 icon, #e5e5e5 border, white fill. */
+.landing-showcase-caption-header .landing-feature-icon {
+  margin-bottom: 0;
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  color: #525252;
+}
 .landing-showcase-caption-title { font-size: 32px; line-height: 1.2; font-weight: 600; color: var(--text); margin: 0; }
+.landing-showcase-caption .landing-feature-text { font-size: 16px; }
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 
@@ -4699,13 +4708,17 @@ legend.field-label { padding: 0; }
    down to fit here — the two mockups should read as the same data. Axes
    swap in the column direction, so justify-content (not align-items)
    is what keeps this group at the top now. */
-.landing-calendar-day--has-event { flex-direction: column; justify-content: center; align-items: center; gap: 2px; }
+.landing-calendar-day--has-event { flex-direction: column; justify-content: flex-start; align-items: center; gap: 2px; }
 /* max-width + ellipsis: "L'Oréal" plus its icon is wider than this cell
    can ever be, so without a clamp the centered pill was overflowing and
    getting clipped unevenly by the cell's own overflow:hidden instead of
-   just shrinking cleanly in place. */
+   just shrinking cleanly in place. Auto top/bottom margins center the
+   pill within whatever space is left under the day number (which stays
+   pinned at the top via the parent's flex-start), rather than centering
+   the number+pill as one block. */
 .landing-calendar-day-event {
-  margin-top: 0;
+  margin-top: auto;
+  margin-bottom: auto;
   max-width: 100%;
   padding: 0 3px;
   font-size: 9px;
