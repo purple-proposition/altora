@@ -4404,7 +4404,7 @@ legend.field-label { padding: 0; }
 /* First name is the card's title (everyone shown here is on an
    alternance contract, so that tag/status line was redundant) —
    the degree becomes a plain muted subtitle underneath instead. */
-.landing-talent-name { font-family: 'Goudy Bookletter 1911', Georgia, serif; font-synthesis: none; font-size: 20px; color: var(--text); margin-bottom: 4px; }
+.landing-talent-name { font-family: 'Goudy Bookletter 1911', Georgia, serif; font-synthesis: none; font-size: 24px; color: var(--text); margin-bottom: 4px; }
 /* min-height reserves room for the longest degree (Thomas's, wraps to
    4 lines at this card width) so every card reaches the same height
    instead of the shorter degrees (e.g. Inès's, 1 line) leaving the
