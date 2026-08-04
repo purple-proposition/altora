@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import AltoraLogo from '@/components/AltoraLogo';
+import QuoteCtaButton from '@/components/QuoteCtaButton';
+import QuoteModal from '@/components/QuoteModal';
 
 // Shared nav for every public marketing page (landing, pricing) — see
 // .landing-nav in tracker.css for the floating-card styling. Anchor links
@@ -44,7 +46,7 @@ export default function SiteNav() {
       </nav>
       <div className="landing-nav-actions">
         <Link href="/login" className="landing-nav-login">Se connecter</Link>
-        <Link href="/signup" className="landing-nav-cta">Essayer Altora</Link>
+        <QuoteCtaButton className="landing-nav-cta">Contacter un expert</QuoteCtaButton>
         <div className="landing-nav-menu-wrap">
           <button
             type="button"
@@ -59,10 +61,11 @@ export default function SiteNav() {
             <Link href="/#fonctionnalites" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Fonctionnalités</Link>
             <Link href="/pricing" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Tarifs</Link>
             <Link href="/login" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Se connecter</Link>
-            <Link href="/signup" className="landing-nav-cta landing-nav-popup-cta" onClick={() => setMenuOpen(false)}>Essayer Altora</Link>
+            <QuoteCtaButton className="landing-nav-cta landing-nav-popup-cta" onClick={() => setMenuOpen(false)}>Contacter un expert</QuoteCtaButton>
           </div>
         </div>
       </div>
+      <QuoteModal />
     </header>
   );
 }

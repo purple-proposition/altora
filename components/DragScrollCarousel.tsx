@@ -35,6 +35,11 @@ export default function DragScrollCarousel({ children, className }: { children: 
   function onMouseDown(e: React.MouseEvent) {
     const el = ref.current;
     if (!el) return;
+    // Text in the caption below each mockup stays selectable — only a
+    // mousedown that starts on the mockup itself begins a drag, so
+    // click-dragging across the caption's text selects it instead of
+    // panning the carousel.
+    if ((e.target as HTMLElement).closest('.landing-showcase-caption')) return;
     drag.current = { active: true, startX: e.clientX, startScroll: el.scrollLeft };
     el.classList.add('is-dragging');
   }

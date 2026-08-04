@@ -4428,7 +4428,7 @@ legend.field-label { padding: 0; }
   gap: 48px;
 }
 
-.landing-showcase-caption { display: flex; flex-direction: column; gap: 24px; }
+.landing-showcase-caption { display: flex; flex-direction: column; gap: 12px; }
 .landing-showcase-caption-header { display: flex; align-items: center; gap: 16px; }
 /* Icon keeps its square styling from .landing-feature-icon but loses
    that class's own margin-bottom (sits beside the title in a row here,
@@ -4907,6 +4907,93 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
   margin: 0;
 }
+
+/* "Contacter un expert" modal — frosted glass like the nav popup
+   (.landing-nav-popup / the real CRM's .period-popup), just centered as
+   an overlay instead of anchored under a button. */
+.quote-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, black 45%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.quote-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  background: color-mix(in srgb, var(--card-bg) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 24px 48px color-mix(in srgb, black 24%, transparent);
+}
+.quote-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.quote-modal-close:hover { background: var(--bg); }
+.quote-modal-close .lucide { width: 16px; height: 16px; }
+.quote-modal-title {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-synthesis: none;
+  font-size: 24px;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+.quote-modal-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 0 24px;
+}
+.quote-modal-form { display: flex; flex-direction: column; gap: 16px; }
+.quote-modal-field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; color: var(--text); }
+.quote-modal-field input,
+.quote-modal-field textarea {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--bg);
+  color: var(--text);
+  resize: vertical;
+}
+.quote-modal-field input:focus,
+.quote-modal-field textarea:focus {
+  outline: none;
+  border-color: var(--text);
+}
+.quote-modal-submit {
+  justify-content: center;
+  margin-top: 8px;
+  border: none;
+  cursor: pointer;
+}
+.quote-modal-success .quote-modal-text { margin-bottom: 0; }
 
 .landing-footer {
   max-width: 1120px;

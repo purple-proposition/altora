@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Icon from '@/components/Icon';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
+import QuoteCtaButton from '@/components/QuoteCtaButton';
 import '../tracker.css';
 
 // Public pricing page (added to middleware.ts PUBLIC_PATHS). Structure
@@ -37,7 +38,7 @@ export default function PricingPage() {
           <p className="pricing-plan-tagline">La plateforme complète pour votre établissement</p>
           <div className="pricing-plan-price">Sur devis</div>
           <p className="pricing-plan-price-note">Selon la taille de votre promotion</p>
-          <Link href="/signup" className="landing-nav-cta pricing-plan-cta">Essayer Altora</Link>
+          <QuoteCtaButton className="landing-nav-cta pricing-plan-cta">Contacter un expert</QuoteCtaButton>
           <ul className="pricing-plan-features">
             <li><Icon name="check-circle" />Gestion des étudiants et des offres partenaires</li>
             <li><Icon name="check-circle" />Tableaux de bord et suivi des candidatures</li>

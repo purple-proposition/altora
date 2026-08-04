@@ -7,6 +7,7 @@ import SiteFooter from '@/components/SiteFooter';
 import CountUpPercent from '@/components/CountUpPercent';
 import TalentStack from '@/components/TalentStack';
 import DragScrollCarousel from '@/components/DragScrollCarousel';
+import QuoteCtaButton from '@/components/QuoteCtaButton';
 
 // Public marketing landing page, shown at "/" only when signed out (see
 // app/(tracker)/page.tsx and middleware.ts). Built entirely from the
@@ -43,7 +44,7 @@ export default function LandingPage() {
           accompagner vers la réussite de leur alternance.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
-          <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
+          <QuoteCtaButton className="landing-nav-cta landing-hero-cta">Contacter un expert</QuoteCtaButton>
         </div>
 
         <div className="landing-preview landing-in landing-in--4" aria-hidden="true">
@@ -136,7 +137,7 @@ export default function LandingPage() {
             <li><Icon name="check-circle" />Rythme d&apos;alternance de l&apos;école appliqué automatiquement</li>
             <li><Icon name="check-circle" />Suivi des candidatures de chaque alternant</li>
           </ul>
-          <Link href="/signup" className="landing-category-cta">Essayer Altora <Icon name="chevron-right" /></Link>
+          <QuoteCtaButton className="landing-category-cta">Contacter un expert <Icon name="chevron-right" /></QuoteCtaButton>
         </Reveal>
 
         <Reveal id="etudiants" className="landing-category">
@@ -544,7 +545,7 @@ export default function LandingPage() {
           Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
         </p>
         <div className="landing-closing-actions">
-          <Link href="/signup" className="landing-nav-cta landing-hero-cta">Essayer Altora</Link>
+          <QuoteCtaButton className="landing-nav-cta landing-hero-cta">Contacter un expert</QuoteCtaButton>
         </div>
       </Reveal>
 
