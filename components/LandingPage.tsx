@@ -228,11 +228,10 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h3 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h3>
             <p className="landing-showcase-body">
-              Vos recruteurs postent une offre et voient aussitôt qui, dans la
-              promotion, correspond le mieux. Chaque école choisit d&apos;ouvrir sa
-              promotion à ses entreprises partenaires : photo, formation,
-              compétences, CV, LinkedIn et email, tout est accessible pour
-              joindre directement le bon profil, sans intermédiaire.
+              Vos recruteurs postent une offre, repèrent aussitôt le profil qui
+              correspond le mieux dans la promotion, et le contactent
+              directement, CV, LinkedIn et email sous la main, sans passer par
+              un intermédiaire.
             </p>
           </div>
           <div className="landing-showcase-visual">
