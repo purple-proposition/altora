@@ -3577,14 +3577,21 @@ legend.field-label { padding: 0; }
    pinned to this cell's right edge and crossfade over the login/CTA
    links in place, instead of the grid reflowing when they disappear. */
 .landing-nav-actions { grid-column: 3; position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
-.landing-nav-actions .landing-nav-login,
-.landing-nav-actions .landing-nav-cta {
+/* Direct-child selector, not descendant: .landing-nav-popup-cta further
+   down is also a .landing-nav-cta (it reuses the class for its pill
+   styling), but it's nested several levels inside .landing-nav-actions
+   too — a plain descendant selector here was fading it out and killing
+   its pointer-events every time it should have been showing (i.e.
+   whenever .landing-nav--scrolled is set, which is exactly when the
+   popup exists at all). */
+.landing-nav-actions > .landing-nav-login,
+.landing-nav-actions > .landing-nav-cta {
   opacity: 1;
   transform: scale(1);
   transition: opacity 0.35s cubic-bezier(0.48, 0.72, 0, 1), transform 0.35s cubic-bezier(0.48, 0.72, 0, 1);
 }
-.landing-nav--scrolled .landing-nav-actions .landing-nav-login,
-.landing-nav--scrolled .landing-nav-actions .landing-nav-cta {
+.landing-nav--scrolled .landing-nav-actions > .landing-nav-login,
+.landing-nav--scrolled .landing-nav-actions > .landing-nav-cta {
   opacity: 0;
   transform: scale(0.92);
   pointer-events: none;
@@ -4325,20 +4332,28 @@ legend.field-label { padding: 0; }
 .landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
 
 /* Stacked layout (not the shared 2-column .landing-showcase-row grid):
-   right-aligned text on top, a horizontally-scrollable carousel of
+   left-aligned text on top, a horizontally-scrollable carousel of
    mockups below — room to add more slides later instead of a single
-   fixed visual next to the text, like the alternating rows above. Still
-   full-bleed across columns 3-10. */
+   fixed visual next to the text, like the alternating rows above. Both
+   the text and the carousel are pinned to the left margin (column 1) and
+   sized to exactly 4 of the 12 grid columns — same span formula as
+   --annuaire/--priorise above (k=4, g=24 -> 33.3333vw - 32px), just
+   anchored at the left edge (24px) instead of centered on columns 3-10. */
 .landing-showcase-row--kanban {
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  padding-left: calc(16.6667vw + 20px);
-  padding-right: calc(16.6667vw + 20px);
+  padding-left: 24px;
+  padding-right: 24px;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 32px;
 }
-.landing-showcase-row--kanban .landing-showcase-text--right { text-align: right; align-items: flex-end; }
+.landing-showcase-row--kanban .landing-showcase-text--right {
+  text-align: left;
+  align-items: flex-start;
+  width: calc(33.3333vw - 32px);
+}
 
 .landing-showcase-carousel {
   display: flex;
@@ -4346,11 +4361,8 @@ legend.field-label { padding: 0; }
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: 8px;
-  margin: 0 calc(-1 * (16.6667vw + 20px));
-  padding-left: calc(16.6667vw + 20px);
-  padding-right: calc(16.6667vw + 20px);
 }
-.landing-showcase-carousel-item { flex: 0 0 auto; width: min(700px, 85vw); scroll-snap-align: start; }
+.landing-showcase-carousel-item { flex: 0 0 auto; width: calc(33.3333vw - 32px); scroll-snap-align: start; }
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 
