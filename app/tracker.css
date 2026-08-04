@@ -4230,6 +4230,14 @@ legend.field-label { padding: 0; }
   margin-left: calc(50% - 50vw);
   padding-left: calc(16.6667vw + 4px);
   padding-right: calc(16.6667vw + 4px);
+  /* Text and visual each span exactly 4 of the 12 grid columns (columns
+     3-6 and 7-10), with the real 24px inter-column gutter between them —
+     not an even 50/50 split of the row's own content width with an
+     arbitrary 48px gap, which fell 12px short of the true column edges.
+     Same span formula as elsewhere: (k/12)*100vw + g*[(k-1) - (k/12)*11],
+     which for k=4, g=24 simplifies to 33.3333vw - 16px. */
+  grid-template-columns: calc(33.3333vw - 16px) calc(33.3333vw - 16px);
+  gap: 24px;
 }
 .landing-showcase-row--annuaire .landing-showcase-visual { justify-content: flex-end; }
 
