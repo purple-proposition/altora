@@ -3694,12 +3694,18 @@ legend.field-label { padding: 0; }
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
+  border: none;
   border-radius: var(--radius-pill);
   background: var(--indigo);
   color: #fff;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
   transition: background 0.15s ease;
 }
 .landing-nav-cta:hover { background: var(--indigo-fill); }
@@ -5009,7 +5015,7 @@ legend.field-label { padding: 0; }
   background: color-mix(in srgb, black 45%, transparent);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  animation: quote-modal-overlay-in 0.2s ease forwards;
+  animation: quote-modal-overlay-in 0.28s ease forwards;
 }
 .quote-modal {
   position: relative;
@@ -5024,9 +5030,10 @@ legend.field-label { padding: 0; }
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: 0 24px 48px color-mix(in srgb, black 24%, transparent);
-  /* Same spring-in as the nav popup/real .period-popup: a slight
-     overshoot on the way in rather than a plain ease. */
-  animation: quote-modal-in 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  /* Same spring-in as the nav popup/real .period-popup, but gentler:
+     less overshoot and a touch slower than the nav popup so it reads
+     as smooth rather than snappy. */
+  animation: quote-modal-in 0.48s cubic-bezier(0.22, 1.12, 0.36, 1) forwards;
 }
 
 @keyframes quote-modal-overlay-in {
@@ -5034,7 +5041,7 @@ legend.field-label { padding: 0; }
   to { opacity: 1; }
 }
 @keyframes quote-modal-in {
-  from { opacity: 0; transform: scale(0.9) translateY(8px); }
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
