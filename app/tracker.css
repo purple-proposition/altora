@@ -3927,7 +3927,7 @@ legend.field-label { padding: 0; }
 .landing-preview-greeting-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   font-family: 'Goudy Bookletter 1911', Georgia, serif;
   font-synthesis: none;
   font-size: 24px;
