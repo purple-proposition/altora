@@ -1,4 +1,5 @@
 import {
+  Banknote,
   Bell,
   Briefcase,
   Calendar,
@@ -22,6 +23,7 @@ import {
   ListChecks,
   LogOut,
   Mail,
+  MapPin,
   Menu,
   Monitor,
   Moon,
@@ -32,6 +34,7 @@ import {
   RefreshCw,
   Search,
   SlidersHorizontal,
+  Sparkles,
   Sun,
   Target,
   Trash2,
@@ -47,6 +50,7 @@ import {
 // pulled in lucide-react's entire icon set (1000+ components) into every
 // page's client bundle, undoing the earlier perf work.
 const ICONS: Record<string, React.ComponentType<LucideProps>> = {
+  banknote: Banknote,
   bell: Bell,
   briefcase: Briefcase,
   calendar: Calendar,
@@ -70,6 +74,7 @@ const ICONS: Record<string, React.ComponentType<LucideProps>> = {
   'list-checks': ListChecks,
   'log-out': LogOut,
   mail: Mail,
+  'map-pin': MapPin,
   menu: Menu,
   monitor: Monitor,
   moon: Moon,
@@ -80,6 +85,7 @@ const ICONS: Record<string, React.ComponentType<LucideProps>> = {
   'refresh-cw': RefreshCw,
   search: Search,
   'sliders-horizontal': SlidersHorizontal,
+  sparkles: Sparkles,
   sun: Sun,
   target: Target,
   'trash-2': Trash2,

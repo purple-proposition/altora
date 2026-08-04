@@ -238,37 +238,91 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row">
           <div className="landing-showcase-visual">
-            <div className="landing-kanban-card">
-              <div className="landing-kanban-col">
-                <div className="landing-kanban-col-title">
-                  <Icon name="circle-dashed" />À faire<span className="landing-kanban-col-count">2</span>
+            <div className="landing-kanban-board">
+              <div className="column">
+                <div className="column-header column-header--slate">
+                  <Icon name="circle-dashed" />
+                  <span className="column-header-label">À faire</span>
+                  <span className="column-header-count">2</span>
                 </div>
-                <div className="landing-kanban-item landing-kanban-item--slate">
-                  <span className="landing-kanban-item-tag">Suggérée par l&apos;école</span>
-                  <span className="landing-kanban-item-role">Alternance Marketing Digital</span>
-                  <span className="landing-kanban-item-company">L&apos;Oréal</span>
-                </div>
-                <div className="landing-kanban-item landing-kanban-item--slate">
-                  <span className="landing-kanban-item-role">Assistant chef de projet</span>
-                  <span className="landing-kanban-item-company">Decathlon</span>
+                <div className="card-list">
+                  <div className="card card--slate">
+                    <span className="card-school-badge"><Icon name="graduation-cap" />Proposée par l&apos;école</span>
+                    <div className="card-heading">
+                      <span className="card-title">Alternance Marketing Digital</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">L&apos;Oréal</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Clichy</span>
+                      <span className="card-meta-item"><Icon name="banknote" />1 400 € / mois</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                      <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
+                    </div>
+                  </div>
+                  <div className="card card--slate">
+                    <div className="card-heading">
+                      <span className="card-title">Assistant chef de projet</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">Decathlon</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Lyon</span>
+                      <span className="card-meta-item"><Icon name="banknote" />1 100 € / mois</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                      <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="landing-kanban-col">
-                <div className="landing-kanban-col-title">
-                  <Icon name="hourglass" />Envoyé<span className="landing-kanban-col-count">1</span>
+              <div className="column">
+                <div className="column-header column-header--amber">
+                  <Icon name="hourglass" />
+                  <span className="column-header-label">Envoyé</span>
+                  <span className="column-header-count">1</span>
                 </div>
-                <div className="landing-kanban-item landing-kanban-item--amber">
-                  <span className="landing-kanban-item-role">Chargé de communication</span>
-                  <span className="landing-kanban-item-company">BlaBlaCar</span>
+                <div className="card-list">
+                  <div className="card card--amber">
+                    <div className="card-heading">
+                      <span className="card-title">Chargé de communication</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">BlaBlaCar</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Paris</span>
+                      <span className="card-meta-item"><Icon name="banknote" />1 300 € / mois</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="landing-kanban-col">
-                <div className="landing-kanban-col-title">
-                  <Icon name="target" />Entretien<span className="landing-kanban-col-count">1</span>
+              <div className="column">
+                <div className="column-header column-header--green">
+                  <Icon name="target" />
+                  <span className="column-header-label">Entretien</span>
+                  <span className="column-header-count">1</span>
                 </div>
-                <div className="landing-kanban-item landing-kanban-item--green">
-                  <span className="landing-kanban-item-role">Alternance RH</span>
-                  <span className="landing-kanban-item-company">Sephora</span>
+                <div className="card-list">
+                  <div className="card card--green">
+                    <div className="card-heading">
+                      <span className="card-title">Alternance RH</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">Sephora</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Neuilly-sur-Seine</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                    </div>
+                    <span className="card-interview-pill"><Icon name="calendar" />Entretien le 31 juillet à 18h00</span>
+                  </div>
                 </div>
               </div>
             </div>

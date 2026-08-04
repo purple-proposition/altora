@@ -4393,54 +4393,25 @@ legend.field-label { padding: 0; }
 .landing-copilot-item .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 .landing-copilot-item p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text); }
 
-/* Mini kanban mockup ("suivi pédagogique" showcase row) — same visual
-   language as the real board (.column/.card in the app: each card tinted
-   to match its column's status color) scaled down for a marketing card
-   instead of introducing a new one-off style. */
-.landing-kanban-card {
+/* Kanban mockup ("suivi pédagogique" showcase row) — reuses the real
+   board's own classes (.column, .card, .card-title, .card-school-badge,
+   .card-interview-pill, etc. from the dashboard kanban) instead of a
+   parallel one-off style, so this marketing mockup is pixel-identical to
+   the actual product rather than an approximation of it. Only the outer
+   frame (bordered card, matching the other showcase visuals) and the
+   3-column grid are new. */
+.landing-kanban-board {
   width: 100%;
-  background: var(--card-bg);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
   padding: 20px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  align-items: start;
 }
-.landing-kanban-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.landing-kanban-col-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 4px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-.landing-kanban-col-title .lucide { width: 14px; height: 14px; flex-shrink: 0; }
-.landing-kanban-col-count { margin-left: auto; font-size: 11px; opacity: 0.75; }
-.landing-kanban-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 10px 12px;
-  border-radius: var(--radius-inner);
-}
-.landing-kanban-item--slate { background: var(--bg); }
-.landing-kanban-item--amber { background: var(--amber-tint); }
-.landing-kanban-item--green { background: var(--green-tint); }
-.landing-kanban-item-tag {
-  align-self: flex-start;
-  margin-bottom: 2px;
-  padding: 2px 6px;
-  border-radius: var(--radius-pill);
-  background: var(--indigo-tint);
-  color: var(--indigo);
-  font-size: 10px;
-  font-weight: 600;
-}
-.landing-kanban-item-role { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
-.landing-kanban-item-company { font-size: 11px; color: var(--text-muted); }
 
 /* Fanned stack of 3 talent cards: the front one sits in normal flow
    (centering the whole stack), the other two are absolutely positioned
@@ -4509,8 +4480,11 @@ legend.field-label { padding: 0; }
 }
 .landing-talent-photo {
   position: relative;
-  width: 100%;
+  width: calc(100% - 32px);
+  margin: 16px auto 0;
   aspect-ratio: 4 / 3;
+  border-radius: var(--radius-input);
+  overflow: hidden;
   background: var(--bg);
 }
 .landing-talent-photo img { object-fit: cover; }
