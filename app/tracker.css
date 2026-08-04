@@ -3657,7 +3657,6 @@ legend.field-label { padding: 0; }
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  box-shadow: 0 8px 24px color-mix(in srgb, black 16%, transparent);
   transform-origin: top right;
   opacity: 0;
   transform: scale(0.85) translateY(-8px);
@@ -4516,6 +4515,23 @@ legend.field-label { padding: 0; }
 .landing-kanban-board .card-school-badge .lucide { width: 9px; height: 9px; }
 .landing-kanban-board .card-interview-pill { margin-top: 6px; padding: 3px 6px; gap: 3px; font-size: 9px; }
 .landing-kanban-board .card-interview-pill .lucide { width: 9px; height: 9px; }
+
+/* Second carousel slide, same 4-column width and outer card chrome as
+   .landing-kanban-board — a messaging mockup instead of the board.
+   Reuses .inline-pill (the same component the real inbox/summary
+   sentences use) via .landing-preview-panel-list's existing stacked,
+   full-width override, instead of a new one-off pill style. */
+.landing-messaging-board {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 /* Fanned stack of 3 talent cards: the front one sits in normal flow
    (centering the whole stack), the other two are absolutely positioned

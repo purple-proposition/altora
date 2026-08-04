@@ -336,6 +336,20 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+
+            <div className="landing-messaging-board landing-showcase-carousel-item">
+              <div className="column-header column-header--indigo">
+                <Icon name="mail" />
+                <span className="column-header-label">Boîte de réception</span>
+                <span className="column-header-count">4</span>
+              </div>
+              <div className="landing-preview-panel-list">
+                <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée le 4 octobre : préparez vos documents</span>
+                <span className="inline-pill inline-pill--slate"><Icon name="mail" />Une nouvelle offre correspond à votre profil</span>
+                <span className="inline-pill inline-pill--green"><Icon name="target" />Confirmation d&apos;entretien chez Sephora</span>
+                <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />Rappel : complétez votre candidature BlaBlaCar</span>
+              </div>
+            </div>
           </div>
         </Reveal>
 
