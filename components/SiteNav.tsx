@@ -11,22 +11,22 @@ import QuoteModal from '@/components/QuoteModal';
 // .landing-nav in tracker.css for the floating-card styling. Anchor links
 // go through "/" explicitly so they work correctly from /pricing too.
 //
-// Stays a flex sibling above .landing-card (the actual scroll container —
-// .landing itself never scrolls) rather than moving into it. It only reads
-// that scroll to react to it: past a small threshold, the nav compacts
-// (half its vertical padding, a smaller logo) and the links/actions
-// collapse into a hamburger popup — the nav's own position never changes.
+// Stays a flex sibling above .landing-card rather than moving into it. It
+// only reads the page's scroll to react to it: past a small threshold, the
+// nav compacts (half its vertical padding, a smaller logo) and the
+// links/actions collapse into a hamburger popup — the nav's own position
+// never changes. Reads window scroll, not .landing-card's — the page
+// scrolls normally (see .landing/.landing-card in tracker.css), it isn't
+// its own nested scroll container.
 export default function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const scrollEl = document.querySelector('.landing-card');
-    if (!scrollEl) return;
-    const onScroll = () => setScrolled(scrollEl.scrollTop > 8);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
-    scrollEl.addEventListener('scroll', onScroll, { passive: true });
-    return () => scrollEl.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => {

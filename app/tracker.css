@@ -3467,7 +3467,16 @@ legend.field-label { padding: 0; }
    put as a flex sibling outside it; it reacts to that scroll (see
    .landing-nav--scrolled) without moving or overlaying the card itself. */
 .landing {
-  height: 100vh;
+  /* min-height, not height: fixing this to 100vh forced .landing-card
+     below (flex:1, min-height:0) to cap at the leftover viewport height
+     and become its own overflow-y:auto scroll container — meaning the
+     page itself (html/body) never grew taller than one screen. Safari's
+     "Export as PDF" (unlike its Print dialog) captures the document
+     exactly as laid out on screen, not through @media print, so it only
+     ever captured that one screen's worth. min-height still fills the
+     viewport when content is short, but lets the box (and the normal
+     page scroll) grow with its content instead of being clipped. */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -3478,15 +3487,15 @@ legend.field-label { padding: 0; }
 
 .landing-card {
   flex: 1;
-  min-height: 0;
   /* Negative top margin cancels .landing's 24px gap against the nav above,
      so the card touches it with zero visible seam, while keeping 24px on
      the other 3 sides (the footer lives inside the card, at its bottom). */
   margin: -24px 24px 24px;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  overflow-y: auto;
+  /* No overflow-y here (see .landing above) — the page scrolls normally
+     now. overflow-x:hidden stays: the showcase carousel rows' bleed-past-
+     the-margin drag effect clips against this exact boundary. */
   overflow-x: hidden;
 }
 
@@ -3751,20 +3760,6 @@ legend.field-label { padding: 0; }
     transition: none;
     opacity: 1;
     transform: none;
-  }
-  /* Safari's "Export as PDF" (and print) only captures the page's own
-     document height, not the content of a nested overflow:auto
-     scroll container — .landing is pinned to height:100vh and the
-     actual page content scrolls inside .landing-card instead of the
-     page itself, so only a single viewport's worth ever made it into
-     the export. Letting both grow to their natural content height
-     puts everything back in normal document flow, which is what gets
-     captured. */
-  .landing {
-    height: auto;
-  }
-  .landing-card {
-    overflow: visible;
   }
 }
 
