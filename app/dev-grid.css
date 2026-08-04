@@ -6,7 +6,16 @@
 .grid-overlay {
   display: none;
   position: fixed;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  /* 24px margin, grid, 24px margin, ... , grid, 24px margin: the same
+     24px used as the inter-column gap also bookends the whole grid on
+     both sides, instead of the columns running edge-to-edge. Every
+     vw+px alignment formula elsewhere in tracker.css (nav width, talent
+     card width, showcase row insets/spans) is derived from this exact
+     margin+gap geometry — change it here and those need recomputing. */
+  left: 24px;
+  right: 24px;
   grid-template-columns: repeat(12, 1fr);
   gap: 24px;
   z-index: 9999;
