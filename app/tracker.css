@@ -3490,6 +3490,27 @@ legend.field-label { padding: 0; }
   overflow-x: hidden;
 }
 
+/* Frosted top edge, independent of .landing-nav (which keeps its current
+   flat, non-overlapping look/position, unchanged) — a generated sticky
+   strip pinned to the top of .landing-card's own scroll, so content
+   blurs as it scrolls up past the top of the card instead of cutting off
+   sharply. margin-bottom cancels its own height so it doesn't push the
+   real content down; it's the first thing in the card's normal flow, so
+   position:sticky pins it to that scroll, not the page's. */
+.landing-card::before {
+  content: '';
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  display: block;
+  height: 32px;
+  margin-bottom: -32px;
+  background: color-mix(in srgb, var(--card-bg) 65%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  pointer-events: none;
+}
+
 .landing-nav {
   /* Grid, not flex space-between: the brand and the actions groups are
      different widths (a short wordmark vs. two buttons), so space-between
