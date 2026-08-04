@@ -4678,10 +4678,7 @@ legend.field-label { padding: 0; }
   overflow: hidden;
 }
 .landing-calendar-day--muted { background: var(--bg); color: var(--text-muted); }
-/* Jour férié: red number on the plain background, not a filled tint —
-   matches the real reference, where the holiday marker is a text color
-   change, unlike every other category's solid fill. */
-.landing-calendar-day--ferie { color: var(--rose); font-weight: 600; }
+.landing-calendar-day--ferie { background: var(--rose-tint); }
 
 /* Cross-references the "Le 5 août à 10h30" interview pill on the L'Oréal
    card in .landing-kanban-board — same target icon as the real
