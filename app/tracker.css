@@ -4566,6 +4566,8 @@ legend.field-label { padding: 0; }
    full-width override, instead of a new one-off pill style. */
 .landing-messaging-board {
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -4575,6 +4577,45 @@ legend.field-label { padding: 0; }
   flex-direction: column;
   gap: 12px;
 }
+
+/* Real .inbox-message (app/(tracker)/inbox/page.tsx) scaled down for this
+   compact mockup — same avatar/sender/subject/preview structure, tighter
+   padding/font-size, unread vs. read told apart by fill vs. plain border
+   (not the small indigo dot alone, which reads too subtly at this size). */
+.landing-inbox-message { padding: 10px 12px; gap: 8px; min-width: 0; }
+.landing-inbox-message--unread { background: var(--bg); }
+.landing-inbox-message--read { background: var(--card-bg); }
+.landing-messaging-board .inbox-message-body { gap: 2px; min-width: 0; }
+.landing-messaging-board .inbox-message-top { flex-wrap: wrap; gap: 4px; }
+.landing-messaging-board .inbox-message-sender { font-size: 12px; }
+.landing-messaging-board .inbox-message-email { font-size: 12px; max-width: 120px; }
+.landing-messaging-board .inbox-message-time { font-size: 12px; }
+.landing-messaging-board .inbox-message-subject { font-size: 12px; }
+.landing-messaging-board .inbox-message-preview {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.landing-messaging-board .inbox-message-unread-dot { margin-top: 2px; }
+
+.landing-inbox-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+.landing-inbox-avatar--person { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+.landing-inbox-avatar--school { background: var(--indigo-tint); color: var(--indigo); }
+.landing-inbox-avatar--school .lucide { width: 14px; height: 14px; }
 
 /* Third carousel slide: a scaled-down but faithful copy of the real
    calendar view (app/(tracker)/page.tsx .calendar-*), not an invented
@@ -4596,28 +4637,6 @@ legend.field-label { padding: 0; }
   flex-direction: column;
   gap: 12px;
 }
-.landing-calendar-header { display: flex; align-items: center; justify-content: space-between; }
-.landing-calendar-title {
-  font-family: 'Goudy Bookletter 1911', Georgia, serif;
-  font-synthesis: none;
-  font-size: 16px;
-  color: var(--text);
-  text-transform: capitalize;
-}
-.landing-calendar-nav { display: flex; align-items: center; gap: 4px; }
-.landing-calendar-nav-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  background: var(--card-bg);
-  color: var(--text-muted);
-}
-.landing-calendar-nav-btn .lucide { width: 12px; height: 12px; }
-
 .landing-calendar-weekdays,
 .landing-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .landing-calendar-weekdays span {
@@ -4649,6 +4668,8 @@ legend.field-label { padding: 0; }
 .landing-calendar-day--formation { background: var(--indigo-tint); }
 .landing-calendar-day--conges { background: var(--amber-tint); }
 .landing-calendar-day--examen { background: var(--green-tint); }
+.landing-calendar-day--entreprise { background: var(--cyan-tint); }
+.landing-calendar-day--examen-oral { background: var(--violet-tint); }
 
 /* Fanned stack of 3 talent cards: the front one sits in normal flow
    (centering the whole stack), the other two are absolutely positioned

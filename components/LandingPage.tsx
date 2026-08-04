@@ -339,29 +339,34 @@ export default function LandingPage() {
             </div>
 
             <div className="landing-messaging-board landing-showcase-carousel-item">
-              <div className="column-header column-header--indigo">
-                <Icon name="mail" />
-                <span className="column-header-label">Boîte de réception</span>
-                <span className="column-header-count">4</span>
+              <div className="inbox-message landing-inbox-message landing-inbox-message--unread">
+                <span className="landing-inbox-avatar landing-inbox-avatar--person">C</span>
+                <div className="inbox-message-body">
+                  <div className="inbox-message-top">
+                    <span className="inbox-message-sender">Cassandra de Lumina School</span>
+                    <span className="inbox-message-email">cassandra@lumina-school.fr</span>
+                    <span className="inbox-message-time">09:14</span>
+                  </div>
+                  <p className="inbox-message-subject">Ton CV a été mis à jour, tout est prêt pour BlaBlaCar</p>
+                  <p className="inbox-message-preview">J&apos;ai relu ta candidature, n&apos;oublie pas d&apos;ajouter ton projet marketing avant de l&apos;envoyer.</p>
+                </div>
+                <span className="inbox-message-unread-dot" />
               </div>
-              <div className="landing-preview-panel-list">
-                <span className="inline-pill inline-pill--indigo"><Icon name="graduation-cap" />Rentrée le 4 octobre : préparez vos documents</span>
-                <span className="inline-pill inline-pill--slate"><Icon name="mail" />Une nouvelle offre correspond à votre profil</span>
-                <span className="inline-pill inline-pill--green"><Icon name="target" />Confirmation d&apos;entretien chez Sephora</span>
-                <span className="inline-pill inline-pill--amber"><Icon name="hourglass" />Rappel : complétez votre candidature BlaBlaCar</span>
+              <div className="inbox-message landing-inbox-message landing-inbox-message--read">
+                <span className="landing-inbox-avatar landing-inbox-avatar--school"><Icon name="graduation-cap" /></span>
+                <div className="inbox-message-body">
+                  <div className="inbox-message-top">
+                    <span className="inbox-message-sender">Lumina School</span>
+                    <span className="inbox-message-email">contact@lumina-school.fr</span>
+                    <span className="inbox-message-time">Hier</span>
+                  </div>
+                  <p className="inbox-message-subject">Rappel : évaluations B3 les 24, 25 et 26 juin</p>
+                  <p className="inbox-message-preview">Le planning détaillé des évaluations est disponible sur ton espace élève.</p>
+                </div>
               </div>
             </div>
 
             <div className="landing-calendar-board landing-showcase-carousel-item">
-              <div className="landing-calendar-header">
-                <span className="landing-calendar-title">Août 2026</span>
-                <div className="landing-calendar-nav">
-                  <span className="landing-calendar-nav-btn"><Icon name="chevron-left" /></span>
-                  <span className="landing-calendar-nav-btn"><Icon name="circle" /></span>
-                  <span className="landing-calendar-nav-btn"><Icon name="chevron-right" /></span>
-                  <span className="landing-calendar-nav-btn"><Icon name="circle-help" /></span>
-                </div>
-              </div>
               <div className="landing-calendar-weekdays">
                 <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
               </div>
@@ -378,15 +383,36 @@ export default function LandingPage() {
                 <span className="landing-calendar-day landing-calendar-day--formation">5</span>
                 <span className="landing-calendar-day landing-calendar-day--formation">6</span>
                 <span className="landing-calendar-day landing-calendar-day--formation">7</span>
-                <span className="landing-calendar-day">8</span>
-                <span className="landing-calendar-day">9</span>
+                <span className="landing-calendar-day landing-calendar-day--formation">8</span>
+                <span className="landing-calendar-day landing-calendar-day--formation">9</span>
                 <span className="landing-calendar-day landing-calendar-day--conges">10</span>
                 <span className="landing-calendar-day landing-calendar-day--conges">11</span>
                 <span className="landing-calendar-day landing-calendar-day--conges">12</span>
                 <span className="landing-calendar-day landing-calendar-day--conges">13</span>
                 <span className="landing-calendar-day landing-calendar-day--conges">14</span>
-                <span className="landing-calendar-day landing-calendar-day--examen">15</span>
-                <span className="landing-calendar-day">16</span>
+                <span className="landing-calendar-day landing-calendar-day--conges">15</span>
+                <span className="landing-calendar-day landing-calendar-day--conges">16</span>
+                <span className="landing-calendar-day landing-calendar-day--examen">17</span>
+                <span className="landing-calendar-day landing-calendar-day--examen">18</span>
+                <span className="landing-calendar-day landing-calendar-day--examen">19</span>
+                <span className="landing-calendar-day landing-calendar-day--examen">20</span>
+                <span className="landing-calendar-day landing-calendar-day--examen">21</span>
+                <span className="landing-calendar-day landing-calendar-day--examen">22</span>
+                <span className="landing-calendar-day landing-calendar-day--examen">23</span>
+                <span className="landing-calendar-day landing-calendar-day--entreprise">24</span>
+                <span className="landing-calendar-day landing-calendar-day--entreprise">25</span>
+                <span className="landing-calendar-day landing-calendar-day--entreprise">26</span>
+                <span className="landing-calendar-day landing-calendar-day--entreprise">27</span>
+                <span className="landing-calendar-day landing-calendar-day--entreprise">28</span>
+                <span className="landing-calendar-day landing-calendar-day--entreprise">29</span>
+                <span className="landing-calendar-day landing-calendar-day--entreprise">30</span>
+                <span className="landing-calendar-day landing-calendar-day--examen-oral">31</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">1</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">2</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">3</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">4</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">5</span>
+                <span className="landing-calendar-day landing-calendar-day--muted">6</span>
               </div>
             </div>
           </DragScrollCarousel>
