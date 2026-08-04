@@ -4286,8 +4286,6 @@ legend.field-label { padding: 0; }
    for k=2, N=12, g=24 simplifies to exactly (1/6)W - 20px. */
 .landing-talent-card {
   width: calc(16.6667vw - 20px);
-  min-width: 190px;
-  max-width: 240px;
   flex-shrink: 0;
   background: var(--card-bg);
   border: 1px solid var(--border);
