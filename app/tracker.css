@@ -4427,11 +4427,15 @@ legend.field-label { padding: 0; }
      — the position already set by the row's own padding-left — instead
      of drifting further left than that. */
   padding-left: calc(25vw - 6px);
-  /* No matching slack on the right, on purpose: the last item should
-     block once it reaches column 3 (its normal scroll-snap-align:start
-     rest position), not be draggable further past it into empty space
-     the way the first item can slide past column 3 to column 0. */
-  padding-right: 0;
+  /* Deliberately NOT symmetric with the left slack: this caps the
+     container's native max scrollLeft to land exactly on the calendar
+     item's own snap target (column 3), the last real stop — instead of
+     the browser's native end-of-scroll boundary sitting further right,
+     past that target, at the tail item's ("Mes documents") flush-right
+     position. With 0 here, dragging could reach a resting boundary the
+     calendar item's snap point never actually claims, defeating the
+     scroll-snap-align:none on the tail item. */
+  padding-right: calc(16.6667vw - 4px);
   /* overflow-x:auto forces overflow-y to compute as auto too (can't mix
      auto with visible on one box), so the cards' own box-shadow (0 10px
      24px blur below) was getting clipped flat by that y-clip — 8px of
