@@ -4233,6 +4233,17 @@ legend.field-label { padding: 0; }
 }
 .landing-showcase-row--annuaire .landing-showcase-visual { justify-content: flex-end; }
 
+/* Same full-bleed columns-3-to-10 treatment as --annuaire above, mirrored:
+   this row has the visual on the left and the text on the right, so the
+   visual hugs column 3's left edge instead of column 10's right edge. */
+.landing-showcase-row--priorise {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding-left: calc(16.6667vw + 4px);
+  padding-right: calc(16.6667vw + 4px);
+}
+.landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
+
 .landing-showcase-text { display: flex; flex-direction: column; }
 
 .landing-showcase-eyebrow {

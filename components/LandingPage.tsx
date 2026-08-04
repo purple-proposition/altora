@@ -195,7 +195,7 @@ export default function LandingPage() {
           </div>
         </Reveal>
 
-        <Reveal className="landing-showcase-row">
+        <Reveal className="landing-showcase-row landing-showcase-row--priorise">
           <div className="landing-showcase-visual">
             <div className="landing-copilot-card">
               <div className="landing-copilot-item">
