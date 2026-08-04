@@ -3530,12 +3530,12 @@ legend.field-label { padding: 0; }
    scaled proportionally from the SVG's own 112:28 (4:1) viewBox ratio. */
 .landing-nav-logo {
   display: block;
-  width: 164px;
-  height: 41px;
+  width: 110px;
+  height: 32px;
   color: var(--text);
   transition: width 0.3s cubic-bezier(0.48, 0.72, 0, 1), height 0.3s cubic-bezier(0.48, 0.72, 0, 1);
 }
-.landing-nav--scrolled .landing-nav-logo { width: 80px; height: 20px; }
+.landing-nav--scrolled .landing-nav-logo { width: 55px; height: 16px; }
 
 /* Explicit grid-column (rather than relying on source order) so that
    hiding this element in the scrolled state doesn't make grid

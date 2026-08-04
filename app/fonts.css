@@ -10,7 +10,7 @@
   font-display: swap;
 }
 
-h1 {
+h1, h2, h3 {
   font-family: 'Goudy Bookletter 1911', Georgia, serif;
   font-synthesis: none;
 }
