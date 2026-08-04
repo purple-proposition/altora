@@ -4406,12 +4406,37 @@ legend.field-label { padding: 0; }
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
-  padding: 20px;
+  padding: 16px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 12px;
   align-items: start;
 }
+
+/* The real board's own type scale (14-16px body text, 16-24px icons,
+   generous padding) is sized for a full dashboard column, not this
+   cramped 3-up mockup — at that width "chez" and company names wrap
+   awkwardly. Same fix as the hero preview mockup above (see
+   .landing-preview-greeting-text .inline-pill): scope a tighter scale to
+   this mockup only, so the real .column/.card classes elsewhere on the
+   site (and in the actual product) stay untouched. */
+.landing-kanban-board .column { padding: 0; min-height: 0; }
+.landing-kanban-board .column-header { padding: 5px 8px; gap: 5px; font-size: 11px; }
+.landing-kanban-board .column-header .lucide { width: 11px; height: 11px; }
+.landing-kanban-board .column-header-count { font-size: 10px; }
+.landing-kanban-board .card-list { gap: 8px; margin-top: 8px; }
+.landing-kanban-board .card { padding: 10px; gap: 6px; border-radius: var(--radius-inner); }
+.landing-kanban-board .card-heading { font-size: 12px; line-height: 1.35; }
+.landing-kanban-board .card-meta-row { gap: 6px; }
+.landing-kanban-board .card-meta-item { font-size: 10px; gap: 3px; }
+.landing-kanban-board .card-meta-item .lucide { width: 10px; height: 10px; }
+.landing-kanban-board .card-link-row { gap: 8px; }
+.landing-kanban-board .card-link { font-size: 10px; gap: 3px; }
+.landing-kanban-board .card-link .lucide { width: 10px; height: 10px; }
+.landing-kanban-board .card-school-badge { margin-bottom: 6px; padding: 2px 6px; gap: 4px; font-size: 9px; }
+.landing-kanban-board .card-school-badge .lucide { width: 9px; height: 9px; }
+.landing-kanban-board .card-interview-pill { margin-top: 6px; padding: 3px 6px; gap: 3px; font-size: 9px; }
+.landing-kanban-board .card-interview-pill .lucide { width: 9px; height: 9px; }
 
 /* Fanned stack of 3 talent cards: the front one sits in normal flow
    (centering the whole stack), the other two are absolutely positioned
