@@ -353,7 +353,8 @@ export default function LandingPage() {
             </div>
             </div>
 
-            <div className="landing-messaging-board landing-showcase-carousel-item">
+            <div className="landing-showcase-carousel-item">
+            <div className="landing-messaging-board">
               <div className="inbox-message landing-inbox-message landing-inbox-message--unread">
                 <span className="landing-inbox-avatar landing-inbox-avatar--person">C</span>
                 <div className="inbox-message-body">
@@ -380,8 +381,21 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+            <div className="landing-showcase-caption">
+              <div className="landing-showcase-caption-header">
+                <div className="landing-feature-icon"><Icon name="mail" /></div>
+                <h3 className="landing-showcase-caption-title">Boîte de réception</h3>
+              </div>
+              <p className="landing-feature-text">
+                Les messages de l&apos;école et les rappels de candidature
+                arrivent directement dans la boîte de réception de
+                l&apos;étudiant, au même endroit que son tableau de suivi.
+              </p>
+            </div>
+            </div>
 
-            <div className="landing-calendar-board landing-showcase-carousel-item">
+            <div className="landing-showcase-carousel-item">
+            <div className="landing-calendar-board">
               <div className="landing-calendar-weekdays">
                 <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
               </div>
@@ -432,6 +446,19 @@ export default function LandingPage() {
                 <span className="landing-calendar-day landing-calendar-day--muted">5</span>
                 <span className="landing-calendar-day landing-calendar-day--muted">6</span>
               </div>
+            </div>
+            <div className="landing-showcase-caption">
+              <div className="landing-showcase-caption-header">
+                <div className="landing-feature-icon"><Icon name="calendar" /></div>
+                <h3 className="landing-showcase-caption-title">Calendrier</h3>
+              </div>
+              <p className="landing-feature-text">
+                Rentrées, périodes en entreprise, examens et entretiens
+                s&apos;affichent sur le même calendrier, mis à jour
+                automatiquement par l&apos;école et par les candidatures en
+                cours.
+              </p>
+            </div>
             </div>
           </DragScrollCarousel>
         </Reveal>
