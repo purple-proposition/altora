@@ -4388,12 +4388,6 @@ legend.field-label { padding: 0; }
   width: calc(100% + (16.6667vw - 4px));
   margin-left: calc(-1 * (16.6667vw - 4px));
   padding-left: calc(16.6667vw - 4px);
-  /* Without this, scroll-snap-align:start on the first item ignores the
-     container's own padding and snaps flush to the content edge instead
-     — the page loaded already auto-scrolled past the padding, so the
-     first card sat at true grid 0 instead of column 3. */
-  scroll-padding-left: calc(16.6667vw - 4px);
-  scroll-snap-type: x mandatory;
   /* overflow-x:auto forces overflow-y to compute as auto too (can't mix
      auto with visible on one box), so the cards' own box-shadow (0 10px
      24px blur below) was getting clipped flat by that y-clip — 8px of
@@ -4411,7 +4405,6 @@ legend.field-label { padding: 0; }
 .landing-showcase-carousel::-webkit-scrollbar { display: none; }
 .landing-showcase-carousel.is-dragging {
   cursor: grabbing;
-  scroll-snap-type: none;
   user-select: none;
 }
 
@@ -4424,8 +4417,11 @@ legend.field-label { padding: 0; }
   flex: 0 0 calc(33.3333vw - 32px);
   min-width: 0;
   max-width: calc(33.3333vw - 32px);
-  scroll-snap-align: start;
 }
+
+/* Caption under the current slide (icon, title, text) — same width as
+   one carousel item so it reads as belonging to the first slide. */
+.landing-showcase-caption { width: calc(33.3333vw - 32px); }
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 
