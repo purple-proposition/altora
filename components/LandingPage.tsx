@@ -382,7 +382,7 @@ export default function LandingPage() {
                 <span className="landing-calendar-day landing-calendar-day--examen landing-calendar-day--today">4</span>
                 <span className="landing-calendar-day landing-calendar-day--examen landing-calendar-day--has-event">
                   <span className="landing-calendar-day-number">5</span>
-                  <span className="landing-calendar-day-event"><Icon name="target" />L&apos;Oréal</span>
+                  <span className="card-interview-pill landing-calendar-day-event"><Icon name="target" />L&apos;Oréal</span>
                 </span>
                 <span className="landing-calendar-day landing-calendar-day--examen">6</span>
                 <span className="landing-calendar-day landing-calendar-day--examen">7</span>

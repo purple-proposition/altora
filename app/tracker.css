@@ -4666,7 +4666,7 @@ legend.field-label { padding: 0; }
 
 .landing-calendar-day {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   min-width: 0;
   padding: 4px;
@@ -4681,22 +4681,14 @@ legend.field-label { padding: 0; }
 .landing-calendar-day--ferie { background: var(--rose-tint); }
 
 /* Cross-references the "Le 5 août à 10h30" interview pill on the L'Oréal
-   card in .landing-kanban-board — same target icon as the real
-   "Entretien" column, so the two mockups read as the same data. */
-.landing-calendar-day--has-event { flex-direction: column; gap: 2px; }
-.landing-calendar-day-event {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 2px 4px;
-  border-radius: var(--radius-pill);
-  background: var(--card-bg);
-  color: var(--green);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.landing-calendar-day-event .lucide { width: 10px; height: 10px; }
+   card in .landing-kanban-board: same target icon, and now the exact
+   same .card-interview-pill class/colors, not a lookalike, just scaled
+   down to fit here — the two mockups should read as the same data. Axes
+   swap in the column direction, so justify-content (not align-items)
+   is what keeps this group at the top now. */
+.landing-calendar-day--has-event { flex-direction: column; justify-content: flex-start; align-items: center; gap: 2px; }
+.landing-calendar-day-event { margin-top: 0; padding: 1px 4px; font-size: 10px; gap: 2px; white-space: nowrap; }
+.landing-calendar-day-event .lucide { width: 9px; height: 9px; }
 /* Thin border in the cell's own category color (darker shade), plus a soft
    colored drop-shadow instead of a thick inset ring — a standard "this
    card is highlighted" treatment rather than a heavy outline. Falls back
