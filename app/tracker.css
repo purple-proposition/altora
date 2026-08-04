@@ -3,7 +3,7 @@
   --bg: #f5f5f5;           /* neutral-100 */
   --card-bg: #ffffff;
   --text: #171717;        /* neutral-900 */
-  --text-muted: #525252;  /* neutral-600 (was neutral-500, failed WCAG AA on --bg) */
+  --text-muted: #737373;  /* neutral-500 */
   --border: #e5e5e5;      /* neutral-200 */
   --shadow: 0 2px 8px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.05);
 
@@ -3563,7 +3563,7 @@ legend.field-label { padding: 0; }
   height: 36px;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-input);
   background: var(--card-bg);
   color: var(--text);
   cursor: pointer;
@@ -4241,7 +4241,7 @@ legend.field-label { padding: 0; }
 .landing-showcase-title {
   font-family: 'Goudy Bookletter 1911', Georgia, serif;
   font-synthesis: none;
-  font-size: 32px;
+  font-size: 48px;
   line-height: 1.2;
   color: var(--text);
   margin: 0 0 12px;
