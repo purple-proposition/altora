@@ -407,8 +407,8 @@ export default function LandingPage() {
                 <span className="landing-calendar-day landing-calendar-day--entreprise">26</span>
                 <span className="landing-calendar-day landing-calendar-day--entreprise">27</span>
                 <span className="landing-calendar-day landing-calendar-day--entreprise">28</span>
-                <span className="landing-calendar-day landing-calendar-day--entreprise">29</span>
-                <span className="landing-calendar-day landing-calendar-day--entreprise">30</span>
+                <span className="landing-calendar-day">29</span>
+                <span className="landing-calendar-day">30</span>
                 <span className="landing-calendar-day landing-calendar-day--entreprise">31</span>
                 <span className="landing-calendar-day landing-calendar-day--muted">1</span>
                 <span className="landing-calendar-day landing-calendar-day--muted">2</span>

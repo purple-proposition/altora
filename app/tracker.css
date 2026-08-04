@@ -4394,8 +4394,13 @@ legend.field-label { padding: 0; }
      first card sat at true grid 0 instead of column 3. */
   scroll-padding-left: calc(16.6667vw - 4px);
   scroll-snap-type: x mandatory;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  /* overflow-x:auto forces overflow-y to compute as auto too (can't mix
+     auto with visible on one box), so the cards' own box-shadow (0 10px
+     24px blur below) was getting clipped flat by that y-clip — 8px of
+     padding wasn't enough room for it. Bumped to fit the shadow's actual
+     reach instead of clipping it. */
+  padding-top: 16px;
+  padding-bottom: 40px;
   cursor: grab;
   /* Drag-to-scroll (components/DragScrollCarousel.tsx) replaces the
      visible scrollbar as the way to move this — hidden on every engine
@@ -4421,24 +4426,6 @@ legend.field-label { padding: 0; }
   max-width: calc(33.3333vw - 32px);
   scroll-snap-align: start;
 }
-
-.drag-scroll-carousel { display: flex; flex-direction: column; gap: 16px; }
-.drag-scroll-carousel-controls { display: flex; gap: 8px; align-self: flex-end; }
-.drag-scroll-carousel-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  background: var(--card-bg);
-  color: var(--text);
-  cursor: pointer;
-}
-.drag-scroll-carousel-btn:hover { background: var(--bg); }
-.drag-scroll-carousel-btn .lucide { width: 18px; height: 18px; }
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 
@@ -4704,7 +4691,7 @@ legend.field-label { padding: 0; }
    down to fit here — the two mockups should read as the same data. Axes
    swap in the column direction, so justify-content (not align-items)
    is what keeps this group at the top now. */
-.landing-calendar-day--has-event { flex-direction: column; justify-content: flex-start; align-items: center; gap: 2px; }
+.landing-calendar-day--has-event { flex-direction: column; justify-content: center; align-items: center; gap: 2px; }
 /* max-width + ellipsis: "L'Oréal" plus its icon is wider than this cell
    can ever be, so without a clamp the centered pill was overflowing and
    getting clipped unevenly by the cell's own overflow:hidden instead of
