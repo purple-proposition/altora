@@ -4427,8 +4427,25 @@ legend.field-label { padding: 0; }
      slide happened to be first. */
   gap: 48px;
 }
+/* Every item is already stretched to the tallest one (default flex
+   align-items:stretch on the row), but that only affects the item box
+   itself — its mockup child still only took its own content height,
+   leaving the shorter mockups (messaging, calendar) visibly shorter
+   than the kanban one with blank space absorbed after the caption
+   instead. flex:1 on the mockup makes it, not the gap below the
+   caption, claim that extra height, so all 3 mockups line up at the
+   same height regardless of how much content each one has. */
+.landing-showcase-carousel-item > .landing-kanban-board,
+.landing-showcase-carousel-item > .landing-messaging-board,
+.landing-showcase-carousel-item > .landing-calendar-board {
+  flex: 1 1 auto;
+}
 
-.landing-showcase-caption { display: flex; flex-direction: column; gap: 12px; }
+/* min-height reserves room for the longest caption text (4 lines) so
+   all 3 captions are the same height regardless of how much each one
+   actually wraps — otherwise the boards above them (flex:1) would each
+   claim a different amount of remaining space and end up uneven again. */
+.landing-showcase-caption { display: flex; flex-direction: column; gap: 12px; min-height: 180px; }
 .landing-showcase-caption-header { display: flex; align-items: center; gap: 16px; }
 /* Icon keeps its square styling from .landing-feature-icon but loses
    that class's own margin-bottom (sits beside the title in a row here,
