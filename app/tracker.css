@@ -3793,9 +3793,14 @@ legend.field-label { padding: 0; }
      the window right past .landing-card's edge instead of centering it
      on the page. calc(50% - 50vw) always centers on the true viewport
      regardless of ancestor width. */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
+  /* calc(100vw - 48px), not true 100vw: .landing-card itself clips
+     overflow-x right at its own edge (24px margin each side), so a
+     literal 100vw breakout overshot that boundary and got hard-clipped
+     mid-content instead of reaching it cleanly. This width/offset lands
+     exactly on .landing-card's own edges instead. */
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
+  margin-right: calc(50% - 50vw + 24px);
   display: flex;
   justify-content: center;
 }
@@ -4301,8 +4306,10 @@ legend.field-label { padding: 0; }
    leading columns = (k/N)*W + g*[(k-1) - (k/N)(N-1)], which for k=2,
    N=12, g=24 simplifies to (1/6)*W + 4px. */
 .landing-showcase-row--annuaire {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  /* calc(100vw - 48px), not true 100vw: see .landing-preview's comment
+     above — .landing-card clips overflow-x at its own 24px-inset edge. */
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
   padding-left: calc(16.6667vw + 20px);
   padding-right: calc(16.6667vw + 20px);
   /* Text and visual each span exactly 4 of the 12 grid columns (columns
@@ -4320,8 +4327,8 @@ legend.field-label { padding: 0; }
    this row has the visual on the left and the text on the right, so the
    visual hugs column 3's left edge instead of column 10's right edge. */
 .landing-showcase-row--priorise {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
   padding-left: calc(16.6667vw + 20px);
   padding-right: calc(16.6667vw + 20px);
   grid-template-columns: calc(33.3333vw - 32px) calc(33.3333vw - 32px);
@@ -4342,8 +4349,8 @@ legend.field-label { padding: 0; }
      not the page's own left margin (column 1) — text and carousel both
      stay pinned there at their fixed 4-column width, so there's no need
      to mirror this as right padding too. */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
   padding-left: calc(16.6667vw + 20px);
   display: flex;
   flex-direction: column;
