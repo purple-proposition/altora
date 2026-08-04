@@ -4372,6 +4372,16 @@ legend.field-label { padding: 0; }
   display: flex;
   gap: 24px;
   overflow-x: auto;
+  /* The carousel's own box starts wherever normal flow puts it — right
+     after the row's padding-left, i.e. column 3 — and overflow-x:auto
+     clips exactly at that box edge. That made a card sliding left during
+     drag get cut off at column 3 instead of at the page's own margin.
+     Bleeding the box itself back out to the row's left edge (the true
+     margin, same one .landing-card clips at) while restoring the visual
+     column-3 start via matching padding-left moves the clip boundary to
+     where it's meant to be, without shifting where the first card sits
+     at rest. */
+  margin-left: calc(-1 * (16.6667vw - 4px));
   /* mandatory, not proximity: proximity let scrolling come to rest with a
      card half cut off at the edge instead of settling cleanly on a card
      boundary. mandatory guarantees the visible strip always ends up
@@ -4380,13 +4390,12 @@ legend.field-label { padding: 0; }
      through a partial card mid-drag is still fine, only the resting
      position needs to land clean. */
   scroll-snap-type: x mandatory;
-  /* Vertical padding only, so the shadow has room top/bottom without
-     shifting the row horizontally — a left/right version of this same
-     fix was throwing off the cards' alignment against the page's own
-     grid columns. Horizontal shadow clipping between cards is covered
-     by the 24px gap already; the first/last card's outer edges are
-     meant to land exactly on the grid, unpadded. */
-  padding: 8px 0;
+  /* padding-top/bottom only from here — the shadow just needs room
+     vertically. padding-left is set last, after the padding shorthand
+     above it would otherwise reset it back to 0. */
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: calc(16.6667vw - 4px);
   cursor: grab;
   /* Drag-to-scroll (components/DragScrollCarousel.tsx) replaces the
      visible scrollbar as the way to move this — hidden on every engine
@@ -4657,8 +4666,8 @@ legend.field-label { padding: 0; }
 
 .landing-calendar-day {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
   min-width: 0;
   padding: 4px;
   border: 1px solid var(--border);
@@ -4669,7 +4678,21 @@ legend.field-label { padding: 0; }
   overflow: hidden;
 }
 .landing-calendar-day--muted { background: var(--bg); color: var(--text-muted); }
-.landing-calendar-day--today { box-shadow: inset 0 0 0 2px var(--indigo); color: var(--indigo); font-weight: 600; }
+/* Thin border in the cell's own category color (darker shade), plus a soft
+   colored drop-shadow instead of a thick inset ring — a standard "this
+   card is highlighted" treatment rather than a heavy outline. Falls back
+   to indigo for a plain (no-category) day; the combined selectors below
+   win on specificity whenever "today" lands on a tinted week. */
+.landing-calendar-day--today {
+  border-color: var(--indigo);
+  color: var(--indigo);
+  font-weight: 600;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--indigo) 35%, transparent);
+}
+.landing-calendar-day--today.landing-calendar-day--conges { border-color: var(--amber); color: var(--amber); box-shadow: 0 2px 8px color-mix(in srgb, var(--amber) 35%, transparent); }
+.landing-calendar-day--today.landing-calendar-day--examen { border-color: var(--green); color: var(--green); box-shadow: 0 2px 8px color-mix(in srgb, var(--green) 35%, transparent); }
+.landing-calendar-day--today.landing-calendar-day--entreprise { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 2px 8px color-mix(in srgb, var(--cyan) 35%, transparent); }
+.landing-calendar-day--today.landing-calendar-day--examen-oral { border-color: var(--violet); color: var(--violet); box-shadow: 0 2px 8px color-mix(in srgb, var(--violet) 35%, transparent); }
 .landing-calendar-day--formation { background: var(--indigo-tint); }
 .landing-calendar-day--conges { background: var(--amber-tint); }
 .landing-calendar-day--examen { background: var(--green-tint); }
