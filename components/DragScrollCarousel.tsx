@@ -4,64 +4,52 @@ import { useEffect, useRef } from 'react';
 
 // Native horizontal scroll only responds to touch/trackpad swipes, not a
 // mouse click-and-drag — this adds that "grab and drag" interaction (mouse
-// click, drag left/right, scrollLeft follows) on top of the existing
-// scroll-snap carousel, instead of relying on the visible scrollbar.
+// click, drag left/right, scrollLeft follows) on top of the standard CSS
+// Scroll Snap carousel (scroll-snap-type/-align on .landing-showcase-carousel
+// and .landing-showcase-carousel-item in tracker.css).
 //
-// Movement is quantized to exactly 3 grid columns per step (span(3) =
-// 25vw - 30px, same k-columns formula used everywhere else on this page),
-// whichever direction it's dragged or scrolled — not a per-card snap
-// (cards aren't 3 columns wide) and not free-scroll. CSS scroll-snap can't
-// express an arbitrary step like this, so it's done in JS: whatever
-// gesture moved it (mouse drag or native touch/trackpad scroll), once
-// movement stops we round the resting scrollLeft to the nearest multiple
-// of that 3-column step and animate there ourselves (requestAnimationFrame
-// + an eased curve) rather than the browser's own scrollTo(behavior:
-// 'smooth'), whose easing is a plain linear-ish ramp on most engines —
-// the animation below uses the same "premium" ease-out curve as the rest
-// of the site's motion (cubic-bezier(0.32, 0.72, 0, 1)-equivalent).
+// This used to hand-roll its own step size (a fraction of window width) and
+// its own requestAnimationFrame easing, snapping on a timer after every
+// scroll event. That custom math is what kept breaking: it drifted out of
+// sync with the real card width whenever the carousel's content changed
+// (e.g. adding the documents mockup), and fought the browser's native
+// scroll-snap/anchoring in ways that showed up as "starts on the wrong
+// card after reload" and "doesn't feel smooth". Letting the browser own
+// snapping (CSS) and measuring real card positions from the DOM instead of
+// a formula removes that whole class of bug — touch/trackpad scrolling
+// snaps natively with zero JS, and mouse-drag only needs a plain
+// scrollTo(behavior: 'smooth') to the nearest actual card on release.
 export default function DragScrollCarousel({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const drag = useRef({ active: false, startX: 0, startScroll: 0 });
-  const scrollEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const animation = useRef<number | null>(null);
+  const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0 });
 
-  function stepSize() {
-    return window.innerWidth * 0.25 - 30;
-  }
-
-  // Cubic ease-out with no overshoot — fast start, gentle settle, matching
-  // the site's other "organic" transitions instead of a linear scroll.
-  function easeOutCubic(t: number) {
-    return 1 - Math.pow(1 - t, 3);
-  }
-
-  function animateTo(target: number) {
+  function snapToNearestItem() {
     const el = ref.current;
     if (!el) return;
-    if (animation.current) cancelAnimationFrame(animation.current);
-    const start = el.scrollLeft;
-    const distance = target - start;
-    const duration = 500;
-    const startTime = performance.now();
-
-    function tick(now: number) {
-      const elapsed = Math.min((now - startTime) / duration, 1);
-      el!.scrollLeft = start + distance * easeOutCubic(elapsed);
-      if (elapsed < 1) {
-        animation.current = requestAnimationFrame(tick);
-      } else {
-        animation.current = null;
+    const items = Array.from(el.children) as HTMLElement[];
+    if (!items.length) return;
+    // offsetLeft is relative to the nearest *positioned* ancestor, which
+    // isn't necessarily this scroll container — getBoundingClientRect
+    // gives each item's true position relative to the container's own
+    // scrollable content regardless of who its offsetParent is.
+    const containerLeft = el.getBoundingClientRect().left;
+    // scroll-snap-align: start on each item snaps its edge to the
+    // container's scroll-padding-left inset, not to scrollLeft: 0 — the
+    // target here has to match that same offset, or this fights the
+    // browser's own mandatory snap instead of landing on the same spot.
+    const scrollPaddingLeft = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+    let nearestTarget = 0;
+    let nearestDistance = Infinity;
+    for (const item of items) {
+      const itemLeft = item.getBoundingClientRect().left - containerLeft + el.scrollLeft;
+      const target = itemLeft - scrollPaddingLeft;
+      const distance = Math.abs(target - el.scrollLeft);
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestTarget = target;
       }
     }
-    animation.current = requestAnimationFrame(tick);
-  }
-
-  function snapToGrid() {
-    const el = ref.current;
-    if (!el) return;
-    const step = stepSize();
-    const target = Math.round(el.scrollLeft / step) * step;
-    animateTo(target);
+    el.scrollTo({ left: nearestTarget, behavior: 'smooth' });
   }
 
   function onMouseDown(e: React.MouseEvent) {
@@ -72,14 +60,14 @@ export default function DragScrollCarousel({ children, className }: { children: 
     // click-dragging across the caption's text selects it instead of
     // panning the carousel.
     if ((e.target as HTMLElement).closest('.landing-showcase-caption')) return;
-    if (animation.current) cancelAnimationFrame(animation.current);
-    drag.current = { active: true, startX: e.clientX, startScroll: el.scrollLeft };
+    drag.current = { active: true, moved: false, startX: e.clientX, startScroll: el.scrollLeft };
     el.classList.add('is-dragging');
   }
 
   function onMouseMove(e: React.MouseEvent) {
     const el = ref.current;
     if (!el || !drag.current.active) return;
+    drag.current.moved = true;
     el.scrollLeft = drag.current.startScroll - (e.clientX - drag.current.startX);
   }
 
@@ -87,31 +75,23 @@ export default function DragScrollCarousel({ children, className }: { children: 
     if (!drag.current.active) return;
     drag.current.active = false;
     ref.current?.classList.remove('is-dragging');
-    snapToGrid();
-  }
-
-  // Covers touch/trackpad scrolling, which never goes through the mouse
-  // handlers above: debounce native scroll events and snap once they've
-  // been quiet for a beat, since there's no single "scroll finished"
-  // native event supported everywhere yet.
-  function onScroll() {
-    if (drag.current.active || animation.current) return;
-    if (scrollEndTimer.current) clearTimeout(scrollEndTimer.current);
-    scrollEndTimer.current = setTimeout(snapToGrid, 120);
+    if (drag.current.moved) snapToNearestItem();
   }
 
   useEffect(() => {
     const el = ref.current;
-    // Guards against the browser's own scroll-anchoring: as web fonts and
-    // images finish loading after first paint, layout shifts inside this
-    // scroll container can make the browser silently adjust scrollLeft to
-    // "keep the same content in view", landing the carousel a step or two
-    // off zero on reload instead of resting at column 3 like it should.
-    if (el) el.scrollLeft = 0;
-    return () => {
-      if (scrollEndTimer.current) clearTimeout(scrollEndTimer.current);
-      if (animation.current) cancelAnimationFrame(animation.current);
-    };
+    if (!el) return;
+    // Guards against the browser's own scroll-anchoring: as web fonts
+    // finish loading after first paint, layout shifts inside this scroll
+    // container can make the browser silently adjust scrollLeft, landing
+    // the carousel a card off zero on reload instead of resting on the
+    // first card. Reset once at mount and again once fonts have actually
+    // finished loading, since that's the layout shift most likely to
+    // trigger it here.
+    el.scrollLeft = 0;
+    document.fonts?.ready?.then(() => {
+      if (el) el.scrollLeft = 0;
+    });
   }, []);
 
   return (
@@ -122,7 +102,6 @@ export default function DragScrollCarousel({ children, className }: { children: 
       onMouseMove={onMouseMove}
       onMouseUp={stopDrag}
       onMouseLeave={stopDrag}
-      onScroll={onScroll}
     >
       {children}
     </div>

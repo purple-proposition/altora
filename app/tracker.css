@@ -4372,6 +4372,16 @@ legend.field-label { padding: 0; }
   display: flex;
   gap: 24px;
   overflow-x: auto;
+  /* Standard CSS Scroll Snap instead of a hand-rolled step-size + RAF
+     easing: the browser owns snapping for touch/trackpad/keyboard for
+     free, and DragScrollCarousel only nudges mouse-drag to the nearest
+     real card on release via scrollTo(behavior: 'smooth'). Far more
+     robust than reimplementing it — no more drift when card widths
+     change. scroll-padding-left matches the row's own padding-left so a
+     snapped card rests at the same inset as the resting (scrollLeft: 0)
+     position instead of flush against the container edge. */
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: calc(16.6667vw - 4px);
   /* Stops the browser's own scroll-anchoring from nudging scrollLeft as
      fonts/images finish loading post-paint — belt-and-suspenders with
      the scrollLeft=0 reset in DragScrollCarousel's mount effect. */
@@ -4415,6 +4425,13 @@ legend.field-label { padding: 0; }
 .landing-showcase-carousel.is-dragging {
   cursor: grabbing;
   user-select: none;
+  /* Mandatory scroll-snap fights any scrollLeft set outside a real
+     scroll/touch gesture — with it left on, a mouse-drag's own scrollLeft
+     assignments get silently rejected/reverted mid-drag. Off for the
+     duration of the drag, then DragScrollCarousel's mouseup handler
+     restores the resting position itself via scrollTo(behavior: 'smooth')
+     once this class (and the snap type with it) comes back off. */
+  scroll-snap-type: none;
 }
 
 /* flex-basis via the shorthand (not a separate width) + min-width/max-width
@@ -4426,6 +4443,8 @@ legend.field-label { padding: 0; }
   flex: 0 0 calc(33.3333vw - 32px);
   min-width: 0;
   max-width: calc(33.3333vw - 32px);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
   display: flex;
   flex-direction: column;
   /* Exactly 48px between the mockup and its caption below — a plain
