@@ -4403,10 +4403,11 @@ legend.field-label { padding: 0; }
   width: calc(100% + (25vw - 6px));
   margin-left: calc(-1 * (25vw - 6px));
   padding-left: calc(16.6667vw - 4px);
-  /* Matching slack on the right: without it, there isn't enough total
-     scrollable range left for the drag to actually reach that far-left
-     clip boundary before running into the native end-of-scroll stop. */
-  padding-right: calc(25vw - 6px);
+  /* No matching slack on the right, on purpose: the last item should
+     block once it reaches column 3 (its normal scroll-snap-align:start
+     rest position), not be draggable further past it into empty space
+     the way the first item can slide past column 3 to column 0. */
+  padding-right: 0;
   /* overflow-x:auto forces overflow-y to compute as auto too (can't mix
      auto with visible on one box), so the cards' own box-shadow (0 10px
      24px blur below) was getting clipped flat by that y-clip — 8px of
