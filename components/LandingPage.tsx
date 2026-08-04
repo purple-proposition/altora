@@ -345,10 +345,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">À faire</h3>
               </div>
               <p className="landing-feature-text">
-                Chaque étudiant gère son propre tableau kanban, avec les offres
-                qu&apos;il ajoute et celles que l&apos;école lui suggère. L&apos;équipe
-                pédagogique consulte ce même tableau pour voir où il en est, à
-                quoi il a déjà postulé, et intervenir au bon moment.
+                Chaque apprenant gère son propre tableau kanban, avec les
+                offres qu&apos;il ajoute et celles que l&apos;école lui suggère.
+                L&apos;équipe pédagogique consulte ce même tableau pour voir
+                l&apos;avancement de ses démarches et intervenir au bon moment.
               </p>
             </div>
             </div>
