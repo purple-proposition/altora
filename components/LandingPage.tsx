@@ -529,6 +529,22 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
+              <div className="folder-card">
+                <div className="folder-card-header">
+                  <Icon name="folder" />
+                  <span className="folder-card-name">Administratif</span>
+                  <span className="folder-card-count">3</span>
+                </div>
+                <div className="folder-card-body">
+                  <div className="doc-thumb-grid">
+                    <div className="doc-thumb-bare doc-thumb-fan">
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--0"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--1"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--2"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
