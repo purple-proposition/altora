@@ -3803,14 +3803,15 @@ legend.field-label { padding: 0; }
    "screenshot"; the actual card look lives on .landing-preview-card. */
 .landing-preview-shell {
   /* True 6-of-12 viewport grid columns (matches the "g" debug overlay:
-     repeat(12,1fr); gap:24px over the full viewport) — half the width of
-     .landing-nav above, which spans 8/12. For k columns out of N with
-     gap g over width W: span = (k/N)*W + g*[(k-1) - (k/N)(N-1)]. For k=6,
-     N=12, g=24 that simplifies to exactly (1/2)W - 12px. No upper clamp:
-     capping at a fixed px value breaks the column match on any viewport
-     wide enough to exceed it, so the window would silently fall short of
-     the grid instead of tracking it. */
-  width: calc(50vw - 12px);
+     24px margin, repeat(12,1fr), 24px gap, 24px margin) — half the width
+     of .landing-nav above, which spans 8/12. For k columns out of N with
+     gap g and outer margin m over width W: span = k*c + (k-1)*g, where
+     c = (W - 2m - (N-1)g)/N. For k=6, N=12, g=24, m=24 that simplifies
+     to exactly (1/2)W - 36px. No upper clamp: capping at a fixed px
+     value breaks the column match on any viewport wide enough to exceed
+     it, so the window would silently fall short of the grid instead of
+     tracking it. */
+  width: calc(50vw - 36px);
   display: flex;
   /* No gap: matches the real .app-shell, where .sidebar and .app touch
      directly (a negative margin on .app cancels the shell's own gap on
