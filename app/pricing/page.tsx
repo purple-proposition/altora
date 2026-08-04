@@ -91,7 +91,7 @@ export default function PricingPage() {
           <h3 className="pricing-faq-question">Comment est calculé le prix de l&apos;abonnement école ?</h3>
           <p className="pricing-faq-answer">
             Sur devis, selon la taille de votre promotion et les fonctionnalités
-            activées &mdash; contactez-nous pour un chiffrage.
+            activées, contactez-nous pour un chiffrage.
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export default function PricingPage() {
         <div className="pricing-faq-item">
           <h3 className="pricing-faq-question">Proposez-vous une offre pour les cabinets de recrutement ou les agences d&apos;intérim ?</h3>
           <p className="pricing-faq-answer">
-            Pas encore &mdash; cette offre est en cours de construction. Contactez-nous
+            Pas encore, cette offre est en cours de construction. Contactez-nous
             pour en discuter.
           </p>
         </div>

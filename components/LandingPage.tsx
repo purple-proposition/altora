@@ -179,7 +179,7 @@ export default function LandingPage() {
             <p className="landing-showcase-body">
               Côté apprenant, c&apos;est le cockpit de son alternance. Côté
               école, c&apos;est le même espace qui devient un vrai levier de
-              suivi et d&apos;accompagnement &mdash; jamais plus que ce que
+              suivi et d&apos;accompagnement, jamais plus que ce que
               l&apos;apprenant choisit de partager.
             </p>
           </div>
@@ -190,7 +190,7 @@ export default function LandingPage() {
                 <div className="column-header column-header--slate">
                   <Icon name="circle-dashed" />
                   <span className="column-header-label">À faire</span>
-                  <span className="column-header-count">4</span>
+                  <span className="column-header-count">3</span>
                 </div>
                 <div className="card-list">
                   <div className="card card--slate">
@@ -231,20 +231,6 @@ export default function LandingPage() {
                     </div>
                     <div className="card-meta-row">
                       <span className="card-meta-item"><Icon name="map-pin" />Paris 9e</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                      <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
-                    </div>
-                  </div>
-                  <div className="card card--slate">
-                    <div className="card-heading">
-                      <span className="card-title">Stagiaire Communication</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">Bureau Vallée</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Boulogne-Billancourt</span>
                     </div>
                     <div className="card-link-row">
                       <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
@@ -556,7 +542,7 @@ export default function LandingPage() {
               <p className="landing-feature-text">
                 L&apos;apprenant y range ses CV et lettres de motivation, avec
                 les conseils de l&apos;école dessus. L&apos;école y dépose ses
-                cours et documents administratifs &mdash; tout au même
+                cours et documents administratifs, tout au même
                 endroit, sans passer par la boîte mail.
               </p>
             </div>
@@ -570,8 +556,8 @@ export default function LandingPage() {
             <p className="landing-showcase-body">
               Quand vous choisissez une offre et lancez la génération, Altora
               produit votre CV et vous donne aussitôt son score de
-              compatibilité avec cette offre &mdash; compétences, expérience,
-              niveau d&apos;études, localisation &mdash; en expliquant ce qui
+              compatibilité avec cette offre (compétences, expérience,
+              niveau d&apos;études, localisation) en expliquant ce qui
               le fait monter ou baisser, pas juste un chiffre brut.
             </p>
           </div>
