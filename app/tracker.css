@@ -4139,7 +4139,7 @@ legend.field-label { padding: 0; }
   padding: 32px 24px;
   display: flex;
   flex-direction: column;
-  gap: 64px;
+  gap: 96px;
 }
 
 .landing-showcase-row {
