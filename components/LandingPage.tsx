@@ -224,10 +224,9 @@ export default function LandingPage() {
           </div>
         </Reveal>
 
-        <Reveal className="landing-showcase-row">
+        <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
           <div className="landing-showcase-text">
-            <span className="landing-showcase-eyebrow">Pour les entreprises partenaires</span>
-            <h3 className="landing-showcase-title">L&apos;annuaire de toute une promotion, ouvert à vos recruteurs</h3>
+            <h3 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h3>
             <p className="landing-showcase-body">
               Les recruteurs peuvent poster leurs offres et voir aussitôt leur taux
               de matching avec les profils de la promotion. Chaque école décide de

@@ -4149,6 +4149,21 @@ legend.field-label { padding: 0; }
   align-items: center;
 }
 
+/* Breaks out of .landing-showcase's centered 1120px container to align
+   with the site's full-viewport 12-column grid instead: text starts at
+   the left edge of column 3, visual ends at the right edge of column 10
+   (2 columns of margin on each side). Same span/offset formula as the
+   other viewport-relative grid elements on this page: offset for k
+   leading columns = (k/N)*W + g*[(k-1) - (k/N)(N-1)], which for k=2,
+   N=12, g=24 simplifies to (1/6)*W + 4px. */
+.landing-showcase-row--annuaire {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding-left: calc(16.6667vw + 4px);
+  padding-right: calc(16.6667vw + 4px);
+}
+.landing-showcase-row--annuaire .landing-showcase-visual { justify-content: flex-end; }
+
 .landing-showcase-text { display: flex; flex-direction: column; }
 
 .landing-showcase-eyebrow {
@@ -4327,12 +4342,16 @@ legend.field-label { padding: 0; }
    alternance contract, so that tag/status line was redundant) —
    the degree becomes a plain muted subtitle underneath instead. */
 .landing-talent-name { font-family: 'Gloock', Georgia, serif; font-synthesis: none; font-size: 20px; color: var(--text); margin-bottom: 4px; }
-.landing-talent-degree { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+/* min-height reserves room for the longest degree (Thomas's, 3 lines)
+   so every card reaches the same height instead of the shorter degrees
+   (e.g. Inès's, 1 line) leaving the card shorter. */
+.landing-talent-degree { font-size: 14px; line-height: 1.4; color: var(--text-muted); margin-bottom: 12px; min-height: 59px; }
 /* Row that wraps to a 2nd line once it runs out of width, instead of
    one skill per row — override .inline-pill's own margin:0 8px (meant
    for pills sitting inline in a sentence) since it ate into the
-   available row width here. */
-.landing-talent-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+   available row width here. min-height reserves 2 rows so cards stay
+   the same height whether their 3 skills wrap to 1 or 2 lines. */
+.landing-talent-skills { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; min-height: 62px; }
 .landing-talent-skills .inline-pill { margin: 0; }
 .landing-talent-footer {
   display: flex;
