@@ -224,7 +224,7 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h3>
+            <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
             <p className="landing-showcase-body">
               Vos recruteurs postent une offre, notre système de matching
               repère aussitôt les profils qui correspondent le mieux, et ils

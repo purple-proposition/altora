@@ -3520,6 +3520,7 @@ legend.field-label { padding: 0; }
 .landing-nav--scrolled { padding: 12px 0; }
 
 .landing-nav-brand {
+  grid-column: 1;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -3536,7 +3537,12 @@ legend.field-label { padding: 0; }
 }
 .landing-nav--scrolled .landing-nav-logo { width: 80px; height: 20px; }
 
-.landing-nav-links { display: flex; align-items: center; gap: 24px; }
+/* Explicit grid-column (rather than relying on source order) so that
+   hiding this element in the scrolled state doesn't make grid
+   auto-placement slide .landing-nav-actions into its now-empty middle
+   track — display:none removes an item from grid placement entirely,
+   not just from view. */
+.landing-nav-links { grid-column: 2; display: flex; align-items: center; gap: 24px; }
 .landing-nav--scrolled .landing-nav-links { display: none; }
 
 .landing-nav-link {
@@ -3548,7 +3554,7 @@ legend.field-label { padding: 0; }
 }
 .landing-nav-link:hover { color: var(--text); }
 
-.landing-nav-actions { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.landing-nav-actions { grid-column: 3; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
 .landing-nav--scrolled .landing-nav-actions .landing-nav-login,
 .landing-nav--scrolled .landing-nav-actions .landing-nav-cta { display: none; }
 
