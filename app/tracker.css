@@ -4372,14 +4372,14 @@ legend.field-label { padding: 0; }
   display: flex;
   gap: 24px;
   overflow-x: auto;
-  /* proximity, not mandatory: "mandatory" forces every scroll to land
-     exactly on a card's edge, so the previous card's sliver vanished
-     abruptly instead of sliding out — this only snaps once you're
-     already close to a card boundary, letting the drag itself move
-     freely and show a partial card on each side mid-scroll. Cards still
-     land on the grid at rest since each one's own width/gap are already
-     grid-derived values (calc(33.3333vw - 32px), 24px). */
-  scroll-snap-type: x proximity;
+  /* mandatory, not proximity: proximity let scrolling come to rest with a
+     card half cut off at the edge instead of settling cleanly on a card
+     boundary. mandatory guarantees the visible strip always ends up
+     aligned to a full card (and so to the grid, since width/gap are
+     already grid-derived values) once the scroll/drag stops — sliding
+     through a partial card mid-drag is still fine, only the resting
+     position needs to land clean. */
+  scroll-snap-type: x mandatory;
   /* Vertical padding only, so the shadow has room top/bottom without
      shifting the row horizontally — a left/right version of this same
      fix was throwing off the cards' alignment against the page's own
