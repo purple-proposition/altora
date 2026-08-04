@@ -142,9 +142,9 @@ export default function LandingPage() {
           <div className="landing-category-icon"><Icon name="list-checks" /></div>
           <h2 className="landing-category-title">Étudiants en alternance</h2>
           <p className="landing-category-text">
-            Ton alternance a son propre rythme, entre les rentrées, les périodes
-            en entreprise et les cours. Altora garde toutes tes candidatures au
-            même endroit, prêtes à temps.
+            Votre alternance a son propre rythme, entre les rentrées, les
+            périodes en entreprise et les cours. Altora garde toutes vos
+            candidatures au même endroit, prêtes à temps.
           </p>
           <ul className="landing-category-list">
             <li><Icon name="check-circle" />Un tableau pour suivre chaque candidature</li>
@@ -178,7 +178,7 @@ export default function LandingPage() {
                 <div className="column-header column-header--slate">
                   <Icon name="circle-dashed" />
                   <span className="column-header-label">À faire</span>
-                  <span className="column-header-count">2</span>
+                  <span className="column-header-count">4</span>
                 </div>
                 <div className="card-list">
                   <div className="card card--slate">
@@ -190,7 +190,6 @@ export default function LandingPage() {
                     </div>
                     <div className="card-meta-row">
                       <span className="card-meta-item"><Icon name="map-pin" />Clichy</span>
-                      <span className="card-meta-item"><Icon name="banknote" />1 400 € / mois</span>
                     </div>
                     <div className="card-link-row">
                       <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
@@ -204,8 +203,36 @@ export default function LandingPage() {
                       <span className="card-company">Decathlon</span>
                     </div>
                     <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Lyon</span>
-                      <span className="card-meta-item"><Icon name="banknote" />1 100 € / mois</span>
+                      <span className="card-meta-item"><Icon name="map-pin" />Paris 15e</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                      <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
+                    </div>
+                  </div>
+                  <div className="card card--slate">
+                    <span className="card-school-badge"><Icon name="graduation-cap" />Proposée par l&apos;école</span>
+                    <div className="card-heading">
+                      <span className="card-title">Alternance Growth Marketing</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">Doctolib</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Paris 9e</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                      <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
+                    </div>
+                  </div>
+                  <div className="card card--slate">
+                    <div className="card-heading">
+                      <span className="card-title">Stagiaire Communication</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">Bureau Vallée</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Boulogne-Billancourt</span>
                     </div>
                     <div className="card-link-row">
                       <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
@@ -218,7 +245,7 @@ export default function LandingPage() {
                 <div className="column-header column-header--amber">
                   <Icon name="hourglass" />
                   <span className="column-header-label">Envoyé</span>
-                  <span className="column-header-count">1</span>
+                  <span className="column-header-count">3</span>
                 </div>
                 <div className="card-list">
                   <div className="card card--amber">
@@ -228,8 +255,33 @@ export default function LandingPage() {
                       <span className="card-company">BlaBlaCar</span>
                     </div>
                     <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Paris</span>
-                      <span className="card-meta-item"><Icon name="banknote" />1 300 € / mois</span>
+                      <span className="card-meta-item"><Icon name="map-pin" />Paris 11e</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                    </div>
+                  </div>
+                  <div className="card card--amber">
+                    <div className="card-heading">
+                      <span className="card-title">Alternant CRM &amp; Data Marketing</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">Sephora</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Neuilly-sur-Seine</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                    </div>
+                  </div>
+                  <div className="card card--amber">
+                    <div className="card-heading">
+                      <span className="card-title">Chargé de Projet Marketing</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">Rocket School</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Paris 8e</span>
                     </div>
                     <div className="card-link-row">
                       <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
@@ -241,7 +293,7 @@ export default function LandingPage() {
                 <div className="column-header column-header--green">
                   <Icon name="target" />
                   <span className="column-header-label">Entretien</span>
-                  <span className="column-header-count">1</span>
+                  <span className="column-header-count">2</span>
                 </div>
                 <div className="card-list">
                   <div className="card card--green">
@@ -256,7 +308,21 @@ export default function LandingPage() {
                     <div className="card-link-row">
                       <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
                     </div>
-                    <span className="card-interview-pill"><Icon name="calendar" />Entretien le 31 juillet à 18h00</span>
+                    <span className="card-interview-pill"><Icon name="calendar" />Entretien le 31/07 à 18h00</span>
+                  </div>
+                  <div className="card card--green">
+                    <div className="card-heading">
+                      <span className="card-title">Assistant Chef de Produit</span>
+                      <span className="card-heading-sep"> chez </span>
+                      <span className="card-company">L&apos;Oréal</span>
+                    </div>
+                    <div className="card-meta-row">
+                      <span className="card-meta-item"><Icon name="map-pin" />Clichy</span>
+                    </div>
+                    <div className="card-link-row">
+                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
+                    </div>
+                    <span className="card-interview-pill"><Icon name="calendar" />Entretien le 05/08 à 10h30</span>
                   </div>
                 </div>
               </div>
@@ -275,13 +341,13 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Ton CV généré, avec un score ATS avant même de l&apos;envoyer</h3>
+            <h3 className="landing-showcase-title">Votre CV généré, avec un score ATS avant même de l&apos;envoyer</h3>
             <p className="landing-showcase-body">
-              Quand tu choisis une offre et lances la génération, Altora produit
-              ton CV et te donne aussitôt son score de compatibilité avec cette
-              offre &mdash; compétences, expérience, niveau d&apos;études,
-              localisation &mdash; en expliquant ce qui le fait monter ou
-              baisser, pas juste un chiffre brut.
+              Quand vous choisissez une offre et lancez la génération, Altora
+              produit votre CV et vous donne aussitôt son score de
+              compatibilité avec cette offre &mdash; compétences, expérience,
+              niveau d&apos;études, localisation &mdash; en expliquant ce qui
+              le fait monter ou baisser, pas juste un chiffre brut.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -353,24 +419,25 @@ export default function LandingPage() {
           <div className="landing-feature-icon"><Icon name="file-text" /></div>
           <h3 className="landing-feature-title">CV et lettre de motivation sur mesure</h3>
           <p className="landing-feature-text">
-            Une fiche de poste collée, et ton CV comme ta lettre de motivation
-            se réorganisent pour elle, sans jamais inventer une expérience.
+            Une fiche de poste collée, et votre CV comme votre lettre de
+            motivation se réorganisent pour elle, sans jamais inventer une
+            expérience.
           </p>
         </Reveal>
         <Reveal className="landing-feature">
           <div className="landing-feature-icon"><Icon name="target" /></div>
           <h3 className="landing-feature-title">Conçu pour passer les robots</h3>
           <p className="landing-feature-text">
-            Avant un recruteur, un ATS lit ton CV. Le tien est structuré pour
-            qu&apos;il le comprenne, et pour être lu jusqu&apos;au bout.
+            Avant un recruteur, un ATS lit votre CV. Le vôtre est structuré
+            pour qu&apos;il le comprenne, et pour être lu jusqu&apos;au bout.
           </p>
         </Reveal>
         <Reveal className="landing-feature">
           <div className="landing-feature-icon"><Icon name="graduation-cap" /></div>
-          <h3 className="landing-feature-title">Pensé pour ton école</h3>
+          <h3 className="landing-feature-title">Pensé pour votre école</h3>
           <p className="landing-feature-text">
-            Rythme d&apos;alternance et rentrée définis par ton école, appliqués
-            automatiquement à tes documents.
+            Rythme d&apos;alternance et rentrée définis par votre école,
+            appliqués automatiquement à vos documents.
           </p>
         </Reveal>
       </section>

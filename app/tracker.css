@@ -3515,6 +3515,10 @@ legend.field-label { padding: 0; }
   width: 100%;
   margin: 0 auto;
   padding: 24px 0;
+  background: color-mix(in srgb, var(--card-bg) 55%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-card);
   transition: padding 0.3s cubic-bezier(0.48, 0.72, 0, 1);
 }
 .landing-nav--scrolled { padding: 12px 0; }
