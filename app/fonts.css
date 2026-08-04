@@ -4,13 +4,13 @@
    faking a bold/italic face that doesn't exist and would distort the
    letterforms wherever a heavier weight is requested. */
 @font-face {
-  font-family: 'Gloock';
-  src: url('/fonts/Gloock-Regular.ttf') format('truetype');
+  font-family: 'Goudy Bookletter 1911';
+  src: url('/fonts/GoudyBookletter1911-Regular.ttf') format('truetype');
   font-weight: 400;
   font-display: swap;
 }
 
 h1 {
-  font-family: 'Gloock', Georgia, serif;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif;
   font-synthesis: none;
 }

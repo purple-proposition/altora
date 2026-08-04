@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
 import './fonts.css';
 import './dev-grid.css';
 import GridOverlayToggle from '@/components/GridOverlayToggle';
@@ -13,14 +13,12 @@ import GridOverlayToggle from '@/components/GridOverlayToggle';
 // fewer render-blocking round trip on every single page.
 //
 // fonts.css is imported here (rather than tracker.css, which only loads
-// inside the (tracker) layout) so the Gloock brand font reaches every page,
+// inside the (tracker) layout) so the Goudy Bookletter 1911 brand font reaches every page,
 // including login/signup. The "g" grid overlay lives here for the same
 // reason: it must show on every route (login, signup, pricing, the
 // landing page, the dashboard) and stay that way regardless of future
 // changes to any individual page's own layout — living once in the root
 // layout instead of being re-declared per page is what makes that durable.
-const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], display: 'swap' });
-
 export const metadata: Metadata = {
   title: 'Altora',
   description: 'Suivi de candidatures, génération de CV et lettre de motivation avec analyse ATS',
@@ -28,8 +26,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={inter.className}>
-      <body style={{ margin: 0, padding: 0, fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <html lang="fr" className={GeistSans.className}>
+      <body style={{ margin: 0, padding: 0, fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}>
         {children}
         <div className="grid-overlay" id="grid-overlay">
           {Array.from({ length: 12 }).map((_, i) => <span key={i}></span>)}

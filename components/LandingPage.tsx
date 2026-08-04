@@ -29,9 +29,8 @@ export default function LandingPage() {
 
   return (
     <div className="landing">
-      <SiteNav />
-
       <div className="landing-card">
+      <SiteNav />
       <main className="landing-hero">
         <h1 className="landing-title landing-in landing-in--1">
           Le copilote IA qui optimise<br />votre taux de placement.
