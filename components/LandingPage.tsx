@@ -331,11 +331,11 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">À faire</h3>
               </div>
               <p className="landing-feature-text">
-                Chaque apprenant gère son propre tableau kanban, avec les
+                Côté apprenant, c&apos;est son tableau de candidatures, avec les
                 offres qu&apos;il ajoute et celles que l&apos;école lui suggère.
-                Pour l&apos;équipe pédagogique, c&apos;est le même tableau qui sert
-                de base aux points de suivi : où en est-il, à quoi a-t-il déjà
-                postulé, faut-il relancer.
+                Côté école, c&apos;est le même tableau qui devient la base des
+                points de suivi : où il en est, à quoi il a déjà postulé,
+                s&apos;il faut relancer.
               </p>
             </div>
             </div>
@@ -389,10 +389,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Boîte de réception</h3>
               </div>
               <p className="landing-feature-text">
-                Rappels de candidature, mais aussi toute la communication
-                interne de l&apos;école : informations, événements à venir,
-                consignes. Un canal direct vers chaque apprenant, sans
-                dépendre de sa messagerie personnelle.
+                Côté apprenant, c&apos;est là qu&apos;arrivent ses rappels de
+                candidature. Côté école, c&apos;est le canal direct vers chaque
+                apprenant pour toute la communication interne, sans dépendre
+                de sa messagerie personnelle.
               </p>
             </div>
             </div>
@@ -456,10 +456,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Calendrier</h3>
               </div>
               <p className="landing-feature-text">
-                L&apos;apprenant y suit son planning, ses dates butoirs et ses
-                entretiens à venir. L&apos;école y programme les rentrées, les
-                périodes en entreprise et les points de suivi, sur le même
-                calendrier partagé.
+                Côté apprenant, c&apos;est son planning : dates butoirs,
+                entretiens à venir. Côté école, c&apos;est le même calendrier
+                qui accueille les rentrées, les périodes en entreprise et
+                les points de suivi.
               </p>
             </div>
             </div>
@@ -528,10 +528,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Mes documents</h3>
               </div>
               <p className="landing-feature-text">
-                L&apos;apprenant y range ses CV et lettres de motivation, avec
-                les conseils de l&apos;école dessus. L&apos;école y dépose ses
-                cours et documents administratifs, tout au même
-                endroit, sans passer par la boîte mail.
+                Côté apprenant, c&apos;est là qu&apos;il range ses CV et lettres
+                de motivation, avec les conseils de l&apos;école dessus. Côté
+                école, c&apos;est le même espace pour déposer cours et
+                documents administratifs, sans passer par la boîte mail.
               </p>
             </div>
             </div>
