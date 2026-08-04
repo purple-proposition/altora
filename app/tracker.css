@@ -4345,6 +4345,7 @@ legend.field-label { padding: 0; }
 .landing-talent-skills .inline-pill { margin: 0; }
 .landing-talent-footer {
   display: flex;
+  margin: 0 16px;
   border-top: 1px solid var(--border);
 }
 .landing-talent-action {
@@ -4357,9 +4358,7 @@ legend.field-label { padding: 0; }
   font-size: 12px;
   font-weight: 500;
   color: var(--indigo);
-  border-right: 1px solid var(--border);
 }
-.landing-talent-action:last-child { border-right: none; }
 .landing-talent-action .lucide { width: 16px; height: 16px; }
 
 .landing-features {
