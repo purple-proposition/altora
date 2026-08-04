@@ -4372,12 +4372,22 @@ legend.field-label { padding: 0; }
   display: flex;
   gap: 24px;
   overflow-x: auto;
-  /* Simple, no bleed trick: the carousel sits in normal flow right after
-     the row's own padding-left, so its first card starts exactly at
-     column 3 at rest, unambiguously — a previous attempt to also bleed
-     this element's own box further left (for the drag-clip edge case)
-     risked shifting that column-3 start itself, which is the one thing
-     that must never move. */
+  box-sizing: border-box;
+  /* Explicit width (not auto/shrink-to-fit) reclaiming exactly the row's
+     own padding-left as extra width, so this box spans the row's full
+     true-margin-to-true-margin span (border-box keeps that width fixed
+     even once padding is added below) — then a matching negative
+     margin-left shifts the box itself back to the row's left edge, and
+     padding-left shifts the *content* right by that same amount. Net
+     visual position at rest is unchanged (still column 3): the two
+     opposite offsets on box-position vs. content-position cancel out.
+     What does change is the clip boundary itself (overflow-x:auto clips
+     at this box's own edge) — it now sits at the true page margin, so a
+     card sliding out during drag stays visible until it reaches that
+     margin instead of getting cut off early at column 3. */
+  width: calc(100% + (16.6667vw - 4px));
+  margin-left: calc(-1 * (16.6667vw - 4px));
+  padding-left: calc(16.6667vw - 4px);
   scroll-snap-type: x mandatory;
   padding-top: 8px;
   padding-bottom: 8px;
