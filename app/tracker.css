@@ -4598,7 +4598,7 @@ legend.field-label { padding: 0; }
 }
 .landing-calendar-header { display: flex; align-items: center; justify-content: space-between; }
 .landing-calendar-title {
-  font-family: 'Gloock', Georgia, serif;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif;
   font-synthesis: none;
   font-size: 16px;
   color: var(--text);
