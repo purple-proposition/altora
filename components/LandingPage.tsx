@@ -382,18 +382,6 @@ export default function LandingPage() {
                   <p className="inbox-message-preview">Le planning détaillé des évaluations est disponible sur ton espace élève.</p>
                 </div>
               </div>
-              <div className="inbox-message landing-inbox-message landing-inbox-message--read">
-                <span className="landing-inbox-avatar landing-inbox-avatar--school"><Icon name="calendar-clock" /></span>
-                <div className="inbox-message-body">
-                  <div className="inbox-message-top">
-                    <span className="inbox-message-sender">Lumina School</span>
-                    <span className="inbox-message-email">contact@lumina-school.fr</span>
-                    <span className="inbox-message-time">Lundi</span>
-                  </div>
-                  <p className="inbox-message-subject">Entretien confirmé chez Sephora le 31 juillet</p>
-                  <p className="inbox-message-preview">Pense à préparer tes questions et à relire la fiche de poste avant l&apos;entretien.</p>
-                </div>
-              </div>
             </div>
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
