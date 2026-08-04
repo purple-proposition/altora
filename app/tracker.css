@@ -4639,6 +4639,12 @@ legend.field-label { padding: 0; }
 }
 .landing-calendar-weekdays,
 .landing-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+/* .landing-showcase-carousel stretches every card to the tallest one's
+   height by default (flex align-items:stretch), so .landing-calendar-board
+   already has room to match .landing-kanban-board — the grid just needs
+   to actually claim it instead of sizing to its own fixed-height cells,
+   which left empty space below the 6 weeks. */
+.landing-calendar-grid { flex: 1; grid-template-rows: repeat(6, 1fr); }
 .landing-calendar-weekdays span {
   min-width: 0;
   font-size: 12px;
@@ -4653,7 +4659,6 @@ legend.field-label { padding: 0; }
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  height: 28px;
   min-width: 0;
   padding: 4px;
   border: 1px solid var(--border);
