@@ -3752,6 +3752,20 @@ legend.field-label { padding: 0; }
     opacity: 1;
     transform: none;
   }
+  /* Safari's "Export as PDF" (and print) only captures the page's own
+     document height, not the content of a nested overflow:auto
+     scroll container — .landing is pinned to height:100vh and the
+     actual page content scrolls inside .landing-card instead of the
+     page itself, so only a single viewport's worth ever made it into
+     the export. Letting both grow to their natural content height
+     puts everything back in normal document flow, which is what gets
+     captured. */
+  .landing {
+    height: auto;
+  }
+  .landing-card {
+    overflow: visible;
+  }
 }
 
 .landing-hero {
