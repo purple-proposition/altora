@@ -4344,7 +4344,12 @@ legend.field-label { padding: 0; }
   position: relative;
   display: flex;
   justify-content: center;
-  padding: 32px 48px;
+  /* Right padding is deliberately larger than left: it's what shifts the
+     whole fan's center point (the left:50% anchor the left/right cards
+     peek out from) left just enough that the right card's own visible
+     edge — not this container's box — lands flush on the row's right
+     edge (10th grid column). */
+  padding: 32px 107px 32px 48px;
 }
 /* Student directory card ("annuaire de promotion" for partner
    companies) — same card shell as .landing-match-card/.landing-

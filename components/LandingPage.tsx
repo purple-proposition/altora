@@ -226,7 +226,7 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
             <p className="landing-showcase-body">
-              Vos recruteurs postent une offre, notre système de matching
+              Vos entreprises partenaires postent une offre, notre système de matching
               repère aussitôt les profils qui correspondent le mieux, et ils
               les contactent directement sans passer par un intermédiaire.
             </p>
