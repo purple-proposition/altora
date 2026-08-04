@@ -4361,12 +4361,13 @@ legend.field-label { padding: 0; }
   gap: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  /* Padding on every side, not just the bottom: the scroll container's
-     overflow clips box-shadow right at its own content edge, so a card's
-     shadow only had room to render at the bottom and got cut off flat on
-     the top/left/right — this is what read as a "buggy" shadow. */
-  padding: 8px;
-  margin: -8px;
+  /* Vertical padding only, so the shadow has room top/bottom without
+     shifting the row horizontally — a left/right version of this same
+     fix was throwing off the cards' alignment against the page's own
+     grid columns. Horizontal shadow clipping between cards is covered
+     by the 24px gap already; the first/last card's outer edges are
+     meant to land exactly on the grid, unpadded. */
+  padding: 8px 0;
   cursor: grab;
   /* Drag-to-scroll (components/DragScrollCarousel.tsx) replaces the
      visible scrollbar as the way to move this — hidden on every engine
