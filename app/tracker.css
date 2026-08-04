@@ -4578,6 +4578,8 @@ legend.field-label { padding: 0; }
    120px-tall cells would never fit at any row count. */
 .landing-calendar-board {
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -4612,6 +4614,7 @@ legend.field-label { padding: 0; }
 .landing-calendar-weekdays,
 .landing-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .landing-calendar-weekdays span {
+  min-width: 0;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -4625,12 +4628,14 @@ legend.field-label { padding: 0; }
   align-items: flex-start;
   justify-content: flex-start;
   height: 28px;
+  min-width: 0;
   padding: 4px;
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   background: var(--card-bg);
   font-size: 12px;
   color: var(--text);
+  overflow: hidden;
 }
 .landing-calendar-day--muted { background: var(--bg); color: var(--text-muted); }
 .landing-calendar-day--today { box-shadow: inset 0 0 0 2px var(--indigo); color: var(--indigo); font-weight: 600; }
