@@ -4326,15 +4326,16 @@ legend.field-label { padding: 0; }
   background: var(--bg);
 }
 .landing-talent-photo img { object-fit: cover; }
-.landing-talent-body { padding: 20px; }
+.landing-talent-body { padding: 16px; }
 /* First name is the card's title (everyone shown here is on an
    alternance contract, so that tag/status line was redundant) —
    the degree becomes a plain muted subtitle underneath instead. */
 .landing-talent-name { font-family: 'Gloock', Georgia, serif; font-synthesis: none; font-size: 20px; color: var(--text); margin-bottom: 4px; }
-/* min-height reserves room for the longest degree (Thomas's, 3 lines)
-   so every card reaches the same height instead of the shorter degrees
-   (e.g. Inès's, 1 line) leaving the card shorter. */
-.landing-talent-degree { font-size: 14px; line-height: 1.4; color: var(--text-muted); margin-bottom: 12px; min-height: 59px; }
+/* min-height reserves room for the longest degree (Thomas's, wraps to
+   4 lines at this card width) so every card reaches the same height
+   instead of the shorter degrees (e.g. Inès's, 1 line) leaving the
+   card shorter. */
+.landing-talent-degree { font-size: 14px; line-height: 1.4; color: var(--text-muted); margin-bottom: 12px; min-height: 79px; }
 /* Row that wraps to a 2nd line once it runs out of width, instead of
    one skill per row — override .inline-pill's own margin:0 8px (meant
    for pills sitting inline in a sentence) since it ate into the
