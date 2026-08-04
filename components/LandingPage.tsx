@@ -235,6 +235,54 @@ export default function LandingPage() {
             <TalentStack />
           </div>
         </Reveal>
+
+        <Reveal className="landing-showcase-row">
+          <div className="landing-showcase-visual">
+            <div className="landing-kanban-card">
+              <div className="landing-kanban-col">
+                <div className="landing-kanban-col-title">
+                  <Icon name="circle-dashed" />À faire<span className="landing-kanban-col-count">2</span>
+                </div>
+                <div className="landing-kanban-item landing-kanban-item--slate">
+                  <span className="landing-kanban-item-tag">Suggérée par l&apos;école</span>
+                  <span className="landing-kanban-item-role">Alternance Marketing Digital</span>
+                  <span className="landing-kanban-item-company">L&apos;Oréal</span>
+                </div>
+                <div className="landing-kanban-item landing-kanban-item--slate">
+                  <span className="landing-kanban-item-role">Assistant chef de projet</span>
+                  <span className="landing-kanban-item-company">Decathlon</span>
+                </div>
+              </div>
+              <div className="landing-kanban-col">
+                <div className="landing-kanban-col-title">
+                  <Icon name="hourglass" />Envoyé<span className="landing-kanban-col-count">1</span>
+                </div>
+                <div className="landing-kanban-item landing-kanban-item--amber">
+                  <span className="landing-kanban-item-role">Chargé de communication</span>
+                  <span className="landing-kanban-item-company">BlaBlaCar</span>
+                </div>
+              </div>
+              <div className="landing-kanban-col">
+                <div className="landing-kanban-col-title">
+                  <Icon name="target" />Entretien<span className="landing-kanban-col-count">1</span>
+                </div>
+                <div className="landing-kanban-item landing-kanban-item--green">
+                  <span className="landing-kanban-item-role">Alternance RH</span>
+                  <span className="landing-kanban-item-company">Sephora</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">Le suivi pédagogique voit où en est chaque étudiant</h3>
+            <p className="landing-showcase-body">
+              Chaque étudiant gère son propre tableau kanban, avec les offres
+              qu&apos;il ajoute et celles que l&apos;école lui suggère. L&apos;équipe
+              pédagogique consulte ce même tableau pour voir où il en est, à
+              quoi il a déjà postulé, et intervenir au bon moment.
+            </p>
+          </div>
+        </Reveal>
       </section>
 
       <section id="fonctionnalites" className="landing-features">
