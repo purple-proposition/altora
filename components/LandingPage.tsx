@@ -317,7 +317,7 @@ export default function LandingPage() {
                     <div className="card-link-row">
                       <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
                     </div>
-                    <span className="card-interview-pill"><Icon name="calendar" />Le 31/07 au 18h00</span>
+                    <span className="card-interview-pill"><Icon name="calendar" />Le 31 juillet à 18h00</span>
                   </div>
                   <div className="card card--green">
                     <div className="card-heading">
@@ -331,7 +331,7 @@ export default function LandingPage() {
                     <div className="card-link-row">
                       <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
                     </div>
-                    <span className="card-interview-pill"><Icon name="calendar" />Le 05/08 au 10h30</span>
+                    <span className="card-interview-pill"><Icon name="calendar" />Le 5 août à 10h30</span>
                   </div>
                 </div>
               </div>

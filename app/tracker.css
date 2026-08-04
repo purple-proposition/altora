@@ -3490,27 +3490,6 @@ legend.field-label { padding: 0; }
   overflow-x: hidden;
 }
 
-/* Frosted top edge, independent of .landing-nav (which keeps its current
-   flat, non-overlapping look/position, unchanged) — a generated sticky
-   strip pinned to the top of .landing-card's own scroll, so content
-   blurs as it scrolls up past the top of the card instead of cutting off
-   sharply. margin-bottom cancels its own height so it doesn't push the
-   real content down; it's the first thing in the card's normal flow, so
-   position:sticky pins it to that scroll, not the page's. */
-.landing-card::before {
-  content: '';
-  position: sticky;
-  top: 0;
-  z-index: 15;
-  display: block;
-  height: 32px;
-  margin-bottom: -32px;
-  background: color-mix(in srgb, var(--card-bg) 65%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  pointer-events: none;
-}
-
 .landing-nav {
   /* Grid, not flex space-between: the brand and the actions groups are
      different widths (a short wordmark vs. two buttons), so space-between
@@ -4386,7 +4365,12 @@ legend.field-label { padding: 0; }
   scroll-snap-type: x mandatory;
   padding-bottom: 8px;
 }
-.landing-showcase-carousel-item { flex: 0 0 auto; width: calc(33.3333vw - 32px); scroll-snap-align: start; }
+/* min-width:0 forces the 4-column width to actually hold: flex items
+   default to auto min-width (their content's min-content size), so the
+   3-up kanban board inside — non-wrapping card headings, fixed-ish
+   column minimums — was pushing this past its set width instead of
+   respecting it. */
+.landing-showcase-carousel-item { flex: 0 0 auto; width: calc(33.3333vw - 32px); min-width: 0; scroll-snap-align: start; }
 
 .landing-showcase-text { display: flex; flex-direction: column; }
 
