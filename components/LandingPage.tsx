@@ -230,8 +230,7 @@ export default function LandingPage() {
             <p className="landing-showcase-body">
               Vos recruteurs postent une offre, repèrent aussitôt le profil qui
               correspond le mieux dans la promotion, et le contactent
-              directement, CV, LinkedIn et email sous la main, sans passer par
-              un intermédiaire.
+              directement sans passer par un intermédiaire.
             </p>
           </div>
           <div className="landing-showcase-visual">
