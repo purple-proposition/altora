@@ -4432,6 +4432,17 @@ legend.field-label { padding: 0; }
 }
 .landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
 
+/* Same 4+4 column split as --annuaire below (text left, visual right). */
+.landing-showcase-row--jobboards {
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
+  padding-left: calc(16.6667vw - 4px);
+  padding-right: calc(16.6667vw - 4px);
+  grid-template-columns: calc(33.3333vw - 32px) calc(33.3333vw - 32px);
+  gap: var(--space-24);
+}
+.landing-showcase-row--jobboards .landing-showcase-visual { justify-content: flex-end; }
+
 /* Same full-bleed breakout and symmetric 2-column margins as --annuaire
    above (columns 1-2 and 11-12 stay pure margin), but an uneven split
    instead of two matching 4-column halves: text spans columns 3-6 (4
@@ -4756,6 +4767,63 @@ legend.field-label { padding: 0; }
 }
 .landing-copilot-item .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 .landing-copilot-item p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text); }
+
+/* Job boards matching frise ("job boards" showcase row): a vertical
+   timeline of match criteria, applied in order. The connecting line is
+   one continuous ::before behind every step (not a border per step),
+   so it reads as a single thread running through the card — each
+   icon's own solid background sits on top and visually breaks it at
+   the bead, the standard timeline trick instead of fiddly per-segment
+   height math. */
+.landing-matching-card {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  padding: var(--space-24);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+.landing-matching-card::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--space-24) + 16px);
+  bottom: calc(var(--space-24) + 16px);
+  left: calc(var(--space-24) + 15px);
+  width: 1px;
+  background: var(--border);
+}
+.landing-matching-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-12);
+  position: relative;
+}
+.landing-matching-step-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--indigo-tint);
+  color: var(--indigo);
+}
+.landing-matching-step-icon .lucide { width: 16px; height: 16px; }
+.landing-matching-step-label { margin: 0 0 2px; font-size: 13px; font-weight: 600; color: var(--text); }
+.landing-matching-step-result { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+/* Date matching is deliberately soft (a heads-up, not a hard filter —
+   start dates are usually negotiable), so its bead and label read as
+   muted/dashed instead of matching the others' solid indigo. */
+.landing-matching-step--muted .landing-matching-step-icon {
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+}
 
 /* Kanban mockup ("suivi pédagogique" showcase row) — reuses the real
    board's own classes (.column, .card, .card-title, .card-school-badge,

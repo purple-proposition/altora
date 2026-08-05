@@ -595,6 +595,57 @@ export default function LandingPage() {
           </div>
         </Reveal>
 
+        <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">Le matching se fait directement avec les job boards</h3>
+            <p className="landing-showcase-body">
+              Altora se connecte aux API des job boards et récupère
+              automatiquement les offres des villes où l&apos;école est
+              présente, puis élimine celles qui ne correspondent pas au
+              profil de chaque apprenant.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-matching-card">
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="map-pin" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Ville de l&apos;école</p>
+                  <p className="landing-matching-step-result">Offres récupérées uniquement sur les villes où l&apos;école est implantée.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="car" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Mobilité de l&apos;apprenant</p>
+                  <p className="landing-matching-step-result">Le rayon et le mode de transport renseignés écartent les offres trop loin.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="calendar-clock" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Rythme d&apos;alternance</p>
+                  <p className="landing-matching-step-result">Seules les offres compatibles avec le rythme défini par l&apos;école sont conservées.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="graduation-cap" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Niveau requis</p>
+                  <p className="landing-matching-step-result">L&apos;IA analyse la fiche de poste pour estimer le niveau requis.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step landing-matching-step--muted">
+                <div className="landing-matching-step-icon"><Icon name="calendar" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Date de début</p>
+                  <p className="landing-matching-step-result">Affichée à titre indicatif : les dates de début sont souvent négociables.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
         <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
