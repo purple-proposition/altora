@@ -605,7 +605,8 @@ export default function LandingPage() {
               <CountUpPercent value={84} />
               <div className="landing-match-label">de compatibilité ATS avec l&apos;offre</div>
               <ul className="landing-match-notes">
-                <li className="is-positive"><Icon name="check-circle" />Suite Adobe, CRM maîtrisés et disponibilité alignée avec l&apos;offre</li>
+                <li className="is-positive"><Icon name="check-circle" />Suite Adobe, CRM et gestion de campagnes maîtrisés</li>
+                <li className="is-positive"><Icon name="check-circle" />Disponibilité alignée avec la date de début de l&apos;offre</li>
                 <li className="is-warning"><Icon name="circle-help" />Aucune certification Adobe mentionnée</li>
                 <li className="is-warning"><Icon name="circle-help" />Ne maîtrise pas l&apos;espagnol, demandé dans l&apos;offre</li>
                 <li className="is-ai"><Icon name="sparkles" />Verbes d&apos;action renforcés : administre, pilote, anime</li>
