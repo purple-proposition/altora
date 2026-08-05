@@ -4416,9 +4416,9 @@ legend.field-label { padding: 0; }
 }
 .landing-showcase-row--annuaire .landing-showcase-visual { justify-content: flex-end; }
 
-/* Same full-bleed columns-3-to-10 treatment as --annuaire above, mirrored:
-   this row has the visual on the left and the text on the right, so the
-   visual hugs column 3's left edge instead of column 10's right edge. */
+/* Text left, mockup right — same convention as every other showcase
+   row now (was visual-left/text-right; flipped in the JSX so the whole
+   page reads consistently, text always on the left). */
 .landing-showcase-row--priorise {
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
@@ -4430,7 +4430,7 @@ legend.field-label { padding: 0; }
   grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
   gap: var(--space-24);
 }
-.landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
+.landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-end; }
 
 /* Same 4+4 column split as --annuaire below (text left, visual right). */
 .landing-showcase-row--jobboards {
@@ -5470,17 +5470,6 @@ legend.field-label { padding: 0; }
     padding-left: var(--space-24);
     padding-right: var(--space-24);
     grid-template-columns: 1fr;
-  }
-  /* --priorise's text sits on the right on desktop (visual on the
-     left) — on mobile it comes first (text-before-visual order rule
-     above) but should still read as pinned to the right margin with 2
-     grid columns of empty space before it, not flush against the left
-     edge like every other row's text. Extra margin-left on top of the
-     row's own 24px padding lands its left edge exactly on column 3
-     (16.6667vw - 4px from the true page margin, i.e. columns 1-2 free)
-     — same offset the desktop layout already uses for column 3. */
-  .landing-showcase-row--priorise .landing-showcase-text {
-    margin-left: calc(16.6667vw - 28px);
   }
   .landing-showcase-row--annuaire .landing-showcase-visual,
   .landing-showcase-row--priorise .landing-showcase-visual,
