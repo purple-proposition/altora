@@ -5397,9 +5397,15 @@ legend.field-label { padding: 0; }
      viewport is too narrow for the sidebar + content card inside, which
      is what was clipping "Bonjour Camille" and the calendar events.
      .landing-preview (its parent) is already full-bleed to the page
-     margins, so 100% here fills that instead of staying pinned to half. */
+     margins (column 1 to column 12) — but the window itself should
+     leave column 1 and column 12 free rather than fill them edge to
+     edge, so this is one column + one gap narrower than 100% on each
+     side (16.6667vw - 4px total, matching the "g" debug grid's own
+     repeat(12,1fr)/24px-gap math), not a full-bleed 100%. .landing-
+     preview's own justify-content:center re-centers it in the freed-up
+     space, no margin needed here. */
   .landing-preview-shell {
-    width: 100%;
+    width: calc(100% - (16.6667vw - 4px));
   }
 }
 
