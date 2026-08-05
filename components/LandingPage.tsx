@@ -602,8 +602,8 @@ export default function LandingPage() {
           </div>
           <div className="landing-showcase-visual">
             <div className="landing-match-card">
-              <CountUpPercent value={92} />
-              <div className="landing-match-label">de compatibilité avec l&apos;offre</div>
+              <CountUpPercent value={84} />
+              <div className="landing-match-label">de compatibilité ATS avec l&apos;offre</div>
               <ul className="landing-match-notes">
                 <li className="is-positive"><Icon name="check-circle" />Profil très adapté</li>
                 <li className="is-warning"><Icon name="circle-help" />Une compétence CRM augmenterait votre score</li>
