@@ -55,7 +55,7 @@ export default function LandingPage() {
           accompagner vers la réussite de leur alternance.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
-          <QuoteCtaButton className="landing-nav-cta landing-hero-cta" location="hero">Contacter un expert</QuoteCtaButton>
+          <QuoteCtaButton className="landing-nav-cta landing-hero-cta" location="hero" icon="message-circle">Contacter un expert</QuoteCtaButton>
         </div>
 
         <div className="landing-preview landing-in landing-in--4" aria-hidden="true">
@@ -148,7 +148,7 @@ export default function LandingPage() {
             <li><Icon name="check-circle" />Rythme d&apos;alternance de l&apos;école appliqué automatiquement</li>
             <li><Icon name="check-circle" />Suivi des candidatures de chaque alternant</li>
           </ul>
-          <QuoteCtaButton className="landing-category-cta" location="category_ecoles">Contacter un expert <Icon name="chevron-right" /></QuoteCtaButton>
+          <QuoteCtaButton className="landing-category-cta" location="category_ecoles" icon="message-circle">Contacter un expert <Icon name="chevron-right" /></QuoteCtaButton>
         </Reveal>
 
         <Reveal id="etudiants" className="landing-category">
@@ -819,7 +819,7 @@ export default function LandingPage() {
           <p className="pricing-plan-tagline">La plateforme complète pour votre établissement, accès étudiant inclus</p>
           <div className="pricing-plan-price">Sur devis</div>
           <p className="pricing-plan-price-note">Selon la taille de votre promotion</p>
-          <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing">Contacter un expert</QuoteCtaButton>
+          <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing" icon="message-circle">Contacter un expert</QuoteCtaButton>
 
           <div className="pricing-merged-groups">
             <div className="pricing-merged-group">
@@ -859,7 +859,7 @@ export default function LandingPage() {
           Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
         </p>
         <div className="landing-closing-actions">
-          <QuoteCtaButton className="landing-nav-cta landing-hero-cta" location="closing">Contacter un expert</QuoteCtaButton>
+          <QuoteCtaButton className="landing-nav-cta landing-hero-cta" location="closing" icon="message-circle">Contacter un expert</QuoteCtaButton>
         </div>
       </Reveal>
 
