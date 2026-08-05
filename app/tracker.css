@@ -5043,9 +5043,21 @@ legend.field-label { padding: 0; }
    viewport grid columns (matches the "g" debug overlay): for k columns
    out of N with gap g, span = (k/N)*W + g*[(k-1) - (k/N)(N-1)], which
    for k=2, N=12, g=24 simplifies to exactly (1/6)W - 20px. */
+/* .landing-talent-card--left/--right are position:absolute (needed for
+   the rotated fan effect), which takes them out of flow — align-items:
+   stretch/grid auto-rows can't equalize their height the way the rest
+   of the site does. min-height here (sized for Thomas's card: 4-line
+   degree + 3-row skills, the tallest combination) is the only way to
+   force all 3 fanned cards to the same height. .landing-talent-body's
+   own flex:1 below absorbs the slack for shorter cards as breathing
+   room before the footer, instead of a min-height on the degree/skills
+   text themselves leaving a dead gap right after the short text. */
 .landing-talent-card {
   width: calc(16.6667vw - 28px);
+  min-height: 512px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -5088,7 +5100,7 @@ legend.field-label { padding: 0; }
   background: var(--bg);
 }
 .landing-talent-photo img { object-fit: cover; }
-.landing-talent-body { padding: 16px; }
+.landing-talent-body { flex: 1; padding: 16px; }
 /* First name is the card's title (everyone shown here is on an
    alternance contract, so that tag/status line was redundant) —
    the degree becomes a plain muted subtitle underneath instead. */

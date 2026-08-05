@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { GeistSans } from 'geist/font/sans';
+import { Inter } from 'next/font/google';
 import './fonts.css';
 import './dev-grid.css';
 import GridOverlayToggle from '@/components/GridOverlayToggle';
@@ -11,6 +11,13 @@ import GridOverlayToggle from '@/components/GridOverlayToggle';
 // blocking initial render, same tradeoff Next.js recommends for
 // analytics scripts that don't need to run before paint.
 const GA_MEASUREMENT_ID = 'G-5E514S4GEX';
+
+// next/font/google still downloads at build time and self-hosts the woff2
+// (same zero-external-request benefit as geist/font/sans below), just for
+// Inter instead of Geist Sans — variable name kept as --font-geist-sans so
+// every existing var(--font-geist-sans) reference in tracker.css/layout
+// doesn't need touching.
+const inter = Inter({ subsets: ['latin'], variable: '--font-geist-sans' });
 
 // Self-hosted via next/font instead of a <link> to fonts.googleapis.com —
 // that external stylesheet cost a DNS lookup + connection to
@@ -34,7 +41,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={GeistSans.className}>
+    <html lang="fr" className={inter.variable}>
       <body style={{ margin: 0, padding: 0, fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}>
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
         <Script id="ga4-init" strategy="afterInteractive">
