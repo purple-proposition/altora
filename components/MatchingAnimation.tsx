@@ -25,10 +25,13 @@ export default function MatchingAnimation() {
         if (!entry.isIntersecting) return;
         observer.disconnect();
         const timeouts: ReturnType<typeof setTimeout>[] = [];
-        STEPS.forEach((_, i) => {
+        // STEPS.length + 1 total beats: one per step, plus one more for the
+        // muted "Date de début" step, so it lights up on its own turn
+        // instead of alongside the last active step.
+        for (let i = 0; i <= STEPS.length; i++) {
           timeouts.push(setTimeout(() => setActiveCount(i + 1), 400 * (i + 1)));
-        });
-        timeouts.push(setTimeout(() => setShowOffer(true), 400 * (STEPS.length + 1) + 300));
+        }
+        timeouts.push(setTimeout(() => setShowOffer(true), 400 * (STEPS.length + 2) + 300));
       },
       { threshold: 0.4 }
     );
@@ -50,7 +53,7 @@ export default function MatchingAnimation() {
             </div>
           </div>
         ))}
-        <div className={`landing-matching-step landing-matching-step--muted${activeCount >= STEPS.length ? ' is-active' : ''}`}>
+        <div className={`landing-matching-step landing-matching-step--muted${activeCount > STEPS.length ? ' is-active' : ''}`}>
           <div className="landing-matching-step-icon">
             <Icon name="calendar" />
           </div>
