@@ -22,17 +22,22 @@ import QuoteModal from '@/components/QuoteModal';
 //
 // Past a small scroll threshold, the nav also compacts (half its
 // vertical padding, a smaller logo) and the links/actions collapse into
-// a hamburger popup. Reads window scroll, not any nested container —
-// the page scrolls normally (see .landing/.landing-card in tracker.css).
+// a hamburger popup. Reads .landing-card's own scroll, not the window —
+// .landing-card is the actual scroll container (overflow-y:auto), kept
+// that way on purpose so its rounded top/bottom corners stay fixed in
+// place under this sticky nav while its content scrolls, instead of
+// scrolling away with a plain in-flow block.
 export default function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const scrollEl = document.querySelector('.landing-card');
+    if (!scrollEl) return;
+    const onScroll = () => setScrolled(scrollEl.scrollTop > 8);
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    scrollEl.addEventListener('scroll', onScroll, { passive: true });
+    return () => scrollEl.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => {

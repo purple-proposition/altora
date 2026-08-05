@@ -160,16 +160,6 @@ body {
   color: var(--text);
   transition: background 0.2s ease, color 0.2s ease;
 }
-/* The app dashboard (.app-shell) owns its own internal scroll and needs
-   body pinned to exactly 100vh/hidden above. The public landing/pricing
-   pages (.landing) scroll normally at the document level instead (see
-   .landing below) — body needs to allow that here, or nothing scrolls
-   at all now that .landing-card no longer has its own nested scroll. */
-body:has(.landing) {
-  height: auto;
-  overflow: visible;
-}
-
 /* --- App shell: the sidebar sits flat on the page background, full
    height/width; the content area is its own bordered, rounded card
    floating on that background, like every other card in the app --- */
@@ -3531,16 +3521,16 @@ legend.field-label { padding: 0; }
    put as a flex sibling outside it; it reacts to that scroll (see
    .landing-nav--scrolled) without moving or overlaying the card itself. */
 .landing {
-  /* min-height, not height: fixing this to 100vh forced .landing-card
-     below (flex:1, min-height:0) to cap at the leftover viewport height
-     and become its own overflow-y:auto scroll container — meaning the
-     page itself (html/body) never grew taller than one screen. Safari's
-     "Export as PDF" (unlike its Print dialog) captures the document
-     exactly as laid out on screen, not through @media print, so it only
-     ever captured that one screen's worth. min-height still fills the
-     viewport when content is short, but lets the box (and the normal
-     page scroll) grow with its content instead of being clipped. */
-  min-height: 100vh;
+  /* height, not min-height: .landing-card below (flex:1, min-height:0,
+     overflow-y:auto) is deliberately its own nested scroll container —
+     that's what keeps its rounded top/bottom corners permanently
+     visible right under the sticky nav while scrolling, instead of
+     scrolling away with the rest of the page like a plain block would.
+     Trade-off, on purpose (reverted per explicit request): Safari's
+     "Export as PDF" only captures the page's own document height, not
+     a nested overflow:auto container's content, so it now only
+     captures a single screen's worth again. */
+  height: 100vh;
   display: flex;
   flex-direction: column;
   gap: var(--space-24);
@@ -3551,6 +3541,7 @@ legend.field-label { padding: 0; }
 
 .landing-card {
   flex: 1;
+  min-height: 0;
   /* Negative top margin cancels .landing's 24px gap against the nav above,
      so the card touches it with zero visible seam, while keeping 24px on
      the other 3 sides (the footer lives inside the card, at its bottom). */
@@ -3558,9 +3549,13 @@ legend.field-label { padding: 0; }
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  /* No overflow-y here (see .landing above) — the page scrolls normally
-     now. overflow-x:hidden stays: the showcase carousel rows' bleed-past-
-     the-margin drag effect clips against this exact boundary. */
+  /* Its own scroll container again (see .landing above) — overflow-y:
+     auto here, not the page/body, is what keeps the rounded corners
+     fixed in place under the sticky nav while the content inside
+     scrolls. overflow-x:hidden stays: the showcase carousel rows'
+     bleed-past-the-margin drag effect clips against this exact
+     boundary. */
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
