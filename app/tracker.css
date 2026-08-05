@@ -5391,6 +5391,16 @@ legend.field-label { padding: 0; }
     max-width: 100%;
     padding: var(--space-24);
   }
+  /* .landing-preview-shell's width (calc(50vw - 36px)) is sized for the
+     desktop hero, where the mini app window sits at half the viewport
+     next to empty space. On mobile there's no space to spare — half the
+     viewport is too narrow for the sidebar + content card inside, which
+     is what was clipping "Bonjour Camille" and the calendar events.
+     .landing-preview (its parent) is already full-bleed to the page
+     margins, so 100% here fills that instead of staying pinned to half. */
+  .landing-preview-shell {
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
