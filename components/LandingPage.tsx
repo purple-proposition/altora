@@ -36,7 +36,7 @@ export default function LandingPage() {
       <div className="landing-card">
       <main className="landing-hero">
         <h1 className="landing-title landing-in landing-in--1">
-          Le copilote IA qui optimise<br />votre taux de placement.
+          La plateforme qui optimise<br />votre taux de placement.
         </h1>
         <p className="landing-subtitle landing-in landing-in--2">
           Les écoles et leurs apprenants jonglent aujourd&apos;hui entre une multitude
