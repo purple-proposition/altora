@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { trackEvent } from '@/lib/gtag';
 
 // Native horizontal scroll only responds to touch/trackpad swipes, not a
 // mouse click-and-drag — this adds that "grab and drag" interaction (mouse
@@ -22,17 +23,19 @@ import { useEffect, useRef } from 'react';
 export default function DragScrollCarousel({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0 });
+  const scrollTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function snapToNearestItem() {
-    const el = ref.current;
-    if (!el) return;
+  // Shared by the drag-release snap and the scroll-tracking below: which
+  // item is currently closest to resting position, and how far its own
+  // snap target is from scrollLeft right now.
+  function findNearestItem(el: HTMLDivElement) {
     // The tail item (e.g. "Mes documents") is CSS scroll-snap-align:none
     // — it should never become a resting point of its own, so it's
     // excluded here too, matching the browser's own native snap behavior.
     const items = (Array.from(el.children) as HTMLElement[]).filter(
       (item) => !item.classList.contains('landing-showcase-carousel-item--tail')
     );
-    if (!items.length) return;
+    if (!items.length) return null;
     // offsetLeft is relative to the nearest *positioned* ancestor, which
     // isn't necessarily this scroll container — getBoundingClientRect
     // gives each item's true position relative to the container's own
@@ -43,18 +46,42 @@ export default function DragScrollCarousel({ children, className }: { children: 
     // target here has to match that same offset, or this fights the
     // browser's own mandatory snap instead of landing on the same spot.
     const scrollPaddingLeft = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+    let nearestIndex = 0;
     let nearestTarget = 0;
     let nearestDistance = Infinity;
-    for (const item of items) {
+    items.forEach((item, index) => {
       const itemLeft = item.getBoundingClientRect().left - containerLeft + el.scrollLeft;
       const target = itemLeft - scrollPaddingLeft;
       const distance = Math.abs(target - el.scrollLeft);
       if (distance < nearestDistance) {
         nearestDistance = distance;
         nearestTarget = target;
+        nearestIndex = index;
       }
-    }
-    el.scrollTo({ left: nearestTarget, behavior: 'smooth' });
+    });
+    return { index: nearestIndex, target: nearestTarget };
+  }
+
+  function snapToNearestItem() {
+    const el = ref.current;
+    if (!el) return;
+    const nearest = findNearestItem(el);
+    if (!nearest) return;
+    el.scrollTo({ left: nearest.target, behavior: 'smooth' });
+  }
+
+  // Fires once per resting position, for touch/trackpad/keyboard scroll
+  // (handled entirely by native CSS scroll-snap, no JS involved above) as
+  // well as mouse-drag — debounced since 'scroll' fires continuously
+  // while the browser's own snap animation is still settling.
+  function onScroll() {
+    const el = ref.current;
+    if (!el) return;
+    if (scrollTrackTimer.current) clearTimeout(scrollTrackTimer.current);
+    scrollTrackTimer.current = setTimeout(() => {
+      const nearest = findNearestItem(el);
+      if (nearest) trackEvent('carousel_scroll', { item_index: nearest.index });
+    }, 150);
   }
 
   function onMouseDown(e: React.MouseEvent) {
@@ -111,6 +138,9 @@ export default function DragScrollCarousel({ children, className }: { children: 
         el.scrollLeft = 0;
         el.classList.add('carousel-snap-ready');
       });
+    return () => {
+      if (scrollTrackTimer.current) clearTimeout(scrollTrackTimer.current);
+    };
   }, []);
 
   return (
@@ -121,6 +151,7 @@ export default function DragScrollCarousel({ children, className }: { children: 
       onMouseMove={onMouseMove}
       onMouseUp={stopDrag}
       onMouseLeave={stopDrag}
+      onScroll={onScroll}
     >
       {children}
     </div>

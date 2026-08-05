@@ -38,7 +38,7 @@ export default function PricingPage() {
           <p className="pricing-plan-tagline">La plateforme complète pour votre établissement</p>
           <div className="pricing-plan-price">Sur devis</div>
           <p className="pricing-plan-price-note">Selon la taille de votre promotion</p>
-          <QuoteCtaButton className="landing-nav-cta pricing-plan-cta">Contacter un expert</QuoteCtaButton>
+          <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="pricing">Contacter un expert</QuoteCtaButton>
           <ul className="pricing-plan-features">
             <li><Icon name="check-circle" />Gestion des étudiants et des offres partenaires</li>
             <li><Icon name="check-circle" />Tableaux de bord et suivi des candidatures</li>

@@ -53,7 +53,7 @@ export default function SiteNav() {
       </nav>
       <div className="landing-nav-actions">
         <Link href="/login" className="landing-nav-login">Se connecter</Link>
-        <QuoteCtaButton className="landing-nav-cta">Contacter un expert</QuoteCtaButton>
+        <QuoteCtaButton className="landing-nav-cta" location="nav">Contacter un expert</QuoteCtaButton>
         <div className="landing-nav-menu-wrap">
           <button
             type="button"
@@ -68,7 +68,7 @@ export default function SiteNav() {
             <Link href="/#fonctionnalites" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Fonctionnalités</Link>
             <Link href="/pricing" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Tarifs</Link>
             <Link href="/login" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Se connecter</Link>
-            <QuoteCtaButton className="landing-nav-cta landing-nav-popup-cta" onClick={() => setMenuOpen(false)}>Contacter un expert</QuoteCtaButton>
+            <QuoteCtaButton className="landing-nav-cta landing-nav-popup-cta" location="nav_popup" onClick={() => setMenuOpen(false)}>Contacter un expert</QuoteCtaButton>
           </div>
         </div>
       </div>

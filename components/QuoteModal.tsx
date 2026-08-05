@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Icon from '@/components/Icon';
 import { OPEN_QUOTE_MODAL_EVENT } from '@/components/QuoteCtaButton';
+import { trackEvent } from '@/lib/gtag';
 
 // HubSpot Forms API v3 — submits straight from the browser, no backend
 // or API key needed (the form GUID is the only thing scoping this to
@@ -73,6 +74,11 @@ export default function QuoteModal() {
         }),
       });
       if (!res.ok) throw new Error(`HubSpot submission failed: ${res.status}`);
+      // GA4's own recommended event name for exactly this ("someone
+      // submitted a lead-gen form") — marked as a key event/conversion
+      // in the property so it shows up as one everywhere in GA4's UI,
+      // not just as a raw event.
+      trackEvent('generate_lead');
       setSubmitted(true);
     } catch {
       setError(true);
