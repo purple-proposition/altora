@@ -49,10 +49,10 @@ function Confetti() {
 // one-shot, like Reveal (components/Reveal.tsx), rather than the
 // scroll-position-tracked odometer roll used elsewhere on the landing
 // page (RollingNumber), since there's no "before/after" state to roll
-// between here, just a single number worth making an entrance. Slowed
-// down (was 900ms) so the count-up reads as a small moment of suspense
-// before the confetti pays it off, rather than a blip.
-export default function CountUpPercent({ value, duration = 2400 }: { value: number; duration?: number }) {
+// between here, just a single number worth making an entrance. 1300ms:
+// long enough to read as a count-up rather than an instant jump, short
+// enough that the confetti payoff at the end doesn't feel delayed.
+export default function CountUpPercent({ value, duration = 1300 }: { value: number; duration?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [display, setDisplay] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
