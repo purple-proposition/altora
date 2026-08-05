@@ -5364,8 +5364,33 @@ legend.field-label { padding: 0; }
   .landing-showcase-row .landing-showcase-visual { order: -1; }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: 16px; }
-  .landing-hero { padding: 64px 20px 40px; }
+  .landing-hero { padding: 64px 24px 40px; }
   .landing-nav-links { display: none; }
+  /* Below 720px there's no room for "Se connecter" + "Contacter un
+     expert" next to the logo, so the hamburger (normally reserved for
+     the scrolled/compact nav state) is forced on unconditionally here
+     — same crossfade rule as .landing-nav--scrolled, just triggered by
+     viewport width instead of scroll position. */
+  .landing-nav-actions > .landing-nav-login,
+  .landing-nav-actions > .landing-nav-cta {
+    opacity: 0;
+    transform: scale(0.92);
+    pointer-events: none;
+  }
+  .landing-nav-menu-btn {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    pointer-events: auto;
+  }
+  /* .landing-nav's own max-width (calc(66.6667vw - 40px), sized for the
+     desktop 12-column grid) leaves the logo/hamburger stranded well
+     short of the real page margin on a narrow viewport instead of
+     hugging it — full width plus an explicit 24px inset on both sides
+     replaces that grid-column math here. */
+  .landing-nav {
+    max-width: 100%;
+    padding: var(--space-24);
+  }
 }
 
 @media (max-width: 480px) {
