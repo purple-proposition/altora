@@ -5614,6 +5614,10 @@ legend.field-label { padding: 0; }
   margin: 20px 0 12px;
   color: var(--text);
 }
+/* Landing page version only (scoped to #tarifs, not /pricing's own
+   standalone hero): no eyebrow above it anymore, so the 20px top
+   margin meant to clear that eyebrow is dropped too. */
+#tarifs .pricing-title { font-size: 48px; margin-top: 0; }
 
 .pricing-plans {
   max-width: 1120px;

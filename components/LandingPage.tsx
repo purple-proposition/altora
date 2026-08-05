@@ -709,7 +709,6 @@ export default function LandingPage() {
       </section>
 
       <Reveal id="tarifs" className="pricing-hero">
-        <span className="landing-eyebrow">Tarifs</span>
         <h2 className="pricing-title">Un tarif pour chaque acteur de l&apos;alternance</h2>
         <p className="landing-subtitle">
           L&apos;accès étudiant est inclus dans l&apos;abonnement de l&apos;école.
