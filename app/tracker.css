@@ -5067,7 +5067,8 @@ legend.field-label { padding: 0; }
 }
 .landing-talent-card--front { position: relative; z-index: 3; }
 .landing-talent-stack:hover .landing-talent-card--front,
-.landing-talent-stack:focus-within .landing-talent-card--front {
+.landing-talent-stack:focus-within .landing-talent-card--front,
+.landing-talent-stack--expanded .landing-talent-card--front {
   transform: translateY(-6px);
   box-shadow: 0 16px 32px color-mix(in srgb, black 20%, transparent);
 }
@@ -5080,11 +5081,13 @@ legend.field-label { padding: 0; }
 .landing-talent-card--left { z-index: 1; transform: translateX(-72%) rotate(-9deg); }
 .landing-talent-card--right { z-index: 2; transform: translateX(-28%) rotate(9deg); }
 .landing-talent-stack:hover .landing-talent-card--left,
-.landing-talent-stack:focus-within .landing-talent-card--left {
+.landing-talent-stack:focus-within .landing-talent-card--left,
+.landing-talent-stack--expanded .landing-talent-card--left {
   transform: translateX(-98%) rotate(-14deg);
 }
 .landing-talent-stack:hover .landing-talent-card--right,
-.landing-talent-stack:focus-within .landing-talent-card--right {
+.landing-talent-stack:focus-within .landing-talent-card--right,
+.landing-talent-stack--expanded .landing-talent-card--right {
   transform: translateX(-2%) rotate(14deg);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -5356,11 +5359,18 @@ legend.field-label { padding: 0; }
 }
 
 @media (max-width: 720px) {
+  .landing-title { font-size: 48px; }
   .landing-preview-cols { grid-template-columns: 1fr; }
   .landing-categories { grid-template-columns: 1fr; }
   .landing-features { grid-template-columns: repeat(2, 1fr); }
   .landing-showcase-row { grid-template-columns: 1fr; }
-  .landing-showcase-row .landing-showcase-visual { order: -1; }
+  /* Regardless of desktop layout — --priorise puts the visual first in
+     the DOM so it can sit on the left there — mobile always reads
+     title, then body text, then mockup/illustration. Explicit order on
+     both (not just order:-1 on the visual) so this holds no matter
+     which one happens to come first in a given row's markup. */
+  .landing-showcase-row .landing-showcase-text { order: 0; }
+  .landing-showcase-row .landing-showcase-visual { order: 1; }
   /* --annuaire/--priorise/--ats/--kanban all use vw-locked widths and
      padding worked out for the desktop 12-column grid (e.g. column 3's
      offset, a fixed 4-column span) — on a narrow phone those same
@@ -5368,13 +5378,19 @@ legend.field-label { padding: 0; }
      which is what forced "Une seule boîte à outils" to wrap one word
      per line. Reset to a fluid width with the same column-1/column-12-
      free inset as .landing-preview-shell above, instead of the
-     desktop's specific column offsets. */
+     desktop's specific column offsets.
+     margin: 0 -24px cancels .landing-showcase's own 24px padding (the
+     desktop rules break out of that same padding via width:100vw +
+     matching negative margin) — without it, that 24px stacked on top
+     of the padding below and pushed everything a column too far right
+     of column 2/11 instead of landing exactly on them. */
   .landing-showcase-row--annuaire,
   .landing-showcase-row--priorise,
   .landing-showcase-row--ats,
   .landing-showcase-row--kanban {
-    width: 100%;
-    margin-left: 0;
+    width: auto;
+    margin-left: calc(-1 * var(--space-24));
+    margin-right: calc(-1 * var(--space-24));
     padding-left: calc(8.3333vw - 2px);
     padding-right: calc(8.3333vw - 2px);
     grid-template-columns: 1fr;
@@ -5409,9 +5425,16 @@ legend.field-label { padding: 0; }
      desktop 12-column grid) leaves the logo/hamburger stranded well
      short of the real page margin on a narrow viewport instead of
      hugging it — full width plus an explicit 24px inset on both sides
-     replaces that grid-column math here. */
+     replaces that grid-column math here. :not(.landing-nav--scrolled)
+     keeps this scoped to the resting state only — plain .landing-nav
+     and .landing-nav--scrolled are equal specificity (one class each),
+     and this rule came later in the file, so an unscoped padding here
+     was winning over .landing-nav--scrolled's own 12px 0 and silently
+     freezing the nav at its resting size no matter how far you scroll. */
   .landing-nav {
     max-width: 100%;
+  }
+  .landing-nav:not(.landing-nav--scrolled) {
     padding: var(--space-24);
   }
   /* .landing-preview-shell's width (calc(50vw - 36px)) is sized for the
@@ -5436,13 +5459,15 @@ legend.field-label { padding: 0; }
      fixed 4-column span (calc(33.3333vw - 32px), ~93px at 375px wide)
      are both desktop-grid math. Simplified to a plain edge-padded
      scroller on mobile — the column-3 bleed/drag effect is a desktop-
-     only flourish, not something to reproduce at this width. */
+     only flourish, not something to reproduce at this width.
+     No padding-left/right here: this carousel is a direct child of
+     .landing-showcase-row--kanban, whose own padding above already
+     insets it to column 2/11 — adding more here pushed it a further
+     column in, to column 3/10, instead of matching that edge. */
   .landing-showcase-carousel {
     width: 100%;
     margin-left: 0;
-    padding-left: calc(8.3333vw - 2px);
-    padding-right: calc(8.3333vw - 2px);
-    scroll-padding-left: calc(8.3333vw - 2px);
+    scroll-padding-left: 0;
   }
   .landing-showcase-carousel-item {
     flex-basis: 78vw;
@@ -5454,6 +5479,16 @@ legend.field-label { padding: 0; }
      desktop grid down to a size it was never meant to hit. */
   .landing-talent-card {
     width: 220px;
+  }
+  /* .landing-talent-stack's own padding is deliberately asymmetric on
+     desktop (48px left, ~1 grid column right) so the front card's flex-
+     centered position lands off-center on purpose, shifted so the
+     right card's edge hits column 10. That grid target doesn't exist
+     on mobile — same padding both sides puts the front card visibly
+     centered between its two fanned siblings instead, since they now
+     rotate away from it by equal amounts on equal padding. */
+  .landing-talent-stack {
+    padding: 32px 48px;
   }
 }
 

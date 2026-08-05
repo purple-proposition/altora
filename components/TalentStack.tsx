@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Icon from '@/components/Icon';
 
@@ -72,10 +72,28 @@ function roleFor(index: number, activeIndex: number, n: number): 'left' | 'front
 
 export default function TalentStack() {
   const [activeIndex, setActiveIndex] = useState(1);
+  const [expanded, setExpanded] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
   const n = TALENTS.length;
 
+  // Hover/focus-within only fans the cards out for a mouse — nothing
+  // triggers that on a touch device, so the effect never plays there at
+  // all. This mirrors it with scroll instead: fan out once the stack is
+  // mostly in view, fold back in on the way back up past it (not a
+  // one-shot reveal like components/Reveal.tsx — this one reverses).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setExpanded(entry.isIntersecting),
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="landing-talent-stack">
+    <div ref={ref} className={`landing-talent-stack${expanded ? ' landing-talent-stack--expanded' : ''}`}>
       {TALENTS.map((talent, i) => (
         <TalentCard
           key={talent.name}
