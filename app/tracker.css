@@ -4493,11 +4493,15 @@ legend.field-label { padding: 0; }
 .landing-roster-avatar img { object-fit: cover; }
 .landing-roster-name { font-size: 13px; font-weight: 600; color: var(--text); }
 .landing-roster-dots { display: flex; align-items: center; justify-content: center; gap: 4px; }
-.landing-roster-dot { width: 8px; height: 8px; border-radius: 50%; }
-.landing-roster-dot--slate { background: var(--text-muted); }
-.landing-roster-dot--amber { background: var(--amber); }
-.landing-roster-dot--green { background: var(--green); }
-.landing-roster-dot--rose { background: var(--rose); }
+/* Light tint fill + saturated border, same "pastille" treatment as the
+   real pills/badges elsewhere on the site (e.g. .inline-pill--amber)
+   instead of a flat, fully-saturated dot — box-sizing:border-box keeps
+   the border inside the 10px footprint rather than growing past it. */
+.landing-roster-dot { width: 10px; height: 10px; border-radius: 50%; box-sizing: border-box; border: 1px solid; }
+.landing-roster-dot--slate { background: var(--bg); border-color: var(--border); }
+.landing-roster-dot--amber { background: var(--amber-tint); border-color: var(--amber); }
+.landing-roster-dot--green { background: var(--green-tint); border-color: var(--green); }
+.landing-roster-dot--rose { background: var(--rose-tint); border-color: var(--rose); }
 
 /* Stacked layout (not the shared 2-column .landing-showcase-row grid):
    left-aligned text on top, a horizontally-scrollable carousel of
