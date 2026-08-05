@@ -4426,20 +4426,26 @@ legend.field-label { padding: 0; }
   padding-right: calc(16.6667vw - 4px);
   /* Text keeps its 4-column span; the copilot mockup is 3 columns
      (calc(25vw - 30px), same 3-column span formula as the ATS/carousel
-     cards elsewhere) instead of matching the text's 4. */
+     cards elsewhere) instead of matching the text's 4. Gap widened to
+     the same formula --ats uses below (8.3333vw + 22px) — a flat 24px
+     gap leaves a full column of dead space unused after the mockup
+     instead of pushing its right edge out to column 10. */
   grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
-  gap: var(--space-24);
+  gap: calc(8.3333vw + 22px);
 }
 .landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-end; }
 
 /* Same 4+4 column split as --annuaire below (text left, visual right). */
+/* Text 4 columns, matching frise mockup 3 columns (calc(25vw - 30px))
+   pushed out to column 10 — same treatment as --priorise above, gap
+   widened with the same formula instead of a flat 24px. */
 .landing-showcase-row--jobboards {
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
   padding-left: calc(16.6667vw - 4px);
   padding-right: calc(16.6667vw - 4px);
-  grid-template-columns: calc(33.3333vw - 32px) calc(33.3333vw - 32px);
-  gap: var(--space-24);
+  grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
+  gap: calc(8.3333vw + 22px);
 }
 .landing-showcase-row--jobboards .landing-showcase-visual { justify-content: flex-end; }
 
@@ -5474,6 +5480,7 @@ legend.field-label { padding: 0; }
   .landing-showcase-row--annuaire .landing-showcase-visual,
   .landing-showcase-row--priorise .landing-showcase-visual,
   .landing-showcase-row--ats .landing-showcase-visual,
+  .landing-showcase-row--jobboards .landing-showcase-visual,
   .landing-showcase-row--kanban .landing-showcase-text--right {
     width: 100%;
   }
@@ -5617,6 +5624,23 @@ legend.field-label { padding: 0; }
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
+/* Landing page version: one merged card instead of 3 separate plans,
+   with a single "Contacter un expert" CTA — the 3 plans become
+   sub-groups of features inside it instead of competing cards. */
+.pricing-plans--merged { max-width: 800px; grid-template-columns: 1fr; }
+.pricing-plan--merged { text-align: center; padding: 48px; }
+.pricing-plan--merged .pricing-plan-tagline { max-width: 480px; margin-left: auto; margin-right: auto; }
+.pricing-plan--merged .pricing-plan-cta { max-width: 320px; margin-left: auto; margin-right: auto; }
+.pricing-merged-groups {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  text-align: left;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.pricing-merged-group-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin: 0 0 12px; }
+.pricing-merged-group .pricing-plan-features { border-top: none; padding-top: 0; }
 
 .pricing-plan {
   position: relative;
@@ -5717,6 +5741,9 @@ legend.field-label { padding: 0; }
 .pricing-faq-item:last-child { padding-bottom: 0; }
 
 .pricing-faq-question {
+  /* h3 picks up the global h1/h2/h3 rule (Goudy Bookletter 1911) by
+     default — FAQ questions read better in the site's plain body font. */
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1;
   font-weight: 600;
@@ -5738,4 +5765,5 @@ legend.field-label { padding: 0; }
 @media (max-width: 640px) {
   .pricing-title { font-size: 28px; }
   .pricing-plans { grid-template-columns: 1fr; }
+  .pricing-merged-groups { grid-template-columns: 1fr; }
 }

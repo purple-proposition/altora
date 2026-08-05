@@ -718,48 +718,43 @@ export default function LandingPage() {
         </p>
       </Reveal>
 
-      <Reveal className="pricing-plans">
-        <div className="pricing-plan">
-          <span className="pricing-plan-badge">Le plus complet</span>
+      <Reveal className="pricing-plans pricing-plans--merged">
+        <div className="pricing-plan pricing-plan--merged">
           <h3 className="pricing-plan-name">Abonnement SaaS</h3>
-          <p className="pricing-plan-tagline">La plateforme complète pour votre établissement</p>
+          <p className="pricing-plan-tagline">La plateforme complète pour votre établissement, accès étudiant inclus</p>
           <div className="pricing-plan-price">Sur devis</div>
           <p className="pricing-plan-price-note">Selon la taille de votre promotion</p>
           <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing">Contacter un expert</QuoteCtaButton>
-          <ul className="pricing-plan-features">
-            <li><Icon name="check-circle" />Gestion des étudiants et des offres partenaires</li>
-            <li><Icon name="check-circle" />Tableaux de bord et suivi des candidatures</li>
-            <li><Icon name="check-circle" />Copilote IA pour l&apos;équipe pédagogique</li>
-            <li><Icon name="check-circle" />Statistiques de placement de la promotion</li>
-          </ul>
-        </div>
 
-        <div className="pricing-plan">
-          <h3 className="pricing-plan-name">Accompagnement Premium</h3>
-          <p className="pricing-plan-tagline">En complément de l&apos;abonnement</p>
-          <div className="pricing-plan-price">Sur devis</div>
-          <p className="pricing-plan-price-note">Service ajouté à l&apos;abonnement SaaS</p>
-          <Link href="/signup" className="landing-nav-cta pricing-plan-cta pricing-plan-cta--secondary">Nous contacter</Link>
-          <ul className="pricing-plan-features">
-            <li><Icon name="check-circle" />Prospection de nouvelles entreprises</li>
-            <li><Icon name="check-circle" />Prise de contact et qualification des besoins</li>
-            <li><Icon name="check-circle" />Organisation des entretiens, relances</li>
-            <li><Icon name="check-circle" />Suivi jusqu&apos;à la signature du contrat</li>
-          </ul>
-        </div>
-
-        <div className="pricing-plan">
-          <h3 className="pricing-plan-name">Étudiant</h3>
-          <p className="pricing-plan-tagline">Pour toute la durée de ton alternance</p>
-          <div className="pricing-plan-price">Gratuit</div>
-          <p className="pricing-plan-price-note">Inclus si ton école utilise Altora</p>
-          <Link href="/signup" className="landing-nav-cta pricing-plan-cta">Créer mon compte</Link>
-          <ul className="pricing-plan-features">
-            <li><Icon name="check-circle" />Tableau de suivi de tes candidatures</li>
-            <li><Icon name="check-circle" />CV et lettre de motivation générés par IA</li>
-            <li><Icon name="check-circle" />Score de matching sur chaque offre</li>
-            <li><Icon name="check-circle" />CV structuré pour passer les ATS</li>
-          </ul>
+          <div className="pricing-merged-groups">
+            <div className="pricing-merged-group">
+              <h4 className="pricing-merged-group-title">Inclus dans l&apos;abonnement</h4>
+              <ul className="pricing-plan-features">
+                <li><Icon name="check-circle" />Gestion des étudiants et des offres partenaires</li>
+                <li><Icon name="check-circle" />Tableaux de bord et suivi des candidatures</li>
+                <li><Icon name="check-circle" />Copilote IA pour l&apos;équipe pédagogique</li>
+                <li><Icon name="check-circle" />Statistiques de placement de la promotion</li>
+              </ul>
+            </div>
+            <div className="pricing-merged-group">
+              <h4 className="pricing-merged-group-title">Pour l&apos;étudiant, gratuit et inclus</h4>
+              <ul className="pricing-plan-features">
+                <li><Icon name="check-circle" />Tableau de suivi de ses candidatures</li>
+                <li><Icon name="check-circle" />CV et lettre de motivation générés par IA</li>
+                <li><Icon name="check-circle" />Score de matching sur chaque offre</li>
+                <li><Icon name="check-circle" />CV structuré pour passer les ATS</li>
+              </ul>
+            </div>
+            <div className="pricing-merged-group">
+              <h4 className="pricing-merged-group-title">Accompagnement Premium, en option</h4>
+              <ul className="pricing-plan-features">
+                <li><Icon name="check-circle" />Prospection de nouvelles entreprises</li>
+                <li><Icon name="check-circle" />Prise de contact et qualification des besoins</li>
+                <li><Icon name="check-circle" />Organisation des entretiens, relances</li>
+                <li><Icon name="check-circle" />Suivi jusqu&apos;à la signature du contrat</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </Reveal>
 
