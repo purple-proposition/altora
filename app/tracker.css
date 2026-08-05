@@ -3837,8 +3837,12 @@ legend.field-label { padding: 0; }
   }
 }
 
+/* Was a flat 720px — this is the real 6-of-12 column span (columns
+   4-9), same k=6 formula as .landing-preview-shell below (50vw - 36px).
+   Centering 6 of 12 columns lands symmetrically on its own (3 free
+   columns each side), so margin:0 auto still works unchanged. */
 .landing-hero {
-  max-width: 720px;
+  max-width: calc(50vw - 36px);
   width: 100%;
   margin: 0 auto;
   padding: var(--space-96) var(--space-24) var(--space-48);
@@ -4915,6 +4919,12 @@ legend.field-label { padding: 0; }
   gap: var(--space-12);
   align-items: start;
 }
+/* .card:hover (real dashboard: filter:brightness(0.97), a drag-and-drop
+   affordance) comes along for free by reusing the real .card class here
+   — this mockup is a static marketing screenshot, not an interactive
+   board, so that hover feedback reads as a rendering glitch instead of
+   a hint. Cancelled scoped to this mockup only, real product untouched. */
+.landing-kanban-board .card:hover { filter: none; }
 
 /* The real board's own type scale (14-16px body text, 16-24px icons,
    generous padding) is sized for a full dashboard column, not this
@@ -5569,7 +5579,7 @@ legend.field-label { padding: 0; }
   .landing-features-title { font-size: 28px; }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: 16px; }
-  .landing-hero { padding: 64px 24px 40px; }
+  .landing-hero { max-width: 100%; padding: 64px 24px 40px; }
   .landing-nav-links { display: none; }
   /* Below 720px there's no room for "Se connecter" + "Contacter un
      expert" next to the logo, so the hamburger (normally reserved for

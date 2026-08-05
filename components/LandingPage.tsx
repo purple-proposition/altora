@@ -904,6 +904,32 @@ export default function LandingPage() {
             pour en discuter.
           </p>
         </div>
+
+        <div className="pricing-faq-item">
+          <h3 className="pricing-faq-question">Qui a accès aux données de vos étudiants ?</h3>
+          <p className="pricing-faq-answer">
+            Seules l&apos;équipe pédagogique de l&apos;école et l&apos;étudiant
+            lui-même. Les entreprises ne voient que ce que l&apos;étudiant
+            choisit de partager via ses candidatures.
+          </p>
+        </div>
+
+        <div className="pricing-faq-item">
+          <h3 className="pricing-faq-question">Pouvez-vous récupérer vos données si vous quittez Altora ?</h3>
+          <p className="pricing-faq-answer">
+            Oui, export complet disponible à tout moment depuis l&apos;espace
+            admin.
+          </p>
+        </div>
+
+        <div className="pricing-faq-item">
+          <h3 className="pricing-faq-question">Comment est calculé le score de matching IA d&apos;un étudiant ?</h3>
+          <p className="pricing-faq-answer">
+            Il combine compétences, expériences, niveau d&apos;études,
+            localisation et préférences renseignées à l&apos;inscription.
+            L&apos;IA explique aussi ce qui le fait monter ou baisser.
+          </p>
+        </div>
       </Reveal>
 
       <SiteFooter />
