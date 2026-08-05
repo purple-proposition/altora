@@ -5,7 +5,7 @@ export default function SiteFooter() {
     <footer className="landing-footer">
       <span>© {new Date().getFullYear()} Altora</span>
       <div className="landing-footer-links">
-        <Link href="/pricing" className="landing-footer-link">Tarifs</Link>
+        <Link href="/#tarifs" className="landing-footer-link">Tarifs</Link>
         <Link href="/login" className="landing-footer-link">Se connecter</Link>
       </div>
     </footer>

@@ -3594,8 +3594,11 @@ legend.field-label { padding: 0; }
      halves (24px -> 12px) and the logo shrinks (164x41 -> 80x20, same
      4:1 ratio), all values kept on a 4px scale — the nav itself never
      moves or changes position; .landing-nav-sticky above handles that. */
+  /* 2 columns now (brand, actions) — was 1fr auto 1fr for a middle
+     landing-nav-links column that no longer exists (Fonctionnalités/
+     Tarifs links removed along with those pages). */
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto;
   align-items: center;
   max-width: calc(66.6667vw - 40px);
   width: 100%;
@@ -3623,42 +3626,10 @@ legend.field-label { padding: 0; }
 }
 .landing-nav--scrolled .landing-nav-logo { width: 55px; height: 16px; }
 
-/* Explicit grid-column (rather than relying on source order) so that
-   fading this element out in the scrolled state can't make grid
-   auto-placement slide .landing-nav-actions into its now-empty middle
-   track. */
-.landing-nav-links {
-  grid-column: 2;
-  display: flex;
-  align-items: center;
-  gap: var(--space-24);
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 0.35s cubic-bezier(0.48, 0.72, 0, 1), transform 0.35s cubic-bezier(0.48, 0.72, 0, 1);
-}
-/* Scaling down from the right (not the center) reads as the links
-   gathering into the hamburger button that replaces them there, rather
-   than just shrinking in place. */
-.landing-nav--scrolled .landing-nav-links {
-  opacity: 0;
-  transform: scale(0.92);
-  transform-origin: right center;
-  pointer-events: none;
-}
-
-.landing-nav-link {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-.landing-nav-link:hover { color: var(--text); }
-
 /* position:relative so the hamburger button (below) can sit absolutely
    pinned to this cell's right edge and crossfade over the login/CTA
    links in place, instead of the grid reflowing when they disappear. */
-.landing-nav-actions { grid-column: 3; position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.landing-nav-actions { grid-column: 2; position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
 /* Direct-child selector, not descendant: .landing-nav-popup-cta further
    down is also a .landing-nav-cta (it reuses the class for its pill
    styling), but it's nested several levels inside .landing-nav-actions
@@ -5591,7 +5562,6 @@ legend.field-label { padding: 0; }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: 16px; }
   .landing-hero { max-width: 100%; padding: 64px 24px 40px; }
-  .landing-nav-links { display: none; }
   /* Below 720px there's no room for "Se connecter" + "Contacter un
      expert" next to the logo, so the hamburger (normally reserved for
      the scrolled/compact nav state) is forced on unconditionally here

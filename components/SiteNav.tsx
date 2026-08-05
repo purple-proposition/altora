@@ -7,10 +7,11 @@ import AltoraLogo from '@/components/AltoraLogo';
 import QuoteCtaButton from '@/components/QuoteCtaButton';
 import QuoteModal from '@/components/QuoteModal';
 
-// Shared nav for every public marketing page (landing, pricing) — see
-// .landing-nav-sticky/.landing-nav in tracker.css for the floating-card
-// styling. Anchor links go through "/" explicitly so they work correctly
-// from /pricing too.
+// Shared nav for every public marketing page — see .landing-nav-sticky/
+// .landing-nav in tracker.css for the floating-card styling. Fonctionnalités
+// and Tarifs used to be separate nav links (Tarifs to its own /pricing
+// page) — both were folded into the single landing page, so the nav is
+// now just the brand and the CTA.
 //
 // The header itself (.landing-nav) stays a narrow, centered pill — the
 // sticky positioning lives on the full-width wrapper around it
@@ -52,10 +53,6 @@ export default function SiteNav() {
           <AltoraLogo className="landing-nav-logo" />
         </Link>
       </div>
-      <nav className="landing-nav-links">
-        <Link href="/#fonctionnalites" className="landing-nav-link">Fonctionnalités</Link>
-        <Link href="/pricing" className="landing-nav-link">Tarifs</Link>
-      </nav>
       <div className="landing-nav-actions">
         <QuoteCtaButton className="landing-nav-cta" location="nav">Contacter un expert</QuoteCtaButton>
         <div className="landing-nav-menu-wrap">
@@ -69,8 +66,6 @@ export default function SiteNav() {
             <Icon name={menuOpen ? 'x' : 'menu'} />
           </button>
           <div className={`landing-nav-popup${menuOpen ? ' landing-nav-popup--visible' : ''}`}>
-            <Link href="/#fonctionnalites" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Fonctionnalités</Link>
-            <Link href="/pricing" className="landing-nav-popup-link" onClick={() => setMenuOpen(false)}>Tarifs</Link>
             <QuoteCtaButton className="landing-nav-cta landing-nav-popup-cta" location="nav_popup" onClick={() => setMenuOpen(false)}>Contacter un expert</QuoteCtaButton>
           </div>
         </div>
