@@ -7,13 +7,13 @@ import AltoraLogo from '@/components/AltoraLogo';
 import QuoteCtaButton from '@/components/QuoteCtaButton';
 import QuoteModal from '@/components/QuoteModal';
 
-// Shared nav for every public marketing page — see .landing-nav-sticky/
+// Shared nav for every public marketing page, see .landing-nav-sticky/
 // .landing-nav in tracker.css for the floating-card styling. Fonctionnalités
 // and Tarifs used to be separate nav links (Tarifs to its own /pricing
-// page) — both were folded into the single landing page, so the nav is
+// page), both were folded into the single landing page, so the nav is
 // now just the brand and the CTA.
 //
-// The header itself (.landing-nav) stays a narrow, centered pill — the
+// The header itself (.landing-nav) stays a narrow, centered pill, the
 // sticky positioning lives on the full-width wrapper around it
 // (.landing-nav-sticky) instead, so its own opaque background covers the
 // whole viewport width once pinned. A previous attempt made .landing-nav
@@ -23,7 +23,7 @@ import QuoteModal from '@/components/QuoteModal';
 //
 // Past a small scroll threshold, the nav also compacts (half its
 // vertical padding, a smaller logo) and the links/actions collapse into
-// a hamburger popup. Reads .landing-card's own scroll, not the window —
+// a hamburger popup. Reads .landing-card's own scroll, not the window,
 // .landing-card is the actual scroll container (overflow-y:auto), kept
 // that way on purpose so its rounded top/bottom corners stay fixed in
 // place under this sticky nav while its content scrolls, instead of

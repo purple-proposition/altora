@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Icon from '@/components/Icon';
 
-// Fixed cyclic order — clicking the left/right card rotates which one
+// Fixed cyclic order, clicking the left/right card rotates which one
 // is "front" instead of the fan being purely decorative.
 const TALENTS = [
   {
@@ -60,7 +60,7 @@ function TalentCard({ talent, role, onSelect }: { talent: typeof TALENTS[number]
 }
 
 // Role is derived per talent (not per slot) so each card keeps its own
-// identity across a swap — React reconciles by the `key` below, so the
+// identity across a swap, React reconciles by the `key` below, so the
 // same DOM node/photo just gets a new transform to animate to instead
 // of two slots instantly exchanging their content mid-transition.
 function roleFor(index: number, activeIndex: number, n: number): 'left' | 'front' | 'right' {
@@ -76,11 +76,11 @@ export default function TalentStack() {
   const ref = useRef<HTMLDivElement>(null);
   const n = TALENTS.length;
 
-  // Hover/focus-within only fans the cards out for a mouse — nothing
+  // Hover/focus-within only fans the cards out for a mouse, nothing
   // triggers that on a touch device, so the effect never plays there at
   // all. This mirrors it with scroll instead: fan out once the stack is
   // mostly in view, fold back in on the way back up past it (not a
-  // one-shot reveal like components/Reveal.tsx — this one reverses).
+  // one-shot reveal like components/Reveal.tsx, this one reverses).
   useEffect(() => {
     const el = ref.current;
     if (!el) return;

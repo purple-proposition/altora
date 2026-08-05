@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { trackEvent } from '@/lib/gtag';
 
 // Native horizontal scroll only responds to touch/trackpad swipes, not a
-// mouse click-and-drag — this adds that "grab and drag" interaction (mouse
+// mouse click-and-drag, this adds that "grab and drag" interaction (mouse
 // click, drag left/right, scrollLeft follows) on top of the standard CSS
 // Scroll Snap carousel (scroll-snap-type/-align on .landing-showcase-carousel
 // and .landing-showcase-carousel-item in tracker.css).
@@ -17,7 +17,7 @@ import { trackEvent } from '@/lib/gtag';
 // scroll-snap/anchoring in ways that showed up as "starts on the wrong
 // card after reload" and "doesn't feel smooth". Letting the browser own
 // snapping (CSS) and measuring real card positions from the DOM instead of
-// a formula removes that whole class of bug — touch/trackpad scrolling
+// a formula removes that whole class of bug, touch/trackpad scrolling
 // snaps natively with zero JS, and mouse-drag only needs a plain
 // scrollTo(behavior: 'smooth') to the nearest actual card on release.
 export default function DragScrollCarousel({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -30,19 +30,19 @@ export default function DragScrollCarousel({ children, className }: { children: 
   // snap target is from scrollLeft right now.
   function findNearestItem(el: HTMLDivElement) {
     // The tail item (e.g. "Mes documents") is CSS scroll-snap-align:none
-    // — it should never become a resting point of its own, so it's
+    // it should never become a resting point of its own, so it's
     // excluded here too, matching the browser's own native snap behavior.
     const items = (Array.from(el.children) as HTMLElement[]).filter(
       (item) => !item.classList.contains('landing-showcase-carousel-item--tail')
     );
     if (!items.length) return null;
     // offsetLeft is relative to the nearest *positioned* ancestor, which
-    // isn't necessarily this scroll container — getBoundingClientRect
+    // isn't necessarily this scroll container, getBoundingClientRect
     // gives each item's true position relative to the container's own
     // scrollable content regardless of who its offsetParent is.
     const containerLeft = el.getBoundingClientRect().left;
     // scroll-snap-align: start on each item snaps its edge to the
-    // container's scroll-padding-left inset, not to scrollLeft: 0 — the
+    // container's scroll-padding-left inset, not to scrollLeft: 0, the
     // target here has to match that same offset, or this fights the
     // browser's own mandatory snap instead of landing on the same spot.
     const scrollPaddingLeft = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
@@ -72,7 +72,7 @@ export default function DragScrollCarousel({ children, className }: { children: 
 
   // Fires once per resting position, for touch/trackpad/keyboard scroll
   // (handled entirely by native CSS scroll-snap, no JS involved above) as
-  // well as mouse-drag — debounced since 'scroll' fires continuously
+  // well as mouse-drag, debounced since 'scroll' fires continuously
   // while the browser's own snap animation is still settling.
   function onScroll() {
     const el = ref.current;
@@ -87,7 +87,7 @@ export default function DragScrollCarousel({ children, className }: { children: 
   function onMouseDown(e: React.MouseEvent) {
     const el = ref.current;
     if (!el) return;
-    // Text in the caption below each mockup stays selectable — only a
+    // Text in the caption below each mockup stays selectable, only a
     // mousedown that starts on the mockup itself begins a drag, so
     // click-dragging across the caption's text selects it instead of
     // panning the carousel.
@@ -115,14 +115,14 @@ export default function DragScrollCarousel({ children, className }: { children: 
     if (!el) return;
     // scroll-snap-type stays off (see .carousel-snap-ready in tracker.css)
     // until this runs, and only turns on right after the last scrollLeft
-    // reset below — otherwise the browser's own "snap to nearest point"
+    // reset below, otherwise the browser's own "snap to nearest point"
     // pass can fire while the web font and Cassandra's photo are still
     // loading and item positions are still shifting, landing the
     // carousel a card or two off the first card on reload instead of
     // resting on it. Reset at mount, again once fonts have actually
     // finished loading (the layout shift most likely to move things),
     // and once more shortly after so any late reflow from that font swap
-    // is also settled before snapping turns on — a plain setTimeout
+    // is also settled before snapping turns on, a plain setTimeout
     // rather than requestAnimationFrame, since rAF never fires in a
     // backgrounded or not-yet-painted tab and would leave snap off.
     el.scrollLeft = 0;

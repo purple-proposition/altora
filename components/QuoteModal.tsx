@@ -5,7 +5,7 @@ import Icon from '@/components/Icon';
 import { OPEN_QUOTE_MODAL_EVENT } from '@/components/QuoteCtaButton';
 import { trackEvent } from '@/lib/gtag';
 
-// HubSpot Forms API v3 — submits straight from the browser, no backend
+// HubSpot Forms API v3: submits straight from the browser, no backend
 // or API key needed (the form GUID is the only thing scoping this to
 // our HubSpot account, not a secret). Field names on the left are this
 // form's own `name` attributes; the right side are the internal HubSpot
@@ -21,14 +21,14 @@ const HUBSPOT_FIELD_MAP: Record<string, string> = {
 };
 
 // Make.com scenario triggered on the same submission, in parallel with
-// HubSpot — its own automation (notifications, sheet logging, whatever
+// HubSpot: its own automation (notifications, sheet logging, whatever
 // the scenario does), not the lead record itself. Its outcome never
 // blocks the form: HubSpot is the one submission the success/error UI
 // below actually depends on.
 const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/z1eh1y4ma7vn3deol74abae05hdxlu4f';
 
 // Shared "Demander un devis" modal, mounted once (in SiteNav, present on
-// every public page) and opened from anywhere via a window event — see
+// every public page) and opened from anywhere via a window event, see
 // QuoteCtaButton. Submits to HubSpot on the account's own "Altora" form.
 export default function QuoteModal() {
   const [open, setOpen] = useState(false);
@@ -92,7 +92,7 @@ export default function QuoteModal() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(makePayload),
         }).catch((err) => {
-          // Make failing is a non-issue for the visitor — log for
+          // Make failing is a non-issue for the visitor: log for
           // debugging, but never surface it as a form error.
           console.error('Make webhook failed:', err);
         }),
@@ -101,7 +101,7 @@ export default function QuoteModal() {
         throw new Error(`HubSpot submission failed: ${hubspotResult.status === 'fulfilled' ? hubspotResult.value.status : hubspotResult.reason}`);
       }
       // GA4's own recommended event name for exactly this ("someone
-      // submitted a lead-gen form") — marked as a key event/conversion
+      // submitted a lead-gen form"), marked as a key event/conversion
       // in the property so it shows up as one everywhere in GA4's UI,
       // not just as a raw event.
       trackEvent('generate_lead');

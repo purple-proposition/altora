@@ -18,7 +18,7 @@ import QuoteCtaButton from '@/components/QuoteCtaButton';
 //
 // Hero and category order lead with écoles, not étudiants: per
 // Altora_Concept_Projet.docx the paying decision-maker is a school's
-// "responsable des relations entreprises / pédagogique", not the student —
+// "responsable des relations entreprises / pédagogique", not the student:
 // the doc explicitly warns against mirroring a candidate-first competitor's
 // positioning, since Altora's real differentiation is being the CRM/copilot
 // the school runs its whole promotion on.
@@ -26,14 +26,14 @@ import QuoteCtaButton from '@/components/QuoteCtaButton';
 // Section order below follows the MentorGoal differentiation note: the
 // écoles/étudiants/entreprises split comes right after the hero so a
 // visitor knows which lens to read the rest through, and the annuaire
-// (entreprise sourcing) row leads the feature sections — per that note,
+// (entreprise sourcing) row leads the feature sections: per that note,
 // it's the one angle MentorGoal doesn't publicly compete on, so it earns
 // the spot generic AI/matching claims used to hold. Kanban, roster, ATS
 // and "priorise" (all closer to table-stakes centralization/matching, the
 // note's own words for MentorGoal's actual territory) sit in the middle
 // as supporting depth, not the opening hook.
 export default function LandingPage() {
-  // Same formatting as the real summary-date (app/(tracker)/page.tsx) —
+  // Same formatting as the real summary-date (app/(tracker)/page.tsx),
   // computed at request time, so it always reads as "today" rather than
   // being hardcoded to whatever date this mockup was written on.
   const rawPreviewDate = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -60,7 +60,7 @@ export default function LandingPage() {
         <div className="landing-preview landing-in landing-in--4" aria-hidden="true">
           {/* Mirrors the real .app-shell exactly: a transparent sidebar rail
               sitting flat on the page background, next to a separate white
-              bordered card (.app) that holds the topbar + content — not one
+              bordered card (.app) that holds the topbar + content, not one
               single box wrapping both, which is not how the real dashboard
               is built. */}
           <div className="landing-preview-shell">
@@ -154,9 +154,9 @@ export default function LandingPage() {
           <div className="landing-category-icon"><Icon name="list-checks" /></div>
           <h2 className="landing-category-title">Étudiants en alternance</h2>
           <p className="landing-category-text">
-            Votre alternance a son propre rythme, entre les rentrées, les
-            périodes en entreprise et les cours. Altora garde toutes vos
-            candidatures au même endroit, prêtes à temps.
+            Chaque étudiant garde son rythme d&apos;alternance, ses
+            candidatures et ses documents au même endroit, prêts à temps.
+            Vous suivez sa progression sans avoir à la lui demander.
           </p>
           <ul className="landing-category-list">
             <li><Icon name="check-circle" />Un tableau pour suivre chaque candidature</li>
@@ -189,11 +189,13 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h3 className="landing-showcase-title">Le matching sans effort</h3>
             <p className="landing-showcase-body">
-              Altora se connecte nativement aux job boards et va chercher
-              les offres à votre place. Chaque apprenant ne voit que
-              celles qui lui correspondent vraiment, pour se concentrer
-              sur les bonnes pistes plutôt que de se noyer dans des
-              dizaines d&apos;offres qui ne le concernent pas.
+              Altora se connecte nativement aux job boards et aux données
+              publiques de l&apos;alternance pour repérer les entreprises
+              qui recrutent vraiment. Chaque apprenant ne voit que les
+              offres qui lui correspondent, notées aussi selon le
+              potentiel d&apos;embauche réel de l&apos;entreprise, pour se
+              concentrer sur les bonnes pistes plutôt que de se noyer dans
+              des dizaines d&apos;offres qui ne le concernent pas.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -224,6 +226,13 @@ export default function LandingPage() {
                 <div className="landing-matching-step-body">
                   <p className="landing-matching-step-label">Niveau requis</p>
                   <p className="landing-matching-step-result">L&apos;agent IA analyse la fiche de poste pour estimer le niveau requis pour le poste.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="trending-up" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Potentiel de l&apos;entreprise</p>
+                  <p className="landing-matching-step-result">Les données publiques de l&apos;alternance évaluent son potentiel d&apos;embauche réel avant de retenir son offre.</p>
                 </div>
               </div>
               <div className="landing-matching-step landing-matching-step--muted">
@@ -257,8 +266,8 @@ export default function LandingPage() {
             <h3 className="landing-showcase-title">Une seule boîte à outils, deux façons de s&apos;en servir</h3>
             <p className="landing-showcase-body">
               Côté apprenant, c&apos;est le cockpit de son alternance. Côté
-              école, c&apos;est le même espace qui devient un vrai levier de
-              suivi et d&apos;accompagnement, jamais plus que ce que
+              école, c&apos;est le même espace qui devient un outil de suivi
+              et d&apos;accompagnement, jamais plus que ce que
               l&apos;apprenant choisit de partager.
             </p>
           </div>
@@ -735,7 +744,7 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--ats">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Un agent IA pour accompagner chaque apprenant</h3>
+            <h3 className="landing-showcase-title">Chaque candidature prête avant l&apos;envoi</h3>
             <p className="landing-showcase-body">
               Altora commence par expliquer à l&apos;alternant ce qu&apos;est
               un ATS et comment reformuler son CV et sa lettre de motivation
@@ -889,7 +898,7 @@ export default function LandingPage() {
       </Reveal>
 
       <Reveal className="landing-closing">
-        <h2 className="landing-closing-title">Prêt à piloter toutes vos promotions depuis un seul espace ?</h2>
+        <h2 className="landing-closing-title">Prêt à améliorer le taux de placement de votre promotion ?</h2>
         <p className="landing-closing-text">
           Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
         </p>

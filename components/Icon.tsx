@@ -42,6 +42,7 @@ import {
   Sun,
   Target,
   Trash2,
+  TrendingUp,
   Upload,
   UserCog,
   Users,
@@ -50,7 +51,7 @@ import {
 } from 'lucide-react';
 
 // Named imports (rather than `import * as icons`) so the bundler can tree-
-// shake down to only the ~35 icons the site actually uses — `import *`
+// shake down to only the ~35 icons the site actually uses: `import *`
 // pulled in lucide-react's entire icon set (1000+ components) into every
 // page's client bundle, undoing the earlier perf work.
 const ICONS: Record<string, React.ComponentType<LucideProps>> = {
@@ -97,6 +98,7 @@ const ICONS: Record<string, React.ComponentType<LucideProps>> = {
   sun: Sun,
   target: Target,
   'trash-2': Trash2,
+  'trending-up': TrendingUp,
   upload: Upload,
   'user-cog': UserCog,
   users: Users,
@@ -109,11 +111,11 @@ const ICONS: Record<string, React.ComponentType<LucideProps>> = {
 // reconciliation), which crashed with "NotFoundError: The object can not be
 // found here" the moment React later tried to unmount/update that node
 // itself (e.g. navigating away, or Sidebar swapping its isHome/non-home
-// branch) — React's fiber still pointed at a DOM node lucide had already
+// branch): React's fiber still pointed at a DOM node lucide had already
 // detached. A real lucide-react component is rendered and owned by React
 // end to end, so there is nothing left for anything else to mutate
 // underneath it. (public/tracker.js keeps using data-lucide + createIcons()
-// for the kanban board/calendar it builds imperatively — that markup is
+// for the kanban board/calendar it builds imperatively, that markup is
 // never touched by React, so no such conflict exists there.)
 export default function Icon({ name, ...props }: { name: string } & LucideProps) {
   const Component = ICONS[name];

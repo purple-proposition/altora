@@ -34,7 +34,7 @@ function Confetti() {
             background: piece.color,
             animationDelay: piece.delay,
             // Custom properties read by the confetti-burst keyframes in
-            // tracker.css — one keyframe definition, randomized per piece.
+            // tracker.css, one keyframe definition, randomized per piece.
             ['--tx' as string]: piece.tx,
             ['--ty' as string]: piece.ty,
             ['--rot' as string]: piece.rot,
@@ -45,7 +45,7 @@ function Confetti() {
   );
 }
 
-// Counts up from 0 to `value` once the score card scrolls into view —
+// Counts up from 0 to `value` once the score card scrolls into view,
 // one-shot, like Reveal (components/Reveal.tsx), rather than the
 // scroll-position-tracked odometer roll used elsewhere on the landing
 // page (RollingNumber), since there's no "before/after" state to roll
