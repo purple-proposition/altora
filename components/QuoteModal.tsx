@@ -4,13 +4,29 @@ import { useEffect, useState } from 'react';
 import Icon from '@/components/Icon';
 import { OPEN_QUOTE_MODAL_EVENT } from '@/components/QuoteCtaButton';
 
+// HubSpot Forms API v3 — submits straight from the browser, no backend
+// or API key needed (the form GUID is the only thing scoping this to
+// our HubSpot account, not a secret). Field names on the left are this
+// form's own `name` attributes; the right side are the internal HubSpot
+// property names for the "Altora" form, given by the account owner.
+const HUBSPOT_ENDPOINT = 'https://api-eu1.hsforms.com/submissions/v3/integration/submit/148576052/579970d8-cdc4-4c9a-9144-e32362ab215c';
+const HUBSPOT_FIELD_MAP: Record<string, string> = {
+  firstName: 'firstname',
+  lastName: 'lastname',
+  email: 'email',
+  organization: 'ecole_ou_organisme',
+  size: 'nombre_detudiants',
+  message: 'message',
+};
+
 // Shared "Demander un devis" modal, mounted once (in SiteNav, present on
 // every public page) and opened from anywhere via a window event — see
-// QuoteCtaButton. No backend yet: submitting just shows a confirmation
-// state instead of actually sending the request anywhere.
+// QuoteCtaButton. Submits to HubSpot on the account's own "Altora" form.
 export default function QuoteModal() {
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
@@ -30,11 +46,39 @@ export default function QuoteModal() {
   function close() {
     setOpen(false);
     setSubmitted(false);
+    setError(false);
   }
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    setError(false);
+    setSubmitting(true);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const fields = Object.entries(HUBSPOT_FIELD_MAP)
+      .map(([inputName, hubspotName]) => ({ name: hubspotName, value: (formData.get(inputName) as string) || '' }))
+      .filter((field) => field.value !== '');
+
+    try {
+      const res = await fetch(HUBSPOT_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fields,
+          context: {
+            pageUri: window.location.href,
+            pageName: document.title,
+          },
+        }),
+      });
+      if (!res.ok) throw new Error(`HubSpot submission failed: ${res.status}`);
+      setSubmitted(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (!open) return null;
@@ -87,7 +131,14 @@ export default function QuoteModal() {
                 <span>Message</span>
                 <textarea name="message" rows={3} />
               </label>
-              <button type="submit" className="landing-nav-cta quote-modal-submit">Envoyer la demande</button>
+              {error && (
+                <p className="quote-modal-error">
+                  L&apos;envoi a échoué. Réessayez, ou écrivez-nous directement si ça persiste.
+                </p>
+              )}
+              <button type="submit" className="landing-nav-cta quote-modal-submit" disabled={submitting}>
+                {submitting ? 'Envoi...' : 'Envoyer la demande'}
+              </button>
             </form>
           </>
         )}
