@@ -599,10 +599,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h3 className="landing-showcase-title">Le matching se fait directement avec les job boards</h3>
             <p className="landing-showcase-body">
-              Altora se connecte aux API des job boards et récupère
-              automatiquement les offres des villes où l&apos;école est
-              présente, puis élimine celles qui ne correspondent pas au
-              profil de chaque apprenant.
+              Connecté aux job boards, Altora récupère automatiquement les
+              offres, puis suggère celles qui correspondent au profil de
+              chaque apprenant.
             </p>
           </div>
           <div className="landing-showcase-visual">
