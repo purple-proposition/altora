@@ -4765,17 +4765,25 @@ legend.field-label { padding: 0; }
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
   padding: var(--space-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+/* The connector line only runs through the steps themselves, sized by
+   .landing-matching-steps alone, so it stops at the last step instead of
+   stretching down through the offer card below once that appears. */
+.landing-matching-steps {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-20);
 }
-.landing-matching-card::before {
+.landing-matching-steps::before {
   content: '';
   position: absolute;
-  top: calc(var(--space-24) + 20px);
-  bottom: calc(var(--space-24) + 20px);
-  left: calc(var(--space-24) + 19px);
+  top: 20px;
+  bottom: 20px;
+  left: 19px;
   width: 1px;
   background: var(--border);
 }
@@ -4836,13 +4844,16 @@ legend.field-label { padding: 0; }
   to { opacity: 1; transform: translateY(0); }
 }
 .landing-matching-offer .card { padding: 10px; gap: 6px; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
-.landing-matching-offer .card-heading { font-size: 12px; line-height: 1.35; }
+.landing-matching-offer .card-heading { font-size: 14px; line-height: 1.35; }
+.landing-matching-offer .card-title,
+.landing-matching-offer .card-company { font-weight: 700; }
+.landing-matching-offer .card-heading-sep { font-weight: 400; }
 .landing-matching-offer .card-meta-row { gap: 6px; }
-.landing-matching-offer .card-meta-item { font-size: 10px; gap: 3px; }
-.landing-matching-offer .card-meta-item .lucide { width: 10px; height: 10px; }
+.landing-matching-offer .card-meta-item { font-size: 12px; gap: 3px; }
+.landing-matching-offer .card-meta-item .lucide { width: 12px; height: 12px; }
 .landing-matching-offer .card-link-row { gap: 8px; }
-.landing-matching-offer .card-link { font-size: 10px; gap: 3px; }
-.landing-matching-offer .card-link .lucide { width: 10px; height: 10px; }
+.landing-matching-offer .card-link { font-size: 12px; gap: 3px; }
+.landing-matching-offer .card-link .lucide { width: 12px; height: 12px; }
 
 /* Personalization badge, same pill shape as .card-school-badge but in
    violet, the site's established "IA-attributed content" color (see

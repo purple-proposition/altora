@@ -11,7 +11,6 @@ const STEPS = [
   { icon: 'car', label: "Mobilité de l'apprenant", result: 'Le rayon et le mode de transport renseignés écartent les offres trop loin.' },
   { icon: 'calendar-clock', label: "Rythme d'alternance", result: "Seules les offres compatibles avec le rythme défini par l'école sont conservées." },
   { icon: 'graduation-cap', label: 'Niveau requis', result: "L'agent IA analyse la fiche de poste pour estimer le niveau requis pour le poste." },
-  { icon: 'trending-up', label: "Potentiel de l'entreprise", result: "Les données publiques de l'alternance évaluent son potentiel d'embauche réel avant de retenir son offre." },
 ] as const;
 
 export default function MatchingAnimation() {
@@ -40,24 +39,26 @@ export default function MatchingAnimation() {
 
   return (
     <div className="landing-matching-card" ref={ref}>
-      {STEPS.map((step, i) => (
-        <div key={step.label} className={`landing-matching-step${i < activeCount ? ' is-active' : ''}`}>
+      <div className="landing-matching-steps">
+        {STEPS.map((step, i) => (
+          <div key={step.label} className={`landing-matching-step${i < activeCount ? ' is-active' : ''}`}>
+            <div className="landing-matching-step-icon">
+              <Icon name={step.icon} />
+            </div>
+            <div className="landing-matching-step-body">
+              <p className="landing-matching-step-label">{step.label}</p>
+              <p className="landing-matching-step-result">{step.result}</p>
+            </div>
+          </div>
+        ))}
+        <div className={`landing-matching-step landing-matching-step--muted${activeCount >= STEPS.length ? ' is-active' : ''}`}>
           <div className="landing-matching-step-icon">
-            <Icon name={step.icon} />
+            <Icon name="calendar" />
           </div>
           <div className="landing-matching-step-body">
-            <p className="landing-matching-step-label">{step.label}</p>
-            <p className="landing-matching-step-result">{step.result}</p>
+            <p className="landing-matching-step-label">Date de début</p>
+            <p className="landing-matching-step-result">Affichée à titre indicatif : les dates de début sont souvent négociables.</p>
           </div>
-        </div>
-      ))}
-      <div className={`landing-matching-step landing-matching-step--muted${activeCount >= STEPS.length ? ' is-active' : ''}`}>
-        <div className="landing-matching-step-icon">
-          <Icon name="calendar" />
-        </div>
-        <div className="landing-matching-step-body">
-          <p className="landing-matching-step-label">Date de début</p>
-          <p className="landing-matching-step-result">Affichée à titre indicatif : les dates de début sont souvent négociables.</p>
         </div>
       </div>
       {showOffer && (
@@ -67,7 +68,11 @@ export default function MatchingAnimation() {
               <Icon name="sparkles" />
               Spécialement pour vous
             </span>
-            <p className="card-heading">Alternance Marketing Digital chez L&apos;Oréal</p>
+            <div className="card-heading">
+              <span className="card-title">Alternance Marketing Digital</span>
+              <span className="card-heading-sep"> chez </span>
+              <span className="card-company">L&apos;Oréal</span>
+            </div>
             <div className="card-meta-row">
               <span className="card-meta-item">
                 <Icon name="map-pin" />
