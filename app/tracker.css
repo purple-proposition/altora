@@ -3555,8 +3555,10 @@ legend.field-label { padding: 0; }
      .landing-card's own scrollTop (.landing-nav--scrolled, set in
      SiteNav.tsx): padding halves (24px -> 12px) and the logo shrinks
      (164x41 -> 80x20, same 4:1 ratio), all values kept on a 4px scale —
-     the nav itself never moves or changes position. */
-  position: relative;
+     the nav itself never moves or changes position (well, other than
+     sticking to the top of the viewport on scroll). */
+  position: sticky;
+  top: 0;
   z-index: 100;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -4188,31 +4190,16 @@ legend.field-label { padding: 0; }
   text-align: left;
 }
 .landing-preview-panel-list .inline-pill .lucide { flex-shrink: 0; }
-/* Task-count marker at the end of an "À faire" pill: inverted from its
-   own pill's colors (background = the pill's own text color, text =
-   the pill's own background tint) instead of one flat gray for every
-   variant. Each inline-pill--* modifier below supplies its matching
-   pair explicitly, since the badge's own `color` is already spoken
-   for (the count digit) and can't double as a currentColor source for
-   its own background. */
+/* Task-count marker at the end of an "À faire" pill: a plain number in
+   the pill's own color (currentColor), same convention as the real
+   kanban's .column-header-count — no separate badge/circle behind it. */
 .landing-preview-panel-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: var(--radius-pill);
-  background: var(--text-muted);
-  color: var(--bg);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
+  opacity: 0.75;
   flex-shrink: 0;
   margin-left: auto;
 }
-.inline-pill--amber .landing-preview-panel-count { background: var(--amber); color: var(--amber-tint); }
-.inline-pill--green .landing-preview-panel-count { background: var(--green); color: var(--green-tint); }
-.inline-pill--rose .landing-preview-panel-count { background: var(--rose); color: var(--rose-tint); }
 /* Real subtitle opens with an "Aujourd'hui ⌄" period-selector button
    before "tu as ..." (components/... period-trigger in page.tsx). */
 .landing-preview-period {

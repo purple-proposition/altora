@@ -573,13 +573,15 @@ export default function LandingPage() {
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
                 <div className="landing-feature-icon"><Icon name="folder" /></div>
-                <h3 className="landing-showcase-caption-title">Mes documents</h3>
+                <h3 className="landing-showcase-caption-title">Documents</h3>
               </div>
               <p className="landing-feature-text">
                 Côté apprenant, c&apos;est là qu&apos;il range ses CV et lettres
                 de motivation, avec les conseils de l&apos;école dessus. Côté
                 école, c&apos;est le même espace pour déposer cours et
                 documents administratifs, sans passer par la boîte mail.
+                Ces documents restent stockés localement et ne transitent
+                jamais par nos serveurs, pour garantir leur confidentialité.
               </p>
             </div>
             </div>
