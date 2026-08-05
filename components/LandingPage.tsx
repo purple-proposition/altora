@@ -470,12 +470,18 @@ export default function LandingPage() {
                 <div className="folder-card-header">
                   <Icon name="folder" />
                   <span className="folder-card-name">Mes CV</span>
-                  <span className="folder-card-count">1</span>
                 </div>
                 <div className="folder-card-body">
                   <div className="doc-thumb-grid">
                     <div className="doc-thumb-bare">
-                      <div className="doc-thumb-sheet"><Icon name="file-text" /></div>
+                      <div className="doc-thumb-sheet">
+                        <div className="doc-thumb-page">
+                          <span className="doc-thumb-page-title" />
+                          <span className="doc-thumb-page-line" />
+                          <span className="doc-thumb-page-line" />
+                          <span className="doc-thumb-page-line doc-thumb-page-line--short" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -484,7 +490,6 @@ export default function LandingPage() {
                 <div className="folder-card-header">
                   <Icon name="folder" />
                   <span className="folder-card-name">Mes lettres de motivation</span>
-                  <span className="folder-card-count">0</span>
                 </div>
                 <div className="folder-card-body">
                   <p className="folder-empty">Aucune lettre générée pour le moment.</p>
@@ -494,13 +499,30 @@ export default function LandingPage() {
                 <div className="folder-card-header">
                   <Icon name="folder" />
                   <span className="folder-card-name">Cours</span>
-                  <span className="folder-card-count">2</span>
                 </div>
                 <div className="folder-card-body">
                   <div className="doc-thumb-grid">
                     <div className="doc-thumb-bare doc-thumb-fan">
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--0"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--1"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--0">
+                        <div className="doc-thumb-sheet">
+                          <div className="doc-thumb-page">
+                            <span className="doc-thumb-page-title" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--1">
+                        <div className="doc-thumb-sheet">
+                          <div className="doc-thumb-page">
+                            <span className="doc-thumb-page-title" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -509,14 +531,40 @@ export default function LandingPage() {
                 <div className="folder-card-header">
                   <Icon name="folder" />
                   <span className="folder-card-name">Administratif</span>
-                  <span className="folder-card-count">3</span>
                 </div>
                 <div className="folder-card-body">
                   <div className="doc-thumb-grid">
                     <div className="doc-thumb-bare doc-thumb-fan">
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--0"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--1"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--2"><div className="doc-thumb-sheet"><Icon name="file-text" /></div></div>
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--0">
+                        <div className="doc-thumb-sheet">
+                          <div className="doc-thumb-page">
+                            <span className="doc-thumb-page-title" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--1">
+                        <div className="doc-thumb-sheet">
+                          <div className="doc-thumb-page">
+                            <span className="doc-thumb-page-title" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--2">
+                        <div className="doc-thumb-sheet">
+                          <div className="doc-thumb-page">
+                            <span className="doc-thumb-page-title" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line" />
+                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -540,13 +588,14 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Votre CV généré, avec un score ATS avant même de l&apos;envoyer</h3>
+            <h3 className="landing-showcase-title">Un accompagnement IA pour préparer chaque candidature aux ATS</h3>
             <p className="landing-showcase-body">
-              Quand vous choisissez une offre et lancez la génération, Altora
-              produit votre CV et vous donne aussitôt son score de
-              compatibilité avec cette offre (compétences, expérience,
-              niveau d&apos;études, localisation) en expliquant ce qui
-              le fait monter ou baisser, pas juste un chiffre brut.
+              Altora commence par expliquer à l&apos;alternant ce qu&apos;est
+              un ATS et comment reformuler son CV pour le passer. Pour
+              chaque fiche de poste, l&apos;IA retravaille ensuite son CV
+              pour qu&apos;il corresponde parfaitement à l&apos;offre,
+              réécrit sa lettre de motivation dans un format idéal, et
+              prépare si besoin le mail à envoyer au recruteur.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -593,10 +642,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
             <p className="landing-showcase-body">
-              Vos entreprises partenaires postent une offre et grâce à notre
-              système de matching repèrent aussitôt les profils qui leur
-              correspondent le mieux et les contactent directement sans
-              passer par un intermédiaire.
+              Vos entreprises partenaires postent une offre. Le matching
+              leur montre aussitôt les profils qui correspondent le mieux,
+              qu&apos;elles contactent directement, sans intermédiaire.
             </p>
           </div>
           <div className="landing-showcase-visual">
