@@ -10,7 +10,7 @@
   /* Accent colors follow Tailwind's default palette (50/100/500/600) */
   --indigo: #171717;       /* was #4f46e5 (indigo-600) — replaced site-wide per request, kept only on the "école" feature icon (see .landing-feature-icon--school) */
   --indigo-fill: #6366f1;  /* indigo-500 */
-  --indigo-tint: #eef2ff;  /* indigo-50 */
+  --indigo-tint: var(--bg); /* was #eef2ff (indigo-50) — neutral now, same monochrome cleanup as --indigo above */
   --indigo-track: #e0e7ff; /* indigo-100 */
 
   --amber: #b45309;        /* amber-700 (was amber-600, failed WCAG AA on --amber-tint) */
@@ -86,7 +86,7 @@
   --border: #e5e5e5;
   --shadow: 0 2px 8px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.05);
 
-  --indigo-tint: #eef2ff;
+  --indigo-tint: var(--bg);
   --indigo-track: #e0e7ff;
   --amber-tint: #fffbeb;
   --amber-track: #fef3c7;
@@ -111,7 +111,7 @@
     --border: #3f3f46;
     --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 10px 24px rgba(0,0,0,0.35);
 
-    --indigo-tint: #312e81;
+    --indigo-tint: var(--border);
     --indigo-track: #3730a3;
     --amber-tint: #451a03;
     --amber-track: #78350f;
@@ -134,7 +134,7 @@
   --border: #3f3f46;
   --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 10px 24px rgba(0,0,0,0.35);
 
-  --indigo-tint: #312e81;
+  --indigo-tint: var(--border);
   --indigo-track: #3730a3;
   --amber-tint: #451a03;
   --amber-track: #78350f;
