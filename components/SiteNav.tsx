@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Icon from '@/components/Icon';
 import AltoraLogo from '@/components/AltoraLogo';
 import QuoteCtaButton from '@/components/QuoteCtaButton';
 import QuoteModal from '@/components/QuoteModal';
@@ -22,15 +21,15 @@ import QuoteModal from '@/components/QuoteModal';
 // sides once pinned, reading as broken rather than floating.
 //
 // Past a small scroll threshold, the nav also compacts (half its
-// vertical padding, a smaller logo) and the links/actions collapse into
-// a hamburger popup. Reads .landing-card's own scroll, not the window,
-// .landing-card is the actual scroll container (overflow-y:auto), kept
-// that way on purpose so its rounded top/bottom corners stay fixed in
-// place under this sticky nav while its content scrolls, instead of
-// scrolling away with a plain in-flow block.
+// vertical padding, a smaller logo), and the CTA's own label collapses
+// away leaving just its icon, rather than swapping to a hamburger menu.
+// Reads .landing-card's own scroll, not the window, .landing-card is the
+// actual scroll container (overflow-y:auto), kept that way on purpose so
+// its rounded top/bottom corners stay fixed in place under this sticky
+// nav while its content scrolls, instead of scrolling away with a plain
+// in-flow block.
 export default function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const scrollEl = document.querySelector('.landing-card');
@@ -41,10 +40,6 @@ export default function SiteNav() {
     return () => scrollEl.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    if (!scrolled) setMenuOpen(false);
-  }, [scrolled]);
-
   return (
     <div className="landing-nav-sticky">
     <header className={`landing-nav${scrolled ? ' landing-nav--scrolled' : ''}`}>
@@ -54,21 +49,7 @@ export default function SiteNav() {
         </Link>
       </div>
       <div className="landing-nav-actions">
-        <QuoteCtaButton className="landing-nav-cta" location="nav">Contacter un expert</QuoteCtaButton>
-        <div className="landing-nav-menu-wrap">
-          <button
-            type="button"
-            className="landing-nav-menu-btn"
-            aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((v) => !v)}
-          >
-            <Icon name={menuOpen ? 'x' : 'menu'} />
-          </button>
-          <div className={`landing-nav-popup${menuOpen ? ' landing-nav-popup--visible' : ''}`}>
-            <QuoteCtaButton className="landing-nav-cta landing-nav-popup-cta" location="nav_popup" onClick={() => setMenuOpen(false)}>Contacter un expert</QuoteCtaButton>
-          </div>
-        </div>
+        <QuoteCtaButton className="landing-nav-cta" location="nav" icon="message-circle">Contacter un expert</QuoteCtaButton>
       </div>
       <QuoteModal />
     </header>

@@ -3626,113 +3626,7 @@ legend.field-label { padding: 0; }
 }
 .landing-nav--scrolled .landing-nav-logo { width: 55px; height: 16px; }
 
-/* position:relative so the hamburger button (below) can sit absolutely
-   pinned to this cell's right edge and crossfade over the login/CTA
-   links in place, instead of the grid reflowing when they disappear. */
 .landing-nav-actions { grid-column: 2; position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
-/* Direct-child selector, not descendant: .landing-nav-popup-cta further
-   down is also a .landing-nav-cta (it reuses the class for its pill
-   styling), but it's nested several levels inside .landing-nav-actions
-   too — a plain descendant selector here was fading it out and killing
-   its pointer-events every time it should have been showing (i.e.
-   whenever .landing-nav--scrolled is set, which is exactly when the
-   popup exists at all). */
-.landing-nav-actions > .landing-nav-login,
-.landing-nav-actions > .landing-nav-cta {
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 0.35s cubic-bezier(0.48, 0.72, 0, 1), transform 0.35s cubic-bezier(0.48, 0.72, 0, 1);
-}
-.landing-nav--scrolled .landing-nav-actions > .landing-nav-login,
-.landing-nav--scrolled .landing-nav-actions > .landing-nav-cta {
-  opacity: 0;
-  transform: scale(0.92);
-  pointer-events: none;
-}
-
-/* Hamburger trigger: crossfades in over the login/CTA links as they fade
-   out (rather than an instant display:none swap) — always mounted,
-   absolutely positioned at the same right edge so the swap reads as one
-   control replacing the other in place instead of a layout jump. */
-/* Wrapper carries the absolute right:0/top:50% placement that used to
-   live on the button itself — the button is now a normal static child of
-   it, so .landing-nav-popup below can anchor its "24px under the icon"
-   offset to this same box (i.e. the icon's own bounds) instead of to
-   .landing-nav-actions, whose height doesn't match the button's. */
-.landing-nav-menu-wrap {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  width: 36px;
-  height: 36px;
-  transform: translateY(-50%);
-}
-.landing-nav-menu-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  background: var(--card-bg);
-  color: var(--text);
-  cursor: pointer;
-  opacity: 0;
-  transform: scale(0.85) rotate(-45deg);
-  pointer-events: none;
-  transition: opacity 0.35s cubic-bezier(0.48, 0.72, 0, 1), transform 0.35s cubic-bezier(0.48, 0.72, 0, 1);
-}
-.landing-nav--scrolled .landing-nav-menu-btn {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-  pointer-events: auto;
-}
-
-/* Frosted glass + spring-in, matching the real CRM's own dropdown
-   (.period-popup): translucent blurred background, and a slight
-   overshoot on the way in (cubic-bezier(0.34, 1.56, 0.64, 1), the same
-   "bounce" curve) rather than a plain ease. Sits exactly 24px under the
-   hamburger icon — top: calc(100% + 24px) off .landing-nav-menu-wrap,
-   which is sized to match the icon exactly, not the taller nav row. */
-.landing-nav-popup {
-  position: absolute;
-  top: calc(100% + var(--space-24));
-  right: 0;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-width: 200px;
-  padding: var(--space-8);
-  background: color-mix(in srgb, var(--card-bg) 65%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  transform-origin: top right;
-  opacity: 0;
-  transform: scale(0.85) translateY(-8px);
-  pointer-events: none;
-  transition: opacity 0.15s ease, transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.landing-nav-popup--visible {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-  pointer-events: auto;
-}
-.landing-nav-popup-link {
-  padding: var(--space-8) var(--space-12);
-  border-radius: var(--radius-input);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.landing-nav-popup-link:hover { background: var(--bg); color: var(--text); }
-.landing-nav-popup-cta { justify-content: center; margin-top: 4px; }
 
 .landing-nav-login {
   font-size: 14px;
@@ -3746,7 +3640,7 @@ legend.field-label { padding: 0; }
 .landing-nav-cta {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: 0;
   padding: var(--space-12) var(--space-20);
   border: none;
   border-radius: var(--radius-pill);
@@ -3763,6 +3657,29 @@ legend.field-label { padding: 0; }
   transition: background 0.15s ease;
 }
 .landing-nav-cta:hover { background: var(--indigo-fill); }
+
+.landing-nav-cta-icon {
+  display: inline-flex;
+  margin-right: var(--space-8);
+  transition: margin-right 0.35s cubic-bezier(0.48, 0.72, 0, 1);
+}
+/* The label collapses away on scroll rather than the whole button
+   fading out, so the CTA stays reachable, just as an icon-only pill,
+   instead of disappearing behind a hamburger menu. */
+.landing-nav-cta-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 200px;
+  transition: max-width 0.35s cubic-bezier(0.48, 0.72, 0, 1), opacity 0.2s ease;
+}
+.landing-nav--scrolled .landing-nav-cta-text {
+  max-width: 0;
+  opacity: 0;
+}
+.landing-nav--scrolled .landing-nav-cta-icon {
+  margin-right: 0;
+}
 
 /* Hero entrance: each element fades/slides in on page load, staggered by
    .landing-in--N so they arrive one after another instead of all at once. */
@@ -4875,6 +4792,60 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
 }
 
+/* MatchingAnimation.tsx lights up each step in turn on scroll-into-view
+   (same one-shot IntersectionObserver pattern as CountUpPercent), steps
+   sit dimmed until then instead of all appearing solved at once. */
+.landing-matching-step {
+  opacity: 0.3;
+  transform: translateY(4px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.landing-matching-step.is-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* The fake personalized offer that appears once every step has lit up,
+   reuses the real kanban .card classes (see .landing-kanban-board's own
+   scoped sizing above) so it reads as the actual product, not a mockup
+   of a mockup. */
+.landing-matching-offer {
+  animation: landing-matching-offer-in 0.5s cubic-bezier(0.48, 0.72, 0, 1);
+}
+@keyframes landing-matching-offer-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.landing-matching-offer .card { padding: 10px; gap: 6px; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
+.landing-matching-offer .card-heading { font-size: 12px; line-height: 1.35; }
+.landing-matching-offer .card-meta-row { gap: 6px; }
+.landing-matching-offer .card-meta-item { font-size: 10px; gap: 3px; }
+.landing-matching-offer .card-meta-item .lucide { width: 10px; height: 10px; }
+.landing-matching-offer .card-link-row { gap: 8px; }
+.landing-matching-offer .card-link { font-size: 10px; gap: 3px; }
+.landing-matching-offer .card-link .lucide { width: 10px; height: 10px; }
+
+/* Personalization badge, same pill shape as .card-school-badge but in
+   violet, the site's established "IA-attributed content" color (see
+   .landing-match-notes li.is-ai), so it reads as a model output rather
+   than a plain school-assigned tag. */
+.card-personalized-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--violet) 15%, transparent);
+  color: var(--violet);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+.card-personalized-badge .lucide { width: 12px; height: 12px; }
+.landing-matching-offer .card-personalized-badge { margin-bottom: 6px; padding: 2px 6px; gap: 4px; font-size: 9px; }
+.landing-matching-offer .card-personalized-badge .lucide { width: 9px; height: 9px; }
+
 /* Kanban mockup ("suivi pédagogique" showcase row) — reuses the real
    board's own classes (.column, .card, .card-title, .card-school-badge,
    .card-interview-pill, etc. from the dashboard kanban) instead of a
@@ -5578,21 +5549,16 @@ legend.field-label { padding: 0; }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: 16px; }
   .landing-hero { max-width: 100%; padding: 64px 24px 40px; }
-  /* Below 720px there's no room for "Se connecter" + "Contacter un
-     expert" next to the logo, so the hamburger (normally reserved for
-     the scrolled/compact nav state) is forced on unconditionally here
-     — same crossfade rule as .landing-nav--scrolled, just triggered by
+  /* Below 720px there's no room for the full "Contacter un expert"
+     label next to the logo, so the CTA's text collapses unconditionally
+     here, same rule as .landing-nav--scrolled, just triggered by
      viewport width instead of scroll position. */
-  .landing-nav-actions > .landing-nav-login,
-  .landing-nav-actions > .landing-nav-cta {
+  .landing-nav-cta-text {
+    max-width: 0;
     opacity: 0;
-    transform: scale(0.92);
-    pointer-events: none;
   }
-  .landing-nav-menu-btn {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    pointer-events: auto;
+  .landing-nav-cta-icon {
+    margin-right: 0;
   }
   /* .landing-nav's own max-width (calc(66.6667vw - 40px), sized for the
      desktop 12-column grid) leaves the logo/hamburger stranded well

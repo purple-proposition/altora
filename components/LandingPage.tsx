@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
+import MatchingAnimation from '@/components/MatchingAnimation';
 import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
@@ -196,50 +197,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="landing-showcase-visual">
-            <div className="landing-matching-card">
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="map-pin" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Ville de l&apos;école</p>
-                  <p className="landing-matching-step-result">Offres récupérées uniquement sur les villes où l&apos;école est implantée.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="car" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Mobilité de l&apos;apprenant</p>
-                  <p className="landing-matching-step-result">Le rayon et le mode de transport renseignés écartent les offres trop loin.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="calendar-clock" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Rythme d&apos;alternance</p>
-                  <p className="landing-matching-step-result">Seules les offres compatibles avec le rythme défini par l&apos;école sont conservées.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="graduation-cap" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Niveau requis</p>
-                  <p className="landing-matching-step-result">L&apos;agent IA analyse la fiche de poste pour estimer le niveau requis pour le poste.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="trending-up" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Potentiel de l&apos;entreprise</p>
-                  <p className="landing-matching-step-result">Les données publiques de l&apos;alternance évaluent son potentiel d&apos;embauche réel avant de retenir son offre.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step landing-matching-step--muted">
-                <div className="landing-matching-step-icon"><Icon name="calendar" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Date de début</p>
-                  <p className="landing-matching-step-result">Affichée à titre indicatif : les dates de début sont souvent négociables.</p>
-                </div>
-              </div>
-            </div>
+            <MatchingAnimation />
           </div>
         </Reveal>
 
