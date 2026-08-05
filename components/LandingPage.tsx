@@ -629,7 +629,7 @@ export default function LandingPage() {
                 </span>
               </div>
               <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-cassandra.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-lina.jpg" alt="" fill sizes="48px" /></span>
                 <span className="landing-roster-name">Lina</span>
                 <span className="landing-roster-dots">
                   <span className="landing-roster-dot landing-roster-dot--slate" />
@@ -638,14 +638,14 @@ export default function LandingPage() {
                 </span>
               </div>
               <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-sofiane.jpg" alt="" fill sizes="48px" /></span>
                 <span className="landing-roster-name">Sofiane</span>
                 <span className="landing-roster-dots">
                   <span className="landing-roster-dot landing-roster-dot--green" />
                 </span>
               </div>
               <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-2.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-manon.jpg" alt="" fill sizes="48px" /></span>
                 <span className="landing-roster-name">Manon</span>
                 <span className="landing-roster-dots">
                   <span className="landing-roster-dot landing-roster-dot--amber" />
