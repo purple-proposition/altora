@@ -593,11 +593,11 @@ export default function LandingPage() {
             <h3 className="landing-showcase-title">Un agent IA dédié pour accompagner chaque apprenant</h3>
             <p className="landing-showcase-body">
               Altora commence par expliquer à l&apos;alternant ce qu&apos;est
-              un ATS et comment reformuler son CV pour le passer. Pour
-              chaque fiche de poste, l&apos;IA retravaille ensuite son CV
-              pour qu&apos;il corresponde parfaitement à l&apos;offre,
-              réécrit sa lettre de motivation dans un format idéal, et
-              prépare si besoin le mail à envoyer au recruteur.
+              un ATS et comment reformuler son CV et sa lettre de motivation
+              pour le passer. Pour chaque fiche de poste, l&apos;IA retravaille
+              ensuite son CV pour qu&apos;il corresponde parfaitement à
+              l&apos;offre, réécrit sa lettre de motivation dans un format
+              idéal, et prépare si besoin le mail à envoyer au recruteur.
             </p>
           </div>
           <div className="landing-showcase-visual">

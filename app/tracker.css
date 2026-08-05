@@ -4397,19 +4397,24 @@ legend.field-label { padding: 0; }
 }
 .landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
 
-/* Same full-bleed breakout as --annuaire/--priorise above, but the
-   visual isn't a fixed 4-column half-split with the text — it's pinned
-   to exactly the last 3 columns (10-12), flush with the row's own right
-   edge (no padding-right, unlike --annuaire which still leaves a
-   2-column margin there), while the text takes whatever's left via 1fr.
-   span(3) = 25vw - 30px, same formula used for the carousel's 3-column
-   drag step elsewhere on this page. */
+/* Same full-bleed breakout and symmetric 2-column margins as --annuaire
+   above (columns 1-2 and 11-12 stay pure margin), but an uneven split
+   instead of two matching 4-column halves: text spans columns 3-6 (4
+   columns, same calc(33.3333vw - 32px) span formula as --annuaire's own
+   text/visual columns), the card spans exactly 3 columns ending at
+   column 10's right edge (columns 8-10, calc(25vw - 30px) — same
+   3-column span formula as the carousel's drag step), and column 7 sits
+   empty between them. That empty column is why `gap` here isn't the
+   usual 24px: it has to cover a full column's width plus its two
+   gutters (c + 48, c = 100vw/12 - 26px) for the card to land exactly on
+   column 8 instead of drifting in by one normal gutter. */
 .landing-showcase-row--ats {
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
   padding-left: calc(16.6667vw - 4px);
-  grid-template-columns: 1fr calc(25vw - 30px);
-  gap: 24px;
+  padding-right: calc(16.6667vw - 4px);
+  grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
+  gap: calc(8.3333vw + 22px);
 }
 .landing-showcase-row--ats .landing-showcase-visual { justify-content: flex-end; }
 .landing-showcase-row--ats .landing-match-card { max-width: none; }
