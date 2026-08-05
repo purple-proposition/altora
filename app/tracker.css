@@ -4424,7 +4424,10 @@ legend.field-label { padding: 0; }
   margin-left: calc(50% - 50vw + 24px);
   padding-left: calc(16.6667vw - 4px);
   padding-right: calc(16.6667vw - 4px);
-  grid-template-columns: calc(33.3333vw - 32px) calc(33.3333vw - 32px);
+  /* Text keeps its 4-column span; the copilot mockup is 3 columns
+     (calc(25vw - 30px), same 3-column span formula as the ATS/carousel
+     cards elsewhere) instead of matching the text's 4. */
+  grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
   gap: var(--space-24);
 }
 .landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
@@ -5322,10 +5325,20 @@ legend.field-label { padding: 0; }
    the way Tripsy closes on "Your next trip starts here" before its
    footer — no fabricated testimonials/press badges here since Altora is
    pre-launch, just a direct final call to action. */
+/* 8-of-12 grid columns, centered — same span formula as .landing-nav
+   above (k=8, N=12, g=24, m=24 simplifies to 66.6667vw - 40px) — with
+   an actual card look (white background, border, radius, shadow)
+   instead of just blending into the page's own --bg. */
 .landing-closing {
+  max-width: calc(66.6667vw - 40px);
+  width: 100%;
+  margin: 0 auto;
   text-align: center;
   padding: var(--space-96) var(--space-24);
-  background: var(--bg);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
 }
 .landing-closing-title {
   font-size: 48px;
@@ -5418,18 +5431,27 @@ legend.field-label { padding: 0; }
   /* .landing-nav's own max-width (calc(66.6667vw - 40px), sized for the
      desktop 12-column grid) leaves the logo/hamburger stranded well
      short of the real page margin on a narrow viewport instead of
-     hugging it — full width plus an explicit 24px inset on both sides
-     replaces that grid-column math here. :not(.landing-nav--scrolled)
-     keeps this scoped to the resting state only — plain .landing-nav
-     and .landing-nav--scrolled are equal specificity (one class each),
-     and this rule came later in the file, so an unscoped padding here
-     was winning over .landing-nav--scrolled's own 12px 0 and silently
-     freezing the nav at its resting size no matter how far you scroll. */
+     hugging it — full width plus an explicit 24px horizontal inset
+     (grid column 1/12's own margin) replaces that grid-column math
+     here. Horizontal padding is set unconditionally (not scoped to
+     :not(.landing-nav--scrolled)) so it survives the scrolled state
+     too — .landing-nav--scrolled's own "padding: 12px 0" only zeroes
+     the horizontal component by using the 2-value shorthand, which
+     was previously winning outright and snapping the logo/hamburger
+     flush to the true viewport edge (0px) once scrolled, instead of
+     staying pinned to the grid margin. */
   .landing-nav {
     max-width: 100%;
+    padding-left: var(--space-24);
+    padding-right: var(--space-24);
   }
   .landing-nav:not(.landing-nav--scrolled) {
-    padding: var(--space-24);
+    padding-top: var(--space-24);
+    padding-bottom: var(--space-24);
+  }
+  .landing-nav--scrolled {
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
   /* .landing-preview-shell's width (calc(50vw - 36px)) is sized for the
      desktop hero, where the mini app window sits at half the viewport

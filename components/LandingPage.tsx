@@ -124,54 +124,6 @@ export default function LandingPage() {
         </div>
       </main>
 
-      <section className="landing-categories">
-        <Reveal id="ecoles" className="landing-category">
-          <div className="landing-category-icon"><Icon name="users" /></div>
-          <h2 className="landing-category-title">Écoles &amp; organismes de formation</h2>
-          <p className="landing-category-text">
-            Suis la recherche d&apos;alternance de toute une promotion, sans
-            relancer chaque étudiant un par un pour savoir où il en est.
-          </p>
-          <ul className="landing-category-list">
-            <li><Icon name="check-circle" />Vue d&apos;ensemble de toute la promotion</li>
-            <li><Icon name="check-circle" />Rythme d&apos;alternance de l&apos;école appliqué automatiquement</li>
-            <li><Icon name="check-circle" />Suivi des candidatures de chaque alternant</li>
-          </ul>
-          <QuoteCtaButton className="landing-category-cta" location="category_ecoles">Contacter un expert <Icon name="chevron-right" /></QuoteCtaButton>
-        </Reveal>
-
-        <Reveal id="etudiants" className="landing-category">
-          <div className="landing-category-icon"><Icon name="list-checks" /></div>
-          <h2 className="landing-category-title">Étudiants en alternance</h2>
-          <p className="landing-category-text">
-            Votre alternance a son propre rythme, entre les rentrées, les
-            périodes en entreprise et les cours. Altora garde toutes vos
-            candidatures au même endroit, prêtes à temps.
-          </p>
-          <ul className="landing-category-list">
-            <li><Icon name="check-circle" />Un tableau pour suivre chaque candidature</li>
-            <li><Icon name="check-circle" />CV et lettre de motivation générés pour chaque offre</li>
-            <li><Icon name="check-circle" />Un CV structuré pour passer les ATS</li>
-          </ul>
-          <Link href="/signup" className="landing-category-cta">Créer mon compte <Icon name="chevron-right" /></Link>
-        </Reveal>
-
-        <Reveal className="landing-category">
-          <div className="landing-category-icon"><Icon name="file-check-2" /></div>
-          <h2 className="landing-category-title">Entreprises partenaires</h2>
-          <p className="landing-category-text">
-            Publiez vos offres d&apos;alternance et échangez directement avec les
-            écoles qui vous envoient des profils qualifiés.
-          </p>
-          <ul className="landing-category-list">
-            <li><Icon name="check-circle" />Recevoir des profils qualifiés par les écoles</li>
-            <li><Icon name="check-circle" />Consulter les candidatures, programmer les entretiens</li>
-            <li><Icon name="check-circle" />Suivre vos recrutements en alternance</li>
-          </ul>
-          <span className="landing-category-cta landing-category-cta--soon">Bientôt disponible</span>
-        </Reveal>
-      </section>
-
       <section className="landing-showcase">
         <Reveal className="landing-showcase-row--kanban">
           <div className="landing-showcase-text landing-showcase-text--right">
@@ -590,7 +542,7 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--ats">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Un agent IA dédié pour accompagner chaque apprenant</h3>
+            <h3 className="landing-showcase-title">Un agent IA pour accompagner chaque apprenant</h3>
             <p className="landing-showcase-body">
               Altora commence par expliquer à l&apos;alternant ce qu&apos;est
               un ATS et comment reformuler son CV et sa lettre de motivation
@@ -655,6 +607,54 @@ export default function LandingPage() {
           <div className="landing-showcase-visual">
             <TalentStack />
           </div>
+        </Reveal>
+      </section>
+
+      <section className="landing-categories">
+        <Reveal id="ecoles" className="landing-category">
+          <div className="landing-category-icon"><Icon name="users" /></div>
+          <h2 className="landing-category-title">Écoles &amp; organismes de formation</h2>
+          <p className="landing-category-text">
+            Suis la recherche d&apos;alternance de toute une promotion, sans
+            relancer chaque étudiant un par un pour savoir où il en est.
+          </p>
+          <ul className="landing-category-list">
+            <li><Icon name="check-circle" />Vue d&apos;ensemble de toute la promotion</li>
+            <li><Icon name="check-circle" />Rythme d&apos;alternance de l&apos;école appliqué automatiquement</li>
+            <li><Icon name="check-circle" />Suivi des candidatures de chaque alternant</li>
+          </ul>
+          <QuoteCtaButton className="landing-category-cta" location="category_ecoles">Contacter un expert <Icon name="chevron-right" /></QuoteCtaButton>
+        </Reveal>
+
+        <Reveal id="etudiants" className="landing-category">
+          <div className="landing-category-icon"><Icon name="list-checks" /></div>
+          <h2 className="landing-category-title">Étudiants en alternance</h2>
+          <p className="landing-category-text">
+            Votre alternance a son propre rythme, entre les rentrées, les
+            périodes en entreprise et les cours. Altora garde toutes vos
+            candidatures au même endroit, prêtes à temps.
+          </p>
+          <ul className="landing-category-list">
+            <li><Icon name="check-circle" />Un tableau pour suivre chaque candidature</li>
+            <li><Icon name="check-circle" />CV et lettre de motivation générés pour chaque offre</li>
+            <li><Icon name="check-circle" />Un CV structuré pour passer les ATS</li>
+          </ul>
+          <Link href="/signup" className="landing-category-cta">Créer mon compte <Icon name="chevron-right" /></Link>
+        </Reveal>
+
+        <Reveal className="landing-category">
+          <div className="landing-category-icon"><Icon name="file-check-2" /></div>
+          <h2 className="landing-category-title">Entreprises partenaires</h2>
+          <p className="landing-category-text">
+            Publiez vos offres d&apos;alternance et échangez directement avec les
+            écoles qui vous envoient des profils qualifiés.
+          </p>
+          <ul className="landing-category-list">
+            <li><Icon name="check-circle" />Recevoir des profils qualifiés par les écoles</li>
+            <li><Icon name="check-circle" />Consulter les candidatures, programmer les entretiens</li>
+            <li><Icon name="check-circle" />Suivre vos recrutements en alternance</li>
+          </ul>
+          <span className="landing-category-cta landing-category-cta--soon">Bientôt disponible</span>
         </Reveal>
       </section>
 
