@@ -4644,6 +4644,10 @@ legend.field-label { padding: 0; }
 .landing-match-notes .lucide { width: 16px; height: 16px; flex-shrink: 0; }
 .landing-match-notes li.is-positive .lucide { color: var(--green); }
 .landing-match-notes li.is-warning .lucide { color: var(--amber); }
+/* Retouches faites par l'IA elle-même (pas un simple constat sur le
+   profil) : violet, la même famille de couleur "IA" que ailleurs sur le
+   site, pour les distinguer des points forts (vert) et faibles (ambre). */
+.landing-match-notes li.is-ai .lucide { color: var(--violet); }
 
 .landing-copilot-card {
   width: 100%;
