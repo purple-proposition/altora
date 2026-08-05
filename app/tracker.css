@@ -5104,13 +5104,15 @@ legend.field-label { padding: 0; }
 .landing-talent-degree { font-size: 14px; line-height: 1.4; color: var(--text-muted); margin-bottom: var(--space-48); }
 /* Row that wraps once it runs out of width — override .inline-pill's
    own margin:0 8px (meant for pills sitting inline in a sentence)
-   since it ate into the available row width here. min-height reserves
-   the worst case (3 skills wrapping one per row, e.g. Camille's) so
-   every card reaches the same height regardless of how many rows its
-   own 3 skills happen to wrap to — was sized for a 2-row worst case
-   that some names actually exceed, which is what let card height vary
-   when the front card rotated. */
-.landing-talent-skills { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; min-height: 100px; }
+   since it ate into the available row width here. No min-height
+   anymore (same issue as .landing-talent-degree above): it reserved
+   the worst case (3 skills wrapping one per row) so every card reached
+   the same height, but that left a dead gap below shorter skill lists
+   before the footer's separator instead of the intended --space-16 —
+   .landing-talent-footer is a sibling of .landing-talent-body, not a
+   child, so .landing-talent-body's own 16px padding-bottom is already
+   that exact gap; no margin needed here on top of it. */
+.landing-talent-skills { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
 .landing-talent-skills .inline-pill { margin: 0; }
 .landing-talent-footer {
   display: flex;
@@ -5198,7 +5200,9 @@ legend.field-label { padding: 0; }
 .quote-modal {
   position: relative;
   width: 100%;
-  max-width: 440px;
+  /* Exactly 3 grid columns — same span(3) formula used everywhere else
+     on the page (carousel drag step, the ATS match card). */
+  max-width: calc(25vw - 30px);
   max-height: 90vh;
   overflow-y: auto;
   padding: var(--space-24);
