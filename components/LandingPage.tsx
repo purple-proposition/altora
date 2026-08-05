@@ -199,11 +199,13 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Le matching, sans effort</h3>
+            <h3 className="landing-showcase-title">Le matching sans effort</h3>
             <p className="landing-showcase-body">
-              Altora se connecte aux job boards et va chercher les
-              meilleures offres à votre place. Chaque apprenant ne voit
-              que celles qui lui correspondent vraiment.
+              Altora se connecte nativement aux job boards et va chercher
+              les offres à votre place. Chaque apprenant ne voit que
+              celles qui lui correspondent vraiment, pour se concentrer
+              sur les bonnes pistes plutôt que de se noyer dans des
+              dizaines d&apos;offres qui ne le concernent pas.
             </p>
           </div>
           <div className="landing-showcase-visual">
