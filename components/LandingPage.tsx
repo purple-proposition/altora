@@ -168,15 +168,17 @@ export default function LandingPage() {
 
         <Reveal className="landing-category">
           <div className="landing-category-icon"><Icon name="file-check-2" /></div>
-          <h2 className="landing-category-title">Entreprises partenaires</h2>
+          <h2 className="landing-category-title">Un accès direct à votre promotion</h2>
           <p className="landing-category-text">
-            Publiez vos offres d&apos;alternance et échangez directement avec les
-            écoles qui vous envoient des profils qualifiés.
+            Les entreprises partenaires consultent directement le
+            trombinoscope de la promotion et contactent les profils qui
+            les intéressent, sans que vos équipes aient à envoyer des
+            candidatures une par une.
           </p>
           <ul className="landing-category-list">
-            <li><Icon name="check-circle" />Recevoir des profils qualifiés par les écoles</li>
-            <li><Icon name="check-circle" />Consulter les candidatures, programmer les entretiens</li>
-            <li><Icon name="check-circle" />Suivre vos recrutements en alternance</li>
+            <li><Icon name="check-circle" />Trombinoscope de toute l&apos;école, toutes promotions confondues</li>
+            <li><Icon name="check-circle" />Prise de contact directe entre entreprise et étudiant</li>
+            <li><Icon name="check-circle" />Suivi des recrutements en alternance</li>
           </ul>
           <span className="landing-category-cta landing-category-cta--soon">Bientôt disponible</span>
         </Reveal>
@@ -239,9 +241,10 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
             <p className="landing-showcase-body">
-              Vos entreprises partenaires postent une offre. Le matching
-              leur montre aussitôt les profils qui correspondent le mieux,
-              qu&apos;elles contactent directement, sans intermédiaire.
+              Vos entreprises partenaires consultent directement le
+              trombinoscope de toute l&apos;école, toutes promotions
+              confondues, et contactent les profils qui les intéressent
+              sans intermédiaire.
             </p>
           </div>
           <div className="landing-showcase-visual">

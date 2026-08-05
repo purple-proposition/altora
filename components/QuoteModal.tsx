@@ -20,6 +20,13 @@ const HUBSPOT_FIELD_MAP: Record<string, string> = {
   message: 'message',
 };
 
+// Make.com scenario triggered on the same submission, in parallel with
+// HubSpot — its own automation (notifications, sheet logging, whatever
+// the scenario does), not the lead record itself. Its outcome never
+// blocks the form: HubSpot is the one submission the success/error UI
+// below actually depends on.
+const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/z1eh1y4ma7vn3deol74abae05hdxlu4f';
+
 // Shared "Demander un devis" modal, mounted once (in SiteNav, present on
 // every public page) and opened from anywhere via a window event — see
 // QuoteCtaButton. Submits to HubSpot on the account's own "Altora" form.
@@ -61,19 +68,38 @@ export default function QuoteModal() {
       .map(([inputName, hubspotName]) => ({ name: hubspotName, value: (formData.get(inputName) as string) || '' }))
       .filter((field) => field.value !== '');
 
+    const makePayload = {
+      ecole: (formData.get('organization') as string) || '',
+      email: (formData.get('email') as string) || '',
+      nb_alternants: (formData.get('size') as string) || '',
+    };
+
     try {
-      const res = await fetch(HUBSPOT_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fields,
-          context: {
-            pageUri: window.location.href,
-            pageName: document.title,
-          },
+      const [hubspotResult] = await Promise.allSettled([
+        fetch(HUBSPOT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fields,
+            context: {
+              pageUri: window.location.href,
+              pageName: document.title,
+            },
+          }),
         }),
-      });
-      if (!res.ok) throw new Error(`HubSpot submission failed: ${res.status}`);
+        fetch(MAKE_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(makePayload),
+        }).catch((err) => {
+          // Make failing is a non-issue for the visitor — log for
+          // debugging, but never surface it as a form error.
+          console.error('Make webhook failed:', err);
+        }),
+      ]);
+      if (hubspotResult.status === 'rejected' || !hubspotResult.value.ok) {
+        throw new Error(`HubSpot submission failed: ${hubspotResult.status === 'fulfilled' ? hubspotResult.value.status : hubspotResult.reason}`);
+      }
       // GA4's own recommended event name for exactly this ("someone
       // submitted a lead-gen form") — marked as a key event/conversion
       // in the property so it shows up as one everywhere in GA4's UI,
