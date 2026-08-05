@@ -4397,6 +4397,23 @@ legend.field-label { padding: 0; }
 }
 .landing-showcase-row--priorise .landing-showcase-visual { justify-content: flex-start; }
 
+/* Same full-bleed breakout as --annuaire/--priorise above, but the
+   visual isn't a fixed 4-column half-split with the text — it's pinned
+   to exactly the last 3 columns (10-12), flush with the row's own right
+   edge (no padding-right, unlike --annuaire which still leaves a
+   2-column margin there), while the text takes whatever's left via 1fr.
+   span(3) = 25vw - 30px, same formula used for the carousel's 3-column
+   drag step elsewhere on this page. */
+.landing-showcase-row--ats {
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
+  padding-left: calc(16.6667vw - 4px);
+  grid-template-columns: 1fr calc(25vw - 30px);
+  gap: 24px;
+}
+.landing-showcase-row--ats .landing-showcase-visual { justify-content: flex-end; }
+.landing-showcase-row--ats .landing-match-card { max-width: none; }
+
 /* Stacked layout (not the shared 2-column .landing-showcase-row grid):
    left-aligned text on top, a horizontally-scrollable carousel of
    mockups below — room to add more slides later instead of a single
@@ -4596,6 +4613,7 @@ legend.field-label { padding: 0; }
 .landing-showcase-visual { display: flex; justify-content: center; }
 
 .landing-match-card {
+  position: relative;
   width: 100%;
   max-width: 320px;
   background: var(--card-bg);
@@ -4604,6 +4622,34 @@ legend.field-label { padding: 0; }
   box-shadow: var(--shadow);
   padding: 24px;
   text-align: center;
+}
+/* Bursts from the top edge of the card once CountUpPercent's count-up
+   finishes — anchored to .landing-match-card (position:relative above),
+   not to the score number itself, so it always reads as coming from the
+   card's top regardless of where the number sits inside it. */
+.landing-match-confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  pointer-events: none;
+}
+.landing-match-confetti-piece {
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 10px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confetti-burst 900ms ease-out forwards;
+}
+@keyframes confetti-burst {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-match-confetti { display: none; }
 }
 .landing-match-score {
   font-family: 'Goudy Bookletter 1911', Georgia, serif;

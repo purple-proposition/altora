@@ -588,7 +588,7 @@ export default function LandingPage() {
           </DragScrollCarousel>
         </Reveal>
 
-        <Reveal className="landing-showcase-row">
+        <Reveal className="landing-showcase-row landing-showcase-row--ats">
           <div className="landing-showcase-text">
             <h3 className="landing-showcase-title">Un accompagnement IA pour préparer chaque candidature aux ATS</h3>
             <p className="landing-showcase-body">
