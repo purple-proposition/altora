@@ -8,16 +8,22 @@ import QuoteCtaButton from '@/components/QuoteCtaButton';
 import QuoteModal from '@/components/QuoteModal';
 
 // Shared nav for every public marketing page (landing, pricing) — see
-// .landing-nav in tracker.css for the floating-card styling. Anchor links
-// go through "/" explicitly so they work correctly from /pricing too.
+// .landing-nav-sticky/.landing-nav in tracker.css for the floating-card
+// styling. Anchor links go through "/" explicitly so they work correctly
+// from /pricing too.
 //
-// Stays a flex sibling above .landing-card rather than moving into it. It
-// only reads the page's scroll to react to it: past a small threshold, the
-// nav compacts (half its vertical padding, a smaller logo) and the
-// links/actions collapse into a hamburger popup — the nav's own position
-// never changes. Reads window scroll, not .landing-card's — the page
-// scrolls normally (see .landing/.landing-card in tracker.css), it isn't
-// its own nested scroll container.
+// The header itself (.landing-nav) stays a narrow, centered pill — the
+// sticky positioning lives on the full-width wrapper around it
+// (.landing-nav-sticky) instead, so its own opaque background covers the
+// whole viewport width once pinned. A previous attempt made .landing-nav
+// itself position:sticky directly: since it's narrower than the
+// viewport, whatever was scrolling behind it stayed visible on both
+// sides once pinned, reading as broken rather than floating.
+//
+// Past a small scroll threshold, the nav also compacts (half its
+// vertical padding, a smaller logo) and the links/actions collapse into
+// a hamburger popup. Reads window scroll, not any nested container —
+// the page scrolls normally (see .landing/.landing-card in tracker.css).
 export default function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -34,6 +40,7 @@ export default function SiteNav() {
   }, [scrolled]);
 
   return (
+    <div className="landing-nav-sticky">
     <header className={`landing-nav${scrolled ? ' landing-nav--scrolled' : ''}`}>
       <div className="landing-nav-brand">
         <Link href="/" aria-label="Altora">
@@ -67,5 +74,6 @@ export default function SiteNav() {
       </div>
       <QuoteModal />
     </header>
+    </div>
   );
 }

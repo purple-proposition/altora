@@ -3564,6 +3564,24 @@ legend.field-label { padding: 0; }
   overflow-x: hidden;
 }
 
+/* Full-width sticky wrapper around the narrow, centered .landing-nav
+   below — its own opaque background spans the whole viewport once
+   pinned, so content scrolling behind it can't show through on the
+   sides the way it did when .landing-nav itself was position:sticky
+   directly (see git history, "Corrige la position de la nav (revert)":
+   sticky was tried once already on the narrow element alone and
+   reverted for exactly that reason). Keeping the two concerns apart —
+   this wrapper owns "stick to the viewport", .landing-nav below still
+   owns "look like a floating centered pill" — means either can change
+   independently without reintroducing that bug. */
+.landing-nav-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: var(--bg);
+}
+
 .landing-nav {
   /* Grid, not flex space-between: the brand and the actions groups are
      different widths (a short wordmark vs. two buttons), so space-between
@@ -3580,20 +3598,7 @@ legend.field-label { padding: 0; }
      window.scrollY (.landing-nav--scrolled, set in SiteNav.tsx): padding
      halves (24px -> 12px) and the logo shrinks (164x41 -> 80x20, same
      4:1 ratio), all values kept on a 4px scale — the nav itself never
-     moves or changes position.
-
-     Deliberately not position:sticky: it was tried (with a frosted-glass
-     backdrop-filter) and reverted (see git history, "Corrige la position
-     de la nav (revert)") because a nav this narrow (max-width below,
-     centered, not full-bleed) lets whatever's scrolling behind it show
-     through on both sides once it's pinned to the viewport, which reads
-     as broken rather than "floating" — visible again when sticky was
-     reapplied later without restoring that context. If sticky comes
-     back, it needs the nav to either go full-bleed or regain an opaque/
-     frosted background that actually reads intentional, not just
-     `position: sticky` on its own. */
-  position: relative;
-  z-index: 100;
+     moves or changes position; .landing-nav-sticky above handles that. */
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -3601,8 +3606,6 @@ legend.field-label { padding: 0; }
   width: 100%;
   margin: 0 auto;
   padding: var(--space-24) 0;
-  background: var(--bg);
-  border-radius: var(--radius-card);
   transition: padding 0.3s cubic-bezier(0.48, 0.72, 0, 1);
 }
 .landing-nav--scrolled { padding: 12px 0; }
