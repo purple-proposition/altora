@@ -5356,12 +5356,35 @@ legend.field-label { padding: 0; }
 }
 
 @media (max-width: 720px) {
-  .landing-title { font-size: 32px; }
   .landing-preview-cols { grid-template-columns: 1fr; }
   .landing-categories { grid-template-columns: 1fr; }
   .landing-features { grid-template-columns: repeat(2, 1fr); }
   .landing-showcase-row { grid-template-columns: 1fr; }
   .landing-showcase-row .landing-showcase-visual { order: -1; }
+  /* --annuaire/--priorise/--ats/--kanban all use vw-locked widths and
+     padding worked out for the desktop 12-column grid (e.g. column 3's
+     offset, a fixed 4-column span) — on a narrow phone those same
+     formulas shrink to near nothing (33.3333vw at 375px is ~125px),
+     which is what forced "Une seule boîte à outils" to wrap one word
+     per line. Reset to a fluid width with the same column-1/column-12-
+     free inset as .landing-preview-shell above, instead of the
+     desktop's specific column offsets. */
+  .landing-showcase-row--annuaire,
+  .landing-showcase-row--priorise,
+  .landing-showcase-row--ats,
+  .landing-showcase-row--kanban {
+    width: 100%;
+    margin-left: 0;
+    padding-left: calc(8.3333vw - 2px);
+    padding-right: calc(8.3333vw - 2px);
+    grid-template-columns: 1fr;
+  }
+  .landing-showcase-row--annuaire .landing-showcase-visual,
+  .landing-showcase-row--priorise .landing-showcase-visual,
+  .landing-showcase-row--ats .landing-showcase-visual,
+  .landing-showcase-row--kanban .landing-showcase-text--right {
+    width: 100%;
+  }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: 16px; }
   .landing-hero { padding: 64px 24px 40px; }
@@ -5406,6 +5429,31 @@ legend.field-label { padding: 0; }
      space, no margin needed here. */
   .landing-preview-shell {
     width: calc(100% - (16.6667vw - 4px));
+  }
+  /* Same problem as .landing-showcase-row--kanban above, one level
+     deeper: the carousel's own bleed-past-the-margin drag illusion
+     (negative margin-left/padding built from 25vw) and each slide's
+     fixed 4-column span (calc(33.3333vw - 32px), ~93px at 375px wide)
+     are both desktop-grid math. Simplified to a plain edge-padded
+     scroller on mobile — the column-3 bleed/drag effect is a desktop-
+     only flourish, not something to reproduce at this width. */
+  .landing-showcase-carousel {
+    width: 100%;
+    margin-left: 0;
+    padding-left: calc(8.3333vw - 2px);
+    padding-right: calc(8.3333vw - 2px);
+    scroll-padding-left: calc(8.3333vw - 2px);
+  }
+  .landing-showcase-carousel-item {
+    flex-basis: 78vw;
+    max-width: 78vw;
+  }
+  /* .landing-talent-card's width (calc(16.6667vw - 28px), one grid
+     column) shrinks to ~35px at 375px wide — unreadable. A fixed mobile
+     width keeps the fanned-card effect legible without chasing the
+     desktop grid down to a size it was never meant to hit. */
+  .landing-talent-card {
+    width: 220px;
   }
 }
 
