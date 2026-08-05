@@ -659,7 +659,7 @@ export default function LandingPage() {
       </section>
 
       <Reveal className="landing-closing">
-        <h2 className="landing-closing-title">Prêt à piloter toute votre promotion depuis un seul endroit ?</h2>
+        <h2 className="landing-closing-title">Prêt à piloter toutes vos promotions depuis un seul espace ?</h2>
         <p className="landing-closing-text">
           Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
         </p>
