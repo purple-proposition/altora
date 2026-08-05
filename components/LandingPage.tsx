@@ -657,37 +657,51 @@ export default function LandingPage() {
         </Reveal>
 
         <Reveal className="landing-features-section">
-          <h2 className="landing-features-title">Pensé pour durer.</h2>
+          <h2 className="landing-features-title">Pensé pour durer</h2>
+          <p className="landing-features-subtitle">
+            Une base technique solide, pensée pour accompagner votre école
+            sur la durée, pas seulement pour la démo.
+          </p>
           <div className="landing-features">
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="lock" /></div>
-              <h3 className="landing-feature-title">RGPD natif</h3>
+              <h3 className="landing-feature-title">Sécurité by design</h3>
               <p className="landing-feature-text">Données hébergées et traitées en conformité RGPD, accès limité à l&apos;équipe pédagogique et à l&apos;étudiant concerné.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="refresh-cw" /></div>
-              <h3 className="landing-feature-title">Connecté à vos outils</h3>
+              <h3 className="landing-feature-title">Toujours synchronisé</h3>
               <p className="landing-feature-text">Job boards et outils existants de l&apos;école synchronisés automatiquement, sans ressaisie manuelle.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="sparkles" /></div>
-              <h3 className="landing-feature-title">IA explicable</h3>
+              <h3 className="landing-feature-title">Intelligence transparente</h3>
               <p className="landing-feature-text">Chaque score de matching détaille ce qui le fait monter ou baisser, jamais une boîte noire.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="download" /></div>
-              <h3 className="landing-feature-title">Export à tout moment</h3>
-              <p className="landing-feature-text">Vos données vous appartiennent : export complet disponible à tout moment depuis l&apos;espace admin.</p>
+              <h3 className="landing-feature-title">Vos données vous appartiennent</h3>
+              <p className="landing-feature-text">Export complet disponible à tout moment depuis l&apos;espace admin.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="user-cog" /></div>
-              <h3 className="landing-feature-title">Accès par rôle</h3>
+              <h3 className="landing-feature-title">Confidentialité totale</h3>
               <p className="landing-feature-text">École, étudiant, entreprise : chacun ne voit que ce qui le concerne, jamais plus.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="plus" /></div>
-              <h3 className="landing-feature-title">Mises à jour continues</h3>
+              <h3 className="landing-feature-title">Toujours à jour</h3>
               <p className="landing-feature-text">De nouvelles fonctionnalités livrées en continu, incluses dans l&apos;abonnement.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="monitor" /></div>
+              <h3 className="landing-feature-title">Disponible partout</h3>
+              <p className="landing-feature-text">Une plateforme accessible à tout moment, hébergée sur une infrastructure fiable.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="mail" /></div>
+              <h3 className="landing-feature-title">Un accompagnement humain</h3>
+              <p className="landing-feature-text">Une équipe disponible pour vous accompagner dans la prise en main d&apos;Altora.</p>
             </div>
           </div>
         </Reveal>
@@ -740,7 +754,7 @@ export default function LandingPage() {
                 <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
               </div>
               <div className="landing-copilot-item landing-copilot-item--urgent">
-                <Icon name="circle-help" />
+                <Icon name="circle-alert" />
                 <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
               </div>
             </div>

@@ -5293,11 +5293,11 @@ legend.field-label { padding: 0; }
 }
 .landing-talent-action .lucide { width: 16px; height: 16px; }
 
-/* Wraps the title + grid together so both share the same max-width/
-   centering as every other showcase section, instead of each managing
-   its own width independently. */
+/* Wraps the title + grid together so both share the same width — the
+   real 8-of-12 column span (columns 3-10), same k=8 formula as
+   .landing-nav (66.6667vw - 40px), not an arbitrary 1120px cap. */
 .landing-features-section {
-  max-width: 1120px;
+  max-width: calc(66.6667vw - 40px);
   width: 100%;
   margin: 0 auto;
   padding: 0 var(--space-24);
@@ -5308,12 +5308,21 @@ legend.field-label { padding: 0; }
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--text);
+  margin: 0 0 var(--space-12);
+}
+.landing-features-subtitle {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 480px;
   margin: 0 0 var(--space-32);
 }
+/* 4 cards per row, each spanning exactly 2 of the section's own 8
+   columns, 2 rows for the 8 cards total. */
 .landing-features {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-24);
 }
 
@@ -5342,8 +5351,8 @@ legend.field-label { padding: 0; }
 .landing-feature-icon--school { color: #4f46e5; }
 
 .landing-feature-title {
-  font-size: 16px;
-  line-height: 1;
+  font-size: 24px;
+  line-height: 1.2;
   font-weight: 600;
   color: var(--text);
   margin: 0 0 var(--space-8);
@@ -5576,6 +5585,8 @@ legend.field-label { padding: 0; }
     width: 100%;
   }
   .landing-roster-card { grid-template-columns: repeat(2, 1fr); }
+  .landing-features-section { max-width: 100%; }
+  .landing-features { grid-template-columns: repeat(2, 1fr); }
   .landing-features-title { font-size: 28px; }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: 16px; }
