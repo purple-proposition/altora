@@ -183,20 +183,6 @@ export default function LandingPage() {
       </section>
 
       <section className="landing-showcase">
-        <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
-          <div className="landing-showcase-text">
-            <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
-            <p className="landing-showcase-body">
-              Vos entreprises partenaires postent une offre. Le matching
-              leur montre aussitôt les profils qui correspondent le mieux,
-              qu&apos;elles contactent directement, sans intermédiaire.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <TalentStack />
-          </div>
-        </Reveal>
-
         <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
           <div className="landing-showcase-text">
             <h3 className="landing-showcase-title">Le matching sans effort</h3>
@@ -235,7 +221,7 @@ export default function LandingPage() {
                 <div className="landing-matching-step-icon"><Icon name="graduation-cap" /></div>
                 <div className="landing-matching-step-body">
                   <p className="landing-matching-step-label">Niveau requis</p>
-                  <p className="landing-matching-step-result">L&apos;IA analyse la fiche de poste pour estimer le niveau requis.</p>
+                  <p className="landing-matching-step-result">L&apos;agent IA analyse la fiche de poste pour estimer le niveau requis pour le poste.</p>
                 </div>
               </div>
               <div className="landing-matching-step landing-matching-step--muted">
@@ -246,6 +232,20 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
+          <div className="landing-showcase-text">
+            <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
+            <p className="landing-showcase-body">
+              Vos entreprises partenaires postent une offre. Le matching
+              leur montre aussitôt les profils qui correspondent le mieux,
+              qu&apos;elles contactent directement, sans intermédiaire.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <TalentStack />
           </div>
         </Reveal>
 
