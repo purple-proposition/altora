@@ -8,7 +8,6 @@ import Icon from '@/components/Icon';
 // never replays it.
 const STEPS = [
   { icon: 'map-pin', label: "Ville de l'école", result: "Offres récupérées uniquement sur les villes où l'école est implantée." },
-  { icon: 'car', label: "Mobilité de l'apprenant", result: 'Le rayon et le mode de transport renseignés écartent les offres trop loin.' },
   { icon: 'calendar-clock', label: "Rythme d'alternance", result: "Seules les offres compatibles avec le rythme défini par l'école sont conservées." },
   { icon: 'graduation-cap', label: 'Niveau requis', result: "L'agent IA analyse la fiche de poste pour estimer le niveau requis pour le poste." },
 ] as const;
