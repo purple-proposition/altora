@@ -46,7 +46,7 @@ export default function LandingPage() {
       <div className="landing-card">
       <main className="landing-hero">
         <h1 className="landing-title landing-in landing-in--1">
-          La plateforme qui optimise<br />votre taux de placement.
+          La plateforme qui optimise<br />votre taux de placement
         </h1>
         <p className="landing-subtitle landing-in landing-in--2">
           Les écoles et leurs apprenants jonglent aujourd&apos;hui entre une multitude
@@ -419,11 +419,12 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">À faire</h3>
               </div>
               <p className="landing-feature-text">
-                Côté apprenant, c&apos;est son tableau de candidatures, avec les
-                offres qu&apos;il ajoute et celles que l&apos;école lui suggère.
-                Côté école, c&apos;est le même tableau qui devient la base des
-                points de suivi : où il en est, à quoi il a déjà postulé,
-                s&apos;il faut relancer.
+                Chaque étudiant suit ses candidatures sur un tableau
+                unique, avec les offres qu&apos;il ajoute et celles
+                suggérées par l&apos;école. L&apos;équipe pédagogique
+                s&apos;appuie sur ce même tableau pour ses points de suivi :
+                où il en est, à quoi il a déjà postulé, s&apos;il faut
+                relancer.
               </p>
             </div>
             </div>
@@ -477,10 +478,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Boîte de réception</h3>
               </div>
               <p className="landing-feature-text">
-                Côté apprenant, c&apos;est là qu&apos;arrivent ses rappels de
-                candidature. Côté école, c&apos;est le canal direct vers chaque
-                apprenant pour toute la communication interne, sans dépendre
-                de sa messagerie personnelle.
+                Les rappels de candidature arrivent directement dans la
+                boîte de réception de l&apos;étudiant. L&apos;école y
+                dispose du même canal direct vers chaque apprenant, sans
+                dépendre de sa messagerie personnelle.
               </p>
             </div>
             </div>
@@ -544,10 +545,10 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Calendrier</h3>
               </div>
               <p className="landing-feature-text">
-                Côté apprenant, c&apos;est son planning : dates butoirs,
-                entretiens à venir. Côté école, c&apos;est le même calendrier
-                qui accueille les rentrées, les périodes en entreprise et
-                les points de suivi.
+                Dates butoirs et entretiens à venir s&apos;affichent sur le
+                planning de l&apos;étudiant. Le même calendrier accueille
+                aussi les rentrées, les périodes en entreprise et les
+                points de suivi côté école.
               </p>
             </div>
             </div>
@@ -664,11 +665,11 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Documents</h3>
               </div>
               <p className="landing-feature-text">
-                Côté apprenant, c&apos;est là qu&apos;il range ses CV et lettres
-                de motivation, avec les conseils de l&apos;école dessus. Côté
-                école, c&apos;est le même espace pour déposer cours et
-                documents administratifs, sans passer par la boîte mail.
-                Ces documents restent stockés localement et ne transitent
+                L&apos;étudiant y range ses CV et lettres de motivation,
+                avec les conseils de l&apos;école directement dessus.
+                L&apos;école y dépose aussi cours et documents
+                administratifs, sans passer par la boîte mail. Ces
+                documents restent stockés localement et ne transitent
                 jamais par nos serveurs, pour garantir leur confidentialité.
               </p>
             </div>

@@ -5272,11 +5272,18 @@ legend.field-label { padding: 0; }
 /* Wraps the title + grid together so both share the same width — the
    real 8-of-12 column span (columns 3-10), same k=8 formula as
    .landing-nav (66.6667vw - 40px), not an arbitrary 1120px cap. */
+/* Full-bleed breakout to the true viewport grid, same pattern as
+   .landing-showcase-row--annuaire/--ats: columns 1-2 and 11-12 stay
+   pure margin, this section spans columns 3-10 exactly. The old
+   version centered a calc(66.6667vw - 40px) box (already numerically
+   an 8-column span) inside .landing-showcase's own ~1120px centered
+   container instead of the true viewport, which is why it never quite
+   lined up with the "g" grid overlay. */
 .landing-features-section {
-  max-width: calc(66.6667vw - 40px);
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--space-24);
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
+  padding-left: calc(16.6667vw - 4px);
+  padding-right: calc(16.6667vw - 4px);
 }
 .landing-features-title {
   font-size: 40px;
@@ -5293,12 +5300,15 @@ legend.field-label { padding: 0; }
   max-width: 480px;
   margin: 0 0 var(--space-32);
 }
-/* 4 cards per row, each spanning exactly 2 of the section's own 8
-   columns, 2 rows for the 8 cards total. */
+/* 4 cards per row, each spanning exactly 2 real grid columns (the same
+   calc(16.6667vw - 28px) span(2) formula as .landing-talent-card),
+   2 rows for the 8 cards total, instead of a naive repeat(4, 1fr):
+   1fr columns only split the container's own width evenly, they don't
+   land each card on the page's actual column boundaries. */
 .landing-features {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, calc(16.6667vw - 28px));
   gap: var(--space-24);
 }
 
@@ -5544,7 +5554,8 @@ legend.field-label { padding: 0; }
   .landing-showcase-row--ats,
   .landing-showcase-row--jobboards,
   .landing-showcase-row--roster,
-  .landing-showcase-row--kanban {
+  .landing-showcase-row--kanban,
+  .landing-features-section {
     width: auto;
     margin-left: calc(-1 * var(--space-24));
     margin-right: calc(-1 * var(--space-24));
@@ -5709,9 +5720,22 @@ legend.field-label { padding: 0; }
   gap: 24px;
 }
 /* Landing page version: one merged card instead of 3 separate plans,
-   with a single "Contacter un expert" CTA — the 3 plans become
-   sub-groups of features inside it instead of competing cards. */
-.pricing-plans--merged { max-width: 800px; grid-template-columns: 1fr; }
+   with a single "Contacter un expert" CTA, the 3 plans become
+   sub-groups of features inside it instead of competing cards.
+   Exactly 6 of 12 grid columns wide (columns 4-9): span(6) = 6c + 5*24
+   (c = 100vw/12 - 26px, the column-width term used everywhere else on
+   this page) simplifies to 50vw - 36px. Centered via the existing
+   margin:0 auto chain, which lands it on columns 4-9 rather than some
+   arbitrary fixed pixel width. padding-left/right zeroed out: .pricing-
+   plans' own 24px horizontal padding would otherwise inset the card by
+   another 24px on each side, landing it 48px narrower than the exact
+   6-column span. */
+.pricing-plans--merged {
+  max-width: calc(50vw - 36px);
+  padding-left: 0;
+  padding-right: 0;
+  grid-template-columns: 1fr;
+}
 .pricing-plan--merged { text-align: center; padding: 48px; }
 .pricing-plan--merged .pricing-plan-tagline { max-width: 480px; margin-left: auto; margin-right: auto; }
 .pricing-plan--merged .pricing-plan-cta { max-width: 320px; margin-left: auto; margin-right: auto; }
