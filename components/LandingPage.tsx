@@ -590,7 +590,7 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--ats">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Un accompagnement IA pour préparer chaque candidature aux ATS</h3>
+            <h3 className="landing-showcase-title">Un agent IA dédié pour accompagner chaque apprenant</h3>
             <p className="landing-showcase-body">
               Altora commence par expliquer à l&apos;alternant ce qu&apos;est
               un ATS et comment reformuler son CV pour le passer. Pour
