@@ -5376,14 +5376,14 @@ legend.field-label { padding: 0; }
      offset, a fixed 4-column span) — on a narrow phone those same
      formulas shrink to near nothing (33.3333vw at 375px is ~125px),
      which is what forced "Une seule boîte à outils" to wrap one word
-     per line. Reset to a fluid width with the same column-1/column-12-
-     free inset as .landing-preview-shell above, instead of the
-     desktop's specific column offsets.
+     per line. Reset to a fluid width with a flat 24px inset (the same
+     page-margin gutter used everywhere else on the site) instead of the
+     desktop's column-width-based offsets.
      margin: 0 -24px cancels .landing-showcase's own 24px padding (the
      desktop rules break out of that same padding via width:100vw +
      matching negative margin) — without it, that 24px stacked on top
-     of the padding below and pushed everything a column too far right
-     of column 2/11 instead of landing exactly on them. */
+     of the padding below and pushed everything a further 24px right
+     than intended. */
   .landing-showcase-row--annuaire,
   .landing-showcase-row--priorise,
   .landing-showcase-row--ats,
@@ -5391,8 +5391,8 @@ legend.field-label { padding: 0; }
     width: auto;
     margin-left: calc(-1 * var(--space-24));
     margin-right: calc(-1 * var(--space-24));
-    padding-left: calc(8.3333vw - 2px);
-    padding-right: calc(8.3333vw - 2px);
+    padding-left: var(--space-24);
+    padding-right: var(--space-24);
     grid-template-columns: 1fr;
   }
   .landing-showcase-row--annuaire .landing-showcase-visual,
@@ -5443,15 +5443,13 @@ legend.field-label { padding: 0; }
      viewport is too narrow for the sidebar + content card inside, which
      is what was clipping "Bonjour Camille" and the calendar events.
      .landing-preview (its parent) is already full-bleed to the page
-     margins (column 1 to column 12) — but the window itself should
-     leave column 1 and column 12 free rather than fill them edge to
-     edge, so this is one column + one gap narrower than 100% on each
-     side (16.6667vw - 4px total, matching the "g" debug grid's own
-     repeat(12,1fr)/24px-gap math), not a full-bleed 100%. .landing-
-     preview's own justify-content:center re-centers it in the freed-up
-     space, no margin needed here. */
+     margins — but the window itself should keep a flat 24px of
+     breathing room next to its own border on each side (the standard
+     page-margin gutter, not a full grid column), rather than filling
+     that edge completely. .landing-preview's own justify-content:center
+     re-centers it in the freed-up space, no margin needed here. */
   .landing-preview-shell {
-    width: calc(100% - (16.6667vw - 4px));
+    width: calc(100% - 48px);
   }
   /* Same problem as .landing-showcase-row--kanban above, one level
      deeper: the carousel's own bleed-past-the-margin drag illusion
