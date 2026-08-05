@@ -125,6 +125,56 @@ export default function LandingPage() {
       </main>
 
       <section className="landing-showcase">
+        <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">Le matching se fait directement avec les job boards</h3>
+            <p className="landing-showcase-body">
+              Connecté aux job boards, Altora récupère automatiquement les
+              offres, puis suggère celles qui correspondent au profil de
+              chaque apprenant.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-matching-card">
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="map-pin" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Ville de l&apos;école</p>
+                  <p className="landing-matching-step-result">Offres récupérées uniquement sur les villes où l&apos;école est implantée.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="car" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Mobilité de l&apos;apprenant</p>
+                  <p className="landing-matching-step-result">Le rayon et le mode de transport renseignés écartent les offres trop loin.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="calendar-clock" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Rythme d&apos;alternance</p>
+                  <p className="landing-matching-step-result">Seules les offres compatibles avec le rythme défini par l&apos;école sont conservées.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step">
+                <div className="landing-matching-step-icon"><Icon name="graduation-cap" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Niveau requis</p>
+                  <p className="landing-matching-step-result">L&apos;IA analyse la fiche de poste pour estimer le niveau requis.</p>
+                </div>
+              </div>
+              <div className="landing-matching-step landing-matching-step--muted">
+                <div className="landing-matching-step-icon"><Icon name="calendar" /></div>
+                <div className="landing-matching-step-body">
+                  <p className="landing-matching-step-label">Date de début</p>
+                  <p className="landing-matching-step-result">Affichée à titre indicatif : les dates de début sont souvent négociables.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
         <Reveal className="landing-showcase-row--kanban">
           <div className="landing-showcase-text landing-showcase-text--right">
             <h3 className="landing-showcase-title">Une seule boîte à outils, deux façons de s&apos;en servir</h3>
@@ -540,6 +590,108 @@ export default function LandingPage() {
           </DragScrollCarousel>
         </Reveal>
 
+        <Reveal className="landing-showcase-row landing-showcase-row--roster">
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">Une vue d&apos;ensemble fiable, pas un outil de surveillance</h3>
+            <p className="landing-showcase-body">
+              D&apos;un coup d&apos;œil sur toute la promotion, chaque pastille
+              reprend les couleurs du tableau de suivi (à faire, envoyé,
+              entretien, refus), sans jamais afficher le détail des
+              démarches de chacun. De quoi ouvrir la conversation avec un
+              étudiant, pas la remplacer.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-roster-card">
+              <div className="landing-roster-student">
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-name">Camille</span>
+                <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
+                  <span className="landing-roster-dot landing-roster-dot--green" />
+                </span>
+              </div>
+              <div className="landing-roster-student">
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-2.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-name">Inès</span>
+                <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--green" />
+                </span>
+              </div>
+              <div className="landing-roster-student">
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-3.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-name">Thomas</span>
+                <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
+                  <span className="landing-roster-dot landing-roster-dot--rose" />
+                </span>
+              </div>
+              <div className="landing-roster-student">
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-cassandra.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-name">Lina</span>
+                <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
+                </span>
+              </div>
+              <div className="landing-roster-student">
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-name">Sofiane</span>
+                <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--green" />
+                </span>
+              </div>
+              <div className="landing-roster-student">
+                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-2.jpg" alt="" fill sizes="48px" /></span>
+                <span className="landing-roster-name">Manon</span>
+                <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
+                </span>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-features-section">
+          <h2 className="landing-features-title">Pensé pour durer.</h2>
+          <div className="landing-features">
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="lock" /></div>
+              <h3 className="landing-feature-title">RGPD natif</h3>
+              <p className="landing-feature-text">Données hébergées et traitées en conformité RGPD, accès limité à l&apos;équipe pédagogique et à l&apos;étudiant concerné.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="refresh-cw" /></div>
+              <h3 className="landing-feature-title">Connecté à vos outils</h3>
+              <p className="landing-feature-text">Job boards et outils existants de l&apos;école synchronisés automatiquement, sans ressaisie manuelle.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="sparkles" /></div>
+              <h3 className="landing-feature-title">IA explicable</h3>
+              <p className="landing-feature-text">Chaque score de matching détaille ce qui le fait monter ou baisser, jamais une boîte noire.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="download" /></div>
+              <h3 className="landing-feature-title">Export à tout moment</h3>
+              <p className="landing-feature-text">Vos données vous appartiennent : export complet disponible à tout moment depuis l&apos;espace admin.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="user-cog" /></div>
+              <h3 className="landing-feature-title">Accès par rôle</h3>
+              <p className="landing-feature-text">École, étudiant, entreprise : chacun ne voit que ce qui le concerne, jamais plus.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="plus" /></div>
+              <h3 className="landing-feature-title">Mises à jour continues</h3>
+              <p className="landing-feature-text">De nouvelles fonctionnalités livrées en continu, incluses dans l&apos;abonnement.</p>
+            </div>
+          </div>
+        </Reveal>
+
         <Reveal className="landing-showcase-row landing-showcase-row--ats">
           <div className="landing-showcase-text">
             <h3 className="landing-showcase-title">Un agent IA pour accompagner chaque apprenant</h3>
@@ -579,67 +731,17 @@ export default function LandingPage() {
           </div>
           <div className="landing-showcase-visual">
             <div className="landing-copilot-card">
-              <div className="landing-copilot-item">
+              <div className="landing-copilot-item landing-copilot-item--warning">
                 <Icon name="target" />
                 <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
               </div>
-              <div className="landing-copilot-item">
+              <div className="landing-copilot-item landing-copilot-item--positive">
                 <Icon name="check-circle" />
                 <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
               </div>
-              <div className="landing-copilot-item">
+              <div className="landing-copilot-item landing-copilot-item--urgent">
                 <Icon name="circle-help" />
-                <p>Cet étudiant n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
-          <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Le matching se fait directement avec les job boards</h3>
-            <p className="landing-showcase-body">
-              Connecté aux job boards, Altora récupère automatiquement les
-              offres, puis suggère celles qui correspondent au profil de
-              chaque apprenant.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <div className="landing-matching-card">
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="map-pin" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Ville de l&apos;école</p>
-                  <p className="landing-matching-step-result">Offres récupérées uniquement sur les villes où l&apos;école est implantée.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="car" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Mobilité de l&apos;apprenant</p>
-                  <p className="landing-matching-step-result">Le rayon et le mode de transport renseignés écartent les offres trop loin.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="calendar-clock" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Rythme d&apos;alternance</p>
-                  <p className="landing-matching-step-result">Seules les offres compatibles avec le rythme défini par l&apos;école sont conservées.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step">
-                <div className="landing-matching-step-icon"><Icon name="graduation-cap" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Niveau requis</p>
-                  <p className="landing-matching-step-result">L&apos;IA analyse la fiche de poste pour estimer le niveau requis.</p>
-                </div>
-              </div>
-              <div className="landing-matching-step landing-matching-step--muted">
-                <div className="landing-matching-step-icon"><Icon name="calendar" /></div>
-                <div className="landing-matching-step-body">
-                  <p className="landing-matching-step-label">Date de début</p>
-                  <p className="landing-matching-step-result">Affichée à titre indicatif : les dates de début sont souvent négociables.</p>
-                </div>
+                <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
               </div>
             </div>
           </div>

@@ -4471,6 +4471,59 @@ legend.field-label { padding: 0; }
 .landing-showcase-row--ats .landing-showcase-visual { justify-content: flex-end; }
 .landing-showcase-row--ats .landing-match-card { max-width: none; }
 
+/* Same text-left/mockup-right 4+3 column treatment as --ats/--priorise
+   above. */
+.landing-showcase-row--roster {
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
+  padding-left: calc(16.6667vw - 4px);
+  padding-right: calc(16.6667vw - 4px);
+  grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
+  gap: calc(8.3333vw + 22px);
+}
+.landing-showcase-row--roster .landing-showcase-visual { justify-content: flex-end; }
+
+/* Promotion roster mockup: a compact grid of student avatars, each
+   with plain colored dots (no counts) — the same colors as the real
+   kanban columns (slate/amber/green/rose), so a viewer familiar with
+   the kanban reads them the same way without a legend. Deliberately no
+   number on the dot: a fast "what's the color" glance is the point,
+   not a precise count that reads as a scoreboard. */
+.landing-roster-card {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  padding: var(--space-24);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-20);
+}
+.landing-roster-student {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  text-align: center;
+}
+.landing-roster-avatar {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--bg);
+}
+.landing-roster-avatar img { object-fit: cover; }
+.landing-roster-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.landing-roster-dots { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.landing-roster-dot { width: 8px; height: 8px; border-radius: 50%; }
+.landing-roster-dot--slate { background: var(--text-muted); }
+.landing-roster-dot--amber { background: var(--amber); }
+.landing-roster-dot--green { background: var(--green); }
+.landing-roster-dot--rose { background: var(--rose); }
+
 /* Stacked layout (not the shared 2-column .landing-showcase-row grid):
    left-aligned text on top, a horizontally-scrollable carousel of
    mockups below — room to add more slides later instead of a single
@@ -4773,6 +4826,15 @@ legend.field-label { padding: 0; }
 }
 .landing-copilot-item .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 .landing-copilot-item p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text); }
+/* Green = positive news, amber = a point worth watching, rose = needs
+   action now — same tint/color pairing as the kanban's own column
+   headers, so the severity reads instantly without a legend. */
+.landing-copilot-item--positive { background: var(--green-tint); }
+.landing-copilot-item--positive .lucide { color: var(--green); }
+.landing-copilot-item--warning { background: var(--amber-tint); }
+.landing-copilot-item--warning .lucide { color: var(--amber); }
+.landing-copilot-item--urgent { background: var(--rose-tint); }
+.landing-copilot-item--urgent .lucide { color: var(--rose); }
 
 /* Job boards matching frise ("job boards" showcase row): a vertical
    timeline of match criteria, applied in order. The connecting line is
@@ -4796,9 +4858,9 @@ legend.field-label { padding: 0; }
 .landing-matching-card::before {
   content: '';
   position: absolute;
-  top: calc(var(--space-24) + 16px);
-  bottom: calc(var(--space-24) + 16px);
-  left: calc(var(--space-24) + 15px);
+  top: calc(var(--space-24) + 20px);
+  bottom: calc(var(--space-24) + 20px);
+  left: calc(var(--space-24) + 19px);
   width: 1px;
   background: var(--border);
 }
@@ -4808,18 +4870,21 @@ legend.field-label { padding: 0; }
   gap: var(--space-12);
   position: relative;
 }
+/* Same rounded-square badge as .landing-feature-icon/.landing-category-
+   icon (40x40, radius-input, indigo-tint) instead of a circular bead —
+   consistent with every other icon badge on the site. */
 .landing-matching-step-icon {
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--radius-input);
   background: var(--indigo-tint);
   color: var(--indigo);
 }
-.landing-matching-step-icon .lucide { width: 16px; height: 16px; }
+.landing-matching-step-icon .lucide { width: 20px; height: 20px; }
 .landing-matching-step-label { margin: 0 0 2px; font-size: 13px; font-weight: 600; color: var(--text); }
 .landing-matching-step-result { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
 /* Date matching is deliberately soft (a heads-up, not a hard filter —
@@ -5218,13 +5283,27 @@ legend.field-label { padding: 0; }
 }
 .landing-talent-action .lucide { width: 16px; height: 16px; }
 
-.landing-features {
+/* Wraps the title + grid together so both share the same max-width/
+   centering as every other showcase section, instead of each managing
+   its own width independently. */
+.landing-features-section {
   max-width: 1120px;
   width: 100%;
   margin: 0 auto;
-  padding: var(--space-32) var(--space-24);
+  padding: 0 var(--space-24);
+}
+.landing-features-title {
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0 0 var(--space-32);
+}
+.landing-features {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-24);
 }
 
@@ -5469,6 +5548,7 @@ legend.field-label { padding: 0; }
   .landing-showcase-row--priorise,
   .landing-showcase-row--ats,
   .landing-showcase-row--jobboards,
+  .landing-showcase-row--roster,
   .landing-showcase-row--kanban {
     width: auto;
     margin-left: calc(-1 * var(--space-24));
@@ -5481,9 +5561,12 @@ legend.field-label { padding: 0; }
   .landing-showcase-row--priorise .landing-showcase-visual,
   .landing-showcase-row--ats .landing-showcase-visual,
   .landing-showcase-row--jobboards .landing-showcase-visual,
+  .landing-showcase-row--roster .landing-showcase-visual,
   .landing-showcase-row--kanban .landing-showcase-text--right {
     width: 100%;
   }
+  .landing-roster-card { grid-template-columns: repeat(2, 1fr); }
+  .landing-features-title { font-size: 28px; }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: 16px; }
   .landing-hero { padding: 64px 24px 40px; }
@@ -5618,6 +5701,7 @@ legend.field-label { padding: 0; }
    standalone hero): no eyebrow above it anymore, so the 20px top
    margin meant to clear that eyebrow is dropped too. */
 #tarifs .pricing-title { font-size: 48px; margin-top: 0; }
+#tarifs .landing-subtitle { font-size: 16px; }
 
 .pricing-plans {
   max-width: 1120px;
