@@ -5054,7 +5054,11 @@ legend.field-label { padding: 0; }
    text themselves leaving a dead gap right after the short text. */
 .landing-talent-card {
   width: calc(16.6667vw - 28px);
-  min-height: 512px;
+  /* Was 512px — the estimate reserved more room than the tallest card
+     (Thomas's) actually needs, leaving a dead gap between the skills
+     pills and the footer separator on every shorter card instead of a
+     tight fit. */
+  min-height: 416px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
