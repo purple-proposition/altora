@@ -5467,9 +5467,15 @@ legend.field-label { padding: 0; }
     margin-left: 0;
     scroll-padding-left: 0;
   }
+  /* 78vw was an eyeballed approximation — this is the site's actual
+     6-of-12-column span formula (same one .landing-preview-shell above
+     uses, k=6/N=12/g=24 simplified to 50vw - 36px), so each slide is
+     exactly half the row width and the next one always peeks in at the
+     edge to invite a swipe, instead of a rounded guess that could land
+     flush with no peek on some viewport widths. */
   .landing-showcase-carousel-item {
-    flex-basis: 78vw;
-    max-width: 78vw;
+    flex-basis: calc(50vw - 36px);
+    max-width: calc(50vw - 36px);
   }
   /* .landing-talent-card's width (calc(16.6667vw - 28px), one grid
      column) shrinks to ~35px at 375px wide — unreadable. A fixed mobile
