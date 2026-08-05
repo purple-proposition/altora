@@ -5019,18 +5019,22 @@ legend.field-label { padding: 0; }
   position: relative;
   display: flex;
   justify-content: center;
-  /* Right padding is deliberately larger than left: it's what shifts the
-     whole fan's center point (the left:50% anchor the left/right cards
-     peek out from) left just enough that the right card's own visible
-     edge — not this container's box — lands flush on the row's right
-     edge (10th grid column), across viewport widths, not just the one
-     it was eyeballed at. Because the card is rotated, its rightmost
-     point depends on both its width (which scales with vw) and height
-     (mostly fixed px, since only the photo portion scales) via
-     0.5*(W*cos9° + H*sin9°) — worked back from the card's actual
-     geometry (equal-height cards, W = 16.6667vw - 20px) into a
-     vw+px expression instead of a single fixed px value. */
-  padding: 32px calc(9.08vw - 11px) 32px 48px;
+  /* .landing-showcase-row--annuaire gives the parent .landing-showcase-
+     visual justify-content:flex-end, so this stack's own right edge
+     (padding box) always sits exactly on the visual slot's right edge —
+     column 10's right edge — regardless of padding. That pins down
+     exactly what padding-right needs to be for the front card to land
+     on columns 8-9: front's right edge = stack's right edge minus
+     padding-right, and it needs to land on column 9's right edge, which
+     sits exactly one column-and-gap short of column 10's right edge.
+     padding-right = c + 24 (one column width + one gutter), c being the
+     shared column-width term used everywhere else on this page
+     (100vw/12 - 26px) — simplifies to 8.3333vw - 2px. (A previous,
+     eyeballed-and-then-trig-adjusted value here, calc(9.08vw - 11px),
+     drifted a few px off column 8 at wide viewports; this one is exact
+     at any width, derived from the same span/offset formulas as the
+     rest of the grid instead of back-solved from one screenshot.) */
+  padding: 32px calc(8.3333vw - 2px) 32px 48px;
 }
 /* Student directory card ("annuaire de promotion" for partner
    companies) — same card shell as .landing-match-card/.landing-
