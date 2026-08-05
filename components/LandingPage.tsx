@@ -605,9 +605,12 @@ export default function LandingPage() {
               <CountUpPercent value={84} />
               <div className="landing-match-label">de compatibilité ATS avec l&apos;offre</div>
               <ul className="landing-match-notes">
-                <li className="is-positive"><Icon name="check-circle" />Profil très adapté</li>
-                <li className="is-warning"><Icon name="circle-help" />Une compétence CRM augmenterait votre score</li>
-                <li className="is-warning"><Icon name="circle-help" />+12% avec un projet marketing en plus</li>
+                <li className="is-positive"><Icon name="check-circle" />Suite Adobe et gestion de campagnes maîtrisées</li>
+                <li className="is-positive"><Icon name="check-circle" />Expérience confirmée en CRM et emailing</li>
+                <li className="is-warning"><Icon name="circle-help" />Aucune certification Adobe mentionnée</li>
+                <li className="is-warning"><Icon name="circle-help" />Pas d&apos;expérience poussée en analytics marketing</li>
+                <li className="is-positive"><Icon name="sparkles" />Verbes d&apos;action ajoutés pour matcher la fiche de poste</li>
+                <li className="is-positive"><Icon name="sparkles" />Dates reformatées en MM/AAAA pour les ATS</li>
               </ul>
             </div>
           </div>

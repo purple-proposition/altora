@@ -4602,7 +4602,7 @@ legend.field-label { padding: 0; }
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
-  padding: 32px;
+  padding: 16px;
   text-align: center;
 }
 .landing-match-score {
