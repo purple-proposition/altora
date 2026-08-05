@@ -1,8 +1,16 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { GeistSans } from 'geist/font/sans';
 import './fonts.css';
 import './dev-grid.css';
 import GridOverlayToggle from '@/components/GridOverlayToggle';
+
+// GA4 property "Altora" (analytics.google.com), measurement ID only —
+// not a secret, it's meant to ship in every page's client-side source.
+// afterInteractive: loads after the page is interactive rather than
+// blocking initial render, same tradeoff Next.js recommends for
+// analytics scripts that don't need to run before paint.
+const GA_MEASUREMENT_ID = 'G-5E514S4GEX';
 
 // Self-hosted via next/font instead of a <link> to fonts.googleapis.com —
 // that external stylesheet cost a DNS lookup + connection to
@@ -28,6 +36,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={GeistSans.className}>
       <body style={{ margin: 0, padding: 0, fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}>
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
         {children}
         <div className="grid-overlay" id="grid-overlay">
           {Array.from({ length: 12 }).map((_, i) => <span key={i}></span>)}
