@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { Children, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { trackEvent } from '@/lib/gtag';
 
 // Native horizontal scroll only responds to touch/trackpad swipes, not a
@@ -20,21 +20,42 @@ import { trackEvent } from '@/lib/gtag';
 // a formula removes that whole class of bug, touch/trackpad scrolling
 // snaps natively with zero JS, and mouse-drag only needs a plain
 // scrollTo(behavior: 'smooth') to the nearest actual card on release.
-export default function DragScrollCarousel({ children, className }: { children: React.ReactNode; className?: string }) {
+//
+// `circular`: when set, resting on the first or last item silently rotates
+// which item is physically first/last in the DOM (moving the one just
+// left behind to the opposite end) and compensates scrollLeft by exactly
+// that item's own width so nothing visibly jumps — the user just finds a
+// "new" item to keep scrolling into, forever, in either direction. Each
+// child needs a stable `key` (its content identity, not its position) so
+// React reuses the same component instance — and all its live state,
+// timers, animation loops included — across the rotation instead of
+// unmounting/remounting it. No cloned/duplicated markup anywhere: there
+// are only ever as many DOM nodes as children passed in.
+export default function DragScrollCarousel({ children, className, circular = false }: { children: React.ReactNode; className?: string; circular?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0 });
   const scrollTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Shared by the drag-release snap and the scroll-tracking below: which
-  // item is currently closest to resting position, and how far its own
-  // snap target is from scrollLeft right now.
+  const allKeys = Children.toArray(children).map((child) =>
+    typeof child === 'object' && child !== null && 'key' in child ? String(child.key) : ''
+  );
+  const [order, setOrder] = useState<string[]>(allKeys);
+  // Set right before an order rotation, consumed by the layout effect
+  // below to shift scrollLeft by exactly the rotated item's own size —
+  // measured before the DOM reorders, since items here aren't uniform
+  // width (kanban/messaging/calendar/documents all differ).
+  const pendingShiftRef = useRef(0);
+
+  const byKey = new Map(
+    Children.toArray(children).map((child) => [
+      typeof child === 'object' && child !== null && 'key' in child ? String(child.key) : '',
+      child,
+    ])
+  );
+  const orderedChildren = order.map((key) => byKey.get(key));
+
   function findNearestItem(el: HTMLDivElement) {
-    // The tail item (e.g. "Mes documents") is CSS scroll-snap-align:none
-    // it should never become a resting point of its own, so it's
-    // excluded here too, matching the browser's own native snap behavior.
-    const items = (Array.from(el.children) as HTMLElement[]).filter(
-      (item) => !item.classList.contains('landing-showcase-carousel-item--tail')
-    );
+    const items = Array.from(el.children) as HTMLElement[];
     if (!items.length) return null;
     // offsetLeft is relative to the nearest *positioned* ancestor, which
     // isn't necessarily this scroll container, getBoundingClientRect
@@ -59,7 +80,7 @@ export default function DragScrollCarousel({ children, className }: { children: 
         nearestIndex = index;
       }
     });
-    return { index: nearestIndex, target: nearestTarget };
+    return { index: nearestIndex, target: nearestTarget, items };
   }
 
   function snapToNearestItem() {
@@ -69,6 +90,38 @@ export default function DragScrollCarousel({ children, className }: { children: 
     if (!nearest) return;
     el.scrollTo({ left: nearest.target, behavior: 'smooth' });
   }
+
+  // Called once a resting position has actually settled (debounced in
+  // onScroll below) — if that position is the first or last item and
+  // circular is on, rotates the order right then so there's always
+  // another real item to keep scrolling into, in either direction.
+  function maybeRotate() {
+    if (!circular) return;
+    const el = ref.current;
+    if (!el) return;
+    const nearest = findNearestItem(el);
+    if (!nearest) return;
+    const { index, items } = nearest;
+    if (index === items.length - 1 && items.length > 1) {
+      const shift = items[1].getBoundingClientRect().left - items[0].getBoundingClientRect().left;
+      pendingShiftRef.current = -shift;
+      setOrder((prev) => [...prev.slice(1), prev[0]]);
+    } else if (index === 0 && items.length > 1) {
+      const shift = items[items.length - 1].getBoundingClientRect().left - items[items.length - 2].getBoundingClientRect().left;
+      pendingShiftRef.current = shift;
+      setOrder((prev) => [prev[prev.length - 1], ...prev.slice(0, -1)]);
+    }
+  }
+
+  // Compensates scrollLeft the instant the rotated order actually paints,
+  // so the rotation itself is invisible — the resting item is still
+  // exactly where the user left it, just no longer first/last in the DOM.
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || !pendingShiftRef.current) return;
+    el.scrollLeft += pendingShiftRef.current;
+    pendingShiftRef.current = 0;
+  }, [order]);
 
   // Fires once per resting position, for touch/trackpad/keyboard scroll
   // (handled entirely by native CSS scroll-snap, no JS involved above) as
@@ -81,6 +134,7 @@ export default function DragScrollCarousel({ children, className }: { children: 
     scrollTrackTimer.current = setTimeout(() => {
       const nearest = findNearestItem(el);
       if (nearest) trackEvent('carousel_scroll', { item_index: nearest.index });
+      maybeRotate();
     }, 150);
   }
 
@@ -153,7 +207,7 @@ export default function DragScrollCarousel({ children, className }: { children: 
       onMouseLeave={stopDrag}
       onScroll={onScroll}
     >
-      {children}
+      {circular ? orderedChildren : children}
     </div>
   );
 }

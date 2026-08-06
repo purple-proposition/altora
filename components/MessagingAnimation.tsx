@@ -103,7 +103,12 @@ function Message({ message }: { message: MessageData }) {
   );
 }
 
-export default function MessagingAnimation() {
+// `loop`=false renders the same static starting messages with none of
+// the timers/observer that drive the perpetual cycle — same purpose as
+// KanbanAnimation's own `loop` prop, used for the carousel's tail clones
+// so looping the carousel back around doesn't mean running a second
+// live copy of the animation alongside the real one.
+export default function MessagingAnimation({ loop = true }: { loop?: boolean }) {
   const [messages, setMessages] = useState<MessageData[]>(initialMessages);
   const boardRef = useRef<HTMLDivElement>(null);
 
@@ -119,6 +124,7 @@ export default function MessagingAnimation() {
   const firstRectsRef = useRef<Map<string, DOMRect>>(new Map());
 
   useEffect(() => {
+    if (!loop) return;
     const el = boardRef.current;
     if (!el) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

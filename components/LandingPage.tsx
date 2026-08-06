@@ -230,8 +230,8 @@ export default function LandingPage() {
             </p>
           </div>
           <CalendarSyncProvider>
-          <DragScrollCarousel className="landing-showcase-carousel">
-            <div className="landing-showcase-carousel-item">
+          <DragScrollCarousel className="landing-showcase-carousel" circular>
+            <div className="landing-showcase-carousel-item" key="kanban">
             <KanbanAnimation />
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
@@ -249,7 +249,7 @@ export default function LandingPage() {
             </div>
             </div>
 
-            <div className="landing-showcase-carousel-item">
+            <div className="landing-showcase-carousel-item" key="messaging">
             <MessagingAnimation />
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
@@ -265,7 +265,7 @@ export default function LandingPage() {
             </div>
             </div>
 
-            <div className="landing-showcase-carousel-item">
+            <div className="landing-showcase-carousel-item" key="calendar">
             <HeroCalendar />
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
@@ -280,7 +280,7 @@ export default function LandingPage() {
             </div>
             </div>
 
-            <div className="landing-showcase-carousel-item">
+            <div className="landing-showcase-carousel-item" key="documents">
             <div className="documents-grid landing-documents-board">
               <div className="folder-card">
                 <div className="folder-card-header">
@@ -398,30 +398,6 @@ export default function LandingPage() {
                 administratifs, sans passer par la boîte mail. Ces
                 documents restent stockés localement et ne transitent
                 jamais par nos serveurs, pour garantir leur confidentialité.
-              </p>
-            </div>
-            </div>
-
-            {/* Loops the carousel back to "À faire" right after Documents
-                (the last real slide) so scrolling right never dead-ends —
-                loop={false} renders the same static starting board with
-                none of KanbanAnimation's own timers/observer, so this
-                isn't a second live copy of the animation running
-                alongside the real one, just its resting-state markup. */}
-            <div className="landing-showcase-carousel-item landing-showcase-carousel-item--tail" aria-hidden>
-            <KanbanAnimation loop={false} />
-            <div className="landing-showcase-caption">
-              <div className="landing-showcase-caption-header">
-                <div className="landing-feature-icon"><Icon name="list-checks" /></div>
-                <h3 className="landing-showcase-caption-title">À faire</h3>
-              </div>
-              <p className="landing-feature-text">
-                Chaque étudiant suit ses candidatures sur un tableau
-                unique, avec les offres qu&apos;il ajoute et celles
-                suggérées par l&apos;école. L&apos;équipe pédagogique
-                s&apos;appuie sur ce même tableau pour ses points de suivi :
-                où il en est, à quoi il a déjà postulé, s&apos;il faut
-                relancer.
               </p>
             </div>
             </div>

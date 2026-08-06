@@ -5152,10 +5152,20 @@ legend.field-label { padding: 0; }
 .landing-inbox-message { position: relative; padding: 10px 12px; gap: 8px; min-width: 0; transition: background-color 0.6s ease, border-color 0.6s ease; }
 .landing-inbox-message--unread { background: var(--bg); border-color: transparent; }
 .landing-inbox-message--read { background: var(--card-bg); }
-/* The unread dot always renders (see MessagingAnimation.tsx) — marking a
-   message read toggles this class instead of unmounting the dot, so it
-   shrinks/fades out smoothly rather than just disappearing. */
-.landing-messaging-board .inbox-message-unread-dot { transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1); }
+/* Both the dot and the time are anchored straight to the card (hence
+   .landing-inbox-message needing position:relative) rather than placed
+   in normal flow — that's what lets the time slide smoothly from "4px
+   left of the dot" to "flush at the card edge" as the dot fades out,
+   instead of the two being independently laid out and just happening to
+   line up. The dot sits fixed at 16px from the edge always; only the
+   time's own `right` moves. */
+.landing-messaging-board .inbox-message-unread-dot {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  margin-top: 0;
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
 .landing-messaging-board .inbox-message-unread-dot.is-read { opacity: 0; transform: scale(0.4); }
 /* gap:0 + explicit margins instead of a shared gap, so the sender→
    subject spacing can be halved independently of subject→preview. */
@@ -5163,15 +5173,17 @@ legend.field-label { padding: 0; }
 .landing-messaging-board .inbox-message-top { flex-wrap: wrap; gap: 4px; margin-bottom: 1px; }
 .landing-messaging-board .inbox-message-sender { font-size: 12px; }
 .landing-messaging-board .inbox-message-subject { font-size: 14px; margin: 0 0 2px; }
-/* Absolute rather than the row's own margin-left:auto: an unread
-   message's dot sits after .inbox-message-body as a sibling, so
-   right-aligning within the body alone would land at a different
-   distance from the card edge depending on whether that dot is present.
-   Anchoring straight to the card (which is what .landing-inbox-message
-   needs position:relative for) always lands exactly 16px from its
-   right edge, unread dot or not. .inbox-message-body's own
-   padding-right above keeps the sender name from running under it. */
-.landing-messaging-board .inbox-message-time { position: absolute; top: 10px; right: 16px; margin-left: 0; font-size: 12px; }
+/* 16px (card edge) + 8px (dot) + 4px (gap) = 28px while unread; slides
+   to a flush 16px once the dot has faded away on the read transition. */
+.landing-messaging-board .inbox-message-time {
+  position: absolute;
+  top: 10px;
+  right: 28px;
+  margin-left: 0;
+  font-size: 12px;
+  transition: right 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.landing-messaging-board .landing-inbox-message--read .inbox-message-time { right: 16px; }
 .landing-messaging-board .inbox-message-preview {
   font-size: 12px;
   overflow: hidden;
@@ -5180,7 +5192,6 @@ legend.field-label { padding: 0; }
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.landing-messaging-board .inbox-message-unread-dot { margin-top: 2px; }
 
 .landing-inbox-avatar {
   display: flex;
