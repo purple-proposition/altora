@@ -3785,11 +3785,16 @@ legend.field-label { padding: 0; }
    4-9), same k=6 formula as .landing-preview-shell below (50vw - 36px).
    Centering 6 of 12 columns lands symmetrically on its own (3 free
    columns each side), so margin:0 auto still works unchanged. */
+/* Top padding clears the sticky nav above (this section's own content
+   need, first thing on the page, nothing to space away from) — bottom
+   is 0 on purpose: the 96px gap to the next section comes from that
+   section's own margin-top below, one single rule per gap instead of
+   each side contributing an uncoordinated half. */
 .landing-hero {
   max-width: calc(50vw - 36px);
   width: 100%;
   margin: 0 auto;
-  padding: var(--space-96) var(--space-24) var(--space-48);
+  padding: var(--space-96) var(--space-24) 0;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -4231,11 +4236,16 @@ legend.field-label { padding: 0; }
    whole promotion. Each gets its own card, bullet points, and CTA rather
    than a single generic "features" list, so each visitor sees their own
    use case first. */
+/* margin-top, not vertical padding: this section has no visible
+   border/background of its own, so padding here was indistinguishable
+   from margin — moved to the shared 96px inter-section rhythm instead
+   of an independent value that had to be eyeballed against its
+   neighbors. */
 .landing-categories {
   max-width: 1120px;
   width: 100%;
-  margin: 0 auto;
-  padding: var(--space-32) var(--space-24);
+  margin: var(--space-96) auto 0;
+  padding: 0 var(--space-24);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-24);
@@ -4345,10 +4355,18 @@ legend.field-label { padding: 0; }
    full-bleed breakout itself (once), so every row can just be width:
    100% of a correctly-sized parent instead of repeating the breakout
    math 6 times. */
+/* Vertical padding removed in favor of margin-top (see .landing-
+   categories above for why) — margin-left stays: that's the full-bleed
+   breakout, a horizontal concern, unrelated to the vertical gap. gap:
+   96px below is a separate rhythm (between this section's own rows),
+   coincidentally the same number as the inter-section one but not the
+   same rule — don't conflate the two if either ever needs to change
+   independently. */
 .landing-showcase {
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
-  padding: var(--space-32) calc(16.6667vw - 4px);
+  margin-top: var(--space-96);
+  padding: 0 calc(16.6667vw - 4px);
   display: flex;
   flex-direction: column;
   gap: var(--space-96);
@@ -5550,10 +5568,13 @@ legend.field-label { padding: 0; }
 }
 .quote-modal-success .quote-modal-text { margin-bottom: 0; }
 
+/* border-top is a thin separator, not a filled card — its own padding
+   (24px) is still genuinely internal (space between the text and that
+   line), margin-top is the external 96px gap from the FAQ above it. */
 .landing-footer {
   max-width: 1120px;
   width: 100%;
-  margin: 0 auto;
+  margin: var(--space-96) auto 0;
   padding: var(--space-24);
   display: flex;
   align-items: center;
@@ -5575,10 +5596,16 @@ legend.field-label { padding: 0; }
    above (k=8, N=12, g=24, m=24 simplifies to 66.6667vw - 40px) — with
    an actual card look (white background, border, radius, shadow)
    instead of just blending into the page's own --bg. */
+/* The one section here with a visible box of its own (border/background/
+   shadow) — its padding is genuinely internal (content-to-border
+   breathing room, kept as-is) and separate from margin-top, the
+   external gap to the section before it. Every other section in this
+   file is borderless, where padding and margin read as the same
+   whitespace — not the case here. */
 .landing-closing {
   max-width: calc(66.6667vw - 40px);
   width: 100%;
-  margin: 0 auto;
+  margin: var(--space-96) auto 0;
   text-align: center;
   padding: var(--space-96) var(--space-24);
   background: var(--card-bg);
@@ -5662,7 +5689,7 @@ legend.field-label { padding: 0; }
   .landing-features-title { font-size: 28px; }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: 16px; }
-  .landing-hero { max-width: 100%; padding: 64px 24px 40px; }
+  .landing-hero { max-width: 100%; padding: 64px 24px 0; }
   /* Below 720px there's no room for the full "Contacter un expert"
      label next to the logo, so the nav's own CTA collapses to the same
      icon-only square as .landing-nav--scrolled, unconditionally here,
@@ -5776,8 +5803,8 @@ legend.field-label { padding: 0; }
 .pricing-hero {
   max-width: 640px;
   width: 100%;
-  margin: 0 auto;
-  padding: 64px 24px 48px;
+  margin: var(--space-96) auto 0;
+  padding: 0 24px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -5801,8 +5828,8 @@ legend.field-label { padding: 0; }
 .pricing-plans {
   max-width: 1120px;
   width: 100%;
-  margin: 0 auto;
-  padding: 32px 24px 96px;
+  margin: var(--space-96) auto 0;
+  padding: 0 24px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
@@ -5918,8 +5945,8 @@ legend.field-label { padding: 0; }
 .pricing-faq {
   max-width: 720px;
   width: 100%;
-  margin: 0 auto;
-  padding: 32px 24px 96px;
+  margin: var(--space-96) auto 0;
+  padding: 0 24px;
 }
 
 .pricing-faq-title {
