@@ -242,6 +242,18 @@ export default function KanbanAnimation() {
       if (cardEl) {
         cardEl.classList.remove('card--slate', 'card--amber', 'card--green');
         cardEl.classList.add(`card--${variant}`);
+        // "Générer CV" only makes sense while an offer is still in "À
+        // faire" — once it's sent or in interview, collapse it away
+        // (fade + shrink, negative margin canceling the row's own gap)
+        // rather than have it just vanish.
+        const generateLink = cardEl.querySelector<HTMLElement>('.card-link--generate');
+        if (generateLink) {
+          generateLink.style.transition = 'opacity 0.6s ease, max-width 0.6s cubic-bezier(0.65, 0, 0.35, 1), margin-left 0.6s cubic-bezier(0.65, 0, 0.35, 1)';
+          generateLink.style.opacity = '0';
+          generateLink.style.maxWidth = '0px';
+          generateLink.style.marginLeft = '-8px';
+          generateLink.style.pointerEvents = 'none';
+        }
       }
     }
 

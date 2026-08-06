@@ -5044,6 +5044,17 @@ legend.field-label { padding: 0; }
 .landing-kanban-board .card-meta-item .lucide { width: 10px; height: 10px; }
 .landing-kanban-board .card-link-row { gap: 8px; }
 .landing-kanban-board .card-link { font-size: 10px; gap: 3px; }
+/* Base state has an explicit max-width/margin (rather than relying on
+   intrinsic sizing) so both can be transitioned down to 0 when a card
+   settles into "Envoyé"/"Entretien" — see the recolor() DOM edits in
+   KanbanAnimation.tsx. The negative margin cancels .card-link-row's own
+   gap once collapsed, so no dead space is left behind. */
+.landing-kanban-board .card-link--generate {
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100px;
+  margin-left: 0;
+}
 .landing-kanban-board .card-link .lucide { width: 10px; height: 10px; }
 .landing-kanban-board .card-school-badge { margin-bottom: 6px; padding: 2px 6px; gap: 4px; font-size: 9px; }
 .landing-kanban-board .card-school-badge .lucide { width: 9px; height: 9px; }
@@ -5106,7 +5117,7 @@ legend.field-label { padding: 0; }
 }
 .landing-inbox-avatar--person { position: relative; overflow: hidden; }
 .landing-inbox-avatar--person img { object-fit: cover; }
-.landing-inbox-avatar--school { background: var(--indigo-tint); color: var(--indigo); }
+.landing-inbox-avatar--school { background: var(--indigo-tint); color: var(--indigo); border-color: transparent; }
 .landing-inbox-avatar--school .lucide { width: 14px; height: 14px; }
 
 /* Third carousel slide: a scaled-down but faithful copy of the real
@@ -5161,7 +5172,7 @@ legend.field-label { padding: 0; }
   overflow: hidden;
 }
 .landing-calendar-day--muted { background: var(--bg); color: var(--text-muted); }
-.landing-calendar-day--ferie { background: var(--rose-tint); }
+.landing-calendar-day--ferie { background: var(--rose-tint); border-color: transparent; }
 
 /* Cross-references the "Le 5 août à 10h30" interview pill on the L'Oréal
    card in .landing-kanban-board: same target icon, and now the exact
@@ -5204,11 +5215,11 @@ legend.field-label { padding: 0; }
 .landing-calendar-day--today.landing-calendar-day--examen { border-color: var(--green); color: var(--green); box-shadow: 0 2px 8px color-mix(in srgb, var(--green) 35%, transparent); }
 .landing-calendar-day--today.landing-calendar-day--entreprise { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 2px 8px color-mix(in srgb, var(--cyan) 35%, transparent); }
 .landing-calendar-day--today.landing-calendar-day--examen-oral { border-color: var(--violet); color: var(--violet); box-shadow: 0 2px 8px color-mix(in srgb, var(--violet) 35%, transparent); }
-.landing-calendar-day--formation { background: var(--indigo-tint); }
-.landing-calendar-day--conges { background: var(--amber-tint); }
-.landing-calendar-day--examen { background: var(--green-tint); }
-.landing-calendar-day--entreprise { background: var(--cyan-tint); }
-.landing-calendar-day--examen-oral { background: var(--violet-tint); }
+.landing-calendar-day--formation { background: var(--indigo-tint); border-color: transparent; }
+.landing-calendar-day--conges { background: var(--amber-tint); border-color: transparent; }
+.landing-calendar-day--examen { background: var(--green-tint); border-color: transparent; }
+.landing-calendar-day--entreprise { background: var(--cyan-tint); border-color: transparent; }
+.landing-calendar-day--examen-oral { background: var(--violet-tint); border-color: transparent; }
 
 /* 4th carousel mockup: reuses the real .documents-grid/.folder-card/
    .doc-thumb-* classes from app/(tracker)/documents, arranged 2x2 instead
