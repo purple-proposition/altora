@@ -112,7 +112,7 @@ function Card({ card, pillRevealed }: { card: CardData; pillRevealed: boolean })
       </div>
       <div className="card-link-row">
         <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-        <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
+        <span className={`card-link card-link--generate${card.variant !== 'slate' ? ' is-hidden' : ''}`}><Icon name="sparkles" />Générer CV</span>
       </div>
       {card.interviewPill && (
         <span className={`card-interview-pill landing-kanban-pill${pillRevealed ? ' is-revealed' : ''}`}>
@@ -233,28 +233,24 @@ export default function KanbanAnimation() {
       setColumns(next);
     }
 
+    // A real commit (not a DOM hack): both the background color and the
+    // "Générer CV" collapse are driven declaratively off card.variant in
+    // the Card component/CSS, so they survive a card remounting into a
+    // different column's own <div className="card-list"> (React treats
+    // that as a fresh element, not the same node moved — any styling
+    // applied by directly poking the DOM would be lost the moment that
+    // happens, then reappear once poked again, which is exactly the
+    // flash previously seen on "Générer CV" when a card changed column).
+    // Passing no movedIds means this render leaves every card's position
+    // alone — safe now that the FLIP effect only ever touches ids it's
+    // explicitly told to.
     function recolor(id: string, variant: Variant) {
-      for (const key of ['todo', 'sent', 'interview'] as const) {
-        const idx = pipelineRef.current[key].findIndex((c) => c.id === id);
-        if (idx !== -1) pipelineRef.current[key][idx] = { ...pipelineRef.current[key][idx], variant };
-      }
-      const cardEl = boardRef.current?.querySelector<HTMLElement>(`[data-flip-id="${id}"]`);
-      if (cardEl) {
-        cardEl.classList.remove('card--slate', 'card--amber', 'card--green');
-        cardEl.classList.add(`card--${variant}`);
-        // "Générer CV" only makes sense while an offer is still in "À
-        // faire" — once it's sent or in interview, collapse it away
-        // (fade + shrink, negative margin canceling the row's own gap)
-        // rather than have it just vanish.
-        const generateLink = cardEl.querySelector<HTMLElement>('.card-link--generate');
-        if (generateLink) {
-          generateLink.style.transition = 'opacity 0.6s ease, max-width 0.6s cubic-bezier(0.65, 0, 0.35, 1), margin-left 0.6s cubic-bezier(0.65, 0, 0.35, 1)';
-          generateLink.style.opacity = '0';
-          generateLink.style.maxWidth = '0px';
-          generateLink.style.marginLeft = '-8px';
-          generateLink.style.pointerEvents = 'none';
+      commit((cols) => {
+        for (const key of ['todo', 'sent', 'interview'] as const) {
+          const idx = cols[key].findIndex((c) => c.id === id);
+          if (idx !== -1) cols[key][idx] = { ...cols[key][idx], variant };
         }
-      }
+      });
     }
 
     function fadeOut(id: string, done: () => void) {
@@ -369,6 +365,24 @@ export default function KanbanAnimation() {
       seenIdsRef.current.add(id);
       if (reduceMotion) return;
 
+      // Once the transform/opacity transition below finishes, the inline
+      // `transition` is cleared back to '' — leaving it pinned to
+      // "transform ...ms ..." (or "opacity ...ms ..., transform ...ms
+      // ...") would otherwise permanently shadow the CSS class's own
+      // `background 1s linear` transition (inline styles always win over
+      // a stylesheet rule), which is why the color swap looked instant
+      // no matter how the CSS was tuned: every card that had ever moved
+      // or entered still had a stale inline transition blocking it.
+      function releaseTransitionAfter(duration: number) {
+        const timeoutId = setTimeout(clear, duration + 80);
+        cardEl.addEventListener('transitionend', clear, { once: true });
+        function clear() {
+          clearTimeout(timeoutId);
+          cardEl.removeEventListener('transitionend', clear);
+          cardEl.style.transition = '';
+        }
+      }
+
       if (isNew) {
         cardEl.style.transition = 'none';
         cardEl.style.opacity = '0';
@@ -382,6 +396,7 @@ export default function KanbanAnimation() {
             cardEl.style.transition = `opacity ${ENTRANCE_DURATION}ms ease, transform ${ENTRANCE_DURATION}ms cubic-bezier(0.34, 1.4, 0.64, 1)`;
             cardEl.style.opacity = '1';
             cardEl.style.transform = '';
+            releaseTransitionAfter(ENTRANCE_DURATION);
           });
         });
         return;
@@ -400,6 +415,7 @@ export default function KanbanAnimation() {
           requestAnimationFrame(() => {
             cardEl.style.transition = `transform ${MOVE_DURATION}ms cubic-bezier(0.65, 0, 0.35, 1)`;
             cardEl.style.transform = '';
+            releaseTransitionAfter(MOVE_DURATION);
           });
         });
       }

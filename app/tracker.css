@@ -5045,15 +5045,29 @@ legend.field-label { padding: 0; }
 .landing-kanban-board .card-link-row { gap: 8px; }
 .landing-kanban-board .card-link { font-size: 10px; gap: 3px; }
 /* Base state has an explicit max-width/margin (rather than relying on
-   intrinsic sizing) so both can be transitioned down to 0 when a card
-   settles into "Envoyé"/"Entretien" — see the recolor() DOM edits in
-   KanbanAnimation.tsx. The negative margin cancels .card-link-row's own
-   gap once collapsed, so no dead space is left behind. */
+   intrinsic sizing) so both can be transitioned down to 0 — driven by
+   the .is-hidden class KanbanAnimation.tsx's Card component adds once
+   card.variant leaves "slate" ("À faire"). Declarative on purpose: a
+   card moving column remounts as a fresh DOM node (different column =
+   different parent list in React), so anything applied by poking the
+   DOM directly would be lost on that remount and only reappear once
+   re-applied — this way the correct state always renders immediately,
+   remount or not. The negative margin cancels .card-link-row's own gap
+   once collapsed, so no dead space is left behind. */
 .landing-kanban-board .card-link--generate {
   overflow: hidden;
   white-space: nowrap;
   max-width: 100px;
   margin-left: 0;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.6s ease, max-width 0.6s cubic-bezier(0.65, 0, 0.35, 1), margin-left 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.landing-kanban-board .card-link--generate.is-hidden {
+  opacity: 0;
+  max-width: 0;
+  margin-left: -8px;
+  pointer-events: none;
 }
 .landing-kanban-board .card-link .lucide { width: 10px; height: 10px; }
 .landing-kanban-board .card-school-badge { margin-bottom: 6px; padding: 2px 6px; gap: 4px; font-size: 9px; }
@@ -5215,7 +5229,13 @@ legend.field-label { padding: 0; }
 .landing-calendar-day--today.landing-calendar-day--examen { border-color: var(--green); color: var(--green); box-shadow: 0 2px 8px color-mix(in srgb, var(--green) 35%, transparent); }
 .landing-calendar-day--today.landing-calendar-day--entreprise { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 2px 8px color-mix(in srgb, var(--cyan) 35%, transparent); }
 .landing-calendar-day--today.landing-calendar-day--examen-oral { border-color: var(--violet); color: var(--violet); box-shadow: 0 2px 8px color-mix(in srgb, var(--violet) 35%, transparent); }
-.landing-calendar-day--formation { background: var(--indigo-tint); border-color: transparent; }
+/* Not --indigo-tint: that token was flattened to var(--bg) in the
+   monochrome color cleanup, which makes it visually identical to
+   --muted's own background — a "formation" week would look exactly
+   like an out-of-month grey day. --violet-tint stays a real color and
+   isn't used by any of this calendar's other categories (examen/
+   conges/entreprise), so it reads as its own distinct week. */
+.landing-calendar-day--formation { background: var(--violet-tint); border-color: transparent; }
 .landing-calendar-day--conges { background: var(--amber-tint); border-color: transparent; }
 .landing-calendar-day--examen { background: var(--green-tint); border-color: transparent; }
 .landing-calendar-day--entreprise { background: var(--cyan-tint); border-color: transparent; }
