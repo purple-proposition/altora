@@ -1182,8 +1182,10 @@ body {
   opacity: 0.75;
 }
 
-/* AnimatedCount: a fixed-height clipped slot so the old/new digit can
-   slide past each other instead of just popping to the new value. */
+/* AnimatedCount: a fixed-height clipped slot so the incoming digit can
+   slide up/down into place instead of just popping to the new value —
+   see AnimatedCount.tsx for why this is a plain CSS animation on mount
+   (key-driven) rather than anything imperative. */
 .animated-count {
   position: relative;
   display: inline-block;
@@ -1193,7 +1195,19 @@ body {
   vertical-align: text-bottom;
 }
 .animated-count-digit { display: block; }
-.animated-count-old, .animated-count-new { position: absolute; inset: 0; }
+.animated-count-in-up { animation: animated-count-in-up 0.35s cubic-bezier(0.34, 1.4, 0.64, 1); }
+.animated-count-in-down { animation: animated-count-in-down 0.35s cubic-bezier(0.34, 1.4, 0.64, 1); }
+@keyframes animated-count-in-up {
+  from { opacity: 0; transform: translateY(60%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes animated-count-in-down {
+  from { opacity: 0; transform: translateY(-60%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animated-count-in-up, .animated-count-in-down { animation: none; }
+}
 
 .column-header--slate { background: var(--bg);          color: var(--text-muted); }
 .column-header--indigo{ background: var(--indigo-tint); color: var(--indigo); }

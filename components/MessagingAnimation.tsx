@@ -55,7 +55,7 @@ function initialMessages(): MessageData[] {
 
 const READ_STEP_PAUSE = 1800;
 const REMOVE_PAUSE = 2600;
-const ADD_PAUSE = 2600;
+const ADD_PAUSE = 800;
 const LOOP_PAUSE = 2800;
 const EXIT_DURATION = 800;
 const MOVE_DURATION = 700;
