@@ -193,8 +193,11 @@ export default function KanbanAnimation() {
   const movedIdsRef = useRef<Set<string>>(new Set());
   const firstRectsRef = useRef<Map<string, DOMRect>>(new Map());
   // ids ever rendered — anything not in here yet is a brand-new card and
-  // gets the fade/scale-in entrance instead of a FLIP move.
-  const seenIdsRef = useRef<Set<string>>(new Set());
+  // gets the fade/scale-in entrance instead of a FLIP move. Pre-seeded
+  // with the starting cards so the mockup is already fully in place,
+  // static, the moment it scrolls into view — only offers added later by
+  // the loop itself (beat1) get the entrance animation.
+  const seenIdsRef = useRef<Set<string>>(new Set([...columns.todo, ...columns.sent, ...columns.interview].map((c) => c.id)));
 
   useLayoutEffect(() => {
     if (!gaugeRef.current) return;
