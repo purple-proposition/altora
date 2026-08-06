@@ -124,6 +124,17 @@ function Card({ card, pillRevealed }: { card: CardData; pillRevealed: boolean })
 // date pill that "À faire"/"Envoyé" cards don't, so a single generic
 // column underestimates how tall the board can actually get once a real
 // interview column fills up with pills.
+// Distinct ids from the real cards: makeCard()'s id is derived only from
+// the pool template + cycle number, and the gauge reuses the same cycles
+// (0-8) as the real initial columns — without this prefix, the hidden
+// gauge cards and the real visible ones would share `data-flip-id`, and
+// board.querySelector(...) inside the FLIP effect could pick up the
+// wrong (hidden, static) element, corrupting a card's measured start
+// position and making it appear to jump the wrong way.
+function gaugeCard(cycle: number, variant: Variant): CardData {
+  return { ...makeCard(cycle, variant), id: `gauge-${cycle}` };
+}
+
 function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => void }) {
   return (
     <div className="landing-kanban-board" ref={gaugeRef} aria-hidden style={{ visibility: 'hidden', position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: -1 }}>
@@ -132,7 +143,7 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
           <Icon name="circle-dashed" /><span className="column-header-label">À faire</span><span className="column-header-count">0</span>
         </div>
         <div className="card-list">
-          {[0, 1, 2].map((i) => <Card key={i} card={makeCard(i, 'slate')} pillRevealed />)}
+          {[0, 1, 2].map((i) => <Card key={i} card={gaugeCard(i, 'slate')} pillRevealed />)}
         </div>
       </div>
       <div className="column">
@@ -140,7 +151,7 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
           <Icon name="hourglass" /><span className="column-header-label">Envoyé</span><span className="column-header-count">0</span>
         </div>
         <div className="card-list">
-          {[3, 4, 5].map((i) => <Card key={i} card={makeCard(i, 'amber')} pillRevealed />)}
+          {[3, 4, 5].map((i) => <Card key={i} card={gaugeCard(i, 'amber')} pillRevealed />)}
         </div>
       </div>
       <div className="column">
@@ -148,7 +159,7 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
           <Icon name="target" /><span className="column-header-label">Entretien</span><span className="column-header-count">0</span>
         </div>
         <div className="card-list">
-          {[6, 7, 8].map((i) => <Card key={i} card={{ ...makeCard(i, 'green'), interviewPill: PILL_DATES[i % PILL_DATES.length] }} pillRevealed />)}
+          {[6, 7, 8].map((i) => <Card key={i} card={{ ...gaugeCard(i, 'green'), interviewPill: PILL_DATES[i % PILL_DATES.length] }} pillRevealed />)}
         </div>
       </div>
     </div>
