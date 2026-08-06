@@ -5568,13 +5568,18 @@ legend.field-label { padding: 0; }
 }
 .quote-modal-success .quote-modal-text { margin-bottom: 0; }
 
-/* border-top is a thin separator, not a filled card — its own padding
-   (24px) is still genuinely internal (space between the text and that
-   line), margin-top is the external 96px gap from the FAQ above it. */
+/* Standard landing-page convention, applied deliberately here rather
+   than as a one-off tweak: a footer is chrome (like the nav), not a
+   content section — it already reads as visually separate via its own
+   border-top, so it doesn't need the full 96px content-section rhythm
+   on top of that. Half the value (48px) is the general rule for any
+   trailing chrome element that closes a page, not a footer-specific
+   exception. Its own 24px padding stays internal (space between the
+   text and that line). */
 .landing-footer {
   max-width: 1120px;
   width: 100%;
-  margin: var(--space-96) auto 0;
+  margin: var(--space-48) auto 0;
   padding: var(--space-24);
   display: flex;
   align-items: center;
