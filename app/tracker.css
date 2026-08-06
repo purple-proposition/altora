@@ -9,7 +9,6 @@
 
   /* Accent colors follow Tailwind's default palette (50/100/500/600) */
   --indigo: #171717;       /* was #4f46e5 (indigo-600) — replaced site-wide per request, kept only on the "école" feature icon (see .landing-feature-icon--school) */
-  --indigo-fill: #6366f1;  /* indigo-500 */
   --indigo-tint: var(--bg); /* was #eef2ff (indigo-50) — neutral now, same monochrome cleanup as --indigo above */
   --indigo-track: #e0e7ff; /* indigo-100 */
 
@@ -3640,6 +3639,7 @@ legend.field-label { padding: 0; }
 .landing-nav-cta {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0;
   height: 41px;
   padding: var(--space-12) var(--space-20);
@@ -3657,7 +3657,7 @@ legend.field-label { padding: 0; }
   outline: none;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.35s ease, border-radius 0.35s cubic-bezier(0.48, 0.72, 0, 1), width 0.35s cubic-bezier(0.48, 0.72, 0, 1);
 }
-.landing-nav-cta:hover { background: var(--indigo-fill); }
+.landing-nav-cta:hover { background: var(--text-muted); }
 
 .landing-nav-cta-icon {
   display: inline-flex;
@@ -3685,13 +3685,9 @@ legend.field-label { padding: 0; }
   width: 41px;
   padding: 0;
   border-radius: var(--radius-input);
-  border-color: var(--border);
-  background: var(--card-bg);
-  color: var(--text-muted);
 }
 .landing-nav--scrolled .landing-nav-cta:hover {
-  background: var(--bg);
-  color: var(--text);
+  background: var(--text-muted);
 }
 .landing-nav--scrolled .landing-nav-cta-text {
   max-width: 0;
@@ -4270,7 +4266,7 @@ legend.field-label { padding: 0; }
   color: var(--indigo);
   text-decoration: none;
 }
-.landing-category-cta:hover { color: var(--indigo-fill); }
+.landing-category-cta:hover { color: var(--text-muted); }
 .landing-category-cta .lucide { width: 16px; height: 16px; }
 
 .landing-category-cta--soon {
@@ -4836,23 +4832,18 @@ legend.field-label { padding: 0; }
 /* The fake personalized offer that appears once every step has lit up,
    reuses the real kanban .card classes (see .landing-kanban-board's own
    scoped sizing above) so it reads as the actual product, not a mockup
-   of a mockup. Mounted collapsed (max-height: 0) then flipped to
-   .is-open a frame later (see MatchingAnimation.tsx), so the card's own
-   footprint grows smoothly instead of the whole mockup jumping taller
-   the instant it's added to the DOM — a max-height transition is the
-   only way to ease a height that's naturally "auto", a plain opacity/
-   translateY fade on the child doesn't smooth the parent's own reflow. */
-.landing-matching-offer {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transform: scale(0.97);
-  transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+   of a mockup. It's present from the start (so the mockup's own height
+   never jumps once the steps finish) but blurred/dimmed, then unblurs
+   in place, reading as "the result was being prepared behind the scenes"
+   rather than appearing out of nowhere. */
+.landing-matching-offer .border-beam {
+  filter: blur(6px);
+  opacity: 0.5;
+  transition: filter 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.landing-matching-offer.is-open {
-  max-height: 260px;
+.landing-matching-offer.is-revealed .border-beam {
+  filter: blur(0);
   opacity: 1;
-  transform: scale(1);
 }
 .landing-matching-offer .card { padding: 10px; gap: 6px; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
 .landing-matching-offer .card-heading { font-size: 14px; line-height: 1.35; }
@@ -4860,11 +4851,24 @@ legend.field-label { padding: 0; }
 .landing-matching-offer .card-company { font-weight: 700; }
 .landing-matching-offer .card-heading-sep { font-weight: 400; }
 .landing-matching-offer .card-meta-row { gap: 6px; }
-.landing-matching-offer .card-meta-item { font-size: 12px; gap: 3px; }
-.landing-matching-offer .card-meta-item .lucide { width: 12px; height: 12px; }
+.landing-matching-offer .card-meta-item { font-size: 14px; gap: 4px; }
+.landing-matching-offer .card-meta-item .lucide { width: 14px; height: 14px; }
 .landing-matching-offer .card-link-row { gap: 8px; }
-.landing-matching-offer .card-link { font-size: 12px; gap: 3px; }
-.landing-matching-offer .card-link .lucide { width: 12px; height: 12px; }
+.landing-matching-offer .card-link { font-size: 14px; gap: 4px; }
+.landing-matching-offer .card-link .lucide { width: 14px; height: 14px; }
+
+/* "Générer CV" moves up next to the personalization badge instead of
+   sitting alongside "Voir l'offre" (the real dashboard's own layout),
+   so the AI-generated action reads as a header-level shortcut on this
+   mockup rather than a third link crowding the bottom row. */
+.landing-matching-offer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  margin-bottom: 6px;
+}
+.landing-matching-offer-top .card-personalized-badge { margin-bottom: 0; }
 
 /* Personalization badge, same pill shape as .card-school-badge but in
    violet, the site's established "IA-attributed content" color (see
@@ -4886,6 +4890,83 @@ legend.field-label { padding: 0; }
 .card-personalized-badge .lucide { width: 12px; height: 12px; }
 .landing-matching-offer .card-personalized-badge { margin-bottom: 6px; padding: 2px 6px; gap: 4px; font-size: 9px; }
 .landing-matching-offer .card-personalized-badge .lucide { width: 9px; height: 9px; }
+
+/* BorderBeam.tsx: a rotating highlight ring wrapped around any container
+   that shows an AI-generated result (the ATS match score, the copilot
+   suggestions, the personalized offer), so it reads as "live/generated"
+   rather than a static card. The ::before ring is masked to just the
+   border (padding + double-layer mask-composite: exclude) then rotated
+   with a plain transform, works without @property support (Firefox
+   included), unlike animating a conic-gradient's own angle directly. */
+/* No default width: the wrapped card (.landing-match-card, max-width
+   320px; .landing-copilot-card, width: 100%) already declares its own
+   sizing, and both sit inside a flex .landing-showcase-visual that
+   centers a shrink-to-fit child. Forcing width: 100% here would instead
+   stretch the beam to the full flex container and left-align the capped
+   ATS card inside it, since the parent's justify-content: center no
+   longer has anything narrower than itself to center. */
+.border-beam {
+  position: relative;
+  display: block;
+  border-radius: var(--radius-card);
+  isolation: isolate;
+}
+/* The personalized offer's own card is scoped down to --radius-inner
+   (see .landing-kanban-board's compact sizing convention), so the beam
+   wrapping it needs to match that tighter radius instead of the default
+   --radius-card the other two (larger, unscoped) result cards use. It
+   also needs its own explicit width: 100%, .landing-matching-card is a
+   plain flex column (no centering to preserve), not the ATS/copilot
+   rows' centered flex row. */
+.landing-matching-offer .border-beam { width: 100%; border-radius: var(--radius-inner); }
+/* .landing-copilot-card itself is width: 100% with no max-width (unlike
+   the ATS card), so its beam wrapper needs the same explicit full width
+   to keep filling .landing-showcase-visual the way the card did before
+   it was wrapped. */
+.landing-showcase-row--priorise .border-beam { width: 100%; }
+.border-beam::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 260deg,
+    color-mix(in srgb, var(--beam-color) calc(var(--beam-strength) * 100%), transparent) 300deg,
+    var(--beam-color) 335deg,
+    color-mix(in srgb, var(--beam-color) calc(var(--beam-strength) * 100%), transparent) 355deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: border-beam-spin 3.2s linear infinite;
+  pointer-events: none;
+}
+@keyframes border-beam-spin {
+  to { transform: rotate(360deg); }
+}
+.border-beam--violet { --beam-color: var(--violet); }
+.border-beam--mono { --beam-color: var(--text); }
+/* "pulse-inner": adds a soft breathing glow just inside the ring, on top
+   of the rotating beam, for results meant to draw a bit more attention
+   (the personalized offer) than a plain steady scan (the score cards). */
+.border-beam--pulse-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 16px color-mix(in srgb, var(--beam-color) calc(var(--beam-strength) * 40%), transparent);
+  animation: border-beam-pulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes border-beam-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
 
 /* Kanban mockup ("suivi pédagogique" showcase row) — reuses the real
    board's own classes (.column, .card, .card-title, .card-school-badge,
@@ -5592,17 +5673,15 @@ legend.field-label { padding: 0; }
   .landing-hero { max-width: 100%; padding: 64px 24px 40px; }
   /* Below 720px there's no room for the full "Contacter un expert"
      label next to the logo, so the nav's own CTA collapses to the same
-     bordered icon-only square as .landing-nav--scrolled, unconditionally
-     here, triggered by viewport width instead of scroll position. Scoped
-     to .landing-nav specifically, this class is reused unscoped
-     elsewhere on the page (hero, pricing, closing) where there's room
-     for the full label and it should stay a full indigo pill. */
+     icon-only square as .landing-nav--scrolled, unconditionally here,
+     triggered by viewport width instead of scroll position. Scoped to
+     .landing-nav specifically, this class is reused unscoped elsewhere
+     on the page (hero, pricing, closing) where there's room for the
+     full label and it should stay a full indigo pill. */
   .landing-nav .landing-nav-cta {
     width: 41px;
     padding: 0;
-    border-color: var(--border);
-    background: var(--card-bg);
-    color: var(--text-muted);
+    border-radius: var(--radius-input);
   }
   .landing-nav .landing-nav-cta-text {
     max-width: 0;

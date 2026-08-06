@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import MatchingAnimation from '@/components/MatchingAnimation';
+import BorderBeam from '@/components/BorderBeam';
 import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
@@ -711,18 +712,20 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="landing-showcase-visual">
-            <div className="landing-match-card">
-              <CountUpPercent value={84} />
-              <div className="landing-match-label">de compatibilité ATS avec l&apos;offre</div>
-              <ul className="landing-match-notes">
-                <li className="is-positive"><Icon name="check-circle" />Suite Adobe, CRM et gestion de campagnes maîtrisés</li>
-                <li className="is-positive"><Icon name="check-circle" />Disponibilité alignée avec la date de début de l&apos;offre</li>
-                <li className="is-warning"><Icon name="circle-help" />Aucune certification Adobe mentionnée</li>
-                <li className="is-warning"><Icon name="circle-help" />Ne maîtrise pas l&apos;espagnol, demandé dans l&apos;offre</li>
-                <li className="is-ai"><Icon name="sparkles" />Verbes d&apos;action renforcés : administre, pilote, anime</li>
-                <li className="is-ai"><Icon name="sparkles" />Compétences réordonnées par pertinence pour ce poste</li>
-              </ul>
-            </div>
+            <BorderBeam size="pulse-inner" colorVariant="violet" strength={0.6}>
+              <div className="landing-match-card">
+                <CountUpPercent value={84} />
+                <div className="landing-match-label">de compatibilité ATS avec l&apos;offre</div>
+                <ul className="landing-match-notes">
+                  <li className="is-positive"><Icon name="check-circle" />Suite Adobe, CRM et gestion de campagnes maîtrisés</li>
+                  <li className="is-positive"><Icon name="check-circle" />Disponibilité alignée avec la date de début de l&apos;offre</li>
+                  <li className="is-warning"><Icon name="circle-help" />Aucune certification Adobe mentionnée</li>
+                  <li className="is-warning"><Icon name="circle-help" />Ne maîtrise pas l&apos;espagnol, demandé dans l&apos;offre</li>
+                  <li className="is-ai"><Icon name="sparkles" />Verbes d&apos;action renforcés : administre, pilote, anime</li>
+                  <li className="is-ai"><Icon name="sparkles" />Compétences réordonnées par pertinence pour ce poste</li>
+                </ul>
+              </div>
+            </BorderBeam>
           </div>
         </Reveal>
 
@@ -736,20 +739,22 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="landing-showcase-visual">
-            <div className="landing-copilot-card">
-              <div className="landing-copilot-item landing-copilot-item--warning">
-                <Icon name="target" />
-                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
+            <BorderBeam size="pulse-inner" colorVariant="violet" strength={0.6}>
+              <div className="landing-copilot-card">
+                <div className="landing-copilot-item landing-copilot-item--warning">
+                  <Icon name="target" />
+                  <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
+                </div>
+                <div className="landing-copilot-item landing-copilot-item--positive">
+                  <Icon name="check-circle" />
+                  <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
+                </div>
+                <div className="landing-copilot-item landing-copilot-item--urgent">
+                  <Icon name="circle-alert" />
+                  <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
+                </div>
               </div>
-              <div className="landing-copilot-item landing-copilot-item--positive">
-                <Icon name="check-circle" />
-                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
-              </div>
-              <div className="landing-copilot-item landing-copilot-item--urgent">
-                <Icon name="circle-alert" />
-                <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
-              </div>
-            </div>
+            </BorderBeam>
           </div>
         </Reveal>
 

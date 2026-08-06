@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
+import BorderBeam from '@/components/BorderBeam';
 
 // Same one-shot-reveal pattern as CountUpPercent: observe once, disconnect
 // immediately, then run the animation logic, so scrolling back up and down
@@ -15,8 +16,7 @@ const STEPS = [
 export default function MatchingAnimation() {
   const ref = useRef<HTMLDivElement>(null);
   const [activeCount, setActiveCount] = useState(0);
-  const [showOffer, setShowOffer] = useState(false);
-  const [offerOpen, setOfferOpen] = useState(false);
+  const [offerRevealed, setOfferRevealed] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -29,23 +29,13 @@ export default function MatchingAnimation() {
         STEPS.forEach((_, i) => {
           timeouts.push(setTimeout(() => setActiveCount(i + 1), 400 * (i + 1)));
         });
-        timeouts.push(setTimeout(() => setShowOffer(true), 400 * (STEPS.length + 1) + 300));
+        timeouts.push(setTimeout(() => setOfferRevealed(true), 400 * (STEPS.length + 1) + 300));
       },
       { threshold: 0.4 }
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
-  // Mount the offer collapsed (max-height: 0) first, then flip it open a
-  // frame later so the CSS transition below actually has a "before" state
-  // to ease from, instead of the card popping to full height the instant
-  // it mounts.
-  useEffect(() => {
-    if (!showOffer) return;
-    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setOfferOpen(true)));
-    return () => cancelAnimationFrame(raf);
-  }, [showOffer]);
 
   return (
     <div className="landing-matching-card" ref={ref}>
@@ -56,19 +46,24 @@ export default function MatchingAnimation() {
               <Icon name={step.icon} />
             </div>
             <div className="landing-matching-step-body">
-              <p className="landing-matching-step-label">{step.label}</p>
               <p className="landing-matching-step-result">{step.result}</p>
             </div>
           </div>
         ))}
       </div>
-      {showOffer && (
-        <div className={`landing-matching-offer${offerOpen ? ' is-open' : ''}`}>
+      <div className={`landing-matching-offer${offerRevealed ? ' is-revealed' : ''}`}>
+        <BorderBeam size="pulse-inner" colorVariant="violet" strength={0.6}>
           <div className="card card--slate">
-            <span className="card-personalized-badge">
-              <Icon name="sparkles" />
-              Spécialement pour vous
-            </span>
+            <div className="landing-matching-offer-top">
+              <span className="card-personalized-badge">
+                <Icon name="sparkles" />
+                Spécialement pour vous
+              </span>
+              <span className="card-link card-link--generate">
+                <Icon name="sparkles" />
+                Générer CV
+              </span>
+            </div>
             <div className="card-heading">
               <span className="card-title">Alternance Marketing Digital</span>
               <span className="card-heading-sep"> chez </span>
@@ -85,14 +80,10 @@ export default function MatchingAnimation() {
                 <Icon name="external-link" />
                 Voir l&apos;offre
               </span>
-              <span className="card-link card-link--generate">
-                <Icon name="sparkles" />
-                Générer CV
-              </span>
             </div>
           </div>
-        </div>
-      )}
+        </BorderBeam>
+      </div>
     </div>
   );
 }
