@@ -197,37 +197,38 @@ export default function KanbanAnimation() {
       }
     }
 
-    // A fixed 4-beat loop that always returns to the exact starting
-    // counts (2/3/2), so it can repeat forever without drifting:
-    //   1. a fresh offer appears in "À faire"
-    //   2. the oldest "Envoyé" offer moves to "Entretien" (now at 3)
-    //   3. "À faire" now sends its oldest offer to "Envoyé"
-    //   4. the oldest "Entretien" offer is placed and leaves for good
+    // Un cycle à 3 temps qui revient toujours à l'état de base exact
+    // (2 À faire / 3 Envoyé / 2 Entretien) — "Entretien" ne dépasse
+    // jamais 2 cartes, l'arrivée et le départ s'y produisent dans le
+    // même battement plutôt que l'un après l'autre :
+    //   1. une nouvelle offre apparaît dans "À faire" (3)
+    //   2. la plus ancienne offre "Envoyé" glisse vers "Entretien" en
+    //      même temps que la plus ancienne offre déjà présente en
+    //      "Entretien" en sort — "Entretien" reste à 2, "Envoyé" passe à 2
+    //   3. la plus ancienne offre "À faire" glisse vers "Envoyé" — retour
+    //      à l'état de base (2/3/2)
     function beat1() {
       commit((cols) => { cols.todo.push(makeCard(cycleRef.current++)); });
       timeoutsRef.current.push(setTimeout(beat2, BEAT_PAUSE));
     }
     function beat2() {
       const promoted = pipelineRef.current.sent[0];
-      commit((cols) => {
-        cols.sent.shift();
-        cols.interview.push({ ...promoted, interviewPill: PILL_DATES[dateIdxRef.current++ % PILL_DATES.length] });
+      const placed = pipelineRef.current.interview[0];
+      fadeOut(placed.id, () => {
+        commit((cols) => {
+          cols.sent.shift();
+          cols.interview.shift();
+          cols.interview.push({ ...promoted, interviewPill: PILL_DATES[dateIdxRef.current++ % PILL_DATES.length] });
+        });
+        timeoutsRef.current.push(setTimeout(() => {
+          setRevealedPills((prevSet) => new Set(prevSet).add(promoted.id));
+        }, 900));
+        timeoutsRef.current.push(setTimeout(beat3, BEAT_PAUSE));
       });
-      timeoutsRef.current.push(setTimeout(() => {
-        setRevealedPills((prevSet) => new Set(prevSet).add(promoted.id));
-      }, 900));
-      timeoutsRef.current.push(setTimeout(beat3, BEAT_PAUSE));
     }
     function beat3() {
       commit((cols) => { cols.sent.push(cols.todo.shift()!); });
-      timeoutsRef.current.push(setTimeout(beat4, BEAT_PAUSE));
-    }
-    function beat4() {
-      const placed = pipelineRef.current.interview[0];
-      fadeOut(placed.id, () => {
-        commit((cols) => { cols.interview.shift(); });
-        timeoutsRef.current.push(setTimeout(beat1, BEAT_PAUSE));
-      });
+      timeoutsRef.current.push(setTimeout(beat1, BEAT_PAUSE));
     }
 
     const observer = new IntersectionObserver(
