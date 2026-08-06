@@ -3647,7 +3647,10 @@ legend.field-label { padding: 0; }
      (neither state overrides border-color), so the shape morph between
      them never involves a border popping in or out on top of it. */
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: var(--radius-pill);
+  /* Same rounded-rect radius as the rest of the app's base buttons/
+     inputs (--radius-input), not the pill shape — just elongated to fit
+     the label, instead of a stadium-shaped CTA unlike everything else. */
+  border-radius: var(--radius-input);
   background: var(--indigo);
   color: #fff;
   font-family: inherit;
@@ -4860,46 +4863,13 @@ legend.field-label { padding: 0; }
 .landing-matching-offer .card-link { font-size: 14px; gap: 4px; }
 .landing-matching-offer .card-link .lucide { width: 14px; height: 14px; }
 
-/* "Générer CV" moves up next to the personalization badge instead of
-   sitting alongside "Voir l'offre" (the real dashboard's own layout),
-   so the AI-generated action reads as a header-level shortcut on this
-   mockup rather than a third link crowding the bottom row. */
-.landing-matching-offer-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-8);
-  margin-bottom: 6px;
-}
-.landing-matching-offer-top .card-personalized-badge { margin-bottom: 0; }
-
-/* Personalization badge, same pill shape as .card-school-badge but in
-   violet, the site's established "IA-attributed content" color (see
-   .landing-match-notes li.is-ai), so it reads as a model output rather
-   than a plain school-assigned tag. */
-.card-personalized-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
-  padding: 3px 8px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--violet) 15%, transparent);
-  color: var(--violet);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1;
-}
-.card-personalized-badge .lucide { width: 12px; height: 12px; }
-.landing-matching-offer .card-personalized-badge { margin-bottom: 6px; padding: 2px 6px; gap: 4px; font-size: 9px; }
-.landing-matching-offer .card-personalized-badge .lucide { width: 9px; height: 9px; }
 
 /* .ai-result: marks a container as showing an AI-generated result (the
    ATS match score, the copilot suggestions, the personalized offer) with
    a soft breathing inner halo, in violet — the site's established
-   "IA-attributed content" color (see .landing-match-notes li.is-ai,
-   .card-personalized-badge) — so it reads as the same AI cue as those
-   elsewhere instead of a separate, unrelated visual language. Replaces
+   "IA-attributed content" color (see .landing-match-notes li.is-ai) —
+   so it reads as the same AI cue as those elsewhere instead of a
+   separate, unrelated visual language. Replaces
    an earlier rotating conic-gradient ring (BorderBeam) that relied on
    mask-composite: exclude — Safari doesn't handle -webkit-mask-composite:
    xor the same as the standard exclude value, so the ring's hard edge

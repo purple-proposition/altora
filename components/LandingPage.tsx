@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import MatchingAnimation from '@/components/MatchingAnimation';
+import HeroCalendar from '@/components/HeroCalendar';
 import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
@@ -442,58 +443,7 @@ export default function LandingPage() {
             </div>
 
             <div className="landing-showcase-carousel-item">
-            <div className="landing-calendar-board">
-              <div className="landing-calendar-weekdays">
-                <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
-              </div>
-              <div className="landing-calendar-grid">
-                <span className="landing-calendar-day landing-calendar-day--muted">27</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">28</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">29</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">30</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">31</span>
-                <span className="landing-calendar-day">1</span>
-                <span className="landing-calendar-day">2</span>
-                <span className="landing-calendar-day landing-calendar-day--examen">3</span>
-                <span className="landing-calendar-day landing-calendar-day--examen">4</span>
-                <span className="landing-calendar-day landing-calendar-day--examen landing-calendar-day--has-event">
-                  <span className="landing-calendar-day-number">5</span>
-                  <span className="card-interview-pill landing-calendar-day-event"><Icon name="target" />L&apos;Oréal</span>
-                </span>
-                <span className="landing-calendar-day landing-calendar-day--examen landing-calendar-day--today">6</span>
-                <span className="landing-calendar-day landing-calendar-day--examen">7</span>
-                <span className="landing-calendar-day">8</span>
-                <span className="landing-calendar-day">9</span>
-                <span className="landing-calendar-day landing-calendar-day--conges">10</span>
-                <span className="landing-calendar-day landing-calendar-day--conges">11</span>
-                <span className="landing-calendar-day landing-calendar-day--conges">12</span>
-                <span className="landing-calendar-day landing-calendar-day--conges">13</span>
-                <span className="landing-calendar-day landing-calendar-day--conges">14</span>
-                <span className="landing-calendar-day landing-calendar-day--ferie">15</span>
-                <span className="landing-calendar-day">16</span>
-                <span className="landing-calendar-day landing-calendar-day--formation">17</span>
-                <span className="landing-calendar-day landing-calendar-day--formation">18</span>
-                <span className="landing-calendar-day landing-calendar-day--formation">19</span>
-                <span className="landing-calendar-day landing-calendar-day--formation">20</span>
-                <span className="landing-calendar-day landing-calendar-day--formation">21</span>
-                <span className="landing-calendar-day">22</span>
-                <span className="landing-calendar-day">23</span>
-                <span className="landing-calendar-day landing-calendar-day--entreprise">24</span>
-                <span className="landing-calendar-day landing-calendar-day--entreprise">25</span>
-                <span className="landing-calendar-day landing-calendar-day--entreprise">26</span>
-                <span className="landing-calendar-day landing-calendar-day--entreprise">27</span>
-                <span className="landing-calendar-day landing-calendar-day--entreprise">28</span>
-                <span className="landing-calendar-day">29</span>
-                <span className="landing-calendar-day">30</span>
-                <span className="landing-calendar-day landing-calendar-day--entreprise">31</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">1</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">2</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">3</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">4</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">5</span>
-                <span className="landing-calendar-day landing-calendar-day--muted">6</span>
-              </div>
-            </div>
+            <HeroCalendar />
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
                 <div className="landing-feature-icon"><Icon name="calendar" /></div>

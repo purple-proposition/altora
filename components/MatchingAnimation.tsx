@@ -52,16 +52,6 @@ export default function MatchingAnimation() {
       </div>
       <div className={`landing-matching-offer${offerRevealed ? ' is-revealed' : ''}`}>
         <div className="card card--slate ai-result">
-          <div className="landing-matching-offer-top">
-            <span className="card-personalized-badge">
-              <Icon name="sparkles" />
-              Spécialement pour vous
-            </span>
-            <span className="card-link card-link--generate">
-              <Icon name="sparkles" />
-              Générer CV
-            </span>
-          </div>
           <div className="card-heading">
             <span className="card-title">Alternance Marketing Digital</span>
             <span className="card-heading-sep"> chez </span>
@@ -77,6 +67,10 @@ export default function MatchingAnimation() {
             <span className="card-link">
               <Icon name="external-link" />
               Voir l&apos;offre
+            </span>
+            <span className="card-link card-link--generate">
+              <Icon name="sparkles" />
+              Générer CV
             </span>
           </div>
         </div>
