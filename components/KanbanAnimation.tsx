@@ -24,6 +24,8 @@ import Icon from '@/components/Icon';
 // was to where it now is instead of snapping. A card with no previous rect
 // fades/scales in; a card about to leave is faded out imperatively just
 // before it's actually removed from state, rather than popping out.
+type Variant = 'slate' | 'amber' | 'green';
+
 type CardData = {
   id: string;
   schoolBadge?: boolean;
@@ -31,6 +33,11 @@ type CardData = {
   company: string;
   location: string;
   interviewPill?: string;
+  // The card's own displayed color — kept as the column it came from
+  // while it's sliding, and only switched to the new column's color once
+  // it has actually landed (see the color-swap timeouts in beat3/beat4),
+  // rather than snapping to the destination color the instant it moves.
+  variant: Variant;
 };
 
 type Template = { title: string; company: string; location: string; schoolBadge?: boolean };
@@ -67,9 +74,9 @@ function buildPillDates(): string[] {
 
 const PILL_DATES = buildPillDates();
 
-function makeCard(cycle: number): CardData {
+function makeCard(cycle: number, variant: Variant = 'slate'): CardData {
   const t = POOL[cycle % POOL.length];
-  return { id: `${t.company}-${t.title}-${cycle}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'), ...t };
+  return { id: `${t.company}-${t.title}-${cycle}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'), variant, ...t };
 }
 
 // Starting point: 2 in "À faire", 3 in "Envoyé", 2 in "Entretien" — the
@@ -77,18 +84,18 @@ function makeCard(cycle: number): CardData {
 // without ever drifting or needing a reset.
 function initialColumns() {
   return {
-    interview: [0, 1].map((c) => ({ ...makeCard(c), interviewPill: PILL_DATES[c % PILL_DATES.length] })),
-    sent: [2, 3, 4].map((c) => makeCard(c)),
-    todo: [5, 6].map((c) => makeCard(c)),
+    interview: [0, 1].map((c) => ({ ...makeCard(c, 'green'), interviewPill: PILL_DATES[c % PILL_DATES.length] })),
+    sent: [2, 3, 4].map((c) => makeCard(c, 'amber')),
+    todo: [5, 6].map((c) => makeCard(c, 'slate')),
   };
 }
 
 const BEAT_PAUSE = 2600;
 const EXIT_DURATION = 500;
 
-function Card({ card, pillRevealed, variant }: { card: CardData; pillRevealed: boolean; variant: 'slate' | 'amber' | 'green' }) {
+function Card({ card, pillRevealed }: { card: CardData; pillRevealed: boolean }) {
   return (
-    <div className={`card card--${variant}`} data-flip-id={card.id}>
+    <div className={`card card--${card.variant}`} data-flip-id={card.id}>
       {card.schoolBadge && <span className="card-school-badge"><Icon name="graduation-cap" />Proposée par l&apos;école</span>}
       <div className="card-heading">
         <span className="card-title">{card.title}</span>
@@ -125,7 +132,7 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
           <Icon name="circle-dashed" /><span className="column-header-label">À faire</span><span className="column-header-count">0</span>
         </div>
         <div className="card-list">
-          {[0, 1, 2].map((i) => <Card key={i} card={makeCard(i)} pillRevealed variant="slate" />)}
+          {[0, 1, 2].map((i) => <Card key={i} card={makeCard(i, 'slate')} pillRevealed />)}
         </div>
       </div>
       <div className="column">
@@ -133,7 +140,7 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
           <Icon name="hourglass" /><span className="column-header-label">Envoyé</span><span className="column-header-count">0</span>
         </div>
         <div className="card-list">
-          {[3, 4, 5].map((i) => <Card key={i} card={makeCard(i)} pillRevealed variant="amber" />)}
+          {[3, 4, 5].map((i) => <Card key={i} card={makeCard(i, 'amber')} pillRevealed />)}
         </div>
       </div>
       <div className="column">
@@ -141,7 +148,7 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
           <Icon name="target" /><span className="column-header-label">Entretien</span><span className="column-header-count">0</span>
         </div>
         <div className="card-list">
-          {[6, 7, 8].map((i) => <Card key={i} card={{ ...makeCard(i), interviewPill: PILL_DATES[i % PILL_DATES.length] }} pillRevealed variant="green" />)}
+          {[6, 7, 8].map((i) => <Card key={i} card={{ ...makeCard(i, 'green'), interviewPill: PILL_DATES[i % PILL_DATES.length] }} pillRevealed />)}
         </div>
       </div>
     </div>
@@ -184,6 +191,18 @@ export default function KanbanAnimation() {
       setColumns(next);
     }
 
+    // Swaps a card's displayed color once it has actually landed in its
+    // new column, rather than the moment it starts sliding there — the
+    // move itself always happens in the old color first.
+    function recolor(id: string, variant: Variant) {
+      commit((cols) => {
+        for (const key of ['todo', 'sent', 'interview'] as const) {
+          const idx = cols[key].findIndex((c) => c.id === id);
+          if (idx !== -1) cols[key][idx] = { ...cols[key][idx], variant };
+        }
+      });
+    }
+
     function fadeOut(id: string, done: () => void) {
       const board = boardRef.current;
       const leavingEl = board?.querySelector<HTMLElement>(`[data-flip-id="${id}"]`);
@@ -197,37 +216,60 @@ export default function KanbanAnimation() {
       }
     }
 
-    // Un cycle à 3 temps qui revient toujours à l'état de base exact
-    // (2 À faire / 3 Envoyé / 2 Entretien) — "Entretien" ne dépasse
-    // jamais 2 cartes, l'arrivée et le départ s'y produisent dans le
-    // même battement plutôt que l'un après l'autre :
+    // Which card within a column moves next — not always the oldest
+    // (top) one, alternating between top/middle/bottom keeps it from
+    // reading as a fixed, predictable conveyor.
+    function pickIndex(len: number) {
+      return Math.floor(Math.random() * len);
+    }
+
+    // Un cycle qui revient toujours à l'état de base exact (2 À faire /
+    // 3 Envoyé / 2 Entretien), chaque offre se déplaçant une par une,
+    // jamais deux en même temps, et pas toujours la même position dans
+    // la colonne (parfois celle du haut, parfois du milieu, parfois du
+    // bas) :
     //   1. une nouvelle offre apparaît dans "À faire" (3)
-    //   2. la plus ancienne offre "Envoyé" glisse vers "Entretien" en
-    //      même temps que la plus ancienne offre déjà présente en
-    //      "Entretien" en sort — "Entretien" reste à 2, "Envoyé" passe à 2
-    //   3. la plus ancienne offre "À faire" glisse vers "Envoyé" — retour
-    //      à l'état de base (2/3/2)
+    //   2. une offre déjà en "Entretien" en sort — Entretien passe à 1
+    //   3. une offre "Envoyé" glisse vers "Entretien" — Entretien revient
+    //      à 2, Envoyé passe à 2
+    //   4. une offre "À faire" glisse vers "Envoyé" — retour à l'état de
+    //      base (2/3/2)
     function beat1() {
       commit((cols) => { cols.todo.push(makeCard(cycleRef.current++)); });
       timeoutsRef.current.push(setTimeout(beat2, BEAT_PAUSE));
     }
     function beat2() {
-      const promoted = pipelineRef.current.sent[0];
-      const placed = pipelineRef.current.interview[0];
+      const idx = pickIndex(pipelineRef.current.interview.length);
+      const placed = pipelineRef.current.interview[idx];
       fadeOut(placed.id, () => {
-        commit((cols) => {
-          cols.sent.shift();
-          cols.interview.shift();
-          cols.interview.push({ ...promoted, interviewPill: PILL_DATES[dateIdxRef.current++ % PILL_DATES.length] });
-        });
-        timeoutsRef.current.push(setTimeout(() => {
-          setRevealedPills((prevSet) => new Set(prevSet).add(promoted.id));
-        }, 900));
+        commit((cols) => { cols.interview.splice(idx, 1); });
         timeoutsRef.current.push(setTimeout(beat3, BEAT_PAUSE));
       });
     }
     function beat3() {
-      commit((cols) => { cols.sent.push(cols.todo.shift()!); });
+      const idx = pickIndex(pipelineRef.current.sent.length);
+      const promoted = pipelineRef.current.sent[idx];
+      commit((cols) => {
+        cols.sent.splice(idx, 1);
+        // Still amber here — recolored to green only once it lands (below).
+        cols.interview.push({ ...promoted, interviewPill: PILL_DATES[dateIdxRef.current++ % PILL_DATES.length] });
+      });
+      timeoutsRef.current.push(setTimeout(() => {
+        recolor(promoted.id, 'green');
+        setRevealedPills((prevSet) => new Set(prevSet).add(promoted.id));
+      }, 1100));
+      timeoutsRef.current.push(setTimeout(beat4, BEAT_PAUSE));
+    }
+    function beat4() {
+      const idx = pickIndex(pipelineRef.current.todo.length);
+      const promoted = pipelineRef.current.todo[idx];
+      commit((cols) => {
+        cols.todo.splice(idx, 1);
+        cols.sent.push(promoted);
+      });
+      timeoutsRef.current.push(setTimeout(() => {
+        recolor(promoted.id, 'amber');
+      }, 1100));
       timeoutsRef.current.push(setTimeout(beat1, BEAT_PAUSE));
     }
 
@@ -306,7 +348,7 @@ export default function KanbanAnimation() {
           <span className="column-header-count">{columns.todo.length}</span>
         </div>
         <div className="card-list">
-          {columns.todo.map((card) => <Card key={card.id} card={card} pillRevealed={false} variant="slate" />)}
+          {columns.todo.map((card) => <Card key={card.id} card={card} pillRevealed={false} />)}
         </div>
       </div>
       <div className="column">
@@ -316,7 +358,7 @@ export default function KanbanAnimation() {
           <span className="column-header-count">{columns.sent.length}</span>
         </div>
         <div className="card-list">
-          {columns.sent.map((card) => <Card key={card.id} card={card} pillRevealed={false} variant="amber" />)}
+          {columns.sent.map((card) => <Card key={card.id} card={card} pillRevealed={false} />)}
         </div>
       </div>
       <div className="column">
@@ -327,7 +369,7 @@ export default function KanbanAnimation() {
         </div>
         <div className="card-list">
           {columns.interview.map((card) => (
-            <Card key={card.id} card={card} pillRevealed={revealedPills.has(card.id)} variant="green" />
+            <Card key={card.id} card={card} pillRevealed={revealedPills.has(card.id)} />
           ))}
         </div>
       </div>
