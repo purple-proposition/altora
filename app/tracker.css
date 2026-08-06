@@ -3191,7 +3191,7 @@ legend.field-label { padding: 0; }
 .ats-score-card--mid { background: var(--amber-tint); color: var(--amber); }
 .ats-score-card--low { background: var(--rose-tint); color: var(--rose); }
 .ats-score-value { flex-shrink: 0; text-align: center; }
-.ats-score-number { font-size: 36px; font-weight: 500; line-height: 1; }
+.ats-score-number { font-size: 32px; font-weight: 500; line-height: 1; }
 .ats-score-suffix { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
 .ats-score-card .field-label { color: inherit; opacity: 0.75; }
 
@@ -3319,7 +3319,7 @@ legend.field-label { padding: 0; }
   color: var(--indigo);
 }
 .method-explain-grid .method-card-title {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.3;
 }
@@ -4469,7 +4469,7 @@ legend.field-label { padding: 0; }
   background: var(--bg);
 }
 .landing-roster-avatar img { object-fit: cover; }
-.landing-roster-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.landing-roster-name { font-size: 12px; font-weight: 600; color: var(--text); }
 .landing-roster-dots { display: flex; align-items: center; justify-content: center; gap: 4px; }
 /* Light tint fill + saturated border, same "pastille" treatment as the
    real pills/badges elsewhere on the site (e.g. .inline-pill--amber)
@@ -4659,7 +4659,7 @@ legend.field-label { padding: 0; }
   font-weight: 600;
   color: var(--indigo);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   margin-bottom: var(--space-12);
 }
 
@@ -4867,7 +4867,7 @@ legend.field-label { padding: 0; }
   color: var(--indigo);
 }
 .landing-matching-step-icon .lucide { width: 20px; height: 20px; }
-.landing-matching-step-label { margin: 0 0 2px; font-size: 13px; font-weight: 600; color: var(--text); }
+.landing-matching-step-label { margin: 0 0 2px; font-size: 12px; font-weight: 600; color: var(--text); }
 .landing-matching-step-result { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
 /* Date matching is deliberately soft (a heads-up, not a hard filter —
    start dates are usually negotiable), so its bead and label read as
@@ -4913,7 +4913,7 @@ legend.field-label { padding: 0; }
    so gap is dropped to 0 here and each boundary gets its own explicit
    margin-bottom below instead. */
 .landing-matching-offer .card { padding: 16px; gap: 0; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
-.landing-matching-offer .card-heading { font-size: 14px; line-height: 1.35; margin-bottom: 8px; }
+.landing-matching-offer .card-heading { font-size: 14px; line-height: 1.3; margin-bottom: 8px; }
 .landing-matching-offer .card-title,
 .landing-matching-offer .card-company { font-weight: 600; }
 .landing-matching-offer .card-heading-sep { font-weight: 400; }
@@ -4994,7 +4994,7 @@ legend.field-label { padding: 0; }
 .landing-kanban-board .column-header-count { font-size: 10px; }
 .landing-kanban-board .card-list { gap: 8px; margin-top: 8px; }
 .landing-kanban-board .card { padding: 10px; gap: 6px; border-radius: var(--radius-inner); }
-.landing-kanban-board .card-heading { font-size: 12px; line-height: 1.35; }
+.landing-kanban-board .card-heading { font-size: 12px; line-height: 1.3; }
 .landing-kanban-board .card-meta-row { gap: 6px; }
 .landing-kanban-board .card-meta-item { font-size: 10px; gap: 3px; }
 .landing-kanban-board .card-meta-item .lucide { width: 10px; height: 10px; }
@@ -5527,11 +5527,11 @@ legend.field-label { padding: 0; }
   margin: 0 0 var(--space-24);
 }
 .quote-modal-form { display: flex; flex-direction: column; gap: 16px; }
-.quote-modal-error { margin: -8px 0 0; font-size: 13px; color: var(--rose); }
+.quote-modal-error { margin: -8px 0 0; font-size: 12px; color: var(--rose); }
 .quote-modal-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 .quote-modal-field-row { display: flex; gap: 16px; }
 .quote-modal-field-row .quote-modal-field { flex: 1; min-width: 0; }
-.quote-modal-field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; color: var(--text); }
+.quote-modal-field { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text); }
 .quote-modal-field input,
 .quote-modal-field textarea {
   font: inherit;
@@ -5856,7 +5856,7 @@ legend.field-label { padding: 0; }
   padding-top: 24px;
   border-top: 1px solid var(--border);
 }
-.pricing-merged-group-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin: 0 0 12px; }
+.pricing-merged-group-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin: 0 0 12px; }
 .pricing-merged-group .pricing-plan-features { border-top: none; padding-top: 0; }
 
 .pricing-plan {
