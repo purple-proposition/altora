@@ -1350,6 +1350,28 @@ body {
   background: var(--green-track);
 }
 .card-interview-pill .lucide { width: 12px; height: 12px; }
+/* KanbanAnimation's interview time slot: starts invisible/collapsed
+   (margin-top:0 folds the gap above it away too, not just opacity, so
+   it doesn't leave a dead empty line before it fades in) and eases in
+   once the card carrying it has already landed in "Entretien" and
+   settled, not mid-slide. */
+.landing-kanban-pill {
+  opacity: 0;
+  transform: translateY(-4px);
+  margin-top: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1), margin-top 0.45s cubic-bezier(0.65, 0, 0.35, 1), max-height 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.landing-kanban-pill.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 8px;
+  max-height: 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-kanban-pill { transition: none; }
+}
 
 .card-meta-row {
   display: flex;
@@ -4502,10 +4524,18 @@ legend.field-label { padding: 0; }
      instead of also giving every row the old per-row breakout back. */
   margin-right: calc(-1 * (16.6667vw - 4px));
 }
+/* Same 4-column span as before (calc(33.3333vw - 32px)), just shifted
+   2 columns right from where the row's own padding-left starts
+   (column 3) to column 5 — landing it centered on the middle 4 of 12
+   columns instead of hugging the left edge of the row's own bleed
+   area. Text itself stays left-aligned (text-align:left) — this is
+   about the block's position on the page, not its own internal
+   alignment. */
 .landing-showcase-row--kanban .landing-showcase-text--right {
   text-align: left;
   align-items: flex-start;
   width: calc(33.3333vw - 32px);
+  margin-left: calc(16.6667vw - 28px);
 }
 
 .landing-showcase-carousel {
@@ -5590,23 +5620,11 @@ legend.field-label { padding: 0; }
    above (k=8, N=12, g=24, m=24 simplifies to 66.6667vw - 40px) — with
    an actual card look (white background, border, radius, shadow)
    instead of just blending into the page's own --bg. */
-/* The one section here with a visible box of its own (border/background/
-   shadow) — its padding is genuinely internal (content-to-border
-   breathing room, kept as-is) and separate from margin-top, the
-   external gap to the section before it. Every other section in this
-   file is borderless, where padding and margin read as the same
-   whitespace — not the case here. */
-.landing-closing {
-  max-width: calc(66.6667vw - 40px);
-  width: 100%;
-  margin: var(--space-96) auto 0;
-  text-align: center;
-  padding: var(--space-96) var(--space-24);
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow);
-}
+/* .landing-closing (the standalone bordered-card wrapper) and
+   .landing-closing-actions are gone — that section was merged into
+   .pricing-plan--merged (its title/text classes live on below, reused
+   inside that card instead of their own box) so the page doesn't ask
+   twice, one screen apart, for the same "contact us" click. */
 .landing-closing-title {
   font-size: 48px;
   line-height: 1.1;
@@ -5621,11 +5639,15 @@ legend.field-label { padding: 0; }
   max-width: 480px;
   margin: 0 auto var(--space-32);
 }
-.landing-closing-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-20);
+/* The old plan name ("Abonnement SaaS") drops a rank once the closing
+   headline above takes over as the card's actual title — a small
+   muted label introducing the price, not a heading of its own. */
+.pricing-plan-tagline--name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 @media (max-width: 960px) {

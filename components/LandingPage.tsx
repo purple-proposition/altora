@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Icon from '@/components/Icon';
 import MatchingAnimation from '@/components/MatchingAnimation';
 import HeroCalendar from '@/components/HeroCalendar';
+import KanbanAnimation from '@/components/KanbanAnimation';
 import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
@@ -228,146 +229,7 @@ export default function LandingPage() {
           </div>
           <DragScrollCarousel className="landing-showcase-carousel">
             <div className="landing-showcase-carousel-item">
-            <div className="landing-kanban-board">
-              <div className="column">
-                <div className="column-header column-header--slate">
-                  <Icon name="circle-dashed" />
-                  <span className="column-header-label">À faire</span>
-                  <span className="column-header-count">3</span>
-                </div>
-                <div className="card-list">
-                  <div className="card card--slate">
-                    <span className="card-school-badge"><Icon name="graduation-cap" />Proposée par l&apos;école</span>
-                    <div className="card-heading">
-                      <span className="card-title">Alternance Marketing Digital</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">L&apos;Oréal</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Clichy</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                      <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
-                    </div>
-                  </div>
-                  <div className="card card--slate">
-                    <div className="card-heading">
-                      <span className="card-title">Assistant chef de projet</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">Decathlon</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Paris 15e</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                      <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
-                    </div>
-                  </div>
-                  <div className="card card--slate">
-                    <span className="card-school-badge"><Icon name="graduation-cap" />Proposée par l&apos;école</span>
-                    <div className="card-heading">
-                      <span className="card-title">Alternance Growth Marketing</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">Doctolib</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Paris 9e</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                      <span className="card-link card-link--generate"><Icon name="sparkles" />Générer CV</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="column">
-                <div className="column-header column-header--amber">
-                  <Icon name="hourglass" />
-                  <span className="column-header-label">Envoyé</span>
-                  <span className="column-header-count">3</span>
-                </div>
-                <div className="card-list">
-                  <div className="card card--amber">
-                    <div className="card-heading">
-                      <span className="card-title">Chargé de communication</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">BlaBlaCar</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Paris 11e</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                    </div>
-                  </div>
-                  <div className="card card--amber">
-                    <div className="card-heading">
-                      <span className="card-title">Alternant CRM &amp; Data Marketing</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">Sephora</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Neuilly-sur-Seine</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                    </div>
-                  </div>
-                  <div className="card card--amber">
-                    <div className="card-heading">
-                      <span className="card-title">Chargé de Projet Marketing</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">Rocket School</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Paris 8e</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="column">
-                <div className="column-header column-header--green">
-                  <Icon name="target" />
-                  <span className="column-header-label">Entretien</span>
-                  <span className="column-header-count">2</span>
-                </div>
-                <div className="card-list">
-                  <div className="card card--green">
-                    <div className="card-heading">
-                      <span className="card-title">Alternance RH</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">Sephora</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Neuilly-sur-Seine</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                    </div>
-                    <span className="card-interview-pill"><Icon name="calendar" />Le 31 juillet à 18h00</span>
-                  </div>
-                  <div className="card card--green">
-                    <div className="card-heading">
-                      <span className="card-title">Assistant Chef de Produit</span>
-                      <span className="card-heading-sep"> chez </span>
-                      <span className="card-company">L&apos;Oréal</span>
-                    </div>
-                    <div className="card-meta-row">
-                      <span className="card-meta-item"><Icon name="map-pin" />Clichy</span>
-                    </div>
-                    <div className="card-link-row">
-                      <span className="card-link"><Icon name="external-link" />Voir l&apos;offre</span>
-                    </div>
-                    <span className="card-interview-pill"><Icon name="calendar" />Le 5 août à 10h30</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <KanbanAnimation />
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
                 <div className="landing-feature-icon"><Icon name="list-checks" /></div>
@@ -672,7 +534,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="landing-showcase-visual">
-            <div className="landing-match-card ai-result">
+            <div className="landing-match-card">
               <CountUpPercent value={84} />
               <div className="landing-match-label">de compatibilité ATS avec l&apos;offre</div>
               <ul className="landing-match-notes">
@@ -776,8 +638,11 @@ export default function LandingPage() {
 
       <Reveal className="pricing-plans pricing-plans--merged">
         <div className="pricing-plan pricing-plan--merged">
-          <h3 className="pricing-plan-name">Abonnement SaaS</h3>
-          <p className="pricing-plan-tagline">La plateforme complète pour votre établissement, accès étudiant inclus</p>
+          <h2 className="landing-closing-title">Prêt à améliorer le taux de placement de votre promotion ?</h2>
+          <p className="landing-closing-text">
+            Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
+          </p>
+          <p className="pricing-plan-tagline pricing-plan-tagline--name">Abonnement SaaS, la plateforme complète pour votre établissement, accès étudiant inclus</p>
           <div className="pricing-plan-price">Sur devis</div>
           <p className="pricing-plan-price-note">Selon la taille de votre promotion</p>
           <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing" icon="message-circle">Contacter un expert</QuoteCtaButton>
@@ -814,16 +679,6 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-        </div>
-      </Reveal>
-
-      <Reveal className="landing-closing">
-        <h2 className="landing-closing-title">Prêt à améliorer le taux de placement de votre promotion ?</h2>
-        <p className="landing-closing-text">
-          Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
-        </p>
-        <div className="landing-closing-actions">
-          <QuoteCtaButton className="landing-nav-cta" location="closing" icon="message-circle">Contacter un expert</QuoteCtaButton>
         </div>
       </Reveal>
 
