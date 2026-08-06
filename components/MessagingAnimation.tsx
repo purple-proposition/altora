@@ -179,7 +179,13 @@ export default function MessagingAnimation() {
 
     function addNewMessage() {
       const fresh = makeMessage(cycleRef.current++, false);
-      commit([fresh, ...messagesRef.current]);
+      // The existing messages need to FLIP-glide down to make room, in
+      // step with the new one fading in above them — without listing
+      // their ids as moved, they'd just snap straight to their new
+      // (lower) position instantly, which is what read as choppy rather
+      // than one organic motion.
+      const existingIds = messagesRef.current.map((m) => m.id);
+      commit([fresh, ...messagesRef.current], existingIds);
       timeoutsRef.current.push(setTimeout(loop, LOOP_PAUSE));
     }
 

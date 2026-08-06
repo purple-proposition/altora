@@ -76,9 +76,16 @@ function buildPillDates(): PillInfo[] {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
+  // Nudging each anchor independently isn't quite enough on its own: two
+  // anchors a few days apart can both land on the same weekday after
+  // their own nudge and collide. `usedDays` keeps every date already
+  // claimed so a colliding anchor keeps stepping forward (skipping
+  // weekends too) until it lands on a genuinely free weekday.
+  const usedDays = new Set<number>();
   return DAY_ANCHORS.map((day, i) => {
     const d = new Date(year, month, day);
-    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+    while (d.getDay() === 0 || d.getDay() === 6 || usedDays.has(d.getDate())) d.setDate(d.getDate() + 1);
+    usedDays.add(d.getDate());
     return { text: `Le ${d.getDate()} ${MONTHS_FR[d.getMonth()]} à ${HOURS[i]}`, day: d.getDate() };
   });
 }
