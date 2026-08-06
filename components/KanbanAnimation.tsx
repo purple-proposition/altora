@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import AnimatedCount from '@/components/AnimatedCount';
+import { useCalendarSync } from '@/components/CalendarSyncContext';
 
 // Unlike the site's other one-shot mockups (CountUpPercent, MatchingAnimation),
 // this one is a perpetual loop: it starts once the board scrolls into view,
@@ -65,14 +66,20 @@ const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juill
 const DAY_ANCHORS = [4, 7, 11, 14, 19];
 const HOURS = ['18h00', '10h30', '11h00', '14h00', '9h30'];
 
-function buildPillDates(): string[] {
+type PillInfo = { text: string; day: number };
+
+// `day` (the nudged, real day-of-month) is what HeroCalendar's own
+// CalendarSyncContext lookup matches against — both mockups compute the
+// nudge from the same DAY_ANCHORS, so they always agree on which real
+// date an interview pill refers to.
+function buildPillDates(): PillInfo[] {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
   return DAY_ANCHORS.map((day, i) => {
     const d = new Date(year, month, day);
     while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
-    return `Le ${d.getDate()} ${MONTHS_FR[d.getMonth()]} à ${HOURS[i]}`;
+    return { text: `Le ${d.getDate()} ${MONTHS_FR[d.getMonth()]} à ${HOURS[i]}`, day: d.getDate() };
   });
 }
 
@@ -88,7 +95,7 @@ function makeCard(cycle: number, variant: Variant): CardData {
 // without ever drifting or needing a reset.
 function initialColumns(): Columns {
   return {
-    interview: [0, 1].map((c) => ({ ...makeCard(c, 'green'), interviewPill: PILL_DATES[c % PILL_DATES.length] })),
+    interview: [0, 1].map((c) => ({ ...makeCard(c, 'green'), interviewPill: PILL_DATES[c % PILL_DATES.length].text })),
     sent: [2, 3, 4].map((c) => makeCard(c, 'amber')),
     todo: [5, 6].map((c) => makeCard(c, 'slate')),
   };
@@ -173,7 +180,7 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
           <Icon name="target" /><span className="column-header-label">Entretien</span><span className="column-header-count">0</span>
         </div>
         <div className="card-list">
-          {[6, 7, 8].map((i) => <Card key={i} card={{ ...gaugeCard(i, 'green'), interviewPill: PILL_DATES[i % PILL_DATES.length] }} pillRevealed />)}
+          {[6, 7, 8].map((i) => <Card key={i} card={{ ...gaugeCard(i, 'green'), interviewPill: PILL_DATES[i % PILL_DATES.length].text }} pillRevealed />)}
         </div>
       </div>
     </div>
@@ -186,6 +193,21 @@ export default function KanbanAnimation() {
   const [boardMinHeight, setBoardMinHeight] = useState<number | undefined>(undefined);
   const boardRef = useRef<HTMLDivElement>(null);
   const gaugeRef = useRef<HTMLDivElement>(null);
+  const calendarSync = useCalendarSync();
+
+  // The two interview cards present at mount need to register with the
+  // calendar too, not just the ones beat3 adds later — otherwise the
+  // calendar starts empty until the first cycle catches up.
+  useEffect(() => {
+    const initialInterview = columns.interview;
+    initialInterview.forEach((card, i) => {
+      calendarSync?.addEvent({ id: card.id, day: PILL_DATES[i % PILL_DATES.length].day, label: card.company });
+    });
+    return () => {
+      initialInterview.forEach((card) => calendarSync?.removeEvent(card.id));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Mutable pipeline state read/written synchronously by the beat loop —
   // React state (`columns`) mirrors it for rendering, but the loop's own
@@ -302,6 +324,9 @@ export default function KanbanAnimation() {
       const idx = pickIndex(pipelineRef.current.interview.length);
       const placed = pipelineRef.current.interview[idx];
       const remainingIds = idsExcept(pipelineRef.current.interview, idx);
+      // Removed from the calendar the moment the card starts leaving —
+      // same instant as its own exit animation begins, not after.
+      calendarSync?.removeEvent(placed.id);
       fadeOut(placed.id, () => {
         commit((cols) => { cols.interview.splice(idx, 1); }, remainingIds);
         timeoutsRef.current.push(setTimeout(beat3, BEAT_PAUSE));
@@ -311,11 +336,16 @@ export default function KanbanAnimation() {
       const idx = pickIndex(pipelineRef.current.sent.length);
       const promoted = pipelineRef.current.sent[idx];
       const remainingIds = idsExcept(pipelineRef.current.sent, idx);
+      const pillInfo = PILL_DATES[dateIdxRef.current++ % PILL_DATES.length];
       commit((cols) => {
         cols.sent.splice(idx, 1);
         // Still amber here — recolored to green only once it lands.
-        cols.interview.push({ ...promoted, interviewPill: PILL_DATES[dateIdxRef.current++ % PILL_DATES.length] });
+        cols.interview.push({ ...promoted, interviewPill: pillInfo.text });
       }, [...remainingIds, promoted.id]);
+      // Added to the calendar at the same moment the card starts sliding
+      // into "Entretien", not once it has settled — matches beat2's exit
+      // timing so both mockups move together.
+      calendarSync?.addEvent({ id: promoted.id, day: pillInfo.day, label: promoted.company });
       timeoutsRef.current.push(setTimeout(() => {
         recolor(promoted.id, 'green');
         setRevealedPills((prevSet) => new Set(prevSet).add(promoted.id));

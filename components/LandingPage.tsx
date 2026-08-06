@@ -5,6 +5,7 @@ import MatchingAnimation from '@/components/MatchingAnimation';
 import HeroCalendar from '@/components/HeroCalendar';
 import KanbanAnimation from '@/components/KanbanAnimation';
 import MessagingAnimation from '@/components/MessagingAnimation';
+import { CalendarSyncProvider } from '@/components/CalendarSyncContext';
 import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
@@ -228,6 +229,7 @@ export default function LandingPage() {
               l&apos;apprenant choisit de partager.
             </p>
           </div>
+          <CalendarSyncProvider>
           <DragScrollCarousel className="landing-showcase-carousel">
             <div className="landing-showcase-carousel-item">
             <KanbanAnimation />
@@ -271,15 +273,14 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Calendrier</h3>
               </div>
               <p className="landing-feature-text">
-                Dates butoirs et entretiens à venir s&apos;affichent sur le
-                planning de l&apos;étudiant. Le même calendrier accueille
-                aussi les rentrées, les périodes en entreprise et les
-                points de suivi côté école.
+                Deadlines, entretiens, rentrées, périodes en entreprise et
+                suivi pédagogique : un seul calendrier, partagé par
+                l&apos;étudiant et l&apos;école.
               </p>
             </div>
             </div>
 
-            <div className="landing-showcase-carousel-item landing-showcase-carousel-item--tail">
+            <div className="landing-showcase-carousel-item">
             <div className="documents-grid landing-documents-board">
               <div className="folder-card">
                 <div className="folder-card-header">
@@ -400,7 +401,26 @@ export default function LandingPage() {
               </p>
             </div>
             </div>
+
+            {/* Loops the carousel back to the calendar right after
+                Documents (the last real slide) — scrolling right never
+                dead-ends, it just keeps cycling through the same story. */}
+            <div className="landing-showcase-carousel-item landing-showcase-carousel-item--tail" aria-hidden>
+            <HeroCalendar />
+            <div className="landing-showcase-caption">
+              <div className="landing-showcase-caption-header">
+                <div className="landing-feature-icon"><Icon name="calendar" /></div>
+                <h3 className="landing-showcase-caption-title">Calendrier</h3>
+              </div>
+              <p className="landing-feature-text">
+                Deadlines, entretiens, rentrées, périodes en entreprise et
+                suivi pédagogique : un seul calendrier, partagé par
+                l&apos;étudiant et l&apos;école.
+              </p>
+            </div>
+            </div>
           </DragScrollCarousel>
+          </CalendarSyncProvider>
         </Reveal>
 
         <Reveal className="landing-showcase-row landing-showcase-row--roster">

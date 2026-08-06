@@ -1,13 +1,17 @@
 'use client';
 
 import Icon from '@/components/Icon';
+import { useCalendarSync } from '@/components/CalendarSyncContext';
 
 // Same "story" the calendar always told (an exam week, a break, a
-// training week, a business-days-only company period, one interview),
-// but anchored to real "today" via day offsets instead of hardcoded
-// dates — so the "aujourd'hui" marker (and the whole narrative around
-// it) is always correct for whoever's viewing the page, no more manual
-// bumping every time the date moves on.
+// training week, a business-days-only company period), anchored to real
+// "today" via day offsets instead of hardcoded dates — so the
+// "aujourd'hui" marker (and the whole narrative around it) is always
+// correct for whoever's viewing the page, no more manual bumping every
+// time the date moves on. The interview event itself is no longer one
+// of these fixed ranges: it comes from CalendarSyncContext, driven live
+// by KanbanAnimation (see that file's beat2/beat3), so this calendar
+// always reflects whatever interview is currently active there.
 const WEEKDAY_RANGES: { type: string; from: number; to: number }[] = [
   { type: 'examen', from: -3, to: 1 },
   { type: 'conges', from: 4, to: 8 },
@@ -15,7 +19,6 @@ const WEEKDAY_RANGES: { type: string; from: number; to: number }[] = [
   { type: 'entreprise', from: 18, to: 25 },
 ];
 const FERIE_OFFSET = 9;
-const EVENT_OFFSET = -1;
 
 function isWeekday(date: Date) {
   const day = date.getDay();
@@ -41,11 +44,9 @@ function buildGrid(today: Date) {
     const offset = Math.round((startOfDay(date).getTime() - todayStart.getTime()) / 86400000);
     const type = WEEKDAY_RANGES.find((r) => offset >= r.from && offset <= r.to && isWeekday(date))?.type;
     cells.push({
-      date,
       day: date.getDate(),
       muted: date.getMonth() !== today.getMonth(),
       isToday: offset === 0,
-      isEvent: offset === EVENT_OFFSET,
       isFerie: offset === FERIE_OFFSET,
       type,
     });
@@ -55,6 +56,7 @@ function buildGrid(today: Date) {
 
 export default function HeroCalendar() {
   const cells = buildGrid(new Date());
+  const calendarSync = useCalendarSync();
 
   return (
     <div className="landing-calendar-board">
@@ -63,22 +65,26 @@ export default function HeroCalendar() {
       </div>
       <div className="landing-calendar-grid">
         {cells.map((cell, i) => {
+          // Every day cell always renders the event-pill slot (see the
+          // collapsed default state in .landing-calendar-day-event) so
+          // it can transition smoothly in/out at 0.8s in sync with
+          // KanbanAnimation's own interview move, instead of the pill
+          // just popping in/out on mount/unmount.
+          const event = !cell.muted ? calendarSync?.events.find((e) => e.day === cell.day) : undefined;
           const classes = ['landing-calendar-day'];
           if (cell.muted) classes.push('landing-calendar-day--muted');
           if (cell.type) classes.push(`landing-calendar-day--${cell.type}`);
           if (cell.isFerie) classes.push('landing-calendar-day--ferie');
           if (cell.isToday) classes.push('landing-calendar-day--today');
-          if (cell.isEvent) classes.push('landing-calendar-day--has-event');
 
-          if (cell.isEvent) {
-            return (
-              <span key={i} className={classes.join(' ')}>
-                <span className="landing-calendar-day-number">{cell.day}</span>
-                <span className="card-interview-pill landing-calendar-day-event"><Icon name="target" />L&apos;Oréal</span>
+          return (
+            <span key={i} className={classes.join(' ')}>
+              <span className="landing-calendar-day-number">{cell.day}</span>
+              <span className={`card-interview-pill landing-calendar-day-event${event ? ' is-visible' : ''}`}>
+                <Icon name="target" />{event?.label}
               </span>
-            );
-          }
-          return <span key={i} className={classes.join(' ')}>{cell.day}</span>;
+            </span>
+          );
         })}
       </div>
     </div>

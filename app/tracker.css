@@ -31,6 +31,12 @@
   --cyan: #0891b2;          /* cyan-600 */
   --cyan-tint: #ecfeff;     /* cyan-50 */
 
+  --blue: #1d4ed8;          /* blue-700 */
+  --blue-tint: #eff6ff;     /* blue-50 */
+
+  --teal: #0f766e;          /* teal-700 */
+  --teal-tint: #f0fdfa;     /* teal-50 */
+
   /* Unified radius scale (4px grid) */
   --radius-card: 20px;   /* summary-card, stat-card, column, modal */
   --radius-inner: 16px;  /* job card, drag-over outline */
@@ -87,6 +93,8 @@
   --rose-track: #ffe4e6;
   --violet-tint: #f5f3ff;
   --cyan-tint: #ecfeff;
+  --blue-tint: #eff6ff;
+  --teal-tint: #f0fdfa;
 }
 
 /* Dark mode: follows the OS by default ("system"); [data-theme] on <html>
@@ -108,6 +116,8 @@
     --rose-track: #881337;
     --violet-tint: #2e1065;
     --cyan-tint: #083344;
+    --blue-tint: #172554;
+    --teal-tint: #042f2e;
   }
 }
 
@@ -127,6 +137,8 @@
   --rose-track: #881337;
   --violet-tint: #2e1065;
   --cyan-tint: #083344;
+  --blue-tint: #172554;
+  --teal-tint: #042f2e;
 }
 
 * { box-sizing: border-box; }
@@ -1374,7 +1386,7 @@ body {
   margin-top: 0;
   max-height: 0;
   overflow: hidden;
-  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1), margin-top 0.45s cubic-bezier(0.65, 0, 0.35, 1), max-height 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.4, 0.64, 1), margin-top 0.8s cubic-bezier(0.65, 0, 0.35, 1), max-height 0.8s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .landing-kanban-pill.is-revealed {
   opacity: 1;
@@ -5194,10 +5206,18 @@ legend.field-label { padding: 0; }
   text-align: center;
 }
 
+/* Always a column (number on top, event slot below) — every cell, event
+   or not, so a day can gain/lose its event without the cell's own
+   layout direction flipping. A plain day's number still lands top-
+   centered either way (align-items:center handles the horizontal axis,
+   justify-content:flex-start the vertical one), so this reads no
+   differently from a simple centered number at rest. */
 .landing-calendar-day {
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
   min-width: 0;
   padding: var(--space-4);
   border: 1px solid var(--border);
@@ -5207,26 +5227,18 @@ legend.field-label { padding: 0; }
   color: var(--text);
   overflow: hidden;
 }
-.landing-calendar-day--muted { background: var(--bg); color: var(--text-muted); }
+.landing-calendar-day--muted { background: var(--bg); color: var(--text-muted); border-color: transparent; }
 .landing-calendar-day--ferie { background: var(--rose-tint); border-color: transparent; }
 
-/* Cross-references the "Le 5 août à 10h30" interview pill on the L'Oréal
-   card in .landing-kanban-board: same target icon, and now the exact
-   same .card-interview-pill class/colors, not a lookalike, just scaled
-   down to fit here — the two mockups should read as the same data. Axes
-   swap in the column direction, so justify-content (not align-items)
-   is what keeps this group at the top now. */
-.landing-calendar-day--has-event { flex-direction: column; justify-content: flex-start; align-items: center; gap: 2px; }
-/* max-width + ellipsis: "L'Oréal" plus its icon is wider than this cell
-   can ever be, so without a clamp the centered pill was overflowing and
-   getting clipped unevenly by the cell's own overflow:hidden instead of
-   just shrinking cleanly in place. Auto top/bottom margins center the
-   pill within whatever space is left under the day number (which stays
-   pinned at the top via the parent's flex-start), rather than centering
-   the number+pill as one block. */
+/* Cross-references the kanban mockup's own interview pill (same target
+   icon, same .card-interview-pill class/colors, not a lookalike) — both
+   mockups are driven by the same CalendarSyncContext event, so they
+   read as the same data rather than two coincidentally similar ones.
+   Collapsed by default (0 height, scaled down) and expanded via
+   .is-visible, both over 0.8s — the same duration KanbanAnimation uses
+   for its own color swap, since the two are meant to read as one
+   synced motion rather than two separately-timed animations. */
 .landing-calendar-day-event {
-  margin-top: auto;
-  margin-bottom: auto;
   max-width: 100%;
   padding: 0 var(--space-3);
   font-size: 9px;
@@ -5234,6 +5246,17 @@ legend.field-label { padding: 0; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.8s ease, max-height 0.8s cubic-bezier(0.65, 0, 0.35, 1), transform 0.8s cubic-bezier(0.65, 0, 0.35, 1), margin-top 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.landing-calendar-day-event.is-visible {
+  max-height: 24px;
+  margin-top: 2px;
+  opacity: 1;
+  transform: scale(1);
 }
 .landing-calendar-day-event .lucide { width: 8px; height: 8px; flex-shrink: 0; }
 /* Thin border in the cell's own category color (darker shade), plus a soft
@@ -5247,19 +5270,22 @@ legend.field-label { padding: 0; }
   font-weight: 600;
   box-shadow: 0 2px 8px color-mix(in srgb, var(--indigo) 35%, transparent);
 }
-.landing-calendar-day--today.landing-calendar-day--conges { border-color: var(--amber); color: var(--amber); box-shadow: 0 2px 8px color-mix(in srgb, var(--amber) 35%, transparent); }
-.landing-calendar-day--today.landing-calendar-day--examen { border-color: var(--green); color: var(--green); box-shadow: 0 2px 8px color-mix(in srgb, var(--green) 35%, transparent); }
+.landing-calendar-day--today.landing-calendar-day--conges { border-color: var(--blue); color: var(--blue); box-shadow: 0 2px 8px color-mix(in srgb, var(--blue) 35%, transparent); }
+.landing-calendar-day--today.landing-calendar-day--examen { border-color: var(--teal); color: var(--teal); box-shadow: 0 2px 8px color-mix(in srgb, var(--teal) 35%, transparent); }
 .landing-calendar-day--today.landing-calendar-day--entreprise { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 2px 8px color-mix(in srgb, var(--cyan) 35%, transparent); }
 .landing-calendar-day--today.landing-calendar-day--examen-oral { border-color: var(--violet); color: var(--violet); box-shadow: 0 2px 8px color-mix(in srgb, var(--violet) 35%, transparent); }
 /* Not --indigo-tint: that token was flattened to var(--bg) in the
    monochrome color cleanup, which makes it visually identical to
    --muted's own background — a "formation" week would look exactly
-   like an out-of-month grey day. --violet-tint stays a real color and
-   isn't used by any of this calendar's other categories (examen/
-   conges/entreprise), so it reads as its own distinct week. */
+   like an out-of-month grey day. --violet-tint stays a real color.
+   None of these five reuse --amber/--green: those are the kanban
+   mockup's own colors (Envoyé/Entretien) — reusing them here would make
+   the two mockups' color-coding read as related when they aren't.
+   --rose is kept exclusively for --ferie (a genuine holiday) and grey
+   exclusively for --muted (out-of-month), matching the rest of the site. */
 .landing-calendar-day--formation { background: var(--violet-tint); border-color: transparent; }
-.landing-calendar-day--conges { background: var(--amber-tint); border-color: transparent; }
-.landing-calendar-day--examen { background: var(--green-tint); border-color: transparent; }
+.landing-calendar-day--conges { background: var(--blue-tint); border-color: transparent; }
+.landing-calendar-day--examen { background: var(--teal-tint); border-color: transparent; }
 .landing-calendar-day--entreprise { background: var(--cyan-tint); border-color: transparent; }
 .landing-calendar-day--examen-oral { background: var(--violet-tint); border-color: transparent; }
 
