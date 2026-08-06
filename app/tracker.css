@@ -3699,7 +3699,7 @@ legend.field-label { padding: 0; }
      motion. cubic-bezier(0.65,0,0.35,1) is a symmetric "ease" premium
      curve — decelerates into the rest state instead of the previous
      ease-out-only feel. */
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.4s cubic-bezier(0.65, 0, 0.35, 1), border-radius 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.4s cubic-bezier(0.65, 0, 0.35, 1), border-radius 0.4s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .landing-nav-cta:hover { background: var(--text-muted); }
 
@@ -3728,9 +3728,22 @@ legend.field-label { padding: 0; }
    the site" rather than a one-off animation artifact. Scoped to
    .landing-nav--scrolled specifically, .landing-nav-cta is reused
    unscoped elsewhere on the page (hero, pricing, closing) where it
-   always stays the full indigo pill. */
+   always stays the full indigo pill.
+   No explicit width here on purpose: this button has none in its base
+   state either (inline-flex, sized by its own content) — an explicit
+   width: 41px here used to animate on its own timer alongside the
+   text's independent max-width collapse, and the two were never
+   perfectly in sync, which is what read as a jerky, two-step motion
+   instead of one continuous shrink. Padding going to 0 and the text's
+   own max-width collapsing to 0 (see .landing-nav-cta-text) already
+   land the button at the same 41px, driven by one set of transitions
+   instead of two competing ones. min-width (a static constraint, not
+   itself transitioning) just keeps the box from shrinking past the
+   41x41 square once its content-driven width drops below that — the
+   collapse naturally decelerates into that floor on its own instead
+   of needing a second width animation to catch it back up to it. */
 .landing-nav--scrolled .landing-nav-cta {
-  width: 41px;
+  min-width: 41px;
   padding: 0;
   border-radius: var(--radius-input);
 }
