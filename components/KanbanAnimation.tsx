@@ -109,8 +109,8 @@ function initialColumns(): Columns {
 }
 
 const BEAT_PAUSE = 2600;
-const EXIT_DURATION = 500;
-const MOVE_DURATION = 1100;
+const EXIT_DURATION = 400;
+const MOVE_DURATION = 400;
 // recolor() must fire strictly after the move's own inline transition has
 // been released (see releaseTransitionAfter) — releasing it is what lets
 // the CSS class's "background 1s linear" transition actually take over.
@@ -120,7 +120,7 @@ const MOVE_DURATION = 1100;
 // read "transition: transform ...", skipping it straight to the end
 // color with no visible fade. This margin comfortably clears that.
 const RECOLOR_DELAY = MOVE_DURATION + 200;
-const ENTRANCE_DURATION = 900;
+const ENTRANCE_DURATION = 400;
 
 function Card({ card, pillRevealed }: { card: CardData; pillRevealed: boolean }) {
   return (
@@ -194,7 +194,13 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
   );
 }
 
-export default function KanbanAnimation() {
+// `loop`=false renders the exact same static starting board with none
+// of the effects that drive the perpetual cycle (no IntersectionObserver,
+// no timers, no calendar-sync registration) — used for the carousel's
+// tail clone, so looping the carousel back to "À faire" after Documents
+// doesn't mean running a second live copy of the whole animation loop
+// side by side with the real one.
+export default function KanbanAnimation({ loop = true }: { loop?: boolean }) {
   const [columns, setColumns] = useState<Columns>(initialColumns);
   const [revealedPills, setRevealedPills] = useState<Set<string>>(() => new Set(initialColumns().interview.map((c) => c.id)));
   const [boardMinHeight, setBoardMinHeight] = useState<number | undefined>(undefined);
@@ -206,6 +212,7 @@ export default function KanbanAnimation() {
   // calendar too, not just the ones beat3 adds later — otherwise the
   // calendar starts empty until the first cycle catches up.
   useEffect(() => {
+    if (!loop) return;
     const initialInterview = columns.interview;
     initialInterview.forEach((card, i) => {
       calendarSync?.addEvent({ id: card.id, day: PILL_DATES[i % PILL_DATES.length].day, label: card.company });
@@ -244,6 +251,7 @@ export default function KanbanAnimation() {
   }, []);
 
   useEffect(() => {
+    if (!loop) return;
     const el = boardRef.current;
     if (!el) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -292,16 +300,59 @@ export default function KanbanAnimation() {
       });
     }
 
-    function fadeOut(id: string, done: () => void) {
-      const leavingEl = boardRef.current?.querySelector<HTMLElement>(`[data-flip-id="${id}"]`);
-      if (leavingEl && !reduceMotion) {
-        leavingEl.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.65, 0, 0.35, 1)';
-        leavingEl.style.opacity = '0';
-        leavingEl.style.transform = 'scale(0.92)';
-        timeoutsRef.current.push(setTimeout(done, EXIT_DURATION));
-      } else {
+    // Takes the leaving card out of flex flow immediately (position
+    // fixed to its current on-screen spot via absolute positioning),
+    // then fades it in place — the SAME instant, not after. Pulling it
+    // out of flow is what lets the remaining cards in that column
+    // reflow to their final position right away too, so both the fade
+    // and the sibling shift run in the same 0.4s window instead of the
+    // shift waiting for the fade to finish first (which read as two
+    // separate beats instead of one steady rhythm).
+    function fadeOutAndReflow(id: string, siblingIds: string[], done: () => void) {
+      const board = boardRef.current;
+      const leavingEl = board?.querySelector<HTMLElement>(`[data-flip-id="${id}"]`);
+      if (!leavingEl || reduceMotion) {
         done();
+        return;
       }
+      const firsts = new Map<string, DOMRect>();
+      siblingIds.forEach((sid) => {
+        const el = board?.querySelector<HTMLElement>(`[data-flip-id="${sid}"]`);
+        if (el) firsts.set(sid, el.getBoundingClientRect());
+      });
+
+      const rect = leavingEl.getBoundingClientRect();
+      const parentRect = leavingEl.parentElement!.getBoundingClientRect();
+      leavingEl.style.position = 'absolute';
+      leavingEl.style.top = `${rect.top - parentRect.top}px`;
+      leavingEl.style.left = `${rect.left - parentRect.left}px`;
+      leavingEl.style.width = `${rect.width}px`;
+      leavingEl.style.transition = `opacity ${EXIT_DURATION}ms ease, transform ${EXIT_DURATION}ms cubic-bezier(0.65, 0, 0.35, 1)`;
+      leavingEl.style.opacity = '0';
+      leavingEl.style.transform = 'scale(0.92)';
+
+      // Pulling the leaving card out of flow just reflowed the siblings
+      // synchronously — measure their new position now and FLIP them
+      // from the rects captured above, in parallel with the fade.
+      siblingIds.forEach((sid) => {
+        const el = board?.querySelector<HTMLElement>(`[data-flip-id="${sid}"]`);
+        const first = firsts.get(sid);
+        if (!el || !first) return;
+        const last = el.getBoundingClientRect();
+        const dy = first.top - last.top;
+        if (Math.abs(dy) > 0.5) {
+          el.style.transition = 'none';
+          el.style.transform = `translateY(${dy}px)`;
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              el.style.transition = `transform ${MOVE_DURATION}ms cubic-bezier(0.65, 0, 0.35, 1)`;
+              el.style.transform = '';
+            });
+          });
+        }
+      });
+
+      timeoutsRef.current.push(setTimeout(done, EXIT_DURATION));
     }
 
     // Which card within a column moves next — not always the oldest
@@ -334,8 +385,11 @@ export default function KanbanAnimation() {
       // Removed from the calendar the moment the card starts leaving —
       // same instant as its own exit animation begins, not after.
       calendarSync?.removeEvent(placed.id);
-      fadeOut(placed.id, () => {
-        commit((cols) => { cols.interview.splice(idx, 1); }, remainingIds);
+      fadeOutAndReflow(placed.id, remainingIds, () => {
+        // Siblings already sit at their final position (fadeOutAndReflow
+        // moved them there itself) — no movedIds here, this commit is
+        // just catching React's state up to what's already on screen.
+        commit((cols) => { cols.interview.splice(idx, 1); });
         timeoutsRef.current.push(setTimeout(beat3, BEAT_PAUSE));
       });
     }

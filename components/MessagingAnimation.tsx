@@ -20,7 +20,7 @@ import Icon from '@/components/Icon';
 // usually only one unread message left, so later cycles mark just that
 // one — the loop is self-consistent rather than assuming exactly two
 // forever.
-type Avatar = { kind: 'person'; src: string; alt: string } | { kind: 'icon'; icon: string };
+type Avatar = { kind: 'person'; src: string; alt: string } | { kind: 'icon'; icon: string } | { kind: 'logo' };
 
 type MessageData = {
   id: string;
@@ -37,9 +37,9 @@ type Template = Omit<MessageData, 'id' | 'read'>;
 
 const POOL: Template[] = [
   { avatar: { kind: 'person', src: '/landing-preview-avatar-cassandra.jpg', alt: 'Cassandra' }, sender: 'Cassandra de Lumina School', email: 'cassandra@lumina-school.fr', time: '09:14', subject: 'Ton CV a été mis à jour, tout est prêt pour BlaBlaCar', preview: "J'ai relu ta candidature, n'oublie pas d'ajouter ton projet marketing avant de l'envoyer." },
-  { avatar: { kind: 'icon', icon: 'target' }, sender: 'Altora', email: 'notifications@altora.fr', time: '11:02', subject: 'Nouvelle offre compatible à 92% avec ton profil', preview: 'Alternance Growth Marketing chez Doctolib, à Paris 9e. Génère ton CV en un clic.' },
+  { avatar: { kind: 'logo' }, sender: 'Altora', email: 'notifications@altora.fr', time: '11:02', subject: 'Nouvelle offre compatible à 92% avec ton profil', preview: 'Alternance Growth Marketing chez Doctolib, à Paris 9e. Génère ton CV en un clic.' },
   { avatar: { kind: 'icon', icon: 'graduation-cap' }, sender: 'Lumina School', email: 'contact@lumina-school.fr', time: 'Hier', subject: 'Rappel : évaluations B3 les 24, 25 et 26 juin', preview: 'Le planning détaillé des évaluations est disponible sur ton espace élève.' },
-  { avatar: { kind: 'icon', icon: 'target' }, sender: 'Altora', email: 'notifications@altora.fr', time: '14:30', subject: 'Ton CV a été généré pour Sephora', preview: 'Alternance RH chez Sephora, à Neuilly-sur-Seine. Relis-le avant de postuler.' },
+  { avatar: { kind: 'logo' }, sender: 'Altora', email: 'notifications@altora.fr', time: '14:30', subject: 'Ton CV a été généré pour Sephora', preview: 'Alternance RH chez Sephora, à Neuilly-sur-Seine. Relis-le avant de postuler.' },
   { avatar: { kind: 'icon', icon: 'graduation-cap' }, sender: 'Lumina School', email: 'contact@lumina-school.fr', time: '16:05', subject: "N'oublie pas de mettre à jour ton CV", preview: 'Ton dernier CV date de plus de deux mois, pense à le rafraîchir.' },
   { avatar: { kind: 'person', src: '/landing-preview-avatar-cassandra.jpg', alt: 'Cassandra' }, sender: 'Cassandra de Lumina School', email: 'cassandra@lumina-school.fr', time: '10:20', subject: 'Entretien confirmé chez Decathlon', preview: "Ton entretien est bien confirmé, je t'envoie les conseils habituels." },
 ];
@@ -57,15 +57,22 @@ const READ_STEP_PAUSE = 1800;
 const REMOVE_PAUSE = 2600;
 const ADD_PAUSE = 800;
 const LOOP_PAUSE = 2800;
-const EXIT_DURATION = 800;
-const MOVE_DURATION = 700;
-const ENTRANCE_DURATION = 800;
+const EXIT_DURATION = 400;
+const MOVE_DURATION = 400;
+const ENTRANCE_DURATION = 400;
 
 function AvatarView({ avatar }: { avatar: Avatar }) {
   if (avatar.kind === 'person') {
     return (
       <span className="landing-inbox-avatar landing-inbox-avatar--person">
         <Image src={avatar.src} alt={avatar.alt} fill sizes="28px" />
+      </span>
+    );
+  }
+  if (avatar.kind === 'logo') {
+    return (
+      <span className="landing-inbox-avatar landing-inbox-avatar--logo">
+        <Image src="/altora-icon.svg" alt="Altora" width={14} height={14} />
       </span>
     );
   }
@@ -86,7 +93,6 @@ function Message({ message }: { message: MessageData }) {
       <div className="inbox-message-body">
         <div className="inbox-message-top">
           <span className="inbox-message-sender">{message.sender}</span>
-          <span className="inbox-message-email">{message.email}</span>
           <span className="inbox-message-time">{message.time}</span>
         </div>
         <p className="inbox-message-subject">{message.subject}</p>

@@ -402,20 +402,26 @@ export default function LandingPage() {
             </div>
             </div>
 
-            {/* Loops the carousel back to the calendar right after
-                Documents (the last real slide) — scrolling right never
-                dead-ends, it just keeps cycling through the same story. */}
+            {/* Loops the carousel back to "À faire" right after Documents
+                (the last real slide) so scrolling right never dead-ends —
+                loop={false} renders the same static starting board with
+                none of KanbanAnimation's own timers/observer, so this
+                isn't a second live copy of the animation running
+                alongside the real one, just its resting-state markup. */}
             <div className="landing-showcase-carousel-item landing-showcase-carousel-item--tail" aria-hidden>
-            <HeroCalendar />
+            <KanbanAnimation loop={false} />
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
-                <div className="landing-feature-icon"><Icon name="calendar" /></div>
-                <h3 className="landing-showcase-caption-title">Calendrier</h3>
+                <div className="landing-feature-icon"><Icon name="list-checks" /></div>
+                <h3 className="landing-showcase-caption-title">À faire</h3>
               </div>
               <p className="landing-feature-text">
-                Deadlines, entretiens, rentrées, périodes en entreprise et
-                suivi pédagogique : un seul calendrier, partagé par
-                l&apos;étudiant et l&apos;école.
+                Chaque étudiant suit ses candidatures sur un tableau
+                unique, avec les offres qu&apos;il ajoute et celles
+                suggérées par l&apos;école. L&apos;équipe pédagogique
+                s&apos;appuie sur ce même tableau pour ses points de suivi :
+                où il en est, à quoi il a déjà postulé, s&apos;il faut
+                relancer.
               </p>
             </div>
             </div>
