@@ -139,6 +139,29 @@ export default function LandingPage() {
         </div>
       </main>
 
+      {/* Leads with the billing model, not a feature, right after the hero —
+          per Altora's differentiation strategy, the pay-on-placement model
+          is the one advantage an installed competitor can't copy without
+          cannibalizing its own recurring revenue, whereas the suivi/CV/
+          matching features further down are table-stakes any competitor
+          already covers. Deliberately qualitative (no % or fee amount):
+          the real commercial terms aren't finalized yet, only the
+          mechanism — billed on result, not on access — is. */}
+      <Reveal className="landing-risk-banner">
+        <div className="landing-risk-banner-icon"><Icon name="shield-check" /></div>
+        <h2 className="landing-risk-banner-title">Vous ne payez qu&apos;un alternant placé</h2>
+        <p className="landing-risk-banner-text">
+          Aucun coût d&apos;entrée, aucun engagement à la signature. Altora ne
+          facture votre école qu&apos;à partir du moment où un alternant est
+          effectivement placé — jamais pour un simple accès à la plateforme.
+        </p>
+        <ul className="landing-risk-banner-list">
+          <li><Icon name="check-circle" />Zéro risque financier pour tester la plateforme sur votre promotion</li>
+          <li><Icon name="check-circle" />Facturation déclenchée uniquement par un placement réel</li>
+          <li><Icon name="check-circle" />Rien à payer si aucun alternant n&apos;est placé</li>
+        </ul>
+      </Reveal>
+
       <section className="landing-categories">
         <Reveal id="ecoles" className="landing-category">
           <div className="landing-category-icon"><Icon name="users" /></div>
@@ -570,7 +593,7 @@ export default function LandingPage() {
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="plus" /></div>
               <h3 className="landing-feature-title">Toujours à jour</h3>
-              <p className="landing-feature-text">De nouvelles fonctionnalités livrées en continu, incluses dans l&apos;abonnement.</p>
+              <p className="landing-feature-text">De nouvelles fonctionnalités livrées en continu, sans coût supplémentaire.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="monitor" /></div>
@@ -589,9 +612,9 @@ export default function LandingPage() {
       <Reveal id="tarifs" className="pricing-hero">
         <h2 className="pricing-title">Un tarif pour chaque acteur de l&apos;alternance</h2>
         <p className="landing-subtitle">
-          L&apos;accès étudiant est inclus dans l&apos;abonnement de l&apos;école.
-          Les écoles souscrivent à la plateforme, avec un accompagnement humain
-          disponible en option.
+          L&apos;accès étudiant est inclus, sans coût pour l&apos;école.
+          L&apos;école n&apos;est facturée qu&apos;à partir du moment où un
+          alternant est placé, avec un accompagnement humain disponible en option.
         </p>
       </Reveal>
 
@@ -601,14 +624,14 @@ export default function LandingPage() {
           <p className="landing-closing-text">
             Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
           </p>
-          <p className="pricing-plan-tagline pricing-plan-tagline--name">Abonnement SaaS, la plateforme complète pour votre établissement, accès étudiant inclus</p>
-          <div className="pricing-plan-price">Sur devis</div>
-          <p className="pricing-plan-price-note">Selon la taille de votre promotion</p>
+          <p className="pricing-plan-tagline pricing-plan-tagline--name">La plateforme complète pour votre établissement, facturée au placement, accès étudiant inclus</p>
+          <div className="pricing-plan-price">Facturé au placement</div>
+          <p className="pricing-plan-price-note">Contactez-nous pour un chiffrage</p>
           <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing" icon="message-circle">Contacter un expert</QuoteCtaButton>
 
           <div className="pricing-merged-groups">
             <div className="pricing-merged-group">
-              <h4 className="pricing-merged-group-title"><Icon name="graduation-cap" />Inclus dans l&apos;abonnement</h4>
+              <h4 className="pricing-merged-group-title"><Icon name="graduation-cap" />Inclus, facturé au placement</h4>
               <ul className="pricing-plan-features">
                 <li><Icon name="check-circle" />Gestion des étudiants et des offres partenaires</li>
                 <li><Icon name="check-circle" />Tableaux de bord et suivi des candidatures</li>
@@ -647,16 +670,17 @@ export default function LandingPage() {
         <div className="pricing-faq-item">
           <h3 className="pricing-faq-question">Les étudiants paient-ils pour utiliser Altora ?</h3>
           <p className="pricing-faq-answer">
-            Non. L&apos;accès étudiant est inclus dans l&apos;abonnement souscrit par
-            leur école.
+            Non. L&apos;accès étudiant est inclus, sans coût pour l&apos;étudiant
+            ni pour l&apos;école.
           </p>
         </div>
 
         <div className="pricing-faq-item">
-          <h3 className="pricing-faq-question">Comment est calculé le prix de l&apos;abonnement école ?</h3>
+          <h3 className="pricing-faq-question">Comment est calculé le prix ?</h3>
           <p className="pricing-faq-answer">
-            Sur devis, selon la taille de votre promotion et les fonctionnalités
-            activées, contactez-nous pour un chiffrage.
+            Altora ne facture votre école qu&apos;à partir du moment où un
+            alternant est effectivement placé — jamais pour un accès à la
+            plateforme. Contactez-nous pour un chiffrage.
           </p>
         </div>
 
