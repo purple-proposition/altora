@@ -784,7 +784,7 @@ export default function LandingPage() {
 
           <div className="pricing-merged-groups">
             <div className="pricing-merged-group">
-              <h4 className="pricing-merged-group-title">Inclus dans l&apos;abonnement</h4>
+              <h4 className="pricing-merged-group-title"><Icon name="graduation-cap" />Inclus dans l&apos;abonnement</h4>
               <ul className="pricing-plan-features">
                 <li><Icon name="check-circle" />Gestion des étudiants et des offres partenaires</li>
                 <li><Icon name="check-circle" />Tableaux de bord et suivi des candidatures</li>
@@ -793,7 +793,7 @@ export default function LandingPage() {
               </ul>
             </div>
             <div className="pricing-merged-group">
-              <h4 className="pricing-merged-group-title">Pour l&apos;étudiant, gratuit et inclus</h4>
+              <h4 className="pricing-merged-group-title"><Icon name="users" />Pour l&apos;étudiant, gratuit et inclus</h4>
               <ul className="pricing-plan-features">
                 <li><Icon name="check-circle" />Tableau de suivi de ses candidatures</li>
                 <li><Icon name="check-circle" />CV et lettre de motivation générés par IA</li>
@@ -802,7 +802,10 @@ export default function LandingPage() {
               </ul>
             </div>
             <div className="pricing-merged-group">
-              <h4 className="pricing-merged-group-title">Accompagnement Premium, en option</h4>
+              <h4 className="pricing-merged-group-title">
+                <Icon name="sparkles" />Accompagnement Premium
+                <span className="pricing-merged-group-badge">En option</span>
+              </h4>
               <ul className="pricing-plan-features">
                 <li><Icon name="check-circle" />Prospection de nouvelles entreprises</li>
                 <li><Icon name="check-circle" />Prise de contact et qualification des besoins</li>

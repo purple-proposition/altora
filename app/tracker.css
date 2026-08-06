@@ -5845,7 +5845,14 @@ legend.field-label { padding: 0; }
   padding-right: 0;
   grid-template-columns: 1fr;
 }
-.pricing-plan--merged { text-align: center; padding: 48px; }
+/* Heavier shadow + border than the base .pricing-plan: this is the
+   single card carrying the whole pricing story now (not one of 3
+   competing cards), so it earns a bit more visual weight/elevation. */
+.pricing-plan--merged {
+  text-align: center;
+  padding: 56px 48px;
+  box-shadow: 0 4px 16px color-mix(in srgb, black 4%, transparent), 0 24px 48px color-mix(in srgb, black 6%, transparent);
+}
 .pricing-plan--merged .pricing-plan-tagline { max-width: 480px; margin-left: auto; margin-right: auto; }
 .pricing-plan--merged .pricing-plan-cta { max-width: 320px; margin-left: auto; margin-right: auto; }
 .pricing-merged-groups {
@@ -5853,10 +5860,40 @@ legend.field-label { padding: 0; }
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
   text-align: left;
-  padding-top: 24px;
+  padding-top: 32px;
+  margin-top: 32px;
   border-top: 1px solid var(--border);
 }
-.pricing-merged-group-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin: 0 0 12px; }
+/* Vertical hairlines between the 3 groups (not on the last one) — the
+   plain grid gap alone read as 3 loose lists; a divider makes it read
+   as one structured table instead. */
+.pricing-merged-group:not(:last-child) {
+  border-right: 1px solid var(--border);
+  padding-right: 32px;
+}
+.pricing-merged-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+.pricing-merged-group-title .lucide { width: 14px; height: 14px; flex-shrink: 0; }
+/* Sits on its own line if the title + badge don't fit one row, rather
+   than forcing the badge to shrink or wrap mid-word. */
+.pricing-merged-group-badge {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
 .pricing-merged-group .pricing-plan-features { border-top: none; padding-top: 0; }
 
 .pricing-plan {
@@ -5893,10 +5930,15 @@ legend.field-label { padding: 0; }
   margin: 0 0 20px;
 }
 
+/* Serif + larger, matching the site's other big display numbers
+   (.landing-match-score) — a bold sans 28px read as a form label, not
+   the centerpiece of a pricing card. */
 .pricing-plan-price {
-  font-size: 28px;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-synthesis: none;
+  font-size: 48px;
   line-height: 1;
-  font-weight: 800;
+  font-weight: 400;
   color: var(--text);
 }
 
@@ -5983,4 +6025,12 @@ legend.field-label { padding: 0; }
   .pricing-title { font-size: 28px; }
   .pricing-plans { grid-template-columns: 1fr; }
   .pricing-merged-groups { grid-template-columns: 1fr; }
+  /* Vertical dividers between side-by-side columns make no sense once
+     stacked to 1 column — horizontal ones between rows instead. */
+  .pricing-merged-group:not(:last-child) {
+    border-right: none;
+    padding-right: 0;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
 }
