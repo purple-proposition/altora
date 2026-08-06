@@ -3,19 +3,27 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 
-// Same one-shot-reveal convention as CountUpPercent/MatchingAnimation:
-// observe once, disconnect immediately, then run a scripted sequence —
-// never replays on scroll back up/down.
+// Unlike the site's other one-shot mockups (CountUpPercent, MatchingAnimation),
+// this one is a perpetual loop: it starts once the board scrolls into view,
+// then keeps cycling forever rather than settling into a final state. Each
+// column is capped at 3 cards at all times — nothing is ever added without
+// something else leaving first — so it reads as a constant, steady workflow
+// instead of a one-off demo that resets.
 //
-// The move between columns is a manual FLIP (First, Last, Invert, Play):
-// every .card in the board gets measured via getBoundingClientRect right
-// after each state change (a card moving column shifts every other card
-// in both the old and new column too, not just the one that moved), the
-// delta from its previous position is applied as an instant transform,
-// then cleared on the next frame with a transition — the card appears to
-// glide from where it was to where it now is, across two different
-// parent columns, instead of snapping. A card with no previous rect
-// (freshly added) just fades/scales in instead of FLIP-ing from nowhere.
+// Every "tick" of the loop is one synchronized step through the whole
+// pipeline: the oldest interview card leaves (placed/archived), the oldest
+// sent card is promoted into that freed interview slot with a new time
+// slot, the oldest todo card is promoted into that freed sent slot, and a
+// fresh offer fills the gap left in "À faire". One combined state update,
+// so the three columns always move together.
+//
+// Card movement is a manual FLIP (First, Last, Invert, Play): every .card
+// gets measured via getBoundingClientRect right after each state change,
+// the delta from its previous position is applied as an instant transform,
+// then cleared next frame with a transition, so it glides from where it
+// was to where it now is instead of snapping. A card with no previous rect
+// fades/scales in; a card about to leave is faded out imperatively just
+// before it's actually removed from state, rather than popping out.
 type CardData = {
   id: string;
   schoolBadge?: boolean;
@@ -25,35 +33,55 @@ type CardData = {
   interviewPill?: string;
 };
 
-// "À faire" starts empty and fills one card at a time (see the
-// TODO_ENTRANCE sequence below) instead of mounting with all three
-// already there, so the very first thing a viewer sees is the board
-// building itself up rather than a static grid.
-const TODO_ENTRANCE: CardData[] = [
-  { id: 'oreal-marketing', schoolBadge: true, title: 'Alternance Marketing Digital', company: "L'Oréal", location: 'Clichy' },
-  { id: 'decathlon-projet', title: 'Assistant chef de projet', company: 'Decathlon', location: 'Paris 15e' },
-  { id: 'doctolib-growth', title: 'Alternance Growth Marketing', company: 'Doctolib', location: 'Paris 9e' },
+type Template = { title: string; company: string; location: string; schoolBadge?: boolean };
+
+const POOL: Template[] = [
+  { title: 'Alternance Marketing Digital', company: "L'Oréal", location: 'Clichy', schoolBadge: true },
+  { title: 'Assistant chef de projet', company: 'Decathlon', location: 'Paris 15e' },
+  { title: 'Alternance Growth Marketing', company: 'Doctolib', location: 'Paris 9e', schoolBadge: true },
+  { title: 'Alternance Communication', company: 'Nike', location: 'Paris 8e', schoolBadge: true },
+  { title: 'Alternant CRM & Data Marketing', company: 'Sephora', location: 'Neuilly-sur-Seine' },
+  { title: 'Chargé de Projet Marketing', company: 'Rocket School', location: 'Paris 8e' },
+  { title: 'Chargé de communication', company: 'BlaBlaCar', location: 'Paris 11e' },
+  { title: 'Alternance RH', company: 'Sephora', location: 'Neuilly-sur-Seine' },
+  { title: 'Assistant Chef de Produit', company: "L'Oréal", location: 'Clichy' },
 ];
 
-const NEW_TODO_CARD: CardData = { id: 'nike-com', schoolBadge: true, title: 'Alternance Communication', company: 'Nike', location: 'Paris 8e' };
+const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+// Fixed day-of-month anchors + hours: deterministic, not random, so the
+// same dates show up all month regardless of when the page is loaded —
+// each anchor is nudged forward to the nearest weekday.
+const DAY_ANCHORS = [4, 7, 11, 14, 19];
+const HOURS = ['18h00', '10h30', '11h00', '14h00', '9h30'];
 
-// "Envoyé" and "Entretien" already hold a couple of offers when the
-// board mounts — only "À faire" plays the one-by-one entrance.
-const INITIAL = {
-  todo: [] as CardData[],
-  sent: [
-    { id: 'sephora-crm', title: 'Alternant CRM & Data Marketing', company: 'Sephora', location: 'Neuilly-sur-Seine' },
-    { id: 'rocket-projet', title: 'Chargé de Projet Marketing', company: 'Rocket School', location: 'Paris 8e' },
-  ] as CardData[],
-  interview: [
-    { id: 'sephora-rh', title: 'Alternance RH', company: 'Sephora', location: 'Neuilly-sur-Seine', interviewPill: 'Le 31 juillet à 18h00' },
-    { id: 'oreal-produit', title: 'Assistant Chef de Produit', company: "L'Oréal", location: 'Clichy', interviewPill: 'Le 5 août à 10h30' },
-  ] as CardData[],
-};
+function buildPillDates(): string[] {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  return DAY_ANCHORS.map((day, i) => {
+    const d = new Date(year, month, day);
+    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+    return `Le ${d.getDate()} ${MONTHS_FR[d.getMonth()]} à ${HOURS[i]}`;
+  });
+}
 
-// The largest any single column ever gets across the whole script (used
-// below to reserve a fixed board height up front, see GaugeColumn).
-const GAUGE_CARD_COUNT = 4;
+const PILL_DATES = buildPillDates();
+
+function makeCard(cycle: number): CardData {
+  const t = POOL[cycle % POOL.length];
+  return { id: `${t.company}-${t.title}-${cycle}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'), ...t };
+}
+
+function initialColumns() {
+  return {
+    interview: [0, 1, 2].map((c) => ({ ...makeCard(c), interviewPill: PILL_DATES[c % PILL_DATES.length] })),
+    sent: [3, 4, 5].map((c) => makeCard(c)),
+    todo: [6, 7, 8].map((c) => makeCard(c)),
+  };
+}
+
+const TICK_INTERVAL = 5500;
+const EXIT_DURATION = 500;
 
 function Card({ card, pillRevealed, variant }: { card: CardData; pillRevealed: boolean; variant: 'slate' | 'amber' | 'green' }) {
   return (
@@ -80,11 +108,10 @@ function Card({ card, pillRevealed, variant }: { card: CardData; pillRevealed: b
   );
 }
 
-// An offscreen column carrying the peak card count reached during the
-// whole script, measured once on mount to lock in the board's height
-// (see the boardMinHeight state below) before any animation starts —
-// without this, the board itself grows/shrinks as cards move between
-// columns, which reads as the whole mockup jumping around.
+// An offscreen column holding exactly 3 cards (the fixed cap for every
+// real column), measured once on mount to lock in the board's height —
+// since every column always holds exactly 3 cards, the board itself never
+// needs to grow or shrink once this is set.
 function GaugeColumn({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => void }) {
   return (
     <div className="column" ref={gaugeRef} aria-hidden style={{ visibility: 'hidden', position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: -1 }}>
@@ -94,21 +121,26 @@ function GaugeColumn({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => vo
         <span className="column-header-count">0</span>
       </div>
       <div className="card-list">
-        {Array.from({ length: GAUGE_CARD_COUNT }).map((_, i) => (
-          <Card key={i} card={TODO_ENTRANCE[0]} pillRevealed={false} variant="slate" />
-        ))}
+        {[0, 1, 2].map((i) => <Card key={i} card={{ ...makeCard(i), interviewPill: PILL_DATES[0] }} pillRevealed variant="slate" />)}
       </div>
     </div>
   );
 }
 
 export default function KanbanAnimation() {
-  const [columns, setColumns] = useState(INITIAL);
-  const [revealedPills, setRevealedPills] = useState<Set<string>>(new Set(['sephora-rh', 'oreal-produit']));
+  const [columns, setColumns] = useState(initialColumns);
+  const [revealedPills, setRevealedPills] = useState<Set<string>>(() => new Set(initialColumns().interview.map((c) => c.id)));
   const [boardMinHeight, setBoardMinHeight] = useState<number | undefined>(undefined);
   const boardRef = useRef<HTMLDivElement>(null);
   const gaugeRef = useRef<HTMLDivElement>(null);
   const rectsRef = useRef<Map<string, DOMRect>>(new Map());
+  // Mutable pipeline state read/written synchronously by the tick loop —
+  // React state (`columns`) mirrors it for rendering, but the loop's own
+  // scheduling never depends on when a render actually commits.
+  const pipelineRef = useRef(columns);
+  const cycleRef = useRef(9);
+  const dateIdxRef = useRef(0);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useLayoutEffect(() => {
     if (!gaugeRef.current) return;
@@ -118,89 +150,51 @@ export default function KanbanAnimation() {
   useEffect(() => {
     const el = boardRef.current;
     if (!el) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function tick() {
+      const board = boardRef.current;
+      const leaving = pipelineRef.current.interview[0];
+      if (board && leaving && !reduceMotion) {
+        const leavingEl = board.querySelector<HTMLElement>(`[data-flip-id="${leaving.id}"]`);
+        if (leavingEl) {
+          leavingEl.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.65, 0, 0.35, 1)';
+          leavingEl.style.opacity = '0';
+          leavingEl.style.transform = 'scale(0.92)';
+        }
+      }
+      timeoutsRef.current.push(setTimeout(() => {
+        const prev = pipelineRef.current;
+        const promotedFromSent = prev.sent[0];
+        const promotedFromTodo = prev.todo[0];
+        const freshCard = makeCard(cycleRef.current++);
+        const next = {
+          interview: [...prev.interview.slice(1), { ...promotedFromSent, interviewPill: PILL_DATES[dateIdxRef.current++ % PILL_DATES.length] }],
+          sent: [...prev.sent.slice(1), promotedFromTodo],
+          todo: [...prev.todo.slice(1), freshCard],
+        };
+        pipelineRef.current = next;
+        setColumns(next);
+        timeoutsRef.current.push(setTimeout(() => {
+          setRevealedPills((prevSet) => new Set(prevSet).add(promotedFromSent.id));
+        }, 900));
+        timeoutsRef.current.push(setTimeout(tick, TICK_INTERVAL));
+      }, reduceMotion ? 0 : EXIT_DURATION));
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();
-        const timeouts: ReturnType<typeof setTimeout>[] = [];
-        // Timings are deliberately slow and spaced out: the point of this
-        // mockup is for a first-time viewer to actually follow each step
-        // as it happens, not to blur past it.
-        let t = 700;
-
-        // "À faire" fills in one card at a time.
-        TODO_ENTRANCE.forEach((card, i) => {
-          timeouts.push(setTimeout(() => {
-            setColumns((prev) => ({ ...prev, todo: [...prev.todo, card] }));
-          }, t + i * 1100));
-        });
-        t += TODO_ENTRANCE.length * 1100 + 1600;
-
-        // Two of those offers get sent.
-        timeouts.push(setTimeout(() => {
-          setColumns((prev) => {
-            const moving = ['decathlon-projet', 'doctolib-growth'];
-            const moved = prev.todo.filter((c) => moving.includes(c.id));
-            return {
-              ...prev,
-              todo: prev.todo.filter((c) => !moving.includes(c.id)),
-              sent: [...prev.sent, ...moved],
-            };
-          });
-        }, t));
-        t += 2400;
-
-        // A fresh offer fills the gap left in "À faire".
-        timeouts.push(setTimeout(() => {
-          setColumns((prev) => ({ ...prev, todo: [...prev.todo, NEW_TODO_CARD] }));
-        }, t));
-        t += 2400;
-
-        // The two just-sent offers land interviews, one at a time, each
-        // with its own time slot fading in right after it settles.
-        const toInterview = [
-          { id: 'decathlon-projet', pill: 'Le 30 juillet à 11h00' },
-          { id: 'doctolib-growth', pill: 'Le 2 août à 14h00' },
-        ];
-        toInterview.forEach(({ id, pill }) => {
-          timeouts.push(setTimeout(() => {
-            setColumns((prev) => {
-              const moved = prev.sent.find((c) => c.id === id);
-              if (!moved) return prev;
-              return {
-                ...prev,
-                sent: prev.sent.filter((c) => c.id !== id),
-                interview: [...prev.interview, { ...moved, interviewPill: pill }],
-              };
-            });
-          }, t));
-          t += 1000;
-          timeouts.push(setTimeout(() => {
-            setRevealedPills((prev) => new Set(prev).add(id));
-          }, t));
-          t += 1600;
-        });
-
-        // Finally, one more offer moves from "À faire" to "Envoyé" — then
-        // the sequence stops.
-        timeouts.push(setTimeout(() => {
-          setColumns((prev) => {
-            const moved = prev.todo.find((c) => c.id === 'oreal-marketing');
-            if (!moved) return prev;
-            return {
-              ...prev,
-              todo: prev.todo.filter((c) => c.id !== 'oreal-marketing'),
-              sent: [...prev.sent, moved],
-            };
-          });
-        }, t));
-
-        return () => timeouts.forEach(clearTimeout);
+        timeoutsRef.current.push(setTimeout(tick, TICK_INTERVAL));
       },
       { threshold: 0.4 }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      timeoutsRef.current.forEach(clearTimeout);
+    };
   }, []);
 
   // Runs after every render where `columns` changed — by then the DOM
