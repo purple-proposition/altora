@@ -537,8 +537,14 @@ export default function KanbanAnimation() {
     firsts.clear();
   }, [columns]);
 
+  // La jauge (colonne fantôme de 3 cartes) est publiée comme custom
+  // property, pas comme min-height inline : un style inline ne peut être
+  // neutralisé que par !important, or en mobile le plateau reçoit une
+  // hauteur fixe et cette jauge — mesurée sur 3 cartes empilées à largeur
+  // étroite, donc très haute — la ferait exploser. En variable, c'est le
+  // CSS qui décide où elle s'applique.
   return (
-    <div className="landing-kanban-board" ref={boardRef} style={boardMinHeight ? { minHeight: boardMinHeight } : undefined}>
+    <div className="landing-kanban-board" ref={boardRef} style={boardMinHeight ? ({ '--kanban-gauge-h': `${boardMinHeight}px` } as React.CSSProperties) : undefined}>
       <GaugeBoard gaugeRef={(el) => { gaugeRef.current = el; }} />
       <div className="column">
         <div className="column-header column-header--slate">
