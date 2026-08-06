@@ -56,7 +56,7 @@ export default function LandingPage() {
           accompagner vers la réussite de leur alternance.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
-          <QuoteCtaButton className="landing-nav-cta landing-hero-cta" location="hero" icon="message-circle">Contacter un expert</QuoteCtaButton>
+          <QuoteCtaButton className="landing-nav-cta" location="hero" icon="message-circle">Contacter un expert</QuoteCtaButton>
         </div>
 
         <div className="landing-preview landing-in landing-in--4" aria-hidden="true">
@@ -820,7 +820,7 @@ export default function LandingPage() {
           Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
         </p>
         <div className="landing-closing-actions">
-          <QuoteCtaButton className="landing-nav-cta landing-hero-cta" location="closing" icon="message-circle">Contacter un expert</QuoteCtaButton>
+          <QuoteCtaButton className="landing-nav-cta" location="closing" icon="message-circle">Contacter un expert</QuoteCtaButton>
         </div>
       </Reveal>
 

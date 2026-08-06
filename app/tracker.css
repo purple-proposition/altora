@@ -3819,7 +3819,6 @@ legend.field-label { padding: 0; }
   margin-bottom: var(--space-64);
 }
 
-.landing-hero-cta { padding: 16px 28px; font-size: 16px; }
 
 .landing-preview {
   /* Breaks out of .landing-hero's narrower 720px text column so the
