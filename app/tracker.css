@@ -4672,122 +4672,105 @@ legend.field-label { padding: 0; }
   margin-left: calc(16.6667vw - 28px + 16.6667vw - 4px);
 }
 
+/* Carrousel infini — voir components/DragScrollCarousel.tsx pour la
+   mécanique. Le défilement natif et scroll-snap ont été abandonnés : ils
+   ne peuvent pas produire de boucle sans fin, parce qu'avec N éléments
+   il existe toujours un vrai bord, et le contenu suivant ne pouvait
+   apparaître qu'APRÈS que l'utilisateur ait buté dessus. La position est
+   désormais pilotée en JS et chaque élément reboucle modulo la longueur
+   de piste, donc il n'y a plus de bord du tout. */
 .landing-showcase-carousel {
-  display: flex;
-  gap: var(--space-24);
-  overflow-x: auto;
-  /* Standard CSS Scroll Snap instead of a hand-rolled step-size + RAF
-     easing: the browser owns snapping for touch/trackpad/keyboard for
-     free, and DragScrollCarousel only nudges mouse-drag to the nearest
-     real card on release via scrollTo(behavior: 'smooth'). Far more
-     robust than reimplementing it — no more drift when card widths
-     change. scroll-padding-left matches the row's own padding-left so a
-     snapped card rests at the same inset as the resting (scrollLeft: 0)
-     position instead of flush against the container edge.
-     scroll-snap-type only turns on once DragScrollCarousel adds
-     .carousel-snap-ready (mount + fonts loaded + a settle frame) — left
-     off before that so the browser's own "snap to nearest point" pass
-     can't fire mid-layout, while the web font and Cassandra's photo are
-     still loading and item positions are still shifting, and land the
-     rest position a card or two off from the first card on reload. */
-  /* Rest position (scrollLeft: 0) now lands with item0's own left edge
-     flush with the box's own content edge (padding-left: 0 below), so
-     the snap target for it is 0 too — the half-item peek to its left
-     comes entirely from the negative margin-left/width bleed, not from
-     padding, unlike the old column-3 inset this replaced. */
-  scroll-padding-left: 0;
-  /* Stops the browser's own scroll-anchoring from nudging scrollLeft as
-     fonts/images finish loading post-paint — belt-and-suspenders with
-     the scrollLeft=0 reset in DragScrollCarousel's mount effect. */
-  overflow-anchor: none;
+  /* Largeur de la portion masquée du mockup de tête. Sur la grille
+     12 colonnes de la page, un mockup fait span(4) = 33.3333vw - 32px
+     et le pas complet (mockup + gouttière) vaut 33.3333vw - 8px : la
+     moitié de ce pas, 16.6667vw - 4px, laisse donc visible exactement
+     span(2) = 16.6667vw - 28px, soit 2 colonnes pleines de chaque côté.
+     Vérification : span(2) + 24 + span(4) + 24 + span(4) + 24 + span(2)
+     = 100vw - 48px = la largeur de contenu de la page, au pixel près. */
+  --carousel-peek: calc(16.6667vw - 4px);
+  position: relative;
+  width: 100%;
   box-sizing: border-box;
-  /* Half an item's own width on each side (.landing-showcase-carousel-item
-     is calc(33.3333vw - 32px), 4 grid columns — half of that is 2
-     columns) — the row is now full page width (see the row's own
-     margin cancellations above), so bleeding the box's own declared
-     width by exactly one item-width total (split half-and-half via
-     margin-left below) is what leaves precisely "half of item0" and
-     "half of the last item" visible at rest.
-     padding-right is deliberately NOT folded into this width: doing
-     that once made padding-right cancel itself out completely — it
-     grew clientWidth (via width) by the same amount it grew
-     scrollWidth (via content), leaving maxScroll (their difference)
-     completely unchanged no matter how big padding-right got, and
-     reachability silently never improved. Left out of width, it only
-     grows the content's own natural flow, which is what actually
-     creates scrollable overflow. */
-  width: calc(100% + (33.3333vw - 32px));
-  margin-left: calc(-1 * (16.6667vw - 16px));
-  padding-left: 0;
-  /* scroll-snap-type:mandatory's true max scrollLeft is whichever the
-     last item's snap target actually is (3 item-steps from item0 here:
-     3 × (item width + row gap)) — reaching that, not just visually
-     peeking the last item's edge, is what this needs to cover; with
-     padding-right excluded from width above, maxScroll reduces to
-     ~padding-right directly, so it has to be at least that big, plus a
-     safety margin. See DragScrollCarousel.tsx's own comments on the
-     exact failure mode this fixes (mandatory snap never settling on
-     the last item at all if this falls short). */
-  padding-right: calc((33.3333vw - 32px) * 3 + 72px + 40px);
-  /* overflow-x:auto forces overflow-y to compute as auto too (can't mix
-     auto with visible on one box), so the cards' own box-shadow (0 10px
-     24px blur below) was getting clipped flat by that y-clip — 8px of
-     padding wasn't enough room for it. Bumped to fit the shadow's actual
-     reach instead of clipping it. */
+  /* clip, surtout pas hidden : hidden crée un conteneur de défilement
+     programmatique, et n'importe quoi peut le décaler à l'insu du JS
+     (Ctrl+F qui révèle un mot dans une légende tronquée, un
+     scrollIntoView…) — le carrousel resterait décalé définitivement.
+     clip n'en crée aucun. Il autorise en prime overflow-y: visible,
+     impossible avec hidden, donc l'ombre portée des cartes n'est plus
+     rognée verticalement. */
+  overflow-x: clip;
+  overflow-y: visible;
+  /* Conservés tels quels : ils tenaient l'espacement vertical de la
+     section, indépendamment du rognage d'ombre qui les avait motivés. */
   padding-top: var(--space-16);
   padding-bottom: var(--space-40);
   cursor: grab;
-  /* Drag-to-scroll (components/DragScrollCarousel.tsx) replaces the
-     visible scrollbar as the way to move this — hidden on every engine
-     instead of just styled thin, since a thin bar still reads as "here's
-     a strip to scroll," not "grab and drag anywhere". */
-  scrollbar-width: none;
+  /* Le geste horizontal nous revient, le vertical continue de faire
+     défiler la page. Sans ça le navigateur garderait la main sur les
+     deux axes et le pan tactile serait ignoré. */
+  touch-action: pan-y;
 }
-.landing-showcase-carousel::-webkit-scrollbar { display: none; }
-.landing-showcase-carousel.carousel-snap-ready { scroll-snap-type: x mandatory; }
-/* The grab cursor (and the drag it implies) only applies to the mockups
-   themselves — see DragScrollCarousel's mousedown guard, which already
-   skips starting a drag from here. The caption text below stays a normal
-   cursor so it doesn't look draggable/unselectable. */
+/* Le conteneur est focalisable (voir DragScrollCarousel) : au repos les
+   légendes de tête et de queue sont coupées en deux, texte compris, donc
+   il faut un moyen clavier d'atteindre ce contenu. */
+.landing-showcase-carousel:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 4px;
+  border-radius: var(--radius-card);
+}
+/* Sonde de mesure. getComputedStyle ne résout PAS une custom property en
+   pixels (elle est substituée telle quelle, on récupérerait la chaîne
+   "calc(16.6667vw - 4px)"), alors qu'une largeur réelle, si. Cette sonde
+   donne donc au JS la valeur en px du peek à n'importe quel point de
+   rupture, sans jamais dupliquer une formule vw côté JS — duplication
+   qui serait fausse sous 720px, et fausse aussi dès qu'une scrollbar
+   classique ampute la largeur de contenu sans changer 100vw. */
+.landing-showcase-carousel-peek {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--carousel-peek);
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* La piste porte l'unique transform réécrit à chaque frame ; les items ne
+   reçoivent que leur saut de rebouclage (± une longueur de piste), écrit
+   quelques fois par minute seulement. Une écriture par frame au lieu de
+   quatre, et une seule couche de compositing au lieu de quatre boîtes de
+   ~600px contenant du texte (sur Safari, un will-change permanent sur
+   celles-ci rend le texte flou).
+   Le décalage de base vit ici, en CSS, et non en JS : le tout premier
+   rendu — avant hydratation, et même sans JS du tout — est donc déjà
+   aligné sur la grille, sans saut au démarrage. */
+.landing-showcase-carousel-track {
+  display: flex;
+  gap: var(--space-24);
+  transform: translateX(calc(-1 * var(--carousel-peek)));
+}
+/* Le curseur grab ne vaut que pour les mockups : la légende en dessous
+   garde un curseur normal pour ne pas paraître non sélectionnable (voir
+   aussi le garde closest('.landing-showcase-caption') côté JS, qui
+   empêche un glissement démarré sur du texte de panner le carrousel). */
 .landing-showcase-caption { cursor: auto; }
-.landing-showcase-carousel.is-dragging {
-  cursor: grabbing;
-  user-select: none;
-  /* Mandatory scroll-snap fights any scrollLeft set outside a real
-     scroll/touch gesture — with it left on, a mouse-drag's own scrollLeft
-     assignments get silently rejected/reverted mid-drag. Off for the
-     duration of the drag, then DragScrollCarousel's mouseup handler
-     restores the resting position itself via scrollTo(behavior: 'smooth')
-     once this class (and the snap type with it) comes back off. */
-  scroll-snap-type: none;
-}
+.landing-showcase-carousel.is-dragging { cursor: grabbing; user-select: none; }
 
-/* flex-basis via the shorthand (not a separate width) + min-width/max-width
-   both pinned to the same value: belt-and-suspenders against flex's
-   default auto min-width (content's min-content size) — the 3-up kanban
-   board's non-wrapping headings/fixed-ish column minimums were pushing
-   this past 4 grid columns despite an explicit width. */
+/* flex-basis via le raccourci (et non une width séparée) + min-width et
+   max-width épinglés à la même valeur : ceinture et bretelles contre le
+   min-width auto de flex (taille min-content du contenu) — les titres
+   non sécables du kanban 3 colonnes poussaient l'item au-delà de ses
+   4 colonnes malgré une largeur explicite. */
 .landing-showcase-carousel-item {
   flex: 0 0 calc(33.3333vw - 32px);
   min-width: 0;
   max-width: calc(33.3333vw - 32px);
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   display: flex;
   flex-direction: column;
-  /* Exactly 24px between the mockup and its caption below — a plain
-     flex gap, not a margin on the caption, so nothing needs subtracting
-     back out. Caption lives inside the same carousel item as its
-     mockup (not a separate element below the whole carousel) so it
-     scrolls together with it instead of staying fixed under whichever
-     slide happened to be first. */
+  /* Exactement 24px entre le mockup et sa légende — un gap flex, pas une
+     marge sur la légende, donc rien à resoustraire ailleurs. La légende
+     vit dans le même item que son mockup pour défiler avec lui. */
   gap: var(--space-24);
 }
-/* Last item ("Mes documents") is never a snap stop: the carousel
-   should block once the item before it (the calendar) rests at
-   column 3, with this one just visible trailing off to the right —
-   not become a further resting point of its own. */
-.landing-showcase-carousel-item--tail { scroll-snap-align: none; }
 /* Every item is already stretched to the tallest one (default flex
    align-items:stretch on the row), but that only affects the item box
    itself — its mockup child still only took its own content height,
@@ -5915,6 +5898,14 @@ legend.field-label { padding: 0; }
      above and drags the row further right than intended. */
   .landing-showcase-row--kanban {
     margin-right: 0;
+    /* margin-left doit être annulé aussi, pas seulement margin-right :
+       la version desktop décale la ligne d'une valeur négative en vw
+       pour lui donner toute la largeur de page, ce qui ne veut plus
+       rien dire ici où la gouttière est plate. Sans ça, la ligne partait
+       d'une centaine de pixels hors de l'écran à gauche — invisible tant
+       que le carrousel était un scroller à moitié vide, franchement
+       cassé depuis qu'il a une fenêtre de rognage nette. */
+    margin-left: 0;
   }
   .landing-showcase-row--annuaire .landing-showcase-visual,
   .landing-showcase-row--priorise .landing-showcase-visual,
@@ -5923,6 +5914,14 @@ legend.field-label { padding: 0; }
   .landing-showcase-row--roster .landing-showcase-visual,
   .landing-showcase-row--kanban .landing-showcase-text--right {
     width: 100%;
+  }
+  /* Sa marge desktop la recentrait sur les colonnes 5-8 et compensait
+     l'annulation de padding du parent — deux notions qui n'existent plus
+     à cette largeur, et qui la poussaient d'une centaine de pixels vers
+     la droite. Règle séparée du bloc width ci-dessus, qui est partagé
+     avec cinq autres lignes du showcase. */
+  .landing-showcase-row--kanban .landing-showcase-text--right {
+    margin-left: 0;
   }
   .landing-roster-card { grid-template-columns: repeat(2, 1fr); }
   .landing-features-section { max-width: 100%; }
@@ -5989,21 +5988,16 @@ legend.field-label { padding: 0; }
   .landing-preview-shell {
     width: calc(100% - 48px);
   }
-  /* Same problem as .landing-showcase-row--kanban above, one level
-     deeper: the carousel's own bleed-past-the-margin drag illusion
-     (negative margin-left/padding built from 25vw) and each slide's
-     fixed 4-column span (calc(33.3333vw - 32px), ~93px at 375px wide)
-     are both desktop-grid math. Simplified to a plain edge-padded
-     scroller on mobile — the column-3 bleed/drag effect is a desktop-
-     only flourish, not something to reproduce at this width.
-     No padding-left/right here: this carousel is a direct child of
-     .landing-showcase-row--kanban, whose own padding above already
-     insets it to column 2/11 — adding more here pushed it a further
-     column in, to column 3/10, instead of matching that edge. */
+  /* Le peek de moitié de mockup n'a de sens que sur la grille 12
+     colonnes. Ici un item fait span(6) = 50vw - 36px (voir ci-dessous) :
+     en masquer la moitié ne laisserait qu'un moignon d'une soixantaine
+     de pixels à 375px de large, soit une seule carte lisible au lieu de
+     deux. Un peek fixe et court se contente d'amorcer le geste.
+     C'est la seule valeur à redéfinir : le JS la mesure via la sonde
+     plutôt que de recalculer une formule, donc toute la mécanique de
+     rebouclage s'adapte d'elle-même. */
   .landing-showcase-carousel {
-    width: 100%;
-    margin-left: 0;
-    scroll-padding-left: 0;
+    --carousel-peek: 24px;
   }
   /* 78vw was an eyeballed approximation — this is the site's actual
      6-of-12-column span formula (same one .landing-preview-shell above

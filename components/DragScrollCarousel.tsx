@@ -1,258 +1,360 @@
 'use client';
 
-import { Children, cloneElement, isValidElement, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { trackEvent } from '@/lib/gtag';
 
-// Native horizontal scroll only responds to touch/trackpad swipes, not a
-// mouse click-and-drag, this adds that "grab and drag" interaction (mouse
-// click, drag left/right, scrollLeft follows) on top of the standard CSS
-// Scroll Snap carousel (scroll-snap-type/-align on .landing-showcase-carousel
-// and .landing-showcase-carousel-item in tracker.css).
+// Carrousel à boucle infinie.
 //
-// This used to hand-roll its own step size (a fraction of window width) and
-// its own requestAnimationFrame easing, snapping on a timer after every
-// scroll event. That custom math is what kept breaking: it drifted out of
-// sync with the real card width whenever the carousel's content changed
-// (e.g. adding the documents mockup), and fought the browser's native
-// scroll-snap/anchoring in ways that showed up as "starts on the wrong
-// card after reload" and "doesn't feel smooth". Letting the browser own
-// snapping (CSS) and measuring real card positions from the DOM instead of
-// a formula removes that whole class of bug, touch/trackpad scrolling
-// snaps natively with zero JS, and mouse-drag only needs a plain
-// scrollTo(behavior: 'smooth') to the nearest actual card on release.
+// Pourquoi le défilement natif a été abandonné : avec N éléments et un
+// conteneur qui défile, il existe toujours un vrai bord. On peut bien
+// réordonner le DOM une fois ce bord atteint, mais le contenu suivant
+// n'apparaît alors qu'APRÈS que l'utilisateur ait buté dessus — c'est
+// structurellement « ça apparaît au dernier moment », et aucun réglage
+// ne le corrige. S'y ajoutaient deux conflits permanents : muter
+// scrollLeft en pleine inertie (Safari poursuit son animation vers une
+// cible calculée avant la mutation) et le faire sous scroll-snap
+// mandatory, qui re-snappe derrière nous.
 //
-// `circular`: when set, resting on the first or last item silently rotates
-// which item is physically first/last in the DOM (moving the one just
-// left behind to the opposite end) and re-measures where the item the
-// user was actually resting on now sits, snapping scrollLeft exactly
-// there — so the user just finds a "new" item to keep scrolling into,
-// forever, in either direction, with nothing visibly jumping. Each child
-// needs a stable `key` (its content identity, not its position) so React
-// reuses the same component instance — and all its live state, timers,
-// animation loops included — across the rotation instead of unmounting/
-// remounting it. No cloned/duplicated markup anywhere: there are only
-// ever as many DOM nodes as children passed in.
+// Ici la position est une valeur virtuelle `s` pilotée en JS, et chaque
+// élément est placé modulo la longueur de piste : un élément qui sort à
+// droite rentre à gauche, en continu. Il n'y a plus de bord du tout,
+// donc plus rien à atteindre avant que ça ne s'affiche.
+//
+// Les 4 composants ne sont JAMAIS démontés ni réordonnés : leurs
+// animations internes continuent exactement où elles en sont, même hors
+// écran, et aucun mockup n'est cloné — il n'y a que N nœuds DOM.
+//
+// Géométrie (voir aussi .landing-showcase-carousel dans tracker.css) :
+// la piste porte l'unique transform réécrit à chaque frame, les
+// éléments ne portent que leur saut de rebouclage, écrit seulement quand
+// ils rebouclent. Une écriture par frame au lieu de N.
 export default function DragScrollCarousel({ children, className, circular = false }: { children: React.ReactNode; className?: string; circular?: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0 });
-  const scrollTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const allKeys = Children.toArray(children).map((child) =>
-    typeof child === 'object' && child !== null && 'key' in child ? String(child.key) : ''
-  );
-  const [order, setOrder] = useState<string[]>(allKeys);
-  // The key of whichever item the user is actually resting on right
-  // before a rotation — consumed by the layout effect below, which
-  // re-measures THAT item's exact position in the newly-reordered DOM
-  // and snaps scrollLeft precisely there. Deliberately a re-measurement,
-  // not a precomputed delta: a delta assumes the shifted item's width +
-  // gap is exact to the pixel, and mandatory scroll-snap has zero
-  // tolerance for being even slightly off — it'll "correct" straight
-  // past the intended item to whichever one the small error actually
-  // landed closest to. Measuring the real item after the fact can't
-  // accumulate that kind of drift.
-  const pendingRestKeyRef = useRef<string | null>(null);
-  // Cooldown rather than an index/key comparison: right after a
-  // rotation the DOM reorders, so comparing indices would misread that
-  // reorder itself as fresh user movement and could re-trigger
-  // immediately. A short time window is simpler and sufficient here.
-  const lastRotateAtRef = useRef(0);
-
-  const byKey = new Map(
-    Children.toArray(children).map((child) => [
-      typeof child === 'object' && child !== null && 'key' in child ? String(child.key) : '',
-      child,
-    ])
-  );
-  const orderedChildren = order.map((key) => {
-    const child = byKey.get(key);
-    if (!child || !isValidElement(child)) return child;
-    // Own attribute rather than reusing `key` (not a real DOM attribute,
-    // can't be read back via querySelector) — this is what lets the
-    // layout effect find "the item I was resting on" again after a
-    // reorder without depending on index.
-    return cloneElement(child, { 'data-carousel-key': key } as Record<string, unknown>);
-  });
-
-  function scrollPaddingLeftOf(el: HTMLDivElement) {
-    return parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
-  }
-
-  function targetFor(el: HTMLDivElement, item: HTMLElement) {
-    const containerLeft = el.getBoundingClientRect().left;
-    const itemLeft = item.getBoundingClientRect().left - containerLeft + el.scrollLeft;
-    return itemLeft - scrollPaddingLeftOf(el);
-  }
-
-  function findNearestItem(el: HTMLDivElement) {
-    const items = Array.from(el.children) as HTMLElement[];
-    if (!items.length) return null;
-    let nearestIndex = 0;
-    let nearestTarget = 0;
-    let nearestDistance = Infinity;
-    items.forEach((item, index) => {
-      const target = targetFor(el, item);
-      const distance = Math.abs(target - el.scrollLeft);
-      if (distance < nearestDistance) {
-        nearestDistance = distance;
-        nearestTarget = target;
-        nearestIndex = index;
-      }
-    });
-    return { index: nearestIndex, target: nearestTarget, items };
-  }
-
-  function snapToNearestItem() {
-    const el = ref.current;
-    if (!el) return;
-    const nearest = findNearestItem(el);
-    if (!nearest) return;
-    el.scrollTo({ left: nearest.target, behavior: 'smooth' });
-  }
-
-  // Called on every scroll tick, not debounced: waiting for scrolling to
-  // fully stop (the ~150ms settle used for analytics below) meant that
-  // continuing to scroll right past the last item — a single continuous
-  // gesture, the common case — reached the genuine end and stalled
-  // there for a beat before the rotation caught up, reading as the next
-  // item "popping in late" instead of seamless. Checking eagerly, as
-  // soon as the boundary is truly reached, rotates before the user can
-  // out-scroll it.
-  //
-  // Deliberately checked against how close scrollLeft is to the LAST/
-  // FIRST item's own specific snap target — not "is the first/last item
-  // nearest" (nearest is true across the *entire first half* of the
-  // approach to that item, so that check rotated backward on
-  // essentially every scroll starting from rest), and not the
-  // container's raw scrollWidth-clientWidth either: with
-  // scroll-snap-type:mandatory, the browser's own true reachable max is
-  // whichever the last item's snap target is, which can sit short of
-  // that raw geometric max (e.g. trailing padding added so the last
-  // item's target is reachable at all can itself extend scrollWidth
-  // past that target) — comparing to the geometric max then never
-  // matched the position mandatory snap actually settles the container
-  // at, and rotation never fired going forward.
-  function maybeRotate() {
-    if (!circular) return;
-    const el = ref.current;
-    if (!el) return;
-    if (Date.now() - lastRotateAtRef.current < 300) return;
-    const items = Array.from(el.children) as HTMLElement[];
-    if (items.length <= 1) return;
-    const EPSILON = 4;
-    const lastTarget = targetFor(el, items[items.length - 1]);
-    const firstTarget = targetFor(el, items[0]);
-    if (Math.abs(el.scrollLeft - lastTarget) <= EPSILON) {
-      lastRotateAtRef.current = Date.now();
-      pendingRestKeyRef.current = order[order.length - 1];
-      setOrder((prev) => [...prev.slice(1), prev[0]]);
-    } else if (Math.abs(el.scrollLeft - firstTarget) <= EPSILON) {
-      lastRotateAtRef.current = Date.now();
-      pendingRestKeyRef.current = order[0];
-      setOrder((prev) => [prev[prev.length - 1], ...prev.slice(0, -1)]);
-    }
-  }
-
-  // Re-measures the item the user was actually resting on in the
-  // newly-reordered DOM and snaps scrollLeft exactly to its target the
-  // instant the reorder paints — so the rotation itself is invisible,
-  // and immune to any width/gap rounding a precomputed delta could have
-  // drifted on.
-  useLayoutEffect(() => {
-    const el = ref.current;
-    const key = pendingRestKeyRef.current;
-    if (!el || !key) return;
-    pendingRestKeyRef.current = null;
-    const restEl = el.querySelector<HTMLElement>(`[data-carousel-key="${key}"]`);
-    if (!restEl) return;
-    el.scrollLeft = targetFor(el, restEl);
-  }, [order]);
-
-  // Fires once per resting position, for touch/trackpad/keyboard scroll
-  // (handled entirely by native CSS scroll-snap, no JS involved above) as
-  // well as mouse-drag, debounced since 'scroll' fires continuously
-  // while the browser's own snap animation is still settling.
-  function onScroll() {
-    const el = ref.current;
-    if (!el) return;
-    maybeRotate();
-    if (scrollTrackTimer.current) clearTimeout(scrollTrackTimer.current);
-    scrollTrackTimer.current = setTimeout(() => {
-      const nearest = findNearestItem(el);
-      if (nearest) trackEvent('carousel_scroll', { item_index: nearest.index });
-    }, 150);
-  }
-
-  function onMouseDown(e: React.MouseEvent) {
-    const el = ref.current;
-    if (!el) return;
-    // Text in the caption below each mockup stays selectable, only a
-    // mousedown that starts on the mockup itself begins a drag, so
-    // click-dragging across the caption's text selects it instead of
-    // panning the carousel.
-    if ((e.target as HTMLElement).closest('.landing-showcase-caption')) return;
-    drag.current = { active: true, moved: false, startX: e.clientX, startScroll: el.scrollLeft };
-    el.classList.add('is-dragging');
-  }
-
-  function onMouseMove(e: React.MouseEvent) {
-    const el = ref.current;
-    if (!el || !drag.current.active) return;
-    drag.current.moved = true;
-    el.scrollLeft = drag.current.startScroll - (e.clientX - drag.current.startX);
-  }
-
-  function stopDrag() {
-    if (!drag.current.active) return;
-    drag.current.active = false;
-    ref.current?.classList.remove('is-dragging');
-    if (drag.current.moved) snapToNearestItem();
-  }
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const peekRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    // scroll-snap-type stays off (see .carousel-snap-ready in tracker.css)
-    // until this runs, and only turns on right after the last scrollLeft
-    // reset below, otherwise the browser's own "snap to nearest point"
-    // pass can fire while the web font and Cassandra's photo are still
-    // loading and item positions are still shifting, landing the
-    // carousel a card or two off the first card on reload instead of
-    // resting on it. Reset at mount, again once fonts have actually
-    // finished loading (the layout shift most likely to move things),
-    // and once more shortly after so any late reflow from that font swap
-    // is also settled before snapping turns on, a plain setTimeout
-    // rather than requestAnimationFrame, since rAF never fires in a
-    // backgrounded or not-yet-painted tab and would leave snap off.
-    el.scrollLeft = 0;
-    const fontsReady = document.fonts?.ready ?? Promise.resolve();
-    fontsReady
-      .then(() => {
-        if (!el) return;
-        el.scrollLeft = 0;
-        return new Promise((resolve) => setTimeout(resolve, 50));
-      })
-      .then(() => {
-        if (!el) return;
-        el.scrollLeft = 0;
-        el.classList.add('carousel-snap-ready');
-      });
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    const peekEl = peekRef.current;
+    if (!viewport || !track || !peekEl) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // --- Mesures -----------------------------------------------------
+    // Tout est mesuré, jamais recalculé depuis les formules vw du CSS :
+    // celles-ci diffèrent sous 720px, et une scrollbar classique ampute
+    // la largeur de contenu sans que 100vw ne bouge. Une seule source de
+    // vérité, le layout réel.
+    // Déclaré avant measure(), qui le purge : au changement de point de
+    // rupture c'est la longueur de piste qui change, pas le nombre de
+    // tours mémorisé ici.
+    const wrapCounts: number[] = [];
+    let items: HTMLElement[] = [];
+    let itemW = 0;
+    let step = 0;
+    let trackLen = 0;
+    let peek = 0;
+    let lo = 0;
+
+    function measure() {
+      items = Array.from(track!.children) as HTMLElement[];
+      if (!items.length) return;
+      const gap = parseFloat(getComputedStyle(track!).columnGap) || 0;
+      // getBoundingClientRect (et non offsetWidth) pour garder la
+      // précision sous-pixel : les seuls transforms d'ancêtre ici sont
+      // des translations pures, qui ne changent pas une largeur. Ne
+      // jamais introduire de scale() sur le carrousel, cela fausserait
+      // cette mesure (et figerait mal la hauteur du kanban).
+      itemW = items[0].getBoundingClientRect().width;
+      step = itemW + gap;
+      trackLen = items.length * step;
+      peek = peekEl!.getBoundingClientRect().width;
+      const viewportW = viewport!.clientWidth;
+      // Marge hors écran disponible, répartie de part et d'autre : c'est
+      // elle qui rend le saut de rebouclage invisible. Sur la grille
+      // 12 colonnes elle vaut exactement 48px, indépendamment de la
+      // largeur d'écran.
+      const slack = trackLen - viewportW - itemW;
+      lo = -(itemW + Math.max(slack, 0) / 2);
+      // Invalide les sauts de rebouclage mémorisés. paint() ne réécrit le
+      // transform d'un élément que si son NOMBRE de tours a changé — or au
+      // franchissement d'un point de rupture c'est la longueur de piste
+      // qui change, pas ce nombre : sans cette purge, les éléments
+      // gardaient un saut calculé sur l'ancienne géométrie et partaient à
+      // plus de mille pixels hors de l'écran.
+      wrapCounts.length = 0;
+      if (slack <= 0 && process.env.NODE_ENV !== 'production') {
+        // Sans marge, un élément serait visible des deux côtés à la fois
+        // au moment de reboucler. Signalé plutôt que rendu en silence.
+        console.warn('[DragScrollCarousel] piste trop courte pour reboucler sans coupure', { trackLen, viewportW, itemW });
+      }
+    }
+
+    function wrap(raw: number) {
+      return ((raw - lo) % trackLen + trackLen) % trackLen + lo;
+    }
+
+    // --- Rendu -------------------------------------------------------
+    let s = 0;
+    let frame = 0;
+
+    function paint() {
+      frame = 0;
+      if (!step) return;
+      track!.style.transform = `translateX(${-(s + peek)}px)`;
+      for (let i = 0; i < items.length; i++) {
+        const raw = i * step - s - peek;
+        const k = circular ? Math.round((wrap(raw) - raw) / trackLen) : 0;
+        if (wrapCounts[i] !== k) {
+          wrapCounts[i] = k;
+          items[i].style.transform = k ? `translateX(${k * trackLen}px)` : '';
+        }
+      }
+    }
+
+    function schedulePaint() {
+      if (!frame) frame = requestAnimationFrame(paint);
+    }
+
+    function clampIfBounded() {
+      if (circular || !step) return;
+      const max = (items.length - 1) * step;
+      if (s < 0) s = 0;
+      else if (s > max) s = max;
+    }
+
+    // --- Accrochage --------------------------------------------------
+    // `s` reste volontairement non borné (jamais normalisé modulo la
+    // piste) : une animation qui part de trackLen-10 vers trackLen
+    // verrait sinon sa cible normalisée à 0 et repartirait en arrière sur
+    // toute la longueur. La normalisation n'a lieu qu'au moment de
+    // calculer la position de chaque élément.
+    let tween = 0;
+
+    function cancelTween() {
+      if (tween) { cancelAnimationFrame(tween); tween = 0; }
+    }
+
+    function snapTargetFrom(position: number) {
+      const dpr = window.devicePixelRatio || 1;
+      let target = Math.round(position / step) * step;
+      // Les cibles tombent sur des demi-pixels pour la plupart des
+      // largeurs d'écran, ce qui rend le texte des mockups flou au repos.
+      // On aligne la translation effectivement rendue sur la grille de
+      // pixels physiques.
+      const rendered = Math.round(-(target + peek) * dpr) / dpr;
+      target = -rendered - peek;
+      return target;
+    }
+
+    function settle() {
+      if (!step) return;
+      const index = ((Math.round(s / step) % items.length) + items.length) % items.length;
+      trackEvent('carousel_scroll', { item_index: index });
+    }
+
+    function animateTo(target: number) {
+      cancelTween();
+      if (reduceMotion.matches) {
+        // Saut sec, mais accrochage quand même : sans lui la position de
+        // repos serait arbitraire au milieu d'un pas et on perdrait
+        // l'alignement sur la grille, qui est la contrainte n°1.
+        s = target;
+        clampIfBounded();
+        schedulePaint();
+        settle();
+        return;
+      }
+      const from = s;
+      const delta = target - from;
+      if (Math.abs(delta) < 0.5) { s = target; schedulePaint(); settle(); return; }
+      const duration = Math.min(550, Math.max(260, Math.abs(delta) * 0.7));
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        s = from + delta * eased;
+        clampIfBounded();
+        paint();
+        if (t < 1) tween = requestAnimationFrame(tick);
+        else { tween = 0; settle(); }
+      };
+      tween = requestAnimationFrame(tick);
+    }
+
+    function snap() { animateTo(snapTargetFrom(s)); }
+
+    // --- Molette -----------------------------------------------------
+    // Listener manuel non passif : React enregistre `wheel` en passive
+    // sur son conteneur racine, donc un preventDefault dans un onWheel
+    // JSX ne fait rien (et log un avertissement) — la page défilerait
+    // horizontalement, ou déclencherait le geste retour du navigateur,
+    // pendant que le JS bouge aussi le carrousel.
+    let wheelAxis: 'x' | 'y' | null = null;
+    let lastWheelAt = 0;
+    let quiet = 0;
+
+    function onWheel(e: WheelEvent) {
+      if (!step) return;
+      const now = performance.now();
+      // Verrou d'axe sur toute la rafale, et non événement par événement :
+      // sur un geste diagonal de trackpad le rapport bascule d'un
+      // événement à l'autre, ce qui ferait alterner défilement de page et
+      // défilement du carrousel — la page tressaute et le carrousel
+      // avance par à-coups.
+      if (now - lastWheelAt > 150) wheelAxis = null;
+      lastWheelAt = now;
+      if (!wheelAxis) wheelAxis = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? 'x' : 'y';
+      if (wheelAxis !== 'x') return;
+      e.preventDefault();
+      cancelTween();
+      // deltaMode 1 = lignes (Firefox), à convertir en pixels.
+      s += e.deltaX * (e.deltaMode === 1 ? 16 : 1);
+      clampIfBounded();
+      schedulePaint();
+      clearTimeout(quiet);
+      quiet = window.setTimeout(snap, 130);
+    }
+
+    // --- Glisser (souris et tactile) ---------------------------------
+    let dragging = false;
+    let moved = false;
+    let startX = 0;
+    let startS = 0;
+    let lastX = 0;
+    let lastT = 0;
+    let velocity = 0;
+
+    function onPointerDown(e: PointerEvent) {
+      if (!step) return;
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      // Le texte des légendes reste sélectionnable : un glissement qui
+      // démarre dessus n'est pas un pan.
+      if ((e.target as HTMLElement).closest('.landing-showcase-caption')) return;
+      dragging = true;
+      moved = false;
+      startX = lastX = e.clientX;
+      startS = s;
+      lastT = performance.now();
+      velocity = 0;
+      cancelTween();
+      clearTimeout(quiet);
+      // Pas de preventDefault ici : cela tuerait la sélection et le focus.
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      // Seuil de 5px avant de considérer que c'est un glissement, pour
+      // qu'un micro clic-glissé reste une sélection de texte.
+      if (!moved) {
+        if (Math.abs(dx) < 5) return;
+        moved = true;
+        viewport!.classList.add('is-dragging');
+        viewport!.setPointerCapture(e.pointerId);
+      }
+      const now = performance.now();
+      const dt = now - lastT;
+      if (dt > 0) {
+        velocity = (lastX - e.clientX) / dt;
+        lastX = e.clientX;
+        lastT = now;
+      }
+      s = startS - dx;
+      clampIfBounded();
+      schedulePaint();
+    }
+
+    function endDrag(e: PointerEvent) {
+      if (!dragging) return;
+      dragging = false;
+      viewport!.classList.remove('is-dragging');
+      if (viewport!.hasPointerCapture?.(e.pointerId)) viewport!.releasePointerCapture(e.pointerId);
+      if (!moved) return;
+      // Inertie : on projette où le geste « voulait » aller, puis on
+      // accroche. Indispensable au tactile, où c'est l'interaction
+      // principale — sans elle un swipe s'arrête net au lever du doigt et
+      // le carrousel paraît cassé. Bornée à deux pas pour ne pas
+      // s'envoler sur un geste brusque.
+      const projected = s + velocity * 180;
+      const maxJump = 2 * step;
+      const bounded = Math.max(s - maxJump, Math.min(s + maxJump, projected));
+      animateTo(snapTargetFrom(bounded));
+    }
+
+    // --- Clavier -----------------------------------------------------
+    // Le conteneur natif était focalisable et répondait aux flèches tant
+    // qu'il défilait. En reprenant le positionnement on perdait cet
+    // accès, sur un contenu dont les légendes de tête et de queue sont
+    // coupées en deux au repos, texte compris (WCAG 2.1.1).
+    function onKeyDown(e: KeyboardEvent) {
+      if (!step) return;
+      const here = Math.round(s / step);
+      let target: number | null = null;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') target = (here + 1) * step;
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') target = (here - 1) * step;
+      else if (e.key === 'Home') target = Math.round(s / trackLen) * trackLen;
+      else if (e.key === 'End') target = Math.round(s / trackLen) * trackLen + (items.length - 1) * step;
+      if (target === null) return;
+      e.preventDefault();
+      animateTo(snapTargetFrom(target));
+    }
+
+    // --- Cycle de vie -------------------------------------------------
+    measure();
+    schedulePaint();
+
+    // Au franchissement d'un point de rupture, `step` change : on
+    // conserve l'index fractionnaire plutôt que la position en pixels,
+    // sinon le repos tombe au milieu d'un élément.
+    const resize = new ResizeObserver(() => {
+      const before = step ? s / step : 0;
+      measure();
+      s = before * step;
+      cancelTween();
+      s = snapTargetFrom(s);
+      paint();
+    });
+    resize.observe(viewport);
+
+    viewport.addEventListener('wheel', onWheel, { passive: false });
+    viewport.addEventListener('pointerdown', onPointerDown);
+    viewport.addEventListener('pointermove', onPointerMove);
+    viewport.addEventListener('pointerup', endDrag);
+    // pointercancel est obligatoire sur iOS, où le navigateur reprend le
+    // geste : sans lui l'état de glissement reste collé et le carrousel
+    // suivrait la souris sans bouton enfoncé.
+    viewport.addEventListener('pointercancel', endDrag);
+    viewport.addEventListener('keydown', onKeyDown);
+
     return () => {
-      if (scrollTrackTimer.current) clearTimeout(scrollTrackTimer.current);
+      resize.disconnect();
+      cancelTween();
+      if (frame) cancelAnimationFrame(frame);
+      clearTimeout(quiet);
+      viewport.removeEventListener('wheel', onWheel);
+      viewport.removeEventListener('pointerdown', onPointerDown);
+      viewport.removeEventListener('pointermove', onPointerMove);
+      viewport.removeEventListener('pointerup', endDrag);
+      viewport.removeEventListener('pointercancel', endDrag);
+      viewport.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [circular]);
 
   return (
     <div
-      ref={ref}
+      ref={viewportRef}
       className={className}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={stopDrag}
-      onMouseLeave={stopDrag}
-      onScroll={onScroll}
+      tabIndex={0}
+      role="group"
+      aria-roledescription="carrousel"
+      aria-label="Aperçu des outils Altora"
     >
-      {circular ? orderedChildren : children}
+      <span className="landing-showcase-carousel-peek" ref={peekRef} aria-hidden="true" />
+      <div className="landing-showcase-carousel-track" ref={trackRef}>
+        {children}
+      </div>
     </div>
   );
 }

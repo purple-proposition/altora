@@ -103,12 +103,7 @@ function Message({ message }: { message: MessageData }) {
   );
 }
 
-// `loop`=false renders the same static starting messages with none of
-// the timers/observer that drive the perpetual cycle — same purpose as
-// KanbanAnimation's own `loop` prop, used for the carousel's tail clones
-// so looping the carousel back around doesn't mean running a second
-// live copy of the animation alongside the real one.
-export default function MessagingAnimation({ loop = true }: { loop?: boolean }) {
+export default function MessagingAnimation() {
   const [messages, setMessages] = useState<MessageData[]>(initialMessages);
   const boardRef = useRef<HTMLDivElement>(null);
 
@@ -121,10 +116,17 @@ export default function MessagingAnimation({ loop = true }: { loop?: boolean }) 
   // pattern as KanbanAnimation, so a message still animating out from
   // one commit is never re-measured mid-flight by an unrelated one.
   const movedIdsRef = useRef<Set<string>>(new Set());
-  const firstRectsRef = useRef<Map<string, DOMRect>>(new Map());
+  // Coordonnées relatives au plateau, pas un DOMRect viewport : le
+  // carrousel parent réécrit un translateX à chaque frame et les deux
+  // moitiés d'un FLIP sont séparées par une frontière de commit React.
+  // Aujourd'hui seul dy est utilisé ici, donc une translation purement
+  // horizontale ne corromprait rien — mais rien ne garantit que
+  // l'accrochage reste strictement horizontal à l'avenir, et
+  // addNewMessage passe TOUS les messages existants dans movedIds : le
+  // moindre composant vertical partirait toute la liste en FLIP parasite.
+  const firstRectsRef = useRef<Map<string, { left: number; top: number }>>(new Map());
 
   useEffect(() => {
-    if (!loop) return;
     const el = boardRef.current;
     if (!el) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -132,9 +134,12 @@ export default function MessagingAnimation({ loop = true }: { loop?: boolean }) 
     function commit(next: MessageData[], movedIds: string[] = []) {
       const board = boardRef.current;
       if (board) {
+        const origin = board.getBoundingClientRect();
         movedIds.forEach((id) => {
           const msgEl = board.querySelector<HTMLElement>(`[data-msg-id="${id}"]`);
-          if (msgEl) firstRectsRef.current.set(id, msgEl.getBoundingClientRect());
+          if (!msgEl) return;
+          const r = msgEl.getBoundingClientRect();
+          firstRectsRef.current.set(id, { left: r.left - origin.left, top: r.top - origin.top });
         });
       }
       movedIdsRef.current = new Set(movedIds);
@@ -230,6 +235,8 @@ export default function MessagingAnimation({ loop = true }: { loop?: boolean }) 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const moved = movedIdsRef.current;
     const firsts = firstRectsRef.current;
+    // Origine fraîche, lue dans cette tâche-ci — voir firstRectsRef.
+    const origin = board.getBoundingClientRect();
 
     board.querySelectorAll<HTMLElement>('[data-msg-id]').forEach((msgEl) => {
       const id = msgEl.dataset.msgId!;
@@ -265,8 +272,8 @@ export default function MessagingAnimation({ loop = true }: { loop?: boolean }) 
       if (!moved.has(id)) return;
       const first = firsts.get(id);
       if (!first) return;
-      const last = msgEl.getBoundingClientRect();
-      const dy = first.top - last.top;
+      const lastRect = msgEl.getBoundingClientRect();
+      const dy = first.top - (lastRect.top - origin.top);
       if (Math.abs(dy) > 0.5) {
         msgEl.style.transition = 'none';
         msgEl.style.transform = `translateY(${dy}px)`;

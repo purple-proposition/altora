@@ -194,13 +194,7 @@ function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => voi
   );
 }
 
-// `loop`=false renders the exact same static starting board with none
-// of the effects that drive the perpetual cycle (no IntersectionObserver,
-// no timers, no calendar-sync registration) — used for the carousel's
-// tail clone, so looping the carousel back to "À faire" after Documents
-// doesn't mean running a second live copy of the whole animation loop
-// side by side with the real one.
-export default function KanbanAnimation({ loop = true }: { loop?: boolean }) {
+export default function KanbanAnimation() {
   const [columns, setColumns] = useState<Columns>(initialColumns);
   const [revealedPills, setRevealedPills] = useState<Set<string>>(() => new Set(initialColumns().interview.map((c) => c.id)));
   const [boardMinHeight, setBoardMinHeight] = useState<number | undefined>(undefined);
@@ -212,7 +206,6 @@ export default function KanbanAnimation({ loop = true }: { loop?: boolean }) {
   // calendar too, not just the ones beat3 adds later — otherwise the
   // calendar starts empty until the first cycle catches up.
   useEffect(() => {
-    if (!loop) return;
     const initialInterview = columns.interview;
     initialInterview.forEach((card, i) => {
       calendarSync?.addEvent({ id: card.id, day: PILL_DATES[i % PILL_DATES.length].day, label: card.company });
@@ -237,7 +230,9 @@ export default function KanbanAnimation({ loop = true }: { loop?: boolean }) {
   // right after. Any card whose id isn't in this set is left completely
   // untouched by that render, however many other cards changed around it.
   const movedIdsRef = useRef<Set<string>>(new Set());
-  const firstRectsRef = useRef<Map<string, DOMRect>>(new Map());
+  // Coordonnées relatives au plateau, pas un DOMRect viewport — voir
+  // l'explication dans commit().
+  const firstRectsRef = useRef<Map<string, { left: number; top: number }>>(new Map());
   // ids ever rendered — anything not in here yet is a brand-new card and
   // gets the fade/scale-in entrance instead of a FLIP move. Pre-seeded
   // with the starting cards so the mockup is already fully in place,
@@ -251,7 +246,6 @@ export default function KanbanAnimation({ loop = true }: { loop?: boolean }) {
   }, []);
 
   useEffect(() => {
-    if (!loop) return;
     const el = boardRef.current;
     if (!el) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -264,9 +258,23 @@ export default function KanbanAnimation({ loop = true }: { loop?: boolean }) {
     function commit(mutate: (cols: Columns) => void, movedIds: string[] = []) {
       const board = boardRef.current;
       if (board) {
+        // Mesuré RELATIVEMENT au plateau, jamais en coordonnées viewport.
+        // Le carrousel qui contient ce mockup (DragScrollCarousel) réécrit
+        // un translateX à chaque frame pendant un défilement, et les deux
+        // moitiés d'un FLIP sont séparées par une frontière de commit React
+        // (commit() part d'un setTimeout, l'effet de layout s'exécute dans
+        // une autre tâche) : au moins un rAF passe entre les deux, donc en
+        // coordonnées viewport le delta contiendrait systématiquement la
+        // distance parcourue par le carrousel, et chaque carte partirait
+        // avec un saut latéral. En soustrayant une origine lue dans la même
+        // tâche que la mesure, la translation d'ancêtre se simplifie
+        // exactement.
+        const origin = board.getBoundingClientRect();
         movedIds.forEach((id) => {
           const cardEl = board.querySelector<HTMLElement>(`[data-flip-id="${id}"]`);
-          if (cardEl) firstRectsRef.current.set(id, cardEl.getBoundingClientRect());
+          if (!cardEl) return;
+          const r = cardEl.getBoundingClientRect();
+          firstRectsRef.current.set(id, { left: r.left - origin.left, top: r.top - origin.top });
         });
       }
       movedIdsRef.current = new Set(movedIds);
@@ -457,6 +465,9 @@ export default function KanbanAnimation({ loop = true }: { loop?: boolean }) {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const moved = movedIdsRef.current;
     const firsts = firstRectsRef.current;
+    // Origine fraîche, lue dans cette tâche-ci : c'est ce qui annule la
+    // translation du carrousel, qui a pu bouger depuis la mesure "First".
+    const origin = board.getBoundingClientRect();
 
     board.querySelectorAll<HTMLElement>('[data-flip-id]').forEach((cardEl) => {
       const id = cardEl.dataset.flipId!;
@@ -506,9 +517,9 @@ export default function KanbanAnimation({ loop = true }: { loop?: boolean }) {
       if (!moved.has(id)) return;
       const first = firsts.get(id);
       if (!first) return;
-      const last = cardEl.getBoundingClientRect();
-      const dx = first.left - last.left;
-      const dy = first.top - last.top;
+      const lastRect = cardEl.getBoundingClientRect();
+      const dx = first.left - (lastRect.left - origin.left);
+      const dy = first.top - (lastRect.top - origin.top);
       if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
         cardEl.style.transition = 'none';
         cardEl.style.transform = `translate(${dx}px, ${dy}px)`;
