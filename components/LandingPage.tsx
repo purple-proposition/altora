@@ -560,13 +560,13 @@ export default function LandingPage() {
           </div>
           <div className="landing-showcase-visual">
             <div className="landing-copilot-card">
-              <div className="landing-copilot-item landing-copilot-item--warning">
-                <Icon name="target" />
-                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
-              </div>
               <div className="landing-copilot-item landing-copilot-item--positive">
                 <Icon name="check-circle" />
                 <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
+              </div>
+              <div className="landing-copilot-item landing-copilot-item--warning">
+                <Icon name="target" />
+                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
               </div>
               <div className="landing-copilot-item landing-copilot-item--urgent">
                 <Icon name="circle-alert" />

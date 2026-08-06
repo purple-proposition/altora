@@ -5073,7 +5073,7 @@ legend.field-label { padding: 0; }
    padding/font-size, unread vs. read told apart by fill vs. plain border
    (not the small indigo dot alone, which reads too subtly at this size). */
 .landing-inbox-message { padding: 10px 12px; gap: 8px; min-width: 0; }
-.landing-inbox-message--unread { background: var(--bg); }
+.landing-inbox-message--unread { background: var(--bg); border-color: transparent; }
 .landing-inbox-message--read { background: var(--card-bg); }
 .landing-messaging-board .inbox-message-body { gap: 2px; min-width: 0; }
 .landing-messaging-board .inbox-message-top { flex-wrap: wrap; gap: 4px; }
