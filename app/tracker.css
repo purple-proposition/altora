@@ -10,12 +10,10 @@
   /* Accent colors follow Tailwind's default palette (50/100/500/600) */
   --indigo: #171717;       /* was #4f46e5 (indigo-600) — replaced site-wide per request, kept only on the "école" feature icon (see .landing-feature-icon--school) */
   --indigo-tint: var(--bg); /* was #eef2ff (indigo-50) — neutral now, same monochrome cleanup as --indigo above */
-  --indigo-track: #e0e7ff; /* indigo-100 */
 
   --amber: #b45309;        /* amber-700 (was amber-600, failed WCAG AA on --amber-tint) */
   --amber-fill: #f59e0b;   /* amber-500 */
   --amber-tint: #fffbeb;   /* amber-50 */
-  --amber-track: #fef3c7;  /* amber-100 */
 
   --green: #047857;        /* emerald-700 (was emerald-600, failed WCAG AA on --green-tint) */
   --green-fill: #10b981;   /* emerald-500 */
@@ -28,14 +26,10 @@
   --rose-track: #ffe4e6;   /* rose-100 */
 
   --violet: #7c3aed;        /* violet-600 */
-  --violet-fill: #8b5cf6;   /* violet-500 */
   --violet-tint: #f5f3ff;   /* violet-50 */
-  --violet-track: #ede9fe;  /* violet-100 */
 
   --cyan: #0891b2;          /* cyan-600 */
-  --cyan-fill: #06b6d4;     /* cyan-500 */
   --cyan-tint: #ecfeff;     /* cyan-50 */
-  --cyan-track: #cffafe;    /* cyan-100 */
 
   /* Unified radius scale (4px grid) */
   --radius-card: 20px;   /* summary-card, stat-card, column, modal */
@@ -86,17 +80,13 @@
   --shadow: 0 2px 8px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.05);
 
   --indigo-tint: var(--bg);
-  --indigo-track: #e0e7ff;
   --amber-tint: #fffbeb;
-  --amber-track: #fef3c7;
   --green-tint: #ecfdf5;
   --green-track: #d1fae5;
   --rose-tint: #fff1f2;
   --rose-track: #ffe4e6;
   --violet-tint: #f5f3ff;
-  --violet-track: #ede9fe;
   --cyan-tint: #ecfeff;
-  --cyan-track: #cffafe;
 }
 
 /* Dark mode: follows the OS by default ("system"); [data-theme] on <html>
@@ -111,17 +101,13 @@
     --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 10px 24px rgba(0,0,0,0.35);
 
     --indigo-tint: var(--border);
-    --indigo-track: #3730a3;
     --amber-tint: #451a03;
-    --amber-track: #78350f;
     --green-tint: #052e2b;
     --green-track: #065f46;
     --rose-tint: #4c0519;
     --rose-track: #881337;
     --violet-tint: #2e1065;
-    --violet-track: #4c1d95;
     --cyan-tint: #083344;
-    --cyan-track: #155e75;
   }
 }
 
@@ -134,17 +120,13 @@
   --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 10px 24px rgba(0,0,0,0.35);
 
   --indigo-tint: var(--border);
-  --indigo-track: #3730a3;
   --amber-tint: #451a03;
-  --amber-track: #78350f;
   --green-tint: #052e2b;
   --green-track: #065f46;
   --rose-tint: #4c0519;
   --rose-track: #881337;
   --violet-tint: #2e1065;
-  --violet-track: #4c1d95;
   --cyan-tint: #083344;
-  --cyan-track: #155e75;
 }
 
 * { box-sizing: border-box; }
@@ -1364,8 +1346,8 @@ body {
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
   font-weight: 500;
-  color: #065f46;
-  background: #d1fae5;
+  color: var(--green);
+  background: var(--green-track);
 }
 .card-interview-pill .lucide { width: 12px; height: 12px; }
 
@@ -1651,7 +1633,7 @@ body {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius-inner);
-  background: #fff;
+  background: var(--card-bg);
 }
 
 /* --- Offer detail view (read-only, click a card) --- */
@@ -2088,13 +2070,20 @@ legend.field-label { padding: 0; }
 .contact-remove-btn .lucide { width: 16px; height: 16px; }
 .contact-remove-btn:hover { background: var(--rose-tint); color: var(--rose); }
 
+/* var(--text), not var(--indigo): --indigo became a near-black
+   monochrome token site-wide (see its own comment above), so this
+   button rendered black in light mode — the dark-mode override below
+   still hardcoded the old indigo-400 (#818cf8), never updated after
+   that change, so the same button read black in light mode and purple
+   in dark mode. var(--text) already flips correctly per theme on its
+   own, so that override is gone too. */
 .btn-add-contact {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   border: none;
   background: none;
-  color: var(--indigo);
+  color: var(--text);
   font-family: inherit;
   font-weight: 500;
   font-size: 14px;
@@ -3439,10 +3428,8 @@ legend.field-label { padding: 0; }
    the contrast without touching --indigo/--rose everywhere else they're
    used as a background or against a tint. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .btn-add-contact { color: #818cf8; }
   :root:not([data-theme="light"]) .btn-remove-contact { color: #fb7185; }
 }
-:root[data-theme="dark"] .btn-add-contact { color: #818cf8; }
 :root[data-theme="dark"] .btn-remove-contact { color: #fb7185; }
 
 .profile-form-actions { display: flex; align-items: center; gap: 12px; }
@@ -4652,13 +4639,15 @@ legend.field-label { padding: 0; }
 /* Icon keeps its square styling from .landing-feature-icon but loses
    that class's own margin-bottom (sits beside the title in a row here,
    not stacked above it) and swaps its indigo tint for a plain neutral
-   look: #404040 icon, #e5e5e5 border, white fill. */
+   look — var(--card-bg)/var(--border)/var(--text-muted), not hardcoded
+   hex, so this stays in sync with the rest of the theme instead of
+   silently drifting if those tokens ever change. */
 .landing-showcase-caption-header .landing-feature-icon {
   margin-bottom: 0;
   flex-shrink: 0;
-  background: #ffffff;
-  border: 1px solid #e5e5e5;
-  color: #404040;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
 }
 .landing-showcase-caption-title { font-size: 32px; line-height: 1.2; font-weight: 600; color: var(--text); margin: 0; }
 .landing-showcase-caption .landing-feature-text { font-size: 16px; }
@@ -4975,7 +4964,7 @@ legend.field-label { padding: 0; }
    3-column grid are new. */
 .landing-kanban-board {
   width: 100%;
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
@@ -5026,7 +5015,7 @@ legend.field-label { padding: 0; }
   width: 100%;
   min-width: 0;
   overflow: hidden;
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
@@ -5087,7 +5076,7 @@ legend.field-label { padding: 0; }
   width: 100%;
   min-width: 0;
   overflow: hidden;
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
@@ -5184,7 +5173,7 @@ legend.field-label { padding: 0; }
    other mockups so all 4 carousel slides match. */
 .landing-documents-board {
   width: 100%;
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
