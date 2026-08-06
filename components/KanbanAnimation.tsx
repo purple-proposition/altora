@@ -25,14 +25,23 @@ type CardData = {
   interviewPill?: string;
 };
 
+// "À faire" starts empty and fills one card at a time (see the
+// TODO_ENTRANCE sequence below) instead of mounting with all three
+// already there, so the very first thing a viewer sees is the board
+// building itself up rather than a static grid.
+const TODO_ENTRANCE: CardData[] = [
+  { id: 'oreal-marketing', schoolBadge: true, title: 'Alternance Marketing Digital', company: "L'Oréal", location: 'Clichy' },
+  { id: 'decathlon-projet', title: 'Assistant chef de projet', company: 'Decathlon', location: 'Paris 15e' },
+  { id: 'doctolib-growth', title: 'Alternance Growth Marketing', company: 'Doctolib', location: 'Paris 9e' },
+];
+
+const NEW_TODO_CARD: CardData = { id: 'nike-com', schoolBadge: true, title: 'Alternance Communication', company: 'Nike', location: 'Paris 8e' };
+
+// "Envoyé" and "Entretien" already hold a couple of offers when the
+// board mounts — only "À faire" plays the one-by-one entrance.
 const INITIAL = {
-  todo: [
-    { id: 'oreal-marketing', schoolBadge: true, title: 'Alternance Marketing Digital', company: "L'Oréal", location: 'Clichy' },
-    { id: 'decathlon-projet', title: 'Assistant chef de projet', company: 'Decathlon', location: 'Paris 15e' },
-    { id: 'doctolib-growth', schoolBadge: true, title: 'Alternance Growth Marketing', company: 'Doctolib', location: 'Paris 9e' },
-  ] as CardData[],
+  todo: [] as CardData[],
   sent: [
-    { id: 'blablacar-com', title: 'Chargé de communication', company: 'BlaBlaCar', location: 'Paris 11e' },
     { id: 'sephora-crm', title: 'Alternant CRM & Data Marketing', company: 'Sephora', location: 'Neuilly-sur-Seine' },
     { id: 'rocket-projet', title: 'Chargé de Projet Marketing', company: 'Rocket School', location: 'Paris 8e' },
   ] as CardData[],
@@ -42,7 +51,9 @@ const INITIAL = {
   ] as CardData[],
 };
 
-const NEW_TODO_CARD: CardData = { id: 'nike-com', schoolBadge: true, title: 'Alternance Communication', company: 'Nike', location: 'Paris 8e' };
+// The largest any single column ever gets across the whole script (used
+// below to reserve a fixed board height up front, see GaugeColumn).
+const GAUGE_CARD_COUNT = 4;
 
 function Card({ card, pillRevealed, variant }: { card: CardData; pillRevealed: boolean; variant: 'slate' | 'amber' | 'green' }) {
   return (
@@ -69,11 +80,40 @@ function Card({ card, pillRevealed, variant }: { card: CardData; pillRevealed: b
   );
 }
 
+// An offscreen column carrying the peak card count reached during the
+// whole script, measured once on mount to lock in the board's height
+// (see the boardMinHeight state below) before any animation starts —
+// without this, the board itself grows/shrinks as cards move between
+// columns, which reads as the whole mockup jumping around.
+function GaugeColumn({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => void }) {
+  return (
+    <div className="column" ref={gaugeRef} aria-hidden style={{ visibility: 'hidden', position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: -1 }}>
+      <div className="column-header column-header--slate">
+        <Icon name="circle-dashed" />
+        <span className="column-header-label">À faire</span>
+        <span className="column-header-count">0</span>
+      </div>
+      <div className="card-list">
+        {Array.from({ length: GAUGE_CARD_COUNT }).map((_, i) => (
+          <Card key={i} card={TODO_ENTRANCE[0]} pillRevealed={false} variant="slate" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function KanbanAnimation() {
   const [columns, setColumns] = useState(INITIAL);
-  const [revealedPills, setRevealedPills] = useState<Set<string>>(new Set());
+  const [revealedPills, setRevealedPills] = useState<Set<string>>(new Set(['sephora-rh', 'oreal-produit']));
+  const [boardMinHeight, setBoardMinHeight] = useState<number | undefined>(undefined);
   const boardRef = useRef<HTMLDivElement>(null);
+  const gaugeRef = useRef<HTMLDivElement>(null);
   const rectsRef = useRef<Map<string, DOMRect>>(new Map());
+
+  useLayoutEffect(() => {
+    if (!gaugeRef.current) return;
+    setBoardMinHeight(gaugeRef.current.getBoundingClientRect().height);
+  }, []);
 
   useEffect(() => {
     const el = boardRef.current;
@@ -86,39 +126,75 @@ export default function KanbanAnimation() {
         // Timings are deliberately slow and spaced out: the point of this
         // mockup is for a first-time viewer to actually follow each step
         // as it happens, not to blur past it.
-        // Step 1: a todo offer gets sent.
+        let t = 700;
+
+        // "À faire" fills in one card at a time.
+        TODO_ENTRANCE.forEach((card, i) => {
+          timeouts.push(setTimeout(() => {
+            setColumns((prev) => ({ ...prev, todo: [...prev.todo, card] }));
+          }, t + i * 1100));
+        });
+        t += TODO_ENTRANCE.length * 1100 + 1600;
+
+        // Two of those offers get sent.
         timeouts.push(setTimeout(() => {
           setColumns((prev) => {
-            const moved = prev.todo.find((c) => c.id === 'decathlon-projet');
+            const moving = ['decathlon-projet', 'doctolib-growth'];
+            const moved = prev.todo.filter((c) => moving.includes(c.id));
+            return {
+              ...prev,
+              todo: prev.todo.filter((c) => !moving.includes(c.id)),
+              sent: [...prev.sent, ...moved],
+            };
+          });
+        }, t));
+        t += 2400;
+
+        // A fresh offer fills the gap left in "À faire".
+        timeouts.push(setTimeout(() => {
+          setColumns((prev) => ({ ...prev, todo: [...prev.todo, NEW_TODO_CARD] }));
+        }, t));
+        t += 2400;
+
+        // The two just-sent offers land interviews, one at a time, each
+        // with its own time slot fading in right after it settles.
+        const toInterview = [
+          { id: 'decathlon-projet', pill: 'Le 30 juillet à 11h00' },
+          { id: 'doctolib-growth', pill: 'Le 2 août à 14h00' },
+        ];
+        toInterview.forEach(({ id, pill }) => {
+          timeouts.push(setTimeout(() => {
+            setColumns((prev) => {
+              const moved = prev.sent.find((c) => c.id === id);
+              if (!moved) return prev;
+              return {
+                ...prev,
+                sent: prev.sent.filter((c) => c.id !== id),
+                interview: [...prev.interview, { ...moved, interviewPill: pill }],
+              };
+            });
+          }, t));
+          t += 1000;
+          timeouts.push(setTimeout(() => {
+            setRevealedPills((prev) => new Set(prev).add(id));
+          }, t));
+          t += 1600;
+        });
+
+        // Finally, one more offer moves from "À faire" to "Envoyé" — then
+        // the sequence stops.
+        timeouts.push(setTimeout(() => {
+          setColumns((prev) => {
+            const moved = prev.todo.find((c) => c.id === 'oreal-marketing');
             if (!moved) return prev;
             return {
               ...prev,
-              todo: prev.todo.filter((c) => c.id !== 'decathlon-projet'),
+              todo: prev.todo.filter((c) => c.id !== 'oreal-marketing'),
               sent: [...prev.sent, moved],
             };
           });
-        }, 2200));
-        // Step 2: that first sent offer lands an interview.
-        timeouts.push(setTimeout(() => {
-          setColumns((prev) => {
-            const moved = prev.sent.find((c) => c.id === 'blablacar-com');
-            if (!moved) return prev;
-            return {
-              ...prev,
-              sent: prev.sent.filter((c) => c.id !== 'blablacar-com'),
-              interview: [...prev.interview, { ...moved, interviewPill: 'Le 2 août à 14h00' }],
-            };
-          });
-        }, 4800));
-        // Step 3: its interview time slot fades in, once it has settled
-        // into place rather than fading in mid-slide.
-        timeouts.push(setTimeout(() => {
-          setRevealedPills((prev) => new Set(prev).add('blablacar-com'));
-        }, 6300));
-        // Step 4: a fresh offer fills the gap left in "À faire".
-        timeouts.push(setTimeout(() => {
-          setColumns((prev) => ({ ...prev, todo: [...prev.todo, NEW_TODO_CARD] }));
-        }, 7800));
+        }, t));
+
         return () => timeouts.forEach(clearTimeout);
       },
       { threshold: 0.4 }
@@ -156,7 +232,7 @@ export default function KanbanAnimation() {
           // straight to the end position with no visible motion.
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              el.style.transition = 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)';
+              el.style.transition = 'transform 1.1s cubic-bezier(0.65, 0, 0.35, 1)';
               el.style.transform = '';
             });
           });
@@ -167,7 +243,7 @@ export default function KanbanAnimation() {
         el.style.transform = 'scale(0.92) translateY(8px)';
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            el.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.4, 0.64, 1)';
+            el.style.transition = 'opacity 0.9s ease, transform 0.9s cubic-bezier(0.34, 1.4, 0.64, 1)';
             el.style.opacity = '1';
             el.style.transform = '';
           });
@@ -178,7 +254,8 @@ export default function KanbanAnimation() {
   }, [columns]);
 
   return (
-    <div className="landing-kanban-board" ref={boardRef}>
+    <div className="landing-kanban-board" ref={boardRef} style={boardMinHeight ? { minHeight: boardMinHeight } : undefined}>
+      <GaugeColumn gaugeRef={(el) => { gaugeRef.current = el; }} />
       <div className="column">
         <div className="column-header column-header--slate">
           <Icon name="circle-dashed" />
