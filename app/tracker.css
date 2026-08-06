@@ -3519,6 +3519,28 @@ legend.field-label { padding: 0; }
    24px on its other 3 sides. Only .landing-card scrolls — the nav stays
    put as a flex sibling outside it; it reacts to that scroll (see
    .landing-nav--scrolled) without moving or overlaying the card itself. */
+/* Every passive mockup reuses real dashboard classes (.card, .card-link,
+   .folder-card...) for visual fidelity, which brings their real :hover
+   states along for free — fine on the actual product where they're
+   interactive, but on a static marketing screenshot they just read as
+   broken/mismatched feedback for something no one can actually click.
+   pointer-events: none on each mockup's own root kills every descendant
+   :hover in one place instead of chasing down each reused real class
+   individually. Deliberately excludes .landing-talent-stack (its fan
+   hover is a real, designed interaction on this page, not a leftover
+   from a reused class) and every actually-functional element (nav,
+   quote modal, category CTAs, footer, pricing). */
+.landing-preview,
+.landing-kanban-board,
+.landing-messaging-board,
+.landing-documents-board,
+.landing-roster-card,
+.landing-match-card,
+.landing-copilot-card,
+.landing-matching-card,
+.landing-calendar-board {
+  pointer-events: none;
+}
 .landing {
   /* height, not min-height: .landing-card below (flex:1, min-height:0,
      overflow-y:auto) is deliberately its own nested scroll container —
