@@ -27,11 +27,13 @@ const TALENTS = [
   },
 ];
 
-function TalentCard({ talent, role, onSelect }: { talent: typeof TALENTS[number]; role: 'left' | 'front' | 'right'; onSelect?: () => void }) {
+function TalentCard({ talent, role, onSelect, height, cardRef }: { talent: typeof TALENTS[number]; role: 'left' | 'front' | 'right'; onSelect?: () => void; height?: number; cardRef?: (el: HTMLDivElement | null) => void }) {
   const clickable = role !== 'front';
   return (
     <div
+      ref={cardRef}
       className={`landing-talent-card landing-talent-card--${role}`}
+      style={height ? { height } : undefined}
       role={clickable ? 'button' : undefined}
       tabIndex={clickable ? 0 : undefined}
       aria-label={clickable ? `Voir le profil de ${talent.name}` : undefined}
@@ -73,8 +75,32 @@ function roleFor(index: number, activeIndex: number, n: number): 'left' | 'front
 export default function TalentStack() {
   const [activeIndex, setActiveIndex] = useState(1);
   const [expanded, setExpanded] = useState(false);
+  const [cardHeight, setCardHeight] = useState<number | undefined>(undefined);
   const ref = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const n = TALENTS.length;
+
+  // The tallest card's degree/skills content sets the height every other
+  // card floors up to (CSS min-height alone can't do this: it's a floor,
+  // not a shared reference, so whichever card actually has the longest
+  // content still grows past a fixed px value at some viewport widths
+  // instead of the others catching up to it). Measured with height unset
+  // first so it reflects each card's own natural content, not a stale
+  // height from the previous measurement.
+  useEffect(() => {
+    function measure() {
+      const heights = cardRefs.current.map((el) => el?.getBoundingClientRect().height ?? 0);
+      const max = Math.max(...heights, 0);
+      if (max > 0) setCardHeight(max);
+    }
+    function remeasure() {
+      setCardHeight(undefined);
+      requestAnimationFrame(() => requestAnimationFrame(measure));
+    }
+    measure();
+    window.addEventListener('resize', remeasure);
+    return () => window.removeEventListener('resize', remeasure);
+  }, []);
 
   // Hover/focus-within only fans the cards out for a mouse, nothing
   // triggers that on a touch device, so the effect never plays there at
@@ -100,6 +126,8 @@ export default function TalentStack() {
           talent={talent}
           role={roleFor(i, activeIndex, n)}
           onSelect={() => setActiveIndex(i)}
+          height={cardHeight}
+          cardRef={(el) => { cardRefs.current[i] = el; }}
         />
       ))}
     </div>

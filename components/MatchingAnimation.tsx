@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
-import BorderBeam from '@/components/BorderBeam';
 
 // Same one-shot-reveal pattern as CountUpPercent: observe once, disconnect
 // immediately, then run the animation logic, so scrolling back up and down
@@ -52,37 +51,35 @@ export default function MatchingAnimation() {
         ))}
       </div>
       <div className={`landing-matching-offer${offerRevealed ? ' is-revealed' : ''}`}>
-        <BorderBeam size="pulse-inner" colorVariant="violet" strength={0.6}>
-          <div className="card card--slate">
-            <div className="landing-matching-offer-top">
-              <span className="card-personalized-badge">
-                <Icon name="sparkles" />
-                Spécialement pour vous
-              </span>
-              <span className="card-link card-link--generate">
-                <Icon name="sparkles" />
-                Générer CV
-              </span>
-            </div>
-            <div className="card-heading">
-              <span className="card-title">Alternance Marketing Digital</span>
-              <span className="card-heading-sep"> chez </span>
-              <span className="card-company">L&apos;Oréal</span>
-            </div>
-            <div className="card-meta-row">
-              <span className="card-meta-item">
-                <Icon name="map-pin" />
-                Clichy
-              </span>
-            </div>
-            <div className="card-link-row">
-              <span className="card-link">
-                <Icon name="external-link" />
-                Voir l&apos;offre
-              </span>
-            </div>
+        <div className="card card--slate ai-result">
+          <div className="landing-matching-offer-top">
+            <span className="card-personalized-badge">
+              <Icon name="sparkles" />
+              Spécialement pour vous
+            </span>
+            <span className="card-link card-link--generate">
+              <Icon name="sparkles" />
+              Générer CV
+            </span>
           </div>
-        </BorderBeam>
+          <div className="card-heading">
+            <span className="card-title">Alternance Marketing Digital</span>
+            <span className="card-heading-sep"> chez </span>
+            <span className="card-company">L&apos;Oréal</span>
+          </div>
+          <div className="card-meta-row">
+            <span className="card-meta-item">
+              <Icon name="map-pin" />
+              Clichy
+            </span>
+          </div>
+          <div className="card-link-row">
+            <span className="card-link">
+              <Icon name="external-link" />
+              Voir l&apos;offre
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
