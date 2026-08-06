@@ -4284,6 +4284,12 @@ legend.field-label { padding: 0; }
 }
 .landing-category-list .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 
+/* Shared by 3 category-card CTAs: "Créer mon compte" (étudiants) and
+   "Bientôt disponible" (entreprises) are deliberately lightweight text
+   links, not buttons — only the "Contacter un expert" one (écoles) was
+   pulled out to share .landing-nav-cta's full button look instead (see
+   .landing-category-cta--btn below), so this base class must stay as
+   plain text-link styling for the other two. */
 .landing-category-cta {
   display: inline-flex;
   align-items: center;
@@ -4296,6 +4302,21 @@ legend.field-label { padding: 0; }
 }
 .landing-category-cta:hover { color: var(--text-muted); }
 .landing-category-cta .lucide { width: 16px; height: 16px; }
+/* Overrides the text-link styling above back to nothing but the
+   bottom-pinning, since .landing-nav-cta (applied alongside it) already
+   supplies the real black-pill look — this class just still needs to be
+   what places the button at the bottom of its card. */
+.landing-category-cta--btn {
+  display: inline-flex;
+  gap: 0;
+  margin-top: auto;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+}
+.landing-category-cta--btn:hover { color: #fff; }
+.landing-category-cta--btn .lucide { width: auto; height: auto; }
 
 .landing-category-cta--soon {
   color: var(--text-muted);
@@ -4457,6 +4478,13 @@ legend.field-label { padding: 0; }
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-32);
+  /* Every other row wants .landing-showcase's own right padding (columns
+     3-10 on both sides) — this is the one row that doesn't: the carousel
+     needs the extra room past column 10 to bleed toward the true
+     viewport edge (see .landing-showcase-carousel's own width/margin
+     math below). Cancels the parent's right padding for this row only
+     instead of also giving every row the old per-row breakout back. */
+  margin-right: calc(-1 * (16.6667vw - 4px));
 }
 .landing-showcase-row--kanban .landing-showcase-text--right {
   text-align: left;
@@ -4729,6 +4757,11 @@ legend.field-label { padding: 0; }
   flex-direction: column;
   gap: var(--space-16);
 }
+/* Each suggestion slides in from the right once the row's own scroll
+   reveal fires (.reveal--visible, see Reveal.tsx wrapping the whole
+   row), staggered per card instead of all 3 appearing at once — same
+   one-shot trigger the rest of the page already uses, just applied per
+   child instead of to the row as a whole. */
 .landing-copilot-item {
   display: flex;
   align-items: center;
@@ -4736,7 +4769,17 @@ legend.field-label { padding: 0; }
   padding: var(--space-12);
   background: var(--bg);
   border-radius: var(--radius-inner);
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.48, 0.72, 0, 1);
 }
+.reveal--visible .landing-copilot-item {
+  opacity: 1;
+  transform: translateX(0);
+}
+.landing-copilot-item:nth-child(1) { transition-delay: 0s; }
+.landing-copilot-item:nth-child(2) { transition-delay: 0.12s; }
+.landing-copilot-item:nth-child(3) { transition-delay: 0.24s; }
 .landing-copilot-item .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 .landing-copilot-item p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text); }
 /* Green = positive news, amber = a point worth watching, rose = needs
@@ -5218,23 +5261,36 @@ legend.field-label { padding: 0; }
   transform: translateY(-6px);
   box-shadow: 0 16px 32px color-mix(in srgb, black 20%, transparent);
 }
+/* left:50% on an absolutely positioned child resolves against the
+   stack's full padding box (padding included), but the front card
+   (a normal-flow flex child, centered by justify-content) sits in the
+   content box instead (padding excluded) — and the stack's own padding
+   is deliberately asymmetric (48px left, calc(8.3333vw - 2px) right,
+   see .landing-talent-stack above), so those two boxes don't share a
+   center. Without correction the fan's own left/right symmetry axis
+   sits (paddingRight - paddingLeft)/2 to the right of the front card it's
+   supposed to fan out from, letting the right card peek out much
+   further than the left one. --talent-fan-correction shifts both cards
+   back onto the front card's actual center before the usual
+   left/right-specific translateX is added. */
 .landing-talent-card--left,
 .landing-talent-card--right {
   position: absolute;
   top: 0;
   left: 50%;
+  --talent-fan-correction: calc((48px - (8.3333vw - 2px)) / 2);
 }
-.landing-talent-card--left { z-index: 1; transform: translateX(-72%) rotate(-9deg); }
-.landing-talent-card--right { z-index: 2; transform: translateX(-28%) rotate(9deg); }
+.landing-talent-card--left { z-index: 1; transform: translateX(calc(-72% + var(--talent-fan-correction))) rotate(-9deg); }
+.landing-talent-card--right { z-index: 2; transform: translateX(calc(-28% + var(--talent-fan-correction))) rotate(9deg); }
 .landing-talent-stack:hover .landing-talent-card--left,
 .landing-talent-stack:focus-within .landing-talent-card--left,
 .landing-talent-stack--expanded .landing-talent-card--left {
-  transform: translateX(-98%) rotate(-14deg);
+  transform: translateX(calc(-98% + var(--talent-fan-correction))) rotate(-14deg);
 }
 .landing-talent-stack:hover .landing-talent-card--right,
 .landing-talent-stack:focus-within .landing-talent-card--right,
 .landing-talent-stack--expanded .landing-talent-card--right {
-  transform: translateX(-2%) rotate(14deg);
+  transform: translateX(calc(-2% + var(--talent-fan-correction))) rotate(14deg);
 }
 @media (prefers-reduced-motion: reduce) {
   .landing-talent-card { transition: none; }
@@ -5573,6 +5629,13 @@ legend.field-label { padding: 0; }
     margin-right: calc(-1 * var(--space-24));
     padding-left: var(--space-24);
     padding-right: var(--space-24);
+  }
+  /* Cancels its own desktop-only margin-right (the negative vw value
+     that lets the carousel bleed past column 10 at desktop widths) —
+     without this it stacks on top of .landing-showcase's own reset
+     above and drags the row further right than intended. */
+  .landing-showcase-row--kanban {
+    margin-right: 0;
   }
   .landing-showcase-row--annuaire .landing-showcase-visual,
   .landing-showcase-row--priorise .landing-showcase-visual,

@@ -148,12 +148,12 @@ export default function QuoteModal() {
                 </label>
               </div>
               <label className="quote-modal-field">
-                <span>Email professionnel *</span>
-                <input type="email" name="email" required />
-              </label>
-              <label className="quote-modal-field">
                 <span>École ou organisme *</span>
                 <input type="text" name="organization" required />
+              </label>
+              <label className="quote-modal-field">
+                <span>Email professionnel *</span>
+                <input type="email" name="email" required />
               </label>
               <label className="quote-modal-field">
                 <span>Nombre d&apos;étudiants (approximatif)</span>

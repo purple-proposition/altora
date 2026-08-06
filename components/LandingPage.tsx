@@ -149,7 +149,7 @@ export default function LandingPage() {
             <li><Icon name="check-circle" />Rythme d&apos;alternance de l&apos;école appliqué automatiquement</li>
             <li><Icon name="check-circle" />Suivi des candidatures de chaque alternant</li>
           </ul>
-          <QuoteCtaButton className="landing-category-cta" location="category_ecoles" icon="message-circle">Contacter un expert <Icon name="chevron-right" /></QuoteCtaButton>
+          <QuoteCtaButton className="landing-nav-cta landing-category-cta--btn" location="category_ecoles" icon="message-circle">Contacter un expert</QuoteCtaButton>
         </Reveal>
 
         <Reveal id="etudiants" className="landing-category">
@@ -189,11 +189,11 @@ export default function LandingPage() {
       <section className="landing-showcase">
         <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Le matching sans effort</h3>
+            <h3 className="landing-showcase-title">Votre matching sans effort</h3>
             <p className="landing-showcase-body">
-              Altora se connecte aux job boards et repère
-              les entreprises qui recrutent pour que l&apos;apprenant
-              ne voit que les offres qui lui correspondent vraiment.
+              Altora se connecte aux job boards, filtre les entreprises
+              qui recrutent vraiment, et ne propose à l&apos;apprenant
+              que les offres qui lui correspondent.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -599,6 +599,8 @@ export default function LandingPage() {
                 <span className="landing-roster-name">Camille</span>
                 <span className="landing-roster-dots">
                   <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
                   <span className="landing-roster-dot landing-roster-dot--amber" />
                   <span className="landing-roster-dot landing-roster-dot--green" />
                 </span>
@@ -608,6 +610,8 @@ export default function LandingPage() {
                 <span className="landing-roster-name">Inès</span>
                 <span className="landing-roster-dots">
                   <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
                   <span className="landing-roster-dot landing-roster-dot--green" />
                 </span>
               </div>
@@ -615,6 +619,8 @@ export default function LandingPage() {
                 <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-3.jpg" alt="" fill sizes="48px" /></span>
                 <span className="landing-roster-name">Thomas</span>
                 <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
                   <span className="landing-roster-dot landing-roster-dot--amber" />
                   <span className="landing-roster-dot landing-roster-dot--rose" />
                 </span>
@@ -626,12 +632,16 @@ export default function LandingPage() {
                   <span className="landing-roster-dot landing-roster-dot--slate" />
                   <span className="landing-roster-dot landing-roster-dot--slate" />
                   <span className="landing-roster-dot landing-roster-dot--amber" />
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
+                  <span className="landing-roster-dot landing-roster-dot--green" />
                 </span>
               </div>
               <div className="landing-roster-student">
                 <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-sofiane.jpg" alt="" fill sizes="48px" /></span>
                 <span className="landing-roster-name">Sofiane</span>
                 <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
+                  <span className="landing-roster-dot landing-roster-dot--amber" />
                   <span className="landing-roster-dot landing-roster-dot--green" />
                 </span>
               </div>
@@ -639,8 +649,10 @@ export default function LandingPage() {
                 <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-manon.jpg" alt="" fill sizes="48px" /></span>
                 <span className="landing-roster-name">Manon</span>
                 <span className="landing-roster-dots">
+                  <span className="landing-roster-dot landing-roster-dot--slate" />
                   <span className="landing-roster-dot landing-roster-dot--amber" />
                   <span className="landing-roster-dot landing-roster-dot--amber" />
+                  <span className="landing-roster-dot landing-roster-dot--green" />
                 </span>
               </div>
             </div>
@@ -685,7 +697,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="landing-showcase-visual">
-            <div className="landing-copilot-card ai-result">
+            <div className="landing-copilot-card">
               <div className="landing-copilot-item landing-copilot-item--warning">
                 <Icon name="target" />
                 <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
