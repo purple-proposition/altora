@@ -5174,9 +5174,9 @@ legend.field-label { padding: 0; }
 }
 .landing-messaging-board .inbox-message-unread-dot.is-read { opacity: 0; transform: scale(0.4); }
 /* gap:0 + explicit margins instead of a shared gap, so the sender→
-   subject spacing can be halved independently of subject→preview. */
+   subject spacing is independent of subject→preview. */
 .landing-messaging-board .inbox-message-body { gap: 0; min-width: 0; padding-right: 44px; }
-.landing-messaging-board .inbox-message-top { flex-wrap: wrap; gap: 4px; margin-bottom: 1px; }
+.landing-messaging-board .inbox-message-top { flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
 .landing-messaging-board .inbox-message-sender { font-size: 12px; }
 .landing-messaging-board .inbox-message-subject { font-size: 14px; margin: 0 0 2px; }
 /* 16px (card edge) + 8px (dot) + 4px (gap) = 28px while unread; slides
