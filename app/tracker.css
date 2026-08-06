@@ -4305,11 +4305,18 @@ legend.field-label { padding: 0; }
 /* IA showcase: two alternating text+visual rows. Content (92% match score,
    copilote suggestions) is pulled directly from the illustrative examples
    in Altora_Concept_Projet.docx, not invented screenshots. */
+/* Every row below broke out of this container individually to reach the
+   site's true 12-column grid (columns 3-10), since this box itself was a
+   legacy centered max-width: 1120px — not grid-aligned, and visibly
+   narrower than what its own children actually rendered at, the mismatch
+   this comment used to describe. The container now carries that same
+   full-bleed breakout itself (once), so every row can just be width:
+   100% of a correctly-sized parent instead of repeating the breakout
+   math 6 times. */
 .landing-showcase {
-  max-width: 1120px;
-  width: 100%;
-  margin: 0 auto;
-  padding: var(--space-32) var(--space-24);
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
+  padding: var(--space-32) calc(16.6667vw - 4px);
   display: flex;
   flex-direction: column;
   gap: var(--space-96);
@@ -4330,17 +4337,6 @@ legend.field-label { padding: 0; }
    leading columns = (k/N)*W + g*[(k-1) - (k/N)(N-1)], which for k=2,
    N=12, g=24 simplifies to (1/6)*W + 4px. */
 .landing-showcase-row--annuaire {
-  /* calc(100vw - 48px), not true 100vw: see .landing-preview's comment
-     above — .landing-card clips overflow-x at its own 24px-inset edge.
-     padding-left/right dropped by that same 24px (20px -> -4px): the
-     16.6667vw+20px offset to column 3 was measured from the true
-     viewport edge, but this row's own box now starts 24px later (at
-     .landing-card's edge), so the unadjusted padding overshot column 3
-     by 24px. */
-  width: calc(100vw - 48px);
-  margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw - 4px);
-  padding-right: calc(16.6667vw - 4px);
   /* Text and visual each span exactly 4 of the 12 grid columns (columns
      3-6 and 7-10), with the real 24px inter-column gutter between them —
      not an even 50/50 split of the row's own content width with an
@@ -4356,10 +4352,6 @@ legend.field-label { padding: 0; }
    row now (was visual-left/text-right; flipped in the JSX so the whole
    page reads consistently, text always on the left). */
 .landing-showcase-row--priorise {
-  width: calc(100vw - 48px);
-  margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw - 4px);
-  padding-right: calc(16.6667vw - 4px);
   /* Text keeps its 4-column span; the copilot mockup is 3 columns
      (calc(25vw - 30px), same 3-column span formula as the ATS/carousel
      cards elsewhere) instead of matching the text's 4. Gap widened to
@@ -4376,10 +4368,6 @@ legend.field-label { padding: 0; }
    pushed out to column 10 — same treatment as --priorise above, gap
    widened with the same formula instead of a flat 24px. */
 .landing-showcase-row--jobboards {
-  width: calc(100vw - 48px);
-  margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw - 4px);
-  padding-right: calc(16.6667vw - 4px);
   grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
   gap: calc(8.3333vw + 22px);
 }
@@ -4397,10 +4385,6 @@ legend.field-label { padding: 0; }
    gutters (c + 48, c = 100vw/12 - 26px) for the card to land exactly on
    column 8 instead of drifting in by one normal gutter. */
 .landing-showcase-row--ats {
-  width: calc(100vw - 48px);
-  margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw - 4px);
-  padding-right: calc(16.6667vw - 4px);
   grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
   gap: calc(8.3333vw + 22px);
 }
@@ -4410,10 +4394,6 @@ legend.field-label { padding: 0; }
 /* Same text-left/mockup-right 4+3 column treatment as --ats/--priorise
    above. */
 .landing-showcase-row--roster {
-  width: calc(100vw - 48px);
-  margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw - 4px);
-  padding-right: calc(16.6667vw - 4px);
   grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
   gap: calc(8.3333vw + 22px);
 }
@@ -4473,13 +4453,6 @@ legend.field-label { padding: 0; }
    --annuaire/--priorise above (k=4, g=24 -> 33.3333vw - 32px), just
    anchored at the left edge (24px) instead of centered on columns 3-10. */
 .landing-showcase-row--kanban {
-  /* Left edge of column 3 (same offset as --annuaire/--priorise above),
-     not the page's own left margin (column 1) — text and carousel both
-     stay pinned there at their fixed 4-column width, so there's no need
-     to mirror this as right padding too. */
-  width: calc(100vw - 48px);
-  margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw - 4px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -5579,32 +5552,22 @@ legend.field-label { padding: 0; }
      which one happens to come first in a given row's markup. */
   .landing-showcase-row .landing-showcase-text { order: 0; }
   .landing-showcase-row .landing-showcase-visual { order: 1; }
-  /* --annuaire/--priorise/--ats/--kanban all use vw-locked widths and
-     padding worked out for the desktop 12-column grid (e.g. column 3's
-     offset, a fixed 4-column span) — on a narrow phone those same
-     formulas shrink to near nothing (33.3333vw at 375px is ~125px),
-     which is what forced "Une seule boîte à outils" to wrap one word
-     per line. Reset to a fluid width with a flat 24px inset (the same
-     page-margin gutter used everywhere else on the site) instead of the
-     desktop's column-width-based offsets.
-     margin: 0 -24px cancels .landing-showcase's own 24px padding (the
-     desktop rules break out of that same padding via width:100vw +
-     matching negative margin) — without it, that 24px stacked on top
-     of the padding below and pushed everything a further 24px right
-     than intended. */
-  .landing-showcase-row--annuaire,
-  .landing-showcase-row--priorise,
-  .landing-showcase-row--ats,
-  .landing-showcase-row--jobboards,
-  .landing-showcase-row--roster,
-  .landing-showcase-row--kanban,
+  /* .landing-showcase itself now carries the full-bleed breakout (every
+     row is just width: 100% of it) — on a narrow phone that same
+     vw-locked padding (16.6667vw - 4px, worked out for the desktop
+     12-column grid) shrinks to near nothing, which is what forced "Une
+     seule boîte à outils" to wrap one word per line. Reset to a fluid
+     width with a flat 24px inset (the same page-margin gutter used
+     everywhere else on the site) instead of the desktop's column-width-
+     based offset — every row resets for free along with it now, instead
+     of needing its own copy of this same reset. */
+  .landing-showcase,
   .landing-features-section {
     width: auto;
     margin-left: calc(-1 * var(--space-24));
     margin-right: calc(-1 * var(--space-24));
     padding-left: var(--space-24);
     padding-right: var(--space-24);
-    grid-template-columns: 1fr;
   }
   .landing-showcase-row--annuaire .landing-showcase-visual,
   .landing-showcase-row--priorise .landing-showcase-visual,
