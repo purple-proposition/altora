@@ -5550,6 +5550,9 @@ legend.field-label { padding: 0; }
   padding-left: calc(16.6667vw - 4px);
   padding-right: calc(16.6667vw - 4px);
 }
+/* Centered like the kanban row's own header — text-align lives on the
+   title/subtitle specifically, not the whole section, so it doesn't
+   cascade into the 8 feature cards below (those stay left-aligned). */
 .landing-features-title {
   font-size: 40px;
   line-height: 1.1;
@@ -5557,13 +5560,15 @@ legend.field-label { padding: 0; }
   letter-spacing: -0.02em;
   color: var(--text);
   margin: 0 0 var(--space-12);
+  text-align: center;
 }
 .landing-features-subtitle {
   font-size: 16px;
   line-height: 1.6;
   color: var(--text-muted);
   max-width: 480px;
-  margin: 0 0 var(--space-32);
+  text-align: center;
+  margin: 0 auto var(--space-32);
 }
 /* 4 cards per row, each spanning exactly 2 real grid columns (the same
    calc(16.6667vw - 28px) span(2) formula as .landing-talent-card),
