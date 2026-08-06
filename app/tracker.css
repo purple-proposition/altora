@@ -4540,13 +4540,11 @@ legend.field-label { padding: 0; }
 /* Same 4-column span as before (calc(33.3333vw - 32px)), just shifted
    2 columns right from where the row's own padding-left starts
    (column 3) to column 5 — landing it centered on the middle 4 of 12
-   columns instead of hugging the left edge of the row's own bleed
-   area. Text itself stays left-aligned (text-align:left) — this is
-   about the block's position on the page, not its own internal
-   alignment. */
+   columns. Text itself is also center-aligned, matching the block's
+   own centered position on the page. */
 .landing-showcase-row--kanban .landing-showcase-text--right {
-  text-align: left;
-  align-items: flex-start;
+  text-align: center;
+  align-items: center;
   width: calc(33.3333vw - 32px);
   margin-left: calc(16.6667vw - 28px);
 }

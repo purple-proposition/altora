@@ -44,9 +44,9 @@ const INITIAL = {
 
 const NEW_TODO_CARD: CardData = { id: 'nike-com', schoolBadge: true, title: 'Alternance Communication', company: 'Nike', location: 'Paris 8e' };
 
-function Card({ card, pillRevealed }: { card: CardData; pillRevealed: boolean }) {
+function Card({ card, pillRevealed, variant }: { card: CardData; pillRevealed: boolean; variant: 'slate' | 'amber' | 'green' }) {
   return (
-    <div className="card card--slate" data-flip-id={card.id}>
+    <div className={`card card--${variant}`} data-flip-id={card.id}>
       {card.schoolBadge && <span className="card-school-badge"><Icon name="graduation-cap" />Proposée par l&apos;école</span>}
       <div className="card-heading">
         <span className="card-title">{card.title}</span>
@@ -83,6 +83,9 @@ export default function KanbanAnimation() {
         if (!entry.isIntersecting) return;
         observer.disconnect();
         const timeouts: ReturnType<typeof setTimeout>[] = [];
+        // Timings are deliberately slow and spaced out: the point of this
+        // mockup is for a first-time viewer to actually follow each step
+        // as it happens, not to blur past it.
         // Step 1: a todo offer gets sent.
         timeouts.push(setTimeout(() => {
           setColumns((prev) => {
@@ -94,7 +97,7 @@ export default function KanbanAnimation() {
               sent: [...prev.sent, moved],
             };
           });
-        }, 1200));
+        }, 2200));
         // Step 2: that first sent offer lands an interview.
         timeouts.push(setTimeout(() => {
           setColumns((prev) => {
@@ -106,16 +109,16 @@ export default function KanbanAnimation() {
               interview: [...prev.interview, { ...moved, interviewPill: 'Le 2 août à 14h00' }],
             };
           });
-        }, 2600));
+        }, 4800));
         // Step 3: its interview time slot fades in, once it has settled
         // into place rather than fading in mid-slide.
         timeouts.push(setTimeout(() => {
           setRevealedPills((prev) => new Set(prev).add('blablacar-com'));
-        }, 3300));
+        }, 6300));
         // Step 4: a fresh offer fills the gap left in "À faire".
         timeouts.push(setTimeout(() => {
           setColumns((prev) => ({ ...prev, todo: [...prev.todo, NEW_TODO_CARD] }));
-        }, 4200));
+        }, 7800));
         return () => timeouts.forEach(clearTimeout);
       },
       { threshold: 0.4 }
@@ -153,7 +156,7 @@ export default function KanbanAnimation() {
           // straight to the end position with no visible motion.
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              el.style.transition = 'transform 0.6s cubic-bezier(0.65, 0, 0.35, 1)';
+              el.style.transition = 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)';
               el.style.transform = '';
             });
           });
@@ -164,7 +167,7 @@ export default function KanbanAnimation() {
         el.style.transform = 'scale(0.92) translateY(8px)';
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            el.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.4, 0.64, 1)';
             el.style.opacity = '1';
             el.style.transform = '';
           });
@@ -183,7 +186,7 @@ export default function KanbanAnimation() {
           <span className="column-header-count">{columns.todo.length}</span>
         </div>
         <div className="card-list">
-          {columns.todo.map((card) => <Card key={card.id} card={card} pillRevealed={false} />)}
+          {columns.todo.map((card) => <Card key={card.id} card={card} pillRevealed={false} variant="slate" />)}
         </div>
       </div>
       <div className="column">
@@ -193,7 +196,7 @@ export default function KanbanAnimation() {
           <span className="column-header-count">{columns.sent.length}</span>
         </div>
         <div className="card-list">
-          {columns.sent.map((card) => <Card key={card.id} card={card} pillRevealed={false} />)}
+          {columns.sent.map((card) => <Card key={card.id} card={card} pillRevealed={false} variant="amber" />)}
         </div>
       </div>
       <div className="column">
@@ -204,7 +207,7 @@ export default function KanbanAnimation() {
         </div>
         <div className="card-list">
           {columns.interview.map((card) => (
-            <Card key={card.id} card={card} pillRevealed={revealedPills.has(card.id)} />
+            <Card key={card.id} card={card} pillRevealed={revealedPills.has(card.id)} variant="green" />
           ))}
         </div>
       </div>

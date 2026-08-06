@@ -25,10 +25,13 @@ export default function MatchingAnimation() {
         if (!entry.isIntersecting) return;
         observer.disconnect();
         const timeouts: ReturnType<typeof setTimeout>[] = [];
+        // Slow, spaced-out steps: this mockup exists to show how the
+        // matching actually works, so each step needs to be readable as
+        // it happens rather than flashing past.
         STEPS.forEach((_, i) => {
-          timeouts.push(setTimeout(() => setActiveCount(i + 1), 400 * (i + 1)));
+          timeouts.push(setTimeout(() => setActiveCount(i + 1), 1400 * (i + 1)));
         });
-        timeouts.push(setTimeout(() => setOfferRevealed(true), 400 * (STEPS.length + 1) + 300));
+        timeouts.push(setTimeout(() => setOfferRevealed(true), 1400 * (STEPS.length + 1) + 800));
       },
       { threshold: 0.4 }
     );
