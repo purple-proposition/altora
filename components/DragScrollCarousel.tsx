@@ -103,22 +103,32 @@ export default function DragScrollCarousel({ children, className, circular = fal
   // gesture, the common case — reached the genuine end and stalled
   // there for a beat before the rotation caught up, reading as the next
   // item "popping in late" instead of seamless. Checking eagerly, as
-  // soon as the boundary item becomes nearest, rotates before the user
-  // can out-scroll it.
+  // soon as the boundary is truly reached, rotates before the user can
+  // out-scroll it.
+  //
+  // Deliberately checked against the container's own absolute scroll
+  // position (scrollLeft <= 0 / >= max), NOT "is the first/last item
+  // nearest" — nearest-item is true across the *entire first half* of
+  // the approach to that item (e.g. item0 is "nearest" for any
+  // scrollLeft under ~half the gap to item1), so that check rotated
+  // backward on essentially every scroll starting from rest, not only
+  // once genuinely past the edge. That's what read as chaotic/jumpy the
+  // moment you started scrolling at all.
   function maybeRotate() {
     if (!circular) return;
     const el = ref.current;
     if (!el) return;
     if (Date.now() - lastRotateAtRef.current < 300) return;
-    const nearest = findNearestItem(el);
-    if (!nearest) return;
-    const { index, items } = nearest;
-    if (index === items.length - 1 && items.length > 1) {
+    const items = Array.from(el.children) as HTMLElement[];
+    if (items.length <= 1) return;
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    const EPSILON = 2;
+    if (el.scrollLeft >= maxScrollLeft - EPSILON) {
       lastRotateAtRef.current = Date.now();
       const shift = items[1].getBoundingClientRect().left - items[0].getBoundingClientRect().left;
       pendingShiftRef.current = -shift;
       setOrder((prev) => [...prev.slice(1), prev[0]]);
-    } else if (index === 0 && items.length > 1) {
+    } else if (el.scrollLeft <= EPSILON) {
       lastRotateAtRef.current = Date.now();
       const shift = items[items.length - 1].getBoundingClientRect().left - items[items.length - 2].getBoundingClientRect().left;
       pendingShiftRef.current = shift;
