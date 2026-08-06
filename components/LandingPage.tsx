@@ -392,12 +392,9 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Documents</h3>
               </div>
               <p className="landing-feature-text">
-                L&apos;étudiant y range ses CV et lettres de motivation,
-                avec les conseils de l&apos;école directement dessus.
-                L&apos;école y dépose aussi cours et documents
-                administratifs, sans passer par la boîte mail. Ces
-                documents restent stockés localement et ne transitent
-                jamais par nos serveurs, pour garantir leur confidentialité.
+                CV, lettres de motivation, cours et documents administratifs
+                partagés entre étudiant et école au même endroit, stockés
+                localement et jamais transmis à nos serveurs.
               </p>
             </div>
             </div>

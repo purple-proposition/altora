@@ -45,6 +45,12 @@ export default function DragScrollCarousel({ children, className, circular = fal
   // measured before the DOM reorders, since items here aren't uniform
   // width (kanban/messaging/calendar/documents all differ).
   const pendingShiftRef = useRef(0);
+  // Cooldown rather than an index/key comparison: right after a
+  // rotation the DOM reorders, so "nearest.index" for the very same
+  // physical item changes too — comparing indices would misread that
+  // reorder itself as fresh user movement and could re-trigger
+  // immediately. A short time window is simpler and sufficient here.
+  const lastRotateAtRef = useRef(0);
 
   const byKey = new Map(
     Children.toArray(children).map((child) => [
@@ -91,22 +97,29 @@ export default function DragScrollCarousel({ children, className, circular = fal
     el.scrollTo({ left: nearest.target, behavior: 'smooth' });
   }
 
-  // Called once a resting position has actually settled (debounced in
-  // onScroll below) — if that position is the first or last item and
-  // circular is on, rotates the order right then so there's always
-  // another real item to keep scrolling into, in either direction.
+  // Called on every scroll tick, not debounced: waiting for scrolling to
+  // fully stop (the ~150ms settle used for analytics below) meant that
+  // continuing to scroll right past the last item — a single continuous
+  // gesture, the common case — reached the genuine end and stalled
+  // there for a beat before the rotation caught up, reading as the next
+  // item "popping in late" instead of seamless. Checking eagerly, as
+  // soon as the boundary item becomes nearest, rotates before the user
+  // can out-scroll it.
   function maybeRotate() {
     if (!circular) return;
     const el = ref.current;
     if (!el) return;
+    if (Date.now() - lastRotateAtRef.current < 300) return;
     const nearest = findNearestItem(el);
     if (!nearest) return;
     const { index, items } = nearest;
     if (index === items.length - 1 && items.length > 1) {
+      lastRotateAtRef.current = Date.now();
       const shift = items[1].getBoundingClientRect().left - items[0].getBoundingClientRect().left;
       pendingShiftRef.current = -shift;
       setOrder((prev) => [...prev.slice(1), prev[0]]);
     } else if (index === 0 && items.length > 1) {
+      lastRotateAtRef.current = Date.now();
       const shift = items[items.length - 1].getBoundingClientRect().left - items[items.length - 2].getBoundingClientRect().left;
       pendingShiftRef.current = shift;
       setOrder((prev) => [prev[prev.length - 1], ...prev.slice(0, -1)]);
@@ -130,11 +143,11 @@ export default function DragScrollCarousel({ children, className, circular = fal
   function onScroll() {
     const el = ref.current;
     if (!el) return;
+    maybeRotate();
     if (scrollTrackTimer.current) clearTimeout(scrollTrackTimer.current);
     scrollTrackTimer.current = setTimeout(() => {
       const nearest = findNearestItem(el);
       if (nearest) trackEvent('carousel_scroll', { item_index: nearest.index });
-      maybeRotate();
     }, 150);
   }
 
