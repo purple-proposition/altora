@@ -1,6 +1,6 @@
 'use client';
 
-import { Children, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Children, cloneElement, isValidElement, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { trackEvent } from '@/lib/gtag';
 
 // Native horizontal scroll only responds to touch/trackpad swipes, not a
@@ -23,14 +23,15 @@ import { trackEvent } from '@/lib/gtag';
 //
 // `circular`: when set, resting on the first or last item silently rotates
 // which item is physically first/last in the DOM (moving the one just
-// left behind to the opposite end) and compensates scrollLeft by exactly
-// that item's own width so nothing visibly jumps — the user just finds a
-// "new" item to keep scrolling into, forever, in either direction. Each
-// child needs a stable `key` (its content identity, not its position) so
-// React reuses the same component instance — and all its live state,
-// timers, animation loops included — across the rotation instead of
-// unmounting/remounting it. No cloned/duplicated markup anywhere: there
-// are only ever as many DOM nodes as children passed in.
+// left behind to the opposite end) and re-measures where the item the
+// user was actually resting on now sits, snapping scrollLeft exactly
+// there — so the user just finds a "new" item to keep scrolling into,
+// forever, in either direction, with nothing visibly jumping. Each child
+// needs a stable `key` (its content identity, not its position) so React
+// reuses the same component instance — and all its live state, timers,
+// animation loops included — across the rotation instead of unmounting/
+// remounting it. No cloned/duplicated markup anywhere: there are only
+// ever as many DOM nodes as children passed in.
 export default function DragScrollCarousel({ children, className, circular = false }: { children: React.ReactNode; className?: string; circular?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0 });
@@ -40,14 +41,19 @@ export default function DragScrollCarousel({ children, className, circular = fal
     typeof child === 'object' && child !== null && 'key' in child ? String(child.key) : ''
   );
   const [order, setOrder] = useState<string[]>(allKeys);
-  // Set right before an order rotation, consumed by the layout effect
-  // below to shift scrollLeft by exactly the rotated item's own size —
-  // measured before the DOM reorders, since items here aren't uniform
-  // width (kanban/messaging/calendar/documents all differ).
-  const pendingShiftRef = useRef(0);
+  // The key of whichever item the user is actually resting on right
+  // before a rotation — consumed by the layout effect below, which
+  // re-measures THAT item's exact position in the newly-reordered DOM
+  // and snaps scrollLeft precisely there. Deliberately a re-measurement,
+  // not a precomputed delta: a delta assumes the shifted item's width +
+  // gap is exact to the pixel, and mandatory scroll-snap has zero
+  // tolerance for being even slightly off — it'll "correct" straight
+  // past the intended item to whichever one the small error actually
+  // landed closest to. Measuring the real item after the fact can't
+  // accumulate that kind of drift.
+  const pendingRestKeyRef = useRef<string | null>(null);
   // Cooldown rather than an index/key comparison: right after a
-  // rotation the DOM reorders, so "nearest.index" for the very same
-  // physical item changes too — comparing indices would misread that
+  // rotation the DOM reorders, so comparing indices would misread that
   // reorder itself as fresh user movement and could re-trigger
   // immediately. A short time window is simpler and sufficient here.
   const lastRotateAtRef = useRef(0);
@@ -58,27 +64,34 @@ export default function DragScrollCarousel({ children, className, circular = fal
       child,
     ])
   );
-  const orderedChildren = order.map((key) => byKey.get(key));
+  const orderedChildren = order.map((key) => {
+    const child = byKey.get(key);
+    if (!child || !isValidElement(child)) return child;
+    // Own attribute rather than reusing `key` (not a real DOM attribute,
+    // can't be read back via querySelector) — this is what lets the
+    // layout effect find "the item I was resting on" again after a
+    // reorder without depending on index.
+    return cloneElement(child, { 'data-carousel-key': key } as Record<string, unknown>);
+  });
+
+  function scrollPaddingLeftOf(el: HTMLDivElement) {
+    return parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+  }
+
+  function targetFor(el: HTMLDivElement, item: HTMLElement) {
+    const containerLeft = el.getBoundingClientRect().left;
+    const itemLeft = item.getBoundingClientRect().left - containerLeft + el.scrollLeft;
+    return itemLeft - scrollPaddingLeftOf(el);
+  }
 
   function findNearestItem(el: HTMLDivElement) {
     const items = Array.from(el.children) as HTMLElement[];
     if (!items.length) return null;
-    // offsetLeft is relative to the nearest *positioned* ancestor, which
-    // isn't necessarily this scroll container, getBoundingClientRect
-    // gives each item's true position relative to the container's own
-    // scrollable content regardless of who its offsetParent is.
-    const containerLeft = el.getBoundingClientRect().left;
-    // scroll-snap-align: start on each item snaps its edge to the
-    // container's scroll-padding-left inset, not to scrollLeft: 0, the
-    // target here has to match that same offset, or this fights the
-    // browser's own mandatory snap instead of landing on the same spot.
-    const scrollPaddingLeft = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
     let nearestIndex = 0;
     let nearestTarget = 0;
     let nearestDistance = Infinity;
     items.forEach((item, index) => {
-      const itemLeft = item.getBoundingClientRect().left - containerLeft + el.scrollLeft;
-      const target = itemLeft - scrollPaddingLeft;
+      const target = targetFor(el, item);
       const distance = Math.abs(target - el.scrollLeft);
       if (distance < nearestDistance) {
         nearestDistance = distance;
@@ -106,14 +119,19 @@ export default function DragScrollCarousel({ children, className, circular = fal
   // soon as the boundary is truly reached, rotates before the user can
   // out-scroll it.
   //
-  // Deliberately checked against the container's own absolute scroll
-  // position (scrollLeft <= 0 / >= max), NOT "is the first/last item
-  // nearest" — nearest-item is true across the *entire first half* of
-  // the approach to that item (e.g. item0 is "nearest" for any
-  // scrollLeft under ~half the gap to item1), so that check rotated
-  // backward on essentially every scroll starting from rest, not only
-  // once genuinely past the edge. That's what read as chaotic/jumpy the
-  // moment you started scrolling at all.
+  // Deliberately checked against how close scrollLeft is to the LAST/
+  // FIRST item's own specific snap target — not "is the first/last item
+  // nearest" (nearest is true across the *entire first half* of the
+  // approach to that item, so that check rotated backward on
+  // essentially every scroll starting from rest), and not the
+  // container's raw scrollWidth-clientWidth either: with
+  // scroll-snap-type:mandatory, the browser's own true reachable max is
+  // whichever the last item's snap target is, which can sit short of
+  // that raw geometric max (e.g. trailing padding added so the last
+  // item's target is reachable at all can itself extend scrollWidth
+  // past that target) — comparing to the geometric max then never
+  // matched the position mandatory snap actually settles the container
+  // at, and rotation never fired going forward.
   function maybeRotate() {
     if (!circular) return;
     const el = ref.current;
@@ -121,29 +139,33 @@ export default function DragScrollCarousel({ children, className, circular = fal
     if (Date.now() - lastRotateAtRef.current < 300) return;
     const items = Array.from(el.children) as HTMLElement[];
     if (items.length <= 1) return;
-    const maxScrollLeft = el.scrollWidth - el.clientWidth;
-    const EPSILON = 2;
-    if (el.scrollLeft >= maxScrollLeft - EPSILON) {
+    const EPSILON = 4;
+    const lastTarget = targetFor(el, items[items.length - 1]);
+    const firstTarget = targetFor(el, items[0]);
+    if (Math.abs(el.scrollLeft - lastTarget) <= EPSILON) {
       lastRotateAtRef.current = Date.now();
-      const shift = items[1].getBoundingClientRect().left - items[0].getBoundingClientRect().left;
-      pendingShiftRef.current = -shift;
+      pendingRestKeyRef.current = order[order.length - 1];
       setOrder((prev) => [...prev.slice(1), prev[0]]);
-    } else if (el.scrollLeft <= EPSILON) {
+    } else if (Math.abs(el.scrollLeft - firstTarget) <= EPSILON) {
       lastRotateAtRef.current = Date.now();
-      const shift = items[items.length - 1].getBoundingClientRect().left - items[items.length - 2].getBoundingClientRect().left;
-      pendingShiftRef.current = shift;
+      pendingRestKeyRef.current = order[0];
       setOrder((prev) => [prev[prev.length - 1], ...prev.slice(0, -1)]);
     }
   }
 
-  // Compensates scrollLeft the instant the rotated order actually paints,
-  // so the rotation itself is invisible — the resting item is still
-  // exactly where the user left it, just no longer first/last in the DOM.
+  // Re-measures the item the user was actually resting on in the
+  // newly-reordered DOM and snaps scrollLeft exactly to its target the
+  // instant the reorder paints — so the rotation itself is invisible,
+  // and immune to any width/gap rounding a precomputed delta could have
+  // drifted on.
   useLayoutEffect(() => {
     const el = ref.current;
-    if (!el || !pendingShiftRef.current) return;
-    el.scrollLeft += pendingShiftRef.current;
-    pendingShiftRef.current = 0;
+    const key = pendingRestKeyRef.current;
+    if (!el || !key) return;
+    pendingRestKeyRef.current = null;
+    const restEl = el.querySelector<HTMLElement>(`[data-carousel-key="${key}"]`);
+    if (!restEl) return;
+    el.scrollLeft = targetFor(el, restEl);
   }, [order]);
 
   // Fires once per resting position, for touch/trackpad/keyboard scroll
