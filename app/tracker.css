@@ -3646,7 +3646,7 @@ legend.field-label { padding: 0; }
   /* Same border in the open pill and the closed/scrolled icon square
      (neither state overrides border-color), so the shape morph between
      them never involves a border popping in or out on top of it. */
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--radius-pill);
   background: var(--indigo);
   color: #fff;
