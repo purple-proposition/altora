@@ -96,6 +96,15 @@ function initialColumns(): Columns {
 const BEAT_PAUSE = 2600;
 const EXIT_DURATION = 500;
 const MOVE_DURATION = 1100;
+// recolor() must fire strictly after the move's own inline transition has
+// been released (see releaseTransitionAfter) — releasing it is what lets
+// the CSS class's "background 1s linear" transition actually take over.
+// Firing recolor at exactly MOVE_DURATION races that release (which
+// itself lands a beat late, via transitionend + a small fallback
+// margin), so the color swap would land while the inline style still
+// read "transition: transform ...", skipping it straight to the end
+// color with no visible fade. This margin comfortably clears that.
+const RECOLOR_DELAY = MOVE_DURATION + 200;
 const ENTRANCE_DURATION = 900;
 
 function Card({ card, pillRevealed }: { card: CardData; pillRevealed: boolean }) {
@@ -309,7 +318,7 @@ export default function KanbanAnimation() {
       timeoutsRef.current.push(setTimeout(() => {
         recolor(promoted.id, 'green');
         setRevealedPills((prevSet) => new Set(prevSet).add(promoted.id));
-      }, MOVE_DURATION));
+      }, RECOLOR_DELAY));
       timeoutsRef.current.push(setTimeout(beat4, BEAT_PAUSE));
     }
     function beat4() {
@@ -322,7 +331,7 @@ export default function KanbanAnimation() {
       }, [...remainingIds, promoted.id]);
       timeoutsRef.current.push(setTimeout(() => {
         recolor(promoted.id, 'amber');
-      }, MOVE_DURATION));
+      }, RECOLOR_DELAY));
       timeoutsRef.current.push(setTimeout(beat1, BEAT_PAUSE));
     }
 
