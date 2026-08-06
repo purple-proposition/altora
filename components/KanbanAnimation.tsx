@@ -72,15 +72,18 @@ function makeCard(cycle: number): CardData {
   return { id: `${t.company}-${t.title}-${cycle}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'), ...t };
 }
 
+// Starting point: 2 in "À faire", 3 in "Envoyé", 2 in "Entretien" — the
+// loop below always returns here exactly, so it can repeat forever
+// without ever drifting or needing a reset.
 function initialColumns() {
   return {
-    interview: [0, 1, 2].map((c) => ({ ...makeCard(c), interviewPill: PILL_DATES[c % PILL_DATES.length] })),
-    sent: [3, 4, 5].map((c) => makeCard(c)),
-    todo: [6, 7, 8].map((c) => makeCard(c)),
+    interview: [0, 1].map((c) => ({ ...makeCard(c), interviewPill: PILL_DATES[c % PILL_DATES.length] })),
+    sent: [2, 3, 4].map((c) => makeCard(c)),
+    todo: [5, 6].map((c) => makeCard(c)),
   };
 }
 
-const TICK_INTERVAL = 5500;
+const BEAT_PAUSE = 2600;
 const EXIT_DURATION = 500;
 
 function Card({ card, pillRevealed, variant }: { card: CardData; pillRevealed: boolean; variant: 'slate' | 'amber' | 'green' }) {
@@ -108,20 +111,38 @@ function Card({ card, pillRevealed, variant }: { card: CardData; pillRevealed: b
   );
 }
 
-// An offscreen column holding exactly 3 cards (the fixed cap for every
-// real column), measured once on mount to lock in the board's height —
-// since every column always holds exactly 3 cards, the board itself never
-// needs to grow or shrink once this is set.
-function GaugeColumn({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => void }) {
+// An offscreen copy of all three real columns, each holding 3 cards (the
+// fixed cap), measured once on mount to lock in the board's height. Needs
+// all three side by side rather than just one: "Entretien" cards carry a
+// date pill that "À faire"/"Envoyé" cards don't, so a single generic
+// column underestimates how tall the board can actually get once a real
+// interview column fills up with pills.
+function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => void }) {
   return (
-    <div className="column" ref={gaugeRef} aria-hidden style={{ visibility: 'hidden', position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: -1 }}>
-      <div className="column-header column-header--slate">
-        <Icon name="circle-dashed" />
-        <span className="column-header-label">À faire</span>
-        <span className="column-header-count">0</span>
+    <div className="landing-kanban-board" ref={gaugeRef} aria-hidden style={{ visibility: 'hidden', position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: -1 }}>
+      <div className="column">
+        <div className="column-header column-header--slate">
+          <Icon name="circle-dashed" /><span className="column-header-label">À faire</span><span className="column-header-count">0</span>
+        </div>
+        <div className="card-list">
+          {[0, 1, 2].map((i) => <Card key={i} card={makeCard(i)} pillRevealed variant="slate" />)}
+        </div>
       </div>
-      <div className="card-list">
-        {[0, 1, 2].map((i) => <Card key={i} card={{ ...makeCard(i), interviewPill: PILL_DATES[0] }} pillRevealed variant="slate" />)}
+      <div className="column">
+        <div className="column-header column-header--amber">
+          <Icon name="hourglass" /><span className="column-header-label">Envoyé</span><span className="column-header-count">0</span>
+        </div>
+        <div className="card-list">
+          {[3, 4, 5].map((i) => <Card key={i} card={makeCard(i)} pillRevealed variant="amber" />)}
+        </div>
+      </div>
+      <div className="column">
+        <div className="column-header column-header--green">
+          <Icon name="target" /><span className="column-header-label">Entretien</span><span className="column-header-count">0</span>
+        </div>
+        <div className="card-list">
+          {[6, 7, 8].map((i) => <Card key={i} card={{ ...makeCard(i), interviewPill: PILL_DATES[i % PILL_DATES.length] }} pillRevealed variant="green" />)}
+        </div>
       </div>
     </div>
   );
@@ -138,7 +159,7 @@ export default function KanbanAnimation() {
   // React state (`columns`) mirrors it for rendering, but the loop's own
   // scheduling never depends on when a render actually commits.
   const pipelineRef = useRef(columns);
-  const cycleRef = useRef(9);
+  const cycleRef = useRef(7);
   const dateIdxRef = useRef(0);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -152,41 +173,68 @@ export default function KanbanAnimation() {
     if (!el) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function tick() {
+    function commit(mutate: (cols: { todo: CardData[]; sent: CardData[]; interview: CardData[] }) => void) {
+      const next = {
+        todo: pipelineRef.current.todo.slice(),
+        sent: pipelineRef.current.sent.slice(),
+        interview: pipelineRef.current.interview.slice(),
+      };
+      mutate(next);
+      pipelineRef.current = next;
+      setColumns(next);
+    }
+
+    function fadeOut(id: string, done: () => void) {
       const board = boardRef.current;
-      const leaving = pipelineRef.current.interview[0];
-      if (board && leaving && !reduceMotion) {
-        const leavingEl = board.querySelector<HTMLElement>(`[data-flip-id="${leaving.id}"]`);
-        if (leavingEl) {
-          leavingEl.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.65, 0, 0.35, 1)';
-          leavingEl.style.opacity = '0';
-          leavingEl.style.transform = 'scale(0.92)';
-        }
+      const leavingEl = board?.querySelector<HTMLElement>(`[data-flip-id="${id}"]`);
+      if (leavingEl && !reduceMotion) {
+        leavingEl.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.65, 0, 0.35, 1)';
+        leavingEl.style.opacity = '0';
+        leavingEl.style.transform = 'scale(0.92)';
+        timeoutsRef.current.push(setTimeout(done, EXIT_DURATION));
+      } else {
+        done();
       }
+    }
+
+    // A fixed 4-beat loop that always returns to the exact starting
+    // counts (2/3/2), so it can repeat forever without drifting:
+    //   1. a fresh offer appears in "À faire"
+    //   2. the oldest "Envoyé" offer moves to "Entretien" (now at 3)
+    //   3. "À faire" now sends its oldest offer to "Envoyé"
+    //   4. the oldest "Entretien" offer is placed and leaves for good
+    function beat1() {
+      commit((cols) => { cols.todo.push(makeCard(cycleRef.current++)); });
+      timeoutsRef.current.push(setTimeout(beat2, BEAT_PAUSE));
+    }
+    function beat2() {
+      const promoted = pipelineRef.current.sent[0];
+      commit((cols) => {
+        cols.sent.shift();
+        cols.interview.push({ ...promoted, interviewPill: PILL_DATES[dateIdxRef.current++ % PILL_DATES.length] });
+      });
       timeoutsRef.current.push(setTimeout(() => {
-        const prev = pipelineRef.current;
-        const promotedFromSent = prev.sent[0];
-        const promotedFromTodo = prev.todo[0];
-        const freshCard = makeCard(cycleRef.current++);
-        const next = {
-          interview: [...prev.interview.slice(1), { ...promotedFromSent, interviewPill: PILL_DATES[dateIdxRef.current++ % PILL_DATES.length] }],
-          sent: [...prev.sent.slice(1), promotedFromTodo],
-          todo: [...prev.todo.slice(1), freshCard],
-        };
-        pipelineRef.current = next;
-        setColumns(next);
-        timeoutsRef.current.push(setTimeout(() => {
-          setRevealedPills((prevSet) => new Set(prevSet).add(promotedFromSent.id));
-        }, 900));
-        timeoutsRef.current.push(setTimeout(tick, TICK_INTERVAL));
-      }, reduceMotion ? 0 : EXIT_DURATION));
+        setRevealedPills((prevSet) => new Set(prevSet).add(promoted.id));
+      }, 900));
+      timeoutsRef.current.push(setTimeout(beat3, BEAT_PAUSE));
+    }
+    function beat3() {
+      commit((cols) => { cols.sent.push(cols.todo.shift()!); });
+      timeoutsRef.current.push(setTimeout(beat4, BEAT_PAUSE));
+    }
+    function beat4() {
+      const placed = pipelineRef.current.interview[0];
+      fadeOut(placed.id, () => {
+        commit((cols) => { cols.interview.shift(); });
+        timeoutsRef.current.push(setTimeout(beat1, BEAT_PAUSE));
+      });
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();
-        timeoutsRef.current.push(setTimeout(tick, TICK_INTERVAL));
+        timeoutsRef.current.push(setTimeout(beat1, BEAT_PAUSE));
       },
       { threshold: 0.4 }
     );
@@ -234,7 +282,7 @@ export default function KanbanAnimation() {
       } else {
         el.style.transition = 'none';
         el.style.opacity = '0';
-        el.style.transform = 'scale(0.92) translateY(8px)';
+        el.style.transform = 'scale(0.92) translateY(18px)';
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             el.style.transition = 'opacity 0.9s ease, transform 0.9s cubic-bezier(0.34, 1.4, 0.64, 1)';
@@ -249,7 +297,7 @@ export default function KanbanAnimation() {
 
   return (
     <div className="landing-kanban-board" ref={boardRef} style={boardMinHeight ? { minHeight: boardMinHeight } : undefined}>
-      <GaugeColumn gaugeRef={(el) => { gaugeRef.current = el; }} />
+      <GaugeBoard gaugeRef={(el) => { gaugeRef.current = el; }} />
       <div className="column">
         <div className="column-header column-header--slate">
           <Icon name="circle-dashed" />
