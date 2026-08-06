@@ -4650,6 +4650,11 @@ legend.field-label { padding: 0; }
      math below). Cancels the parent's right padding for this row only
      instead of also giving every row the old per-row breakout back. */
   margin-right: calc(-1 * (16.6667vw - 4px));
+  /* Now also cancels the LEFT padding (matching the right cancellation
+     above) — the carousel needs the row at the page's true full width
+     on both sides for the half-item peeks on either side to add up
+     correctly (see .landing-showcase-carousel's own math below). */
+  margin-left: calc(-1 * (16.6667vw - 4px));
 }
 /* Same 4-column span as before (calc(33.3333vw - 32px)), just shifted
    2 columns right from where the row's own padding-left starts
@@ -4660,7 +4665,11 @@ legend.field-label { padding: 0; }
   text-align: center;
   align-items: center;
   width: calc(33.3333vw - 32px);
-  margin-left: calc(16.6667vw - 28px);
+  /* The row itself now starts a further (16.6667vw - 4px) to the left
+     (see margin-left cancellation above) — added back here so this
+     text block keeps the exact same absolute on-page position it had
+     before that change. */
+  margin-left: calc(16.6667vw - 28px + 16.6667vw - 4px);
 }
 
 .landing-showcase-carousel {
@@ -4681,42 +4690,45 @@ legend.field-label { padding: 0; }
      can't fire mid-layout, while the web font and Cassandra's photo are
      still loading and item positions are still shifting, and land the
      rest position a card or two off from the first card on reload. */
-  scroll-padding-left: calc(25vw - 6px);
+  /* Rest position (scrollLeft: 0) now lands with item0's own left edge
+     flush with the box's own content edge (padding-left: 0 below), so
+     the snap target for it is 0 too — the half-item peek to its left
+     comes entirely from the negative margin-left/width bleed, not from
+     padding, unlike the old column-3 inset this replaced. */
+  scroll-padding-left: 0;
   /* Stops the browser's own scroll-anchoring from nudging scrollLeft as
      fonts/images finish loading post-paint — belt-and-suspenders with
      the scrollLeft=0 reset in DragScrollCarousel's mount effect. */
   overflow-anchor: none;
   box-sizing: border-box;
-  /* Explicit width (not auto/shrink-to-fit), reclaiming extra width on the
-     left so this box's own edge — where overflow-x:auto actually clips —
-     sits a full grid column further left than the row's true page
-     margin (grid 0), at grid -1, fully off-screen. padding-left still
-     rests the content at column 3 at scroll=0 (net visual position at
-     rest is unchanged); the negative margin-left just moves the *clip
-     boundary* further out, so a card dragged past grid 0 keeps sliding
-     out of view instead of getting stuck visible right at that edge. */
-  width: calc(100% + (25vw - 6px));
-  margin-left: calc(-1 * (25vw - 6px));
-  /* Must exactly cancel margin-left above (same magnitude, opposite
-     sign) so the rest position (scrollLeft: 0) lands back at column 3
-     — the position already set by the row's own padding-left — instead
-     of drifting further left than that. */
-  padding-left: calc(25vw - 6px);
-  /* Documents is a real, fully circular carousel item now (not the old
-     unreachable tail item this used to be tuned around), so its own
-     snap-align:start point needs to be genuinely reachable — enough
-     trailing room for it to rest at the same inset as every other item.
-     Too little room here was capping the browser's own max scrollLeft
-     short of that target entirely, so "nearest item" never actually
-     became Documents no matter how far right you scrolled —
-     DragScrollCarousel's circular rotation forward never fired, only
-     backward, which is what read as "works left, not right". Matching
-     the left inset (25vw - 6px) alone isn't enough on its own: that
-     only covers the same slack the first item gets at rest, not the
-     one full item-step (.landing-showcase-carousel-item's own width +
-     the row gap, calc(33.3333vw - 32px) + 24px) still missing beyond
-     it to actually reach the last item's target. */
-  padding-right: calc(25vw - 6px + 33.3333vw - 32px + 24px);
+  /* Half an item's own width on each side (.landing-showcase-carousel-item
+     is calc(33.3333vw - 32px), 4 grid columns — half of that is 2
+     columns) — the row is now full page width (see the row's own
+     margin cancellations above), so bleeding the box's own declared
+     width by exactly one item-width total (split half-and-half via
+     margin-left below) is what leaves precisely "half of item0" and
+     "half of the last item" visible at rest.
+     padding-right is deliberately NOT folded into this width: doing
+     that once made padding-right cancel itself out completely — it
+     grew clientWidth (via width) by the same amount it grew
+     scrollWidth (via content), leaving maxScroll (their difference)
+     completely unchanged no matter how big padding-right got, and
+     reachability silently never improved. Left out of width, it only
+     grows the content's own natural flow, which is what actually
+     creates scrollable overflow. */
+  width: calc(100% + (33.3333vw - 32px));
+  margin-left: calc(-1 * (16.6667vw - 16px));
+  padding-left: 0;
+  /* scroll-snap-type:mandatory's true max scrollLeft is whichever the
+     last item's snap target actually is (3 item-steps from item0 here:
+     3 × (item width + row gap)) — reaching that, not just visually
+     peeking the last item's edge, is what this needs to cover; with
+     padding-right excluded from width above, maxScroll reduces to
+     ~padding-right directly, so it has to be at least that big, plus a
+     safety margin. See DragScrollCarousel.tsx's own comments on the
+     exact failure mode this fixes (mandatory snap never settling on
+     the last item at all if this falls short). */
+  padding-right: calc((33.3333vw - 32px) * 3 + 72px + 40px);
   /* overflow-x:auto forces overflow-y to compute as auto too (can't mix
      auto with visible on one box), so the cards' own box-shadow (0 10px
      24px blur below) was getting clipped flat by that y-clip — 8px of
