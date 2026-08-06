@@ -3,7 +3,7 @@
   --bg: #f5f5f5;           /* neutral-100 */
   --card-bg: #ffffff;
   --text: #171717;        /* neutral-900 */
-  --text-muted: #525252;  /* neutral-600 — neutral-500 (#737373) is closer to #636363 but only hits 4.34:1 against --bg, just under WCAG AA's 4.5:1; neutral-600 clears it at 7.17:1 */
+  --text-muted: #404040;  /* neutral-700 */
   --border: #e5e5e5;      /* neutral-200 */
   --shadow: 0 2px 8px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.05);
 
@@ -82,7 +82,7 @@
   --bg: #f5f5f5;
   --card-bg: #ffffff;
   --text: #171717;
-  --text-muted: #525252;
+  --text-muted: #404040;
   --border: #e5e5e5;
   --shadow: 0 2px 8px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.05);
 
@@ -4598,13 +4598,13 @@ legend.field-label { padding: 0; }
 /* Icon keeps its square styling from .landing-feature-icon but loses
    that class's own margin-bottom (sits beside the title in a row here,
    not stacked above it) and swaps its indigo tint for a plain neutral
-   look: #525252 icon, #e5e5e5 border, white fill. */
+   look: #404040 icon, #e5e5e5 border, white fill. */
 .landing-showcase-caption-header .landing-feature-icon {
   margin-bottom: 0;
   flex-shrink: 0;
   background: #ffffff;
   border: 1px solid #e5e5e5;
-  color: #525252;
+  color: #404040;
 }
 .landing-showcase-caption-title { font-size: 32px; line-height: 1.2; font-weight: 600; color: var(--text); margin: 0; }
 .landing-showcase-caption .landing-feature-text { font-size: 16px; }
@@ -4836,13 +4836,23 @@ legend.field-label { padding: 0; }
 /* The fake personalized offer that appears once every step has lit up,
    reuses the real kanban .card classes (see .landing-kanban-board's own
    scoped sizing above) so it reads as the actual product, not a mockup
-   of a mockup. */
+   of a mockup. Mounted collapsed (max-height: 0) then flipped to
+   .is-open a frame later (see MatchingAnimation.tsx), so the card's own
+   footprint grows smoothly instead of the whole mockup jumping taller
+   the instant it's added to the DOM — a max-height transition is the
+   only way to ease a height that's naturally "auto", a plain opacity/
+   translateY fade on the child doesn't smooth the parent's own reflow. */
 .landing-matching-offer {
-  animation: landing-matching-offer-in 0.5s cubic-bezier(0.48, 0.72, 0, 1);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: scale(0.97);
+  transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-@keyframes landing-matching-offer-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+.landing-matching-offer.is-open {
+  max-height: 260px;
+  opacity: 1;
+  transform: scale(1);
 }
 .landing-matching-offer .card { padding: 10px; gap: 6px; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
 .landing-matching-offer .card-heading { font-size: 14px; line-height: 1.35; }
