@@ -4848,7 +4848,7 @@ legend.field-label { padding: 0; }
   filter: blur(0);
   opacity: 1;
 }
-.landing-matching-offer .card { padding: 10px; gap: 6px; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
+.landing-matching-offer .card { padding: 16px; gap: 6px; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
 .landing-matching-offer .card-heading { font-size: 14px; line-height: 1.35; }
 .landing-matching-offer .card-title,
 .landing-matching-offer .card-company { font-weight: 600; }
@@ -4896,10 +4896,11 @@ legend.field-label { padding: 0; }
 
 /* .ai-result: marks a container as showing an AI-generated result (the
    ATS match score, the copilot suggestions, the personalized offer) with
-   a soft breathing inner halo, monochrome rather than violet so it reads
-   as a subtle "live" cue instead of competing with the violet
-   sparkles/badges already used for AI elsewhere. Replaces an earlier
-   rotating conic-gradient ring (BorderBeam) that relied on
+   a soft breathing inner halo, in violet — the site's established
+   "IA-attributed content" color (see .landing-match-notes li.is-ai,
+   .card-personalized-badge) — so it reads as the same AI cue as those
+   elsewhere instead of a separate, unrelated visual language. Replaces
+   an earlier rotating conic-gradient ring (BorderBeam) that relied on
    mask-composite: exclude — Safari doesn't handle -webkit-mask-composite:
    xor the same as the standard exclude value, so the ring's hard edge
    showed through unmasked as a stray diagonal line. A plain inset
@@ -4914,7 +4915,7 @@ legend.field-label { padding: 0; }
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 20px rgba(23, 23, 23, 0.1);
+  box-shadow: inset 0 0 20px color-mix(in srgb, var(--violet) 22%, transparent);
   animation: ai-result-pulse 2.6s ease-in-out infinite;
   pointer-events: none;
 }
@@ -5418,9 +5419,11 @@ legend.field-label { padding: 0; }
 .quote-modal {
   position: relative;
   width: 100%;
-  /* Exactly 3 grid columns — same span(3) formula used everywhere else
-     on the page (carousel drag step, the ATS match card). */
-  max-width: calc(25vw - 30px);
+  /* Exactly 4 grid columns (the middle 4 of 12), same span(4) formula
+     used everywhere else on the page (showcase text/visual split
+     columns) — the overlay's own flex align/justify-content: center
+     already centers it in the viewport. */
+  max-width: calc(33.3333vw - 32px);
   max-height: 90vh;
   overflow-y: auto;
   padding: var(--space-24);
