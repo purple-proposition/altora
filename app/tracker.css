@@ -4846,12 +4846,17 @@ legend.field-label { padding: 0; }
   filter: blur(0);
   opacity: 1;
 }
-.landing-matching-offer .card { padding: 16px; gap: 6px; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
-.landing-matching-offer .card-heading { font-size: 14px; line-height: 1.35; }
+/* gap: 8px replaces the card's own uniform gap (6px, off the 4px grid):
+   heading-to-city and city-to-links need different spacing (8px, 16px),
+   which a single flex gap can't give two different sibling boundaries —
+   so gap is dropped to 0 here and each boundary gets its own explicit
+   margin-bottom below instead. */
+.landing-matching-offer .card { padding: 16px; gap: 0; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
+.landing-matching-offer .card-heading { font-size: 14px; line-height: 1.35; margin-bottom: 8px; }
 .landing-matching-offer .card-title,
 .landing-matching-offer .card-company { font-weight: 600; }
 .landing-matching-offer .card-heading-sep { font-weight: 400; }
-.landing-matching-offer .card-meta-row { gap: 6px; }
+.landing-matching-offer .card-meta-row { gap: 8px; margin-bottom: 16px; }
 .landing-matching-offer .card-meta-item { font-size: 14px; gap: 4px; }
 .landing-matching-offer .card-meta-item .lucide { width: 14px; height: 14px; }
 .landing-matching-offer .card-link-row { gap: 8px; }
