@@ -29,9 +29,9 @@ export default function MatchingAnimation() {
         // matching actually works, so each step needs to be readable as
         // it happens rather than flashing past.
         STEPS.forEach((_, i) => {
-          timeouts.push(setTimeout(() => setActiveCount(i + 1), 1400 * (i + 1)));
+          timeouts.push(setTimeout(() => setActiveCount(i + 1), 1100 * (i + 1)));
         });
-        timeouts.push(setTimeout(() => setOfferRevealed(true), 1400 * (STEPS.length + 1) + 800));
+        timeouts.push(setTimeout(() => setOfferRevealed(true), 1100 * (STEPS.length + 1) + 600));
       },
       { threshold: 0.4 }
     );

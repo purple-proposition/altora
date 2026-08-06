@@ -4,6 +4,7 @@ import Icon from '@/components/Icon';
 import MatchingAnimation from '@/components/MatchingAnimation';
 import HeroCalendar from '@/components/HeroCalendar';
 import KanbanAnimation from '@/components/KanbanAnimation';
+import MessagingAnimation from '@/components/MessagingAnimation';
 import Reveal from '@/components/Reveal';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
@@ -219,7 +220,7 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row--kanban">
           <div className="landing-showcase-text landing-showcase-text--right">
-            <h3 className="landing-showcase-title">Une seule boîte à outils, deux façons de s&apos;en servir</h3>
+            <h3 className="landing-showcase-title">Une seule boîte à outils, deux utilisations complémentaires</h3>
             <p className="landing-showcase-body">
               Côté apprenant, c&apos;est le cockpit de son alternance. Côté
               école, c&apos;est le même espace qui devient un outil de suivi
@@ -247,48 +248,7 @@ export default function LandingPage() {
             </div>
 
             <div className="landing-showcase-carousel-item">
-            <div className="landing-messaging-board">
-              <div className="inbox-message landing-inbox-message landing-inbox-message--unread">
-                <span className="landing-inbox-avatar landing-inbox-avatar--person">
-                  <Image src="/landing-preview-avatar-cassandra.jpg" alt="Cassandra" fill sizes="28px" />
-                </span>
-                <div className="inbox-message-body">
-                  <div className="inbox-message-top">
-                    <span className="inbox-message-sender">Cassandra de Lumina School</span>
-                    <span className="inbox-message-email">cassandra@lumina-school.fr</span>
-                    <span className="inbox-message-time">09:14</span>
-                  </div>
-                  <p className="inbox-message-subject">Ton CV a été mis à jour, tout est prêt pour BlaBlaCar</p>
-                  <p className="inbox-message-preview">J&apos;ai relu ta candidature, n&apos;oublie pas d&apos;ajouter ton projet marketing avant de l&apos;envoyer.</p>
-                </div>
-                <span className="inbox-message-unread-dot" />
-              </div>
-              <div className="inbox-message landing-inbox-message landing-inbox-message--unread">
-                <span className="landing-inbox-avatar landing-inbox-avatar--school"><Icon name="target" /></span>
-                <div className="inbox-message-body">
-                  <div className="inbox-message-top">
-                    <span className="inbox-message-sender">Altora</span>
-                    <span className="inbox-message-email">notifications@altora.fr</span>
-                    <span className="inbox-message-time">11:02</span>
-                  </div>
-                  <p className="inbox-message-subject">Nouvelle offre compatible à 92% avec ton profil</p>
-                  <p className="inbox-message-preview">Alternance Growth Marketing chez Doctolib, à Paris 9e. Génère ton CV en un clic.</p>
-                </div>
-                <span className="inbox-message-unread-dot" />
-              </div>
-              <div className="inbox-message landing-inbox-message landing-inbox-message--read">
-                <span className="landing-inbox-avatar landing-inbox-avatar--school"><Icon name="graduation-cap" /></span>
-                <div className="inbox-message-body">
-                  <div className="inbox-message-top">
-                    <span className="inbox-message-sender">Lumina School</span>
-                    <span className="inbox-message-email">contact@lumina-school.fr</span>
-                    <span className="inbox-message-time">Hier</span>
-                  </div>
-                  <p className="inbox-message-subject">Rappel : évaluations B3 les 24, 25 et 26 juin</p>
-                  <p className="inbox-message-preview">Le planning détaillé des évaluations est disponible sur ton espace élève.</p>
-                </div>
-              </div>
-            </div>
+            <MessagingAnimation />
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
                 <div className="landing-feature-icon"><Icon name="mail" /></div>

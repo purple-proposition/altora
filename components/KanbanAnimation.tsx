@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
+import AnimatedCount from '@/components/AnimatedCount';
 
 // Unlike the site's other one-shot mockups (CountUpPercent, MatchingAnimation),
 // this one is a perpetual loop: it starts once the board scrolls into view,
@@ -441,7 +442,7 @@ export default function KanbanAnimation() {
         <div className="column-header column-header--slate">
           <Icon name="circle-dashed" />
           <span className="column-header-label">À faire</span>
-          <span className="column-header-count">{columns.todo.length}</span>
+          <AnimatedCount className="column-header-count" value={columns.todo.length} />
         </div>
         <div className="card-list">
           {columns.todo.map((card) => <Card key={card.id} card={card} pillRevealed={false} />)}
@@ -451,7 +452,7 @@ export default function KanbanAnimation() {
         <div className="column-header column-header--amber">
           <Icon name="hourglass" />
           <span className="column-header-label">Envoyé</span>
-          <span className="column-header-count">{columns.sent.length}</span>
+          <AnimatedCount className="column-header-count" value={columns.sent.length} />
         </div>
         <div className="card-list">
           {columns.sent.map((card) => <Card key={card.id} card={card} pillRevealed={false} />)}
@@ -461,7 +462,7 @@ export default function KanbanAnimation() {
         <div className="column-header column-header--green">
           <Icon name="target" />
           <span className="column-header-label">Entretien</span>
-          <span className="column-header-count">{columns.interview.length}</span>
+          <AnimatedCount className="column-header-count" value={columns.interview.length} />
         </div>
         <div className="card-list">
           {columns.interview.map((card) => (

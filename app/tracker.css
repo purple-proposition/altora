@@ -1170,6 +1170,19 @@ body {
   opacity: 0.75;
 }
 
+/* AnimatedCount: a fixed-height clipped slot so the old/new digit can
+   slide past each other instead of just popping to the new value. */
+.animated-count {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 1em;
+  line-height: 1;
+  vertical-align: text-bottom;
+}
+.animated-count-digit { display: block; }
+.animated-count-old, .animated-count-new { position: absolute; inset: 0; }
+
 .column-header--slate { background: var(--bg);          color: var(--text-muted); }
 .column-header--indigo{ background: var(--indigo-tint); color: var(--indigo); }
 .column-header--amber { background: var(--amber-tint);  color: var(--amber); }
@@ -5061,7 +5074,11 @@ legend.field-label { padding: 0; }
   margin-left: 0;
   opacity: 1;
   pointer-events: auto;
-  transition: opacity 0.6s ease, max-width 0.6s cubic-bezier(0.65, 0, 0.35, 1), margin-left 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+  /* Same 0.8s as .landing-kanban-board .card's own background transition
+     — both are triggered by the same card.variant change, so "Générer
+     CV" needs to finish disappearing exactly when the card finishes
+     turning fully amber/green, not before or after. */
+  transition: opacity 0.8s ease, max-width 0.8s cubic-bezier(0.65, 0, 0.35, 1), margin-left 0.8s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .landing-kanban-board .card-link--generate.is-hidden {
   opacity: 0;
@@ -5098,9 +5115,14 @@ legend.field-label { padding: 0; }
    compact mockup — same avatar/sender/subject/preview structure, tighter
    padding/font-size, unread vs. read told apart by fill vs. plain border
    (not the small indigo dot alone, which reads too subtly at this size). */
-.landing-inbox-message { padding: 10px 12px; gap: 8px; min-width: 0; }
+.landing-inbox-message { padding: 10px 12px; gap: 8px; min-width: 0; transition: background-color 0.6s ease, border-color 0.6s ease; }
 .landing-inbox-message--unread { background: var(--bg); border-color: transparent; }
 .landing-inbox-message--read { background: var(--card-bg); }
+/* The unread dot always renders (see MessagingAnimation.tsx) — marking a
+   message read toggles this class instead of unmounting the dot, so it
+   shrinks/fades out smoothly rather than just disappearing. */
+.landing-messaging-board .inbox-message-unread-dot { transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1); }
+.landing-messaging-board .inbox-message-unread-dot.is-read { opacity: 0; transform: scale(0.4); }
 .landing-messaging-board .inbox-message-body { gap: 2px; min-width: 0; }
 .landing-messaging-board .inbox-message-top { flex-wrap: wrap; gap: 4px; }
 .landing-messaging-board .inbox-message-sender { font-size: 12px; }
