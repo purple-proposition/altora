@@ -49,8 +49,13 @@ function makeMessage(cycle: number, read: boolean): MessageData {
   return { id: `${t.sender}-${t.time}-${cycle}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'), read, ...t };
 }
 
+// Plafond dur du nombre de messages affiches. Le cycle en retire un avant
+// d'en ajouter un, donc la liste oscille entre MAX_MESSAGES - 1 et
+// MAX_MESSAGES et ne peut jamais depasser la hauteur reservee au plateau.
+const MAX_MESSAGES = 4;
+
 function initialMessages(): MessageData[] {
-  return [makeMessage(0, false), makeMessage(1, false), makeMessage(2, true)];
+  return [makeMessage(0, false), makeMessage(1, false), makeMessage(2, false), makeMessage(3, true)];
 }
 
 const READ_STEP_PAUSE = 1800;
@@ -108,7 +113,7 @@ export default function MessagingAnimation() {
   const boardRef = useRef<HTMLDivElement>(null);
 
   const messagesRef = useRef<MessageData[]>(messages);
-  const cycleRef = useRef(3);
+  const cycleRef = useRef(4);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const seenIdsRef = useRef<Set<string>>(new Set(messages.map((m) => m.id)));
   // ids the layout effect below is allowed to FLIP-reposition for the
@@ -202,7 +207,10 @@ export default function MessagingAnimation() {
       // (lower) position instantly, which is what read as choppy rather
       // than one organic motion.
       const existingIds = messagesRef.current.map((m) => m.id);
-      commit([fresh, ...messagesRef.current], existingIds);
+      // Ceinture et bretelles : si un retrait avait echoue, on tronque
+      // plutot que de laisser la liste grandir indefiniment.
+      const next = [fresh, ...messagesRef.current].slice(0, MAX_MESSAGES);
+      commit(next, existingIds);
       timeoutsRef.current.push(setTimeout(loop, LOOP_PAUSE));
     }
 

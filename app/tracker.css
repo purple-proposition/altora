@@ -3922,7 +3922,6 @@ legend.field-label { padding: 0; }
   margin-bottom: var(--space-64);
 }
 
-
 .landing-preview {
   /* Breaks out of .landing-hero's narrower 720px text column so the
      window can size against the full viewport width instead of being
@@ -4315,144 +4314,64 @@ legend.field-label { padding: 0; }
   .landing-preview-count-new { animation: none; }
 }
 
-
 /* Audience categories: Altora serves two distinct audiences (see
    app/(tracker)/ecole/page.tsx for the school-admin dashboard this mirrors)
    students tracking their own applications, and schools overseeing a
    whole promotion. Each gets its own card, bullet points, and CTA rather
    than a single generic "features" list, so each visitor sees their own
    use case first. */
-/* margin-top, not vertical padding: this section has no visible
-   border/background of its own, so padding here was indistinguishable
-   from margin : moved to the shared 96px inter-section rhythm instead
-   of an independent value that had to be eyeballed against its
-   neighbors. */
-/* Full-width, centered, tinted apart from every plain white card
-   around it : this is a standalone claim, not another feature tile, so
-   it needs to visually interrupt the page's rhythm rather than blend
-   into the categories grid right below it. */
-.landing-risk-banner {
+/* Mockup de la section facturation. Meme patron que les autres lignes du
+   showcase : texte a gauche, artefact produit a droite, sur fond de carte
+   neutre. La version precedente etait une banniere teintee en vert avec une
+   liste de promesses ; un recapitulatif de facturation demontre le
+   mecanisme au lieu de l'affirmer. Aucun montant : a ce stade seul le
+   principe est arrete, pas les conditions commerciales. */
+.landing-billing-card {
   width: 100%;
-  padding: var(--space-32);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  background: var(--green-tint);
-  border: 1px solid var(--green-track);
-  border-radius: var(--radius-card);
-}
-.landing-risk-banner-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-pill);
-  background: var(--card-bg);
-  color: var(--green);
-  margin-bottom: var(--space-16);
-}
-.landing-risk-banner-icon .lucide { width: 24px; height: 24px; }
-.landing-risk-banner-title {
-  font-size: 32px;
-  line-height: 1.15;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text);
-  margin: 0 0 var(--space-12);
-}
-.landing-risk-banner-text {
-  font-size: 16px;
-  line-height: 1.6;
-  color: var(--text-muted);
-  max-width: 560px;
-  margin: 0 0 var(--space-24);
-}
-.landing-risk-banner-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-24);
-}
-.landing-risk-banner-list li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-}
-.landing-risk-banner-list .lucide { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; }
-@media (max-width: 720px) {
-  .landing-risk-banner-list { flex-direction: column; align-items: flex-start; gap: var(--space-12); }
-}
-
-.landing-categories {
-  max-width: 1120px;
-  width: 100%;
-  margin: var(--space-96) auto 0;
-  padding: 0 var(--space-24);
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-24);
-}
-
-.landing-category {
-  display: flex;
-  flex-direction: column;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  padding: var(--space-32);
-}
-
-.landing-category-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-input);
-  background: var(--indigo-tint);
-  color: var(--indigo);
-  margin-bottom: var(--space-16);
-}
-.landing-category-icon .lucide { width: 20px; height: 20px; }
-
-.landing-category-title {
-  font-size: 48px;
-  line-height: 1;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0 0 var(--space-8);
-}
-
-.landing-category-text {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-muted);
-  margin: 0 0 var(--space-20);
-}
-
-.landing-category-list {
-  list-style: none;
-  margin: 0 0 var(--space-24);
-  padding: 0;
+  box-shadow: var(--shadow);
+  padding: var(--space-24);
   display: flex;
   flex-direction: column;
   gap: var(--space-12);
 }
-.landing-category-list li {
+.landing-billing-header {
   display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  font-size: 14px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-12);
+  margin-bottom: var(--space-4);
+}
+.landing-billing-title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   color: var(--text);
 }
-.landing-category-list .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
+.landing-billing-period { font-size: 12px; color: var(--text-muted); }
+.landing-billing-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: var(--space-12);
+  background: var(--bg);
+  border-radius: var(--radius-inner);
+  font-size: 14px;
+}
+/* La seule ligne facturee est aussi la seule mise en couleur : c'est le
+   contraste avec les deux lignes gratuites au-dessus qui porte le
+   message, pas un aplat sur tout le bloc. */
+.landing-billing-row--billed { background: var(--green-tint); }
+.landing-billing-label { display: flex; align-items: center; gap: var(--space-8); color: var(--text); }
+.landing-billing-label .lucide { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+.landing-billing-row--billed .landing-billing-label .lucide { color: var(--green); }
+.landing-billing-free { font-size: 14px; font-weight: 600; color: var(--text-muted); flex-shrink: 0; }
+.landing-billing-billed { font-size: 14px; font-weight: 600; color: var(--green); flex-shrink: 0; }
 
 /* Shared by 3 category-card CTAs: "Créer mon compte" (étudiants) and
    "Bientôt disponible" (entreprises) are deliberately lightweight text
@@ -4460,38 +4379,11 @@ legend.field-label { padding: 0; }
    pulled out to share .landing-nav-cta's full button look instead (see
    .landing-category-cta--btn below), so this base class must stay as
    plain text-link styling for the other two. */
-.landing-category-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin-top: auto;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--indigo);
-  text-decoration: none;
-}
-.landing-category-cta:hover { color: var(--text-muted); }
-.landing-category-cta .lucide { width: 16px; height: 16px; }
+
 /* Overrides the text-link styling above back to nothing but the
    bottom-pinning, since .landing-nav-cta (applied alongside it) already
    supplies the real black-pill look : this class just still needs to be
    what places the button at the bottom of its card. */
-.landing-category-cta--btn {
-  display: inline-flex;
-  gap: 0;
-  margin-top: auto;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  text-decoration: none;
-}
-.landing-category-cta--btn:hover { color: #fff; }
-.landing-category-cta--btn .lucide { width: auto; height: auto; }
-
-.landing-category-cta--soon {
-  color: var(--text-muted);
-  cursor: default;
-}
 
 /* IA showcase: two alternating text+visual rows. Content (92% match score,
    copilote suggestions) is pulled directly from the illustrative examples
@@ -4566,10 +4458,15 @@ legend.field-label { padding: 0; }
 /* Text 4 columns, matching frise mockup 3 columns (calc(25vw - 30px))
    pushed out to column 10 : same treatment as --priorise above, gap
    widened with the same formula instead of a flat 24px. */
+/* Les deux sections differenciantes, facturation et matching, partagent
+   exactement la meme mise en page : texte sur 4 colonnes, mockup sur 3.
+   Elles se lisent comme une paire, ce qui est voulu. */
+.landing-showcase-row--facturation,
 .landing-showcase-row--jobboards {
   grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
   gap: calc(8.3333vw + 22px);
 }
+.landing-showcase-row--facturation .landing-showcase-visual,
 .landing-showcase-row--jobboards .landing-showcase-visual { justify-content: flex-end; }
 
 /* Same full-bleed breakout and symmetric 2-column margins as --annuaire
@@ -4784,25 +4681,34 @@ legend.field-label { padding: 0; }
      vit dans le même item que son mockup pour défiler avec lui. */
   gap: var(--space-24);
 }
-/* Every item is already stretched to the tallest one (default flex
-   align-items:stretch on the row), but that only affects the item box
-   itself : its mockup child still only took its own content height,
-   leaving the shorter mockups (messaging, calendar) visibly shorter
-   than the kanban one with blank space absorbed after the caption
-   instead. flex:1 on the mockup makes it, not the gap below the
-   caption, claim that extra height, so all 3 mockups line up at the
-   same height regardless of how much content each one has. */
+/* Hauteur fixe, identique pour les quatre plateaux.
+
+   Ils etaient auparavant etires par flex sur le plus grand d'entre eux,
+   et le plus grand etait le kanban, dont la hauteur naturelle change au
+   fil de son animation : selon les cartes presentes, une colonne fait
+   plus ou moins haut (badge ecole ou non, pastille d'entretien ou non,
+   titre sur une ou deux lignes). Toute la section bougeait donc de
+   quelques pixels par a-coups.
+
+   Une jauge JS, une colonne fantome de trois cartes mesuree une seule
+   fois au montage, servait de garde-fou. Elle ne reglait pas le
+   probleme : sa valeur depend du moment exact de la mesure (polices
+   chargees ou non), elle n'est jamais recalculee au redimensionnement,
+   et elle ne couvre pas les etats plus hauts que sa propre reference.
+   D'ou un decalage intermittent plutot qu'un decalage franc.
+
+   Une hauteur fixe plus overflow: hidden rend la croissance
+   structurellement impossible. 600px laisse environ 75px de marge
+   au-dessus de la hauteur naturelle la plus grande observee (524px pour
+   le kanban), donc rien n'est rogne en pratique. */
 .landing-showcase-carousel-item > .landing-kanban-board,
 .landing-showcase-carousel-item > .landing-messaging-board,
 .landing-showcase-carousel-item > .landing-calendar-board,
 .landing-showcase-carousel-item > .landing-documents-board {
-  flex: 1 1 auto;
-}
-/* Hauteur réservée par la jauge de KanbanAnimation (une colonne fantôme
-   de 3 cartes), publiée par le composant en custom property pour que le
-   mobile puisse la neutraliser proprement : voir le bloc 720px. */
-.landing-showcase-carousel-item > .landing-kanban-board {
-  min-height: var(--kanban-gauge-h, 0px);
+  flex: 0 0 auto;
+  height: 600px;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* min-height reserves room for the longest caption text (4 lines) so
@@ -5098,7 +5004,6 @@ legend.field-label { padding: 0; }
 .landing-matching-offer .card-link-row { gap: var(--space-8); }
 .landing-matching-offer .card-link { font-size: 14px; gap: var(--space-4); }
 .landing-matching-offer .card-link .lucide { width: 14px; height: 14px; }
-
 
 /* .ai-result: marks a container as showing an AI-generated result (the
    ATS match score, the copilot suggestions, the personalized offer) with
@@ -5835,10 +5740,6 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
 }
 
-.landing-footer-links { display: flex; align-items: center; gap: var(--space-16); }
-.landing-footer-link { color: var(--text-muted); text-decoration: none; }
-.landing-footer-link:hover { color: var(--text); }
-
 /* Closing CTA banner: a distinct tinted section right before the footer,
    the way Tripsy closes on "Your next trip starts here" before its
    footer : no fabricated testimonials/press badges here since Altora is
@@ -5878,13 +5779,11 @@ legend.field-label { padding: 0; }
 }
 
 @media (max-width: 960px) {
-  .landing-categories { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 720px) {
   .landing-title { font-size: 48px; }
   .landing-preview-cols { grid-template-columns: 1fr; }
-  .landing-categories { grid-template-columns: 1fr; }
   .landing-features { grid-template-columns: repeat(2, 1fr); }
   .landing-showcase-row { grid-template-columns: 1fr; }
   /* Regardless of desktop layout : --priorise puts the visual first in
@@ -5929,6 +5828,7 @@ legend.field-label { padding: 0; }
   .landing-showcase-row--annuaire .landing-showcase-visual,
   .landing-showcase-row--priorise .landing-showcase-visual,
   .landing-showcase-row--ats .landing-showcase-visual,
+  .landing-showcase-row--facturation .landing-showcase-visual,
   .landing-showcase-row--jobboards .landing-showcase-visual,
   .landing-showcase-row--roster .landing-showcase-visual,
   .landing-showcase-row--kanban .landing-showcase-text--right {
@@ -6088,31 +5988,6 @@ legend.field-label { padding: 0; }
   .landing-hero-actions { flex-direction: column; gap: var(--space-16); }
 }
 
-/* --- Pricing page (app/pricing/page.tsx) --- */
-
-.pricing-hero {
-  max-width: 640px;
-  width: 100%;
-  margin: var(--space-96) auto 0;
-  padding: 0 var(--space-24);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.pricing-title {
-  font-size: 40px;
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: var(--space-20) 0 var(--space-12);
-  color: var(--text);
-}
-/* Landing page version only (scoped to #tarifs, not /pricing's own
-   standalone hero): no eyebrow above it anymore, so the 20px top
-   margin meant to clear that eyebrow is dropped too. */
-#tarifs .pricing-title { font-size: 48px; margin-top: 0; }
 #tarifs .landing-subtitle { font-size: 16px; }
 
 .pricing-plans {
@@ -6318,7 +6193,6 @@ legend.field-label { padding: 0; }
 }
 
 @media (max-width: 640px) {
-  .pricing-title { font-size: 28px; }
   .pricing-plans { grid-template-columns: 1fr; }
   .pricing-merged-groups { grid-template-columns: 1fr; }
   /* Vertical dividers between side-by-side columns make no sense once

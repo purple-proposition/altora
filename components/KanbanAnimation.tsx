@@ -81,11 +81,17 @@ function buildPillDates(): PillInfo[] {
   // their own nudge and collide. `usedDays` keeps every date already
   // claimed so a colliding anchor keeps stepping forward (skipping
   // weekends too) until it lands on a genuinely free weekday.
-  const usedDays = new Set<number>();
+  // Cle mois-jour et non jour seul : une ancre poussee au-dela de la fin
+  // du mois repart a 1, ce qui pouvait entrer en collision avec un debut
+  // de mois deja pris et faire croire a un doublon inexistant.
+  const usedDays = new Set<string>();
+  const key = (d: Date) => `${d.getMonth()}-${d.getDate()}`;
   return DAY_ANCHORS.map((day, i) => {
     const d = new Date(year, month, day);
-    while (d.getDay() === 0 || d.getDay() === 6 || usedDays.has(d.getDate())) d.setDate(d.getDate() + 1);
-    usedDays.add(d.getDate());
+    // Jamais un samedi (6) ni un dimanche (0), et jamais une date deja
+    // prise : on avance d'un jour jusqu'a satisfaire les deux.
+    while (d.getDay() === 0 || d.getDay() === 6 || usedDays.has(key(d))) d.setDate(d.getDate() + 1);
+    usedDays.add(key(d));
     return { text: `Le ${d.getDate()} ${MONTHS_FR[d.getMonth()]} à ${HOURS[i]}`, day: d.getDate() };
   });
 }
@@ -147,59 +153,10 @@ function Card({ card, pillRevealed }: { card: CardData; pillRevealed: boolean })
   );
 }
 
-// Distinct ids from the real cards: makeCard()'s id is derived only from
-// the pool template + cycle number, and the gauge would otherwise reuse
-// the same cycles as the real initial columns, colliding on the same
-// data-flip-id. The FLIP/entrance logic below explicitly skips any id
-// starting with "gauge-", so this hidden board never gets measured or
-// animated at all.
-function gaugeCard(cycle: number, variant: Variant): CardData {
-  return { ...makeCard(cycle, variant), id: `gauge-${cycle}` };
-}
-
-// An offscreen copy of all three real columns, each holding 3 cards (the
-// fixed cap), measured once on mount to lock in the board's height. Needs
-// all three side by side rather than just one: "Entretien" cards carry a
-// date pill that "À faire"/"Envoyé" cards don't, so a single generic
-// column underestimates how tall the board can actually get once a real
-// interview column fills up with pills.
-function GaugeBoard({ gaugeRef }: { gaugeRef: (el: HTMLDivElement | null) => void }) {
-  return (
-    <div className="landing-kanban-board" ref={gaugeRef} aria-hidden style={{ visibility: 'hidden', position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: -1 }}>
-      <div className="column">
-        <div className="column-header column-header--slate">
-          <Icon name="circle-dashed" /><span className="column-header-label">À faire</span><span className="column-header-count">0</span>
-        </div>
-        <div className="card-list">
-          {[0, 1, 2].map((i) => <Card key={i} card={gaugeCard(i, 'slate')} pillRevealed />)}
-        </div>
-      </div>
-      <div className="column">
-        <div className="column-header column-header--amber">
-          <Icon name="hourglass" /><span className="column-header-label">Envoyé</span><span className="column-header-count">0</span>
-        </div>
-        <div className="card-list">
-          {[3, 4, 5].map((i) => <Card key={i} card={gaugeCard(i, 'amber')} pillRevealed />)}
-        </div>
-      </div>
-      <div className="column">
-        <div className="column-header column-header--green">
-          <Icon name="target" /><span className="column-header-label">Entretien</span><span className="column-header-count">0</span>
-        </div>
-        <div className="card-list">
-          {[6, 7, 8].map((i) => <Card key={i} card={{ ...gaugeCard(i, 'green'), interviewPill: PILL_DATES[i % PILL_DATES.length].text }} pillRevealed />)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function KanbanAnimation() {
   const [columns, setColumns] = useState<Columns>(initialColumns);
   const [revealedPills, setRevealedPills] = useState<Set<string>>(() => new Set(initialColumns().interview.map((c) => c.id)));
-  const [boardMinHeight, setBoardMinHeight] = useState<number | undefined>(undefined);
   const boardRef = useRef<HTMLDivElement>(null);
-  const gaugeRef = useRef<HTMLDivElement>(null);
   const calendarSync = useCalendarSync();
 
   // The two interview cards present at mount need to register with the
@@ -239,11 +196,6 @@ export default function KanbanAnimation() {
   // static, the moment it scrolls into view : only offers added later by
   // the loop itself (beat1) get the entrance animation.
   const seenIdsRef = useRef<Set<string>>(new Set([...columns.todo, ...columns.sent, ...columns.interview].map((c) => c.id)));
-
-  useLayoutEffect(() => {
-    if (!gaugeRef.current) return;
-    setBoardMinHeight(gaugeRef.current.getBoundingClientRect().height);
-  }, []);
 
   useEffect(() => {
     const el = boardRef.current;
@@ -363,6 +315,39 @@ export default function KanbanAnimation() {
       timeoutsRef.current.push(setTimeout(done, EXIT_DURATION));
     }
 
+    // Deux cartes ne doivent jamais afficher le meme creneau en meme
+    // temps. L'ancien code prenait PILL_DATES[i++ % 5] a l'aveugle : au
+    // bout de cinq attributions l'index reboucle, et deux entretiens
+    // simultanes pouvaient tomber sur la meme date a la meme heure.
+    // On balaie desormais a partir de l'index courant, ce qui garde la
+    // variete, mais on saute tout creneau deja affiche.
+    function pickPill() {
+      const used = new Set(pipelineRef.current.interview.map((c) => c.interviewPill).filter(Boolean));
+      for (let i = 0; i < PILL_DATES.length; i++) {
+        const p = PILL_DATES[(dateIdxRef.current + i) % PILL_DATES.length];
+        if (!used.has(p.text)) {
+          dateIdxRef.current = (dateIdxRef.current + i + 1) % PILL_DATES.length;
+          return p;
+        }
+      }
+      return PILL_DATES[dateIdxRef.current++ % PILL_DATES.length];
+    }
+
+    // Meme probleme cote offres : le pool fait 9 entrees et l'index tourne,
+    // donc deux cartes distantes de 9 cycles affichaient la meme offre, ce
+    // qui pouvait se voir en double a l'ecran. On avance jusqu'a tomber sur
+    // un modele absent du plateau.
+    const templateKey = (c: CardData) => `${c.company}|${c.title}`;
+    function makeUniqueCard(variant: Variant): CardData {
+      const cols = pipelineRef.current;
+      const present = new Set([...cols.todo, ...cols.sent, ...cols.interview].map(templateKey));
+      for (let tries = 0; tries < POOL.length; tries++) {
+        const card = makeCard(cycleRef.current++, variant);
+        if (!present.has(templateKey(card))) return card;
+      }
+      return makeCard(cycleRef.current++, variant);
+    }
+
     // Which card within a column moves next : not always the oldest
     // (top) one; alternating between top/middle/bottom keeps it from
     // reading as a fixed, predictable conveyor.
@@ -383,7 +368,7 @@ export default function KanbanAnimation() {
     //   4. an "À faire" offer slides into "Envoyé" : back to the starting
     //      counts (2/3/2)
     function beat1() {
-      commit((cols) => { cols.todo.push(makeCard(cycleRef.current++, 'slate')); });
+      commit((cols) => { cols.todo.push(makeUniqueCard('slate')); });
       timeoutsRef.current.push(setTimeout(beat2, BEAT_PAUSE));
     }
     function beat2() {
@@ -405,7 +390,7 @@ export default function KanbanAnimation() {
       const idx = pickIndex(pipelineRef.current.sent.length);
       const promoted = pipelineRef.current.sent[idx];
       const remainingIds = idsExcept(pipelineRef.current.sent, idx);
-      const pillInfo = PILL_DATES[dateIdxRef.current++ % PILL_DATES.length];
+      const pillInfo = pickPill();
       commit((cols) => {
         cols.sent.splice(idx, 1);
         // Still amber here : recolored to green only once it lands.
@@ -471,8 +456,6 @@ export default function KanbanAnimation() {
 
     board.querySelectorAll<HTMLElement>('[data-flip-id]').forEach((cardEl) => {
       const id = cardEl.dataset.flipId!;
-      if (id.startsWith('gauge-')) return;
-
       const isNew = !seenIdsRef.current.has(id);
       seenIdsRef.current.add(id);
       if (reduceMotion) return;
@@ -537,15 +520,8 @@ export default function KanbanAnimation() {
     firsts.clear();
   }, [columns]);
 
-  // La jauge (colonne fantôme de 3 cartes) est publiée comme custom
-  // property, pas comme min-height inline : un style inline ne peut être
-  // neutralisé que par !important, or en mobile le plateau reçoit une
-  // hauteur fixe et cette jauge : mesurée sur 3 cartes empilées à largeur
-  // étroite, donc très haute : la ferait exploser. En variable, c'est le
-  // CSS qui décide où elle s'applique.
   return (
-    <div className="landing-kanban-board" ref={boardRef} style={boardMinHeight ? ({ '--kanban-gauge-h': `${boardMinHeight}px` } as React.CSSProperties) : undefined}>
-      <GaugeBoard gaugeRef={(el) => { gaugeRef.current = el; }} />
+    <div className="landing-kanban-board" ref={boardRef}>
       <div className="column">
         <div className="column-header column-header--slate">
           <Icon name="circle-dashed" />

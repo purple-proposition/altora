@@ -12,13 +12,24 @@ import { useCalendarSync } from '@/components/CalendarSyncContext';
 // of these fixed ranges: it comes from CalendarSyncContext, driven live
 // by KanbanAnimation (see that file's beat2/beat3), so this calendar
 // always reflects whatever interview is currently active there.
-const WEEKDAY_RANGES: { type: string; from: number; to: number }[] = [
-  { type: 'examen', from: -3, to: 1 },
-  { type: 'conges', from: 4, to: 8 },
-  { type: 'formation', from: 11, to: 15 },
-  { type: 'entreprise', from: 18, to: 25 },
+// Semaines pleines, ancrees sur le lundi de la semaine en cours. Les
+// bornes etaient auparavant exprimees en jours depuis aujourd'hui, ce qui
+// derivait d'un jour a l'autre : selon le jour de la semaine ou la page
+// etait consultee, le lundi de chaque bloc tombait juste en dehors de sa
+// propre plage et restait blanc. En raisonnant en semaines, un bloc
+// couvre toujours son lundi au vendredi entiers.
+const WEEK_RANGES: { type: string; week: number }[] = [
+  { type: 'examen', week: 0 },
+  { type: 'conges', week: 1 },
+  { type: 'formation', week: 2 },
+  { type: 'entreprise', week: 3 },
+  { type: 'entreprise', week: 4 },
 ];
-const FERIE_OFFSET = 9;
+
+// Vrais jours feries francais a date fixe. L'ancien reperage par decalage
+// (aujourd'hui + 9 jours) se deplacait chaque jour et pouvait tomber
+// n'importe quand, week-end compris ; le 15 aout est le 15 aout.
+const FERIES = [[0, 1], [4, 1], [4, 8], [6, 14], [7, 15], [10, 1], [10, 11], [11, 25]];
 
 function isWeekday(date: Date) {
   const day = date.getDay();
@@ -29,6 +40,13 @@ function startOfDay(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+function mondayOf(date: Date) {
+  const d = startOfDay(date);
+  // getDay() vaut 0 le dimanche : on decale pour que lundi soit l'origine.
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return d;
+}
+
 function buildGrid(today: Date) {
   const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   // Monday-first offset: getDay() is 0 (Sun) .. 6 (Sat), shift so Monday is 0.
@@ -37,17 +55,24 @@ function buildGrid(today: Date) {
   gridStart.setDate(firstOfMonth.getDate() - leadingDays);
 
   const todayStart = startOfDay(today);
+  const weekZero = mondayOf(today);
   const cells = [];
   for (let i = 0; i < 42; i++) {
     const date = new Date(gridStart);
     date.setDate(gridStart.getDate() + i);
     const offset = Math.round((startOfDay(date).getTime() - todayStart.getTime()) / 86400000);
-    const type = WEEKDAY_RANGES.find((r) => offset >= r.from && offset <= r.to && isWeekday(date))?.type;
+    const week = Math.round((mondayOf(date).getTime() - weekZero.getTime()) / (7 * 86400000));
+    // Les jours qui debordent sur le mois voisin restent gris : ils ne
+    // portent ni couleur de periode ni jour ferie, sinon un 1er septembre
+    // affiche en fin de grille se colorait comme s'il appartenait encore
+    // au mois affiche.
+    const muted = date.getMonth() !== today.getMonth();
+    const type = muted ? undefined : WEEK_RANGES.find((r) => r.week === week && isWeekday(date))?.type;
     cells.push({
       day: date.getDate(),
-      muted: date.getMonth() !== today.getMonth(),
+      muted,
       isToday: offset === 0,
-      isFerie: offset === FERIE_OFFSET,
+      isFerie: !muted && FERIES.some(([m, d]) => date.getMonth() === m && date.getDate() === d),
       type,
     });
   }

@@ -153,19 +153,39 @@ export default function LandingPage() {
             already covers. Deliberately qualitative (no % or fee amount):
             the real commercial terms aren't finalized yet, only the
             mechanism (billed on result, not on access) is. */}
-        <Reveal className="landing-risk-banner">
-          <div className="landing-risk-banner-icon"><Icon name="shield-check" /></div>
-          <h2 className="landing-risk-banner-title">Vous ne payez qu&apos;un alternant placé</h2>
-          <p className="landing-risk-banner-text">
-            Aucun coût d&apos;entrée, aucun engagement à la signature. Altora ne
-            facture votre école qu&apos;à partir du moment où un alternant est
-            effectivement placé, jamais pour un simple accès à la plateforme.
-          </p>
-          <ul className="landing-risk-banner-list">
-            <li><Icon name="check-circle" />Zéro risque financier pour tester la plateforme sur votre promotion</li>
-            <li><Icon name="check-circle" />Facturation déclenchée uniquement par un placement réel</li>
-            <li><Icon name="check-circle" />Rien à payer si aucun alternant n&apos;est placé</li>
-          </ul>
+        <Reveal className="landing-showcase-row landing-showcase-row--facturation">
+          <div className="landing-showcase-text">
+            <h2 className="landing-showcase-title">Vous ne payez qu&apos;un alternant placé</h2>
+            <p className="landing-showcase-body">
+              Aucun coût d&apos;entrée, aucun engagement à la signature. Altora ne
+              facture votre école qu&apos;à partir du moment où un alternant est
+              effectivement placé, jamais pour un simple accès à la plateforme.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            {/* Récapitulatif de facturation plutôt qu'une liste de
+                promesses : le mécanisme se démontre mieux qu'il ne
+                s'affirme. Volontairement sans montant, seul le principe
+                est arrêté à ce stade, pas les conditions commerciales. */}
+            <div className="landing-billing-card">
+              <div className="landing-billing-header">
+                <span className="landing-billing-title">Facturation</span>
+                <span className="landing-billing-period">Promotion en cours</span>
+              </div>
+              <div className="landing-billing-row">
+                <span className="landing-billing-label"><Icon name="users" />24 apprenants suivis</span>
+                <span className="landing-billing-free">0 €</span>
+              </div>
+              <div className="landing-billing-row">
+                <span className="landing-billing-label"><Icon name="sparkles" />Accès à la plateforme</span>
+                <span className="landing-billing-free">0 €</span>
+              </div>
+              <div className="landing-billing-row landing-billing-row--billed">
+                <span className="landing-billing-label"><Icon name="check-circle" />3 alternants placés</span>
+                <span className="landing-billing-billed">Facturés</span>
+              </div>
+            </div>
+          </div>
         </Reveal>
 
         <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
