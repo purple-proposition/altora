@@ -32,7 +32,7 @@
   --cyan-tint: #ecfeff;     /* cyan-50 */
 
   --blue: #1d4ed8;          /* blue-700 */
-  --blue-tint: #eff6ff;     /* blue-50 */
+  --blue-tint: #effdff;     /* teinte de la semaine de congés du calendrier */
 
   --teal: #0f766e;          /* teal-700 */
   --teal-tint: #f0fdfa;     /* teal-50 */
@@ -109,7 +109,7 @@
   --rose-track: #ffe4e6;
   --violet-tint: #f5f3ff;
   --cyan-tint: #ecfeff;
-  --blue-tint: #eff6ff;
+  --blue-tint: #effdff;
   --teal-tint: #f0fdfa;
 }
 
