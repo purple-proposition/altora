@@ -164,32 +164,48 @@ export default function LandingPage() {
                 lettres. */}
             <h2 className="landing-showcase-title">Payez au placement, pas à la licence</h2>
             <p className="landing-showcase-body">
-              La mise en place et le support sont facturés au démarrage, puis
-              chaque apprenant qui décroche son alternance ouvre un abonnement
-              mensuel.
+              Une garantie de 1 000 € à la signature, intégralement remboursée
+              si aucun apprenant n&apos;est placé, puis une facturation par
+              apprenant placé tant que son contrat est actif.
             </p>
           </div>
           <div className="landing-showcase-visual">
             {/* Récapitulatif de facturation plutôt qu'une liste de
                 promesses : le mécanisme se démontre mieux qu'il ne
-                s'affirme. Volontairement sans montant, seul le principe
-                est arrêté à ce stade, pas les conditions commerciales. */}
+                s'affirme.
+
+                La derniere ligne est la plus importante des quatre. "Si le
+                contrat s'arrete, la facture s'arrete" est l'argument que
+                personne d'autre ne peut tenir, et c'est la reponse a
+                l'objection immediate d'un directeur qui lit "paye au
+                placement" : et si l'alternance casse au bout de deux mois.
+                Le montrer dans un recapitulatif vaut mieux que l'affirmer
+                dans une phrase de plus.
+
+                Les volumes suivent la cible reelle, des ecoles de 500 a
+                2000 alternants. Les anciens chiffres, 24 suivis et 3
+                places, decrivaient un client hors cible et affaiblissaient
+                la demonstration. */}
             <div className="landing-billing-card">
               <div className="landing-billing-header">
                 <span className="landing-billing-title">Facturation</span>
                 <span className="landing-billing-period">Promotion en cours</span>
               </div>
               <div className="landing-billing-row">
-                <span className="landing-billing-label"><Icon name="sparkles" />Mise en place et support</span>
-                <span className="landing-billing-free">Remboursable</span>
+                <span className="landing-billing-label"><Icon name="shield-check" />Garantie à la signature</span>
+                <span className="landing-billing-free">1 000 € remboursables</span>
               </div>
               <div className="landing-billing-row">
-                <span className="landing-billing-label"><Icon name="users" />24 apprenants suivis</span>
+                <span className="landing-billing-label"><Icon name="users" />180 apprenants suivis</span>
                 <span className="landing-billing-free">Inclus</span>
               </div>
               <div className="landing-billing-row landing-billing-row--billed">
-                <span className="landing-billing-label"><Icon name="check-circle" />3 apprenants placés</span>
-                <span className="landing-billing-billed">Au mois</span>
+                <span className="landing-billing-label"><Icon name="check-circle" />124 apprenants placés</span>
+                <span className="landing-billing-billed">Pendant le contrat</span>
+              </div>
+              <div className="landing-billing-row">
+                <span className="landing-billing-label"><Icon name="circle-dashed" />3 contrats rompus</span>
+                <span className="landing-billing-free">Facturation arrêtée</span>
               </div>
             </div>
           </div>
@@ -532,7 +548,7 @@ export default function LandingPage() {
             Prêt à placer votre prochaine promotion ? Rejoignez les écoles qui
             pilotent le placement de leurs apprenants avec Altora.
           </p>
-          <p className="pricing-plan-price-note">Abonnement mensuel par apprenant placé, accès apprenant inclus</p>
+          <p className="pricing-plan-price-note">Par apprenant placé et tant que son contrat est actif, accès apprenant inclus</p>
           <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing" icon="message-circle">Demander un chiffrage</QuoteCtaButton>
 
           {/* Trois colonnes de quatre puces faisaient tableau comparatif
@@ -577,7 +593,7 @@ export default function LandingPage() {
           Non, jamais. L&apos;accès est inclus dans ce que souscrit leur école.
         </FaqItem>
         <FaqItem question="Comment est calculé le prix ?">
-          Des frais de mise en place et de support sont facturés à la signature, remboursés intégralement si aucun apprenant n&apos;est placé. Chaque apprenant placé fait ensuite l&apos;objet d&apos;un abonnement mensuel, à la charge de l&apos;école. Contactez-nous pour un chiffrage.
+          Une garantie de 1 000 € est déposée à la signature et intégralement remboursée si aucun apprenant n&apos;est placé. Chaque apprenant placé est ensuite facturé tant que son contrat est actif, et toute rupture arrête la facturation. Le support et les mises à jour ne sont jamais facturés. Contactez-nous pour un chiffrage.
         </FaqItem>
         <FaqItem question="Qu'est-ce que l'accompagnement en option ?">
           Un service humain en complément de la plateforme : notre équipe prend en charge la prospection d&apos;entreprises partenaires, les relances et le suivi jusqu&apos;à la signature.

@@ -5728,8 +5728,11 @@ legend.field-label { padding: 0; }
 /* Centered like the kanban row's own header : text-align lives on the
    title/subtitle specifically, not the whole section, so it doesn't
    cascade into the 8 feature cards below (those stay left-aligned). */
+/* 48 px comme .landing-showcase-title et .landing-closing-title. Les
+   titres de section sont un seul niveau de hierarchie, ils n'ont aucune
+   raison d'avoir trois tailles differentes selon la section. */
 .landing-features-title {
-  font-size: 40px;
+  font-size: 48px;
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -6094,8 +6097,11 @@ legend.field-label { padding: 0; }
   .landing-roster-card { grid-template-columns: repeat(2, 1fr); }
   .landing-features-section { max-width: 100%; }
   .landing-features { grid-template-columns: repeat(2, 1fr); }
-  .landing-features-title { font-size: 28px; }
-  .landing-closing-title { font-size: 24px; }
+  /* Ces deux titres retrecissaient a 28 et 24 px en mobile alors que
+     .landing-showcase-title reste a 48 : trois tailles pour un meme
+     niveau de titre, et "Pense pour durer" paraissait deux crans plus
+     bas dans la hierarchie que la section juste au-dessus. Ils gardent
+     donc leur taille, comme les autres. */
   .landing-closing-actions { flex-direction: column; gap: var(--space-16); }
   /* Le raccourci padding reecrivait la gouttiere en 24 pixels et
      annulait la regle de grille posee plus haut : seul le haut change
