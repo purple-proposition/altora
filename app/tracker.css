@@ -5929,10 +5929,13 @@ legend.field-label { padding: 0; }
   outline: none;
   border-color: var(--text);
 }
+/* Le bouton d'envoi est le meme que celui de la page : il ne redefinit
+   que sa place dans le formulaire. Il annulait la bordure claire de
+   .landing-nav-cta, seule divergence trouvee entre toutes les instances
+   du bouton, et se distinguait donc legerement des autres sur fond
+   sombre. justify-content etait deja la valeur de base, donc redondant. */
 .quote-modal-submit {
-  justify-content: center;
   margin-top: var(--space-8);
-  border: none;
   cursor: pointer;
 }
 .quote-modal-success .quote-modal-text { margin-bottom: 0; }
