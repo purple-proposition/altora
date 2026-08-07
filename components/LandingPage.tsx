@@ -58,12 +58,21 @@ export default function LandingPage() {
 
       <div className="landing-card">
       <main className="landing-hero">
+        {/* "sans relancer personne" etait faux, et surtout contredit par la
+            section "Vous savez qui relancer, et quand" plus bas : Altora ne
+            supprime pas la relance, il dit qui relancer et quand. La
+            garantie prend sa place, seule promesse que la concurrence ne
+            peut pas tenir, et verifiable au centime pres par le modele,
+            garantie remboursee plus zero commission. */}
         <h1 className="landing-title landing-in landing-in--1">
-          Votre taux de placement en hausse,<br />sans relancer personne
+          Votre taux de placement en hausse,<br />ou vous ne payez rien
         </h1>
+        {/* Le sous-titre decrit desormais le produit au lieu de redire la
+            garantie : elle est deja dans le titre, trois centimetres plus
+            haut. */}
         <p className="landing-subtitle landing-in landing-in--2">
           Altora réunit la recherche d&apos;alternance de vos apprenants et son
-          pilotage côté école, et vous rembourse si aucun n&apos;est placé.
+          pilotage côté école, du premier CV au contrat signé.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
           <QuoteCtaButton className="landing-nav-cta" location="hero" icon="message-circle">Contacter un expert</QuoteCtaButton>
