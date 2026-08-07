@@ -12,6 +12,7 @@ import CountUpPercent from '@/components/CountUpPercent';
 import TalentStack from '@/components/TalentStack';
 import DragScrollCarousel from '@/components/DragScrollCarousel';
 import QuoteCtaButton from '@/components/QuoteCtaButton';
+import FaqItem from '@/components/FaqItem';
 
 // Public marketing landing page, shown at "/" only when signed out (see
 // app/(tracker)/page.tsx and middleware.ts). Built entirely from the
@@ -154,11 +155,16 @@ export default function LandingPage() {
             mechanism (billed on result, not on access) is. */}
         <Reveal className="landing-showcase-row landing-showcase-row--facturation">
           <div className="landing-showcase-text">
-            <h2 className="landing-showcase-title">Remboursé si aucun apprenant n&apos;est placé</h2>
+            {/* Le hero porte déjà la promesse de remboursement : cette
+                section ne la répète pas et prend en charge le modèle
+                lui-même. Le récapitulatif à droite garde le remboursement
+                visible sans le réaffirmer une deuxième fois en toutes
+                lettres. */}
+            <h2 className="landing-showcase-title">Payez au placement, pas à la licence</h2>
             <p className="landing-showcase-body">
-              Les frais de mise en place et de support sont intégralement
-              remboursés si aucun apprenant n&apos;est placé, et chaque apprenant
-              placé est ensuite facturé au mois.
+              La mise en place et le support sont facturés au démarrage, puis
+              chaque apprenant qui décroche son alternance ouvre un abonnement
+              mensuel.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -628,69 +634,27 @@ export default function LandingPage() {
       <Reveal className="pricing-faq">
         <h2 className="pricing-faq-title">Questions fréquentes</h2>
 
-        <details className="pricing-faq-item">
-          <summary className="pricing-faq-question">
-            Les apprenants paient-ils pour utiliser Altora ?
-            <Icon name="chevron-down" />
-          </summary>
-          <p className="pricing-faq-answer">
-            Non, jamais. L&apos;accès est inclus dans ce que souscrit leur école.
-          </p>
-        </details>
-        <details className="pricing-faq-item">
-          <summary className="pricing-faq-question">
-            Comment est calculé le prix ?
-            <Icon name="chevron-down" />
-          </summary>
-          <p className="pricing-faq-answer">
-            Des frais de mise en place et de support sont facturés à la signature, remboursés intégralement si aucun apprenant n&apos;est placé. Chaque apprenant placé fait ensuite l&apos;objet d&apos;un abonnement mensuel, à la charge de l&apos;école. Contactez-nous pour un chiffrage.
-          </p>
-        </details>
-        <details className="pricing-faq-item">
-          <summary className="pricing-faq-question">
-            Qu&apos;est-ce que l&apos;accompagnement en option ?
-            <Icon name="chevron-down" />
-          </summary>
-          <p className="pricing-faq-answer">
-            Un service humain en complément de la plateforme : notre équipe prend en charge la prospection d&apos;entreprises partenaires, les relances et le suivi jusqu&apos;à la signature.
-          </p>
-        </details>
-        <details className="pricing-faq-item">
-          <summary className="pricing-faq-question">
-            Proposez-vous une offre pour les cabinets de recrutement ?
-            <Icon name="chevron-down" />
-          </summary>
-          <p className="pricing-faq-answer">
-            Pas encore, elle est en cours de construction. Contactez-nous pour en discuter.
-          </p>
-        </details>
-        <details className="pricing-faq-item">
-          <summary className="pricing-faq-question">
-            Qui a accès aux données de vos apprenants ?
-            <Icon name="chevron-down" />
-          </summary>
-          <p className="pricing-faq-answer">
-            Seules l&apos;équipe pédagogique et l&apos;apprenant lui-même. Les entreprises ne voient que ce qu&apos;il choisit de partager via ses candidatures.
-          </p>
-        </details>
-        <details className="pricing-faq-item">
-          <summary className="pricing-faq-question">
-            Pouvez-vous récupérer vos données si vous quittez Altora ?
-            <Icon name="chevron-down" />
-          </summary>
-          <p className="pricing-faq-answer">
-            Oui, export complet disponible à tout moment depuis l&apos;espace admin.
-          </p>
-        </details>
-        <details className="pricing-faq-item">
-          <summary className="pricing-faq-question">
-            Comment est calculé le score de matching d&apos;un apprenant ?
-            <Icon name="chevron-down" />
-          </summary>
-          <p className="pricing-faq-answer">
-            Il combine compétences, expériences, niveau d&apos;études, localisation et préférences renseignées à l&apos;inscription, et détaille ce qui le fait monter ou baisser.
-          </p>
-        </details>
+        <FaqItem question="Les apprenants paient-ils pour utiliser Altora ?">
+          Non, jamais. L&apos;accès est inclus dans ce que souscrit leur école.
+        </FaqItem>
+        <FaqItem question="Comment est calculé le prix ?">
+          Des frais de mise en place et de support sont facturés à la signature, remboursés intégralement si aucun apprenant n&apos;est placé. Chaque apprenant placé fait ensuite l&apos;objet d&apos;un abonnement mensuel, à la charge de l&apos;école. Contactez-nous pour un chiffrage.
+        </FaqItem>
+        <FaqItem question="Qu'est-ce que l'accompagnement en option ?">
+          Un service humain en complément de la plateforme : notre équipe prend en charge la prospection d&apos;entreprises partenaires, les relances et le suivi jusqu&apos;à la signature.
+        </FaqItem>
+        <FaqItem question="Proposez-vous une offre pour les cabinets de recrutement ?">
+          Pas encore, elle est en cours de construction. Contactez-nous pour en discuter.
+        </FaqItem>
+        <FaqItem question="Qui a accès aux données de vos apprenants ?">
+          Seules l&apos;équipe pédagogique et l&apos;apprenant lui-même. Les entreprises ne voient que ce qu&apos;il choisit de partager via ses candidatures.
+        </FaqItem>
+        <FaqItem question="Pouvez-vous récupérer vos données si vous quittez Altora ?">
+          Oui, export complet disponible à tout moment depuis l&apos;espace admin.
+        </FaqItem>
+        <FaqItem question="Comment est calculé le score de matching d'un apprenant ?">
+          Il combine compétences, expériences, niveau d&apos;études, localisation et préférences renseignées à l&apos;inscription, et détaille ce qui le fait monter ou baisser.
+        </FaqItem>
       </Reveal>
 
       <SiteFooter />

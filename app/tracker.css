@@ -6196,9 +6196,23 @@ legend.field-label { padding: 0; }
   height: 20px;
   flex-shrink: 0;
   color: var(--text-muted);
-  transition: transform 0.2s ease;
+  /* Meme duree et meme courbe que le depliage : le chevron et le panneau
+     doivent arriver ensemble, sinon la fleche a fini de tourner quand le
+     texte finit a peine de descendre. */
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
 }
-.pricing-faq-item[open] .pricing-faq-question .lucide { transform: rotate(180deg); }
+/* L'attribut open n'est retire qu'a la fin de l'animation de fermeture,
+   trop tard pour le chevron : data-closing le fait repartir des le clic. */
+.pricing-faq-item[open]:not([data-closing]) .pricing-faq-question .lucide {
+  transform: rotate(180deg);
+}
+
+/* Conteneur de hauteur anime par FaqItem. overflow cache le texte pendant
+   qu'il se replie, et cree au passage un contexte de formatage qui empeche
+   la marge basse de la reponse de s'echapper : sans lui, la hauteur cible
+   mesuree serait plus courte que la hauteur reelle et le panneau
+   sauterait de vingt pixels en fin d'ouverture. */
+.pricing-faq-content { overflow: hidden; }
 
 .pricing-faq-answer {
   font-size: 14px;
