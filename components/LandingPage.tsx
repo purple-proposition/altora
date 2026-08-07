@@ -144,48 +144,33 @@ export default function LandingPage() {
         </div>
       </main>
 
-      {/* Leads with the billing model, not a feature, right after the hero:
-          per Altora's differentiation strategy, the pay-on-placement model
-          is the one advantage an installed competitor can't copy without
-          cannibalizing its own recurring revenue, whereas the suivi/CV/
-          matching features further down are table-stakes any competitor
-          already covers. Deliberately qualitative (no % or fee amount):
-          the real commercial terms aren't finalized yet, only the
-          mechanism (billed on result, not on access) is. */}
-      <Reveal className="landing-risk-banner">
-        <div className="landing-risk-banner-icon"><Icon name="shield-check" /></div>
-        <h2 className="landing-risk-banner-title">Vous ne payez qu&apos;un alternant placé</h2>
-        <p className="landing-risk-banner-text">
-          Aucun coût d&apos;entrée, aucun engagement à la signature. Altora ne
-          facture votre école qu&apos;à partir du moment où un alternant est
-          effectivement placé, jamais pour un simple accès à la plateforme.
-        </p>
-        <ul className="landing-risk-banner-list">
-          <li><Icon name="check-circle" />Zéro risque financier pour tester la plateforme sur votre promotion</li>
-          <li><Icon name="check-circle" />Facturation déclenchée uniquement par un placement réel</li>
-          <li><Icon name="check-circle" />Rien à payer si aucun alternant n&apos;est placé</li>
-        </ul>
-      </Reveal>
-
       <section className="landing-showcase">
-        <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
-          <div className="landing-showcase-text">
-            <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
-            <p className="landing-showcase-body">
-              Vos entreprises partenaires consultent le trombinoscope de
-              toute l&apos;école, toutes promotions confondues, et contactent
-              directement les profils qui les intéressent. Vos équipes
-              n&apos;envoient plus les candidatures une par une.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <TalentStack />
-          </div>
+        {/* Leads with the billing model, not a feature, right after the hero:
+            per Altora's differentiation strategy, the pay-on-placement model
+            is the one advantage an installed competitor can't copy without
+            cannibalizing its own recurring revenue, whereas the suivi/CV/
+            matching features further down are table-stakes any competitor
+            already covers. Deliberately qualitative (no % or fee amount):
+            the real commercial terms aren't finalized yet, only the
+            mechanism (billed on result, not on access) is. */}
+        <Reveal className="landing-risk-banner">
+          <div className="landing-risk-banner-icon"><Icon name="shield-check" /></div>
+          <h2 className="landing-risk-banner-title">Vous ne payez qu&apos;un alternant placé</h2>
+          <p className="landing-risk-banner-text">
+            Aucun coût d&apos;entrée, aucun engagement à la signature. Altora ne
+            facture votre école qu&apos;à partir du moment où un alternant est
+            effectivement placé, jamais pour un simple accès à la plateforme.
+          </p>
+          <ul className="landing-risk-banner-list">
+            <li><Icon name="check-circle" />Zéro risque financier pour tester la plateforme sur votre promotion</li>
+            <li><Icon name="check-circle" />Facturation déclenchée uniquement par un placement réel</li>
+            <li><Icon name="check-circle" />Rien à payer si aucun alternant n&apos;est placé</li>
+          </ul>
         </Reveal>
 
         <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Le matching suit vos règles</h3>
+            <h3 className="landing-showcase-title">Vos apprenants ne voient que des offres compatibles</h3>
             <p className="landing-showcase-body">
               Altora récupère les offres d&apos;alternance, écarte celles qui
               ne correspondent ni au rythme que vous avez défini ni à vos
@@ -381,6 +366,21 @@ export default function LandingPage() {
           </CalendarSyncProvider>
         </Reveal>
 
+        <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
+          <div className="landing-showcase-text">
+            <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
+            <p className="landing-showcase-body">
+              Vos entreprises partenaires consultent le trombinoscope de
+              toute l&apos;école, toutes promotions confondues, et contactent
+              directement les profils qui les intéressent. Vos équipes
+              n&apos;envoient plus les candidatures une par une.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <TalentStack />
+          </div>
+        </Reveal>
+
         <Reveal className="landing-showcase-row landing-showcase-row--ats">
           <div className="landing-showcase-text">
             <h3 className="landing-showcase-title">Chaque candidature prête avant l&apos;envoi</h3>
@@ -405,33 +405,6 @@ export default function LandingPage() {
                 <li className="is-ai"><Icon name="sparkles" />Verbes d&apos;action renforcés : administre, pilote, anime</li>
                 <li className="is-ai"><Icon name="sparkles" />Compétences réordonnées par pertinence pour ce poste</li>
               </ul>
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal className="landing-showcase-row landing-showcase-row--priorise">
-          <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
-            <p className="landing-showcase-body">
-              Altora analyse en continu les candidatures de la promotion et
-              suggère les actions à mener en priorité, pour accompagner chaque
-              étudiant avant qu&apos;il ne décroche.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <div className="landing-copilot-card">
-              <div className="landing-copilot-item landing-copilot-item--positive">
-                <Icon name="check-circle" />
-                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
-              </div>
-              <div className="landing-copilot-item landing-copilot-item--warning">
-                <Icon name="target" />
-                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
-              </div>
-              <div className="landing-copilot-item landing-copilot-item--urgent">
-                <Icon name="circle-alert" />
-                <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
-              </div>
             </div>
           </div>
         </Reveal>
@@ -482,6 +455,33 @@ export default function LandingPage() {
               <div className="landing-feature-icon"><Icon name="mail" /></div>
               <h3 className="landing-feature-title">Un accompagnement humain</h3>
               <p className="landing-feature-text">Une équipe disponible pour vous accompagner dans la prise en main d&apos;Altora.</p>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row landing-showcase-row--priorise">
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
+            <p className="landing-showcase-body">
+              Altora analyse en continu les candidatures de la promotion et
+              suggère les actions à mener en priorité, pour accompagner chaque
+              étudiant avant qu&apos;il ne décroche.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-copilot-card">
+              <div className="landing-copilot-item landing-copilot-item--positive">
+                <Icon name="check-circle" />
+                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
+              </div>
+              <div className="landing-copilot-item landing-copilot-item--warning">
+                <Icon name="target" />
+                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
+              </div>
+              <div className="landing-copilot-item landing-copilot-item--urgent">
+                <Icon name="circle-alert" />
+                <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
+              </div>
             </div>
           </div>
         </Reveal>
