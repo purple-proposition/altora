@@ -4736,6 +4736,15 @@ legend.field-label { padding: 0; }
    (column 3) to column 5 : landing it centered on the middle 4 of 12
    columns. Text itself is also center-aligned, matching the block's
    own centered position on the page. */
+/* align-items: center retire l'etirement par defaut des enfants d'un
+   flex en colonne : chacun prend alors sa largeur de contenu. Le titre
+   reclamait 431 pixels, ce qui passait inapercu tant que le bloc en
+   faisait 448 en bureau, mais le debordait de 45 une fois empile a 327
+   et ouvrait un defilement horizontal dans toute la page. Le plafond
+   ci-dessous force le retour a la ligne sans toucher au centrage. */
+.landing-showcase-row--kanban .landing-showcase-text--right > * {
+  max-width: 100%;
+}
 .landing-showcase-row--kanban .landing-showcase-text--right {
   text-align: center;
   align-items: center;
@@ -5106,7 +5115,11 @@ legend.field-label { padding: 0; }
 }
 .landing-matching-step {
   display: flex;
-  align-items: flex-start;
+  /* Le texte se cale sur le milieu de la pastille et non sur son haut.
+     Sur une etape d'une seule ligne l'ancien alignement se voyait a
+     peine, sur deux lignes le texte partait nettement plus haut que
+     l'icone. */
+  align-items: center;
   gap: var(--space-12);
   position: relative;
 }
@@ -6058,6 +6071,26 @@ legend.field-label { padding: 0; }
   .landing-showcase-row--kanban .landing-showcase-text--right {
     margin-left: 0;
   }
+  /* Quarante-huit pixels entre le texte et le mockup se lisaient comme
+     un blanc de section une fois la ligne empilee : la moitie suffit a
+     separer les deux sans les detacher. */
+  .landing-showcase-row { gap: var(--space-24); }
+  /* En bureau, le conteneur de l'eventail aligne a droite pour que le
+     bord de la carte de droite tombe sur la colonne 10. Empile, cette
+     cible n'existe plus et l'eventail se retrouvait pousse contre le
+     bord : il se centre. La symetrie de la gouttiere interne, elle, est
+     deja traitee plus bas. */
+  .landing-showcase-row--annuaire .landing-showcase-visual {
+    justify-content: center;
+  }
+  /* Filet horizontal. Le carrousel se rogne deja lui-meme en
+     overflow-x: clip et aucun element hors de lui ne depasse, pourtant
+     la carte de page declare quatre-vingt-dix-huit pixels de defilement
+     lateral : du contenu rogne s'echappe quand meme dans le calcul. Un
+     defilement horizontal parasite sur un telephone est bien plus
+     genant que le rognage qui l'empeche, la carte etant de toute facon
+     la limite de la page. */
+  .landing-card { overflow-x: hidden; }
   .landing-roster-card { grid-template-columns: repeat(2, 1fr); }
   .landing-features-section { max-width: 100%; }
   .landing-features { grid-template-columns: repeat(2, 1fr); }
@@ -6068,25 +6101,11 @@ legend.field-label { padding: 0; }
      annulait la regle de grille posee plus haut : seul le haut change
      ici. */
   .landing-hero { max-width: 100%; padding-top: var(--space-64); }
-  /* Below 720px there's no room for the full "Contacter un expert"
-     label next to the logo, so the nav's own CTA collapses to the same
-     icon-only square as .landing-nav--scrolled, unconditionally here,
-     triggered by viewport width instead of scroll position. Scoped to
-     .landing-nav specifically, this class is reused unscoped elsewhere
-     on the page (hero, pricing, closing) where there's room for the
-     full label and it should stay a full indigo pill. */
-  .landing-nav .landing-nav-cta {
-    width: 41px;
-    padding: 0;
-    border-radius: var(--radius-input);
-  }
-  .landing-nav .landing-nav-cta-text {
-    max-width: 0;
-    opacity: 0;
-  }
-  .landing-nav .landing-nav-cta-icon {
-    margin-right: 0;
-  }
+  /* Le bouton de la nav se repliait en carre des 720 pixels, sur le seul
+     critere de la largeur. Il reste desormais entier a l'arrivee et ne
+     se replie qu'au defilement, exactement comme en bureau : la regle
+     .landing-nav--scrolled plus haut n'est bornee par aucune largeur,
+     il suffisait donc de retirer ce repli inconditionnel. */
   /* .landing-nav's own max-width (calc(66.6667vw - 40px), sized for the
      desktop 12-column grid) leaves the logo/hamburger stranded well
      short of the real page margin on a narrow viewport instead of
@@ -6187,8 +6206,13 @@ legend.field-label { padding: 0; }
      column) shrinks to ~35px at 375px wide : unreadable. A fixed mobile
      width keeps the fanned-card effect legible without chasing the
      desktop grid down to a size it was never meant to hit. */
+  /* Les cartes laterales sont pivotees : leur boite englobante mesure
+     bien plus large que la carte elle-meme, 295 pixels pour une carte de
+     220. L'eventail couvrait donc 392 pixels sur un ecran de 390 et
+     ouvrait 35 pixels de defilement horizontal dans la carte de page.
+     180 le fait tenir dans la largeur utile. */
   .landing-talent-card {
-    width: 220px;
+    width: 180px;
   }
   /* .landing-talent-stack's own padding is deliberately asymmetric on
      desktop (48px left, ~1 grid column right) so the front card's flex-
