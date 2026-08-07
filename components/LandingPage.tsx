@@ -56,12 +56,11 @@ export default function LandingPage() {
       <div className="landing-card">
       <main className="landing-hero">
         <h1 className="landing-title landing-in landing-in--1">
-          La plateforme qui optimise<br />votre taux de placement
+          Toute votre promotion placée,<br />sans relancer personne
         </h1>
         <p className="landing-subtitle landing-in landing-in--2">
           Altora réunit la recherche d&apos;alternance de vos apprenants et son
-          pilotage côté école. Vous ne payez qu&apos;à partir du moment où un
-          alternant est placé.
+          pilotage côté école. Aucun placement, et vous êtes remboursé.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
           <QuoteCtaButton className="landing-nav-cta" location="hero" icon="message-circle">Contacter un expert</QuoteCtaButton>
@@ -155,11 +154,11 @@ export default function LandingPage() {
             mechanism (billed on result, not on access) is. */}
         <Reveal className="landing-showcase-row landing-showcase-row--facturation">
           <div className="landing-showcase-text">
-            <h2 className="landing-showcase-title">Vous ne payez qu&apos;un alternant placé</h2>
+            <h2 className="landing-showcase-title">Remboursé si aucun apprenant n&apos;est placé</h2>
             <p className="landing-showcase-body">
-              Aucun coût d&apos;entrée, aucun engagement à la signature. Altora ne
-              facture votre école qu&apos;à partir du moment où un alternant est
-              effectivement placé, jamais pour un simple accès à la plateforme.
+              Les frais de mise en place et de support sont facturés à la
+              signature, puis intégralement remboursés si aucun apprenant
+              n&apos;est placé. Chaque apprenant placé est ensuite facturé au mois.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -173,16 +172,16 @@ export default function LandingPage() {
                 <span className="landing-billing-period">Promotion en cours</span>
               </div>
               <div className="landing-billing-row">
-                <span className="landing-billing-label"><Icon name="users" />24 apprenants suivis</span>
-                <span className="landing-billing-free">0 €</span>
+                <span className="landing-billing-label"><Icon name="sparkles" />Mise en place et support</span>
+                <span className="landing-billing-free">Remboursable</span>
               </div>
               <div className="landing-billing-row">
-                <span className="landing-billing-label"><Icon name="sparkles" />Accès à la plateforme</span>
-                <span className="landing-billing-free">0 €</span>
+                <span className="landing-billing-label"><Icon name="users" />24 apprenants suivis</span>
+                <span className="landing-billing-free">Inclus</span>
               </div>
               <div className="landing-billing-row landing-billing-row--billed">
-                <span className="landing-billing-label"><Icon name="check-circle" />3 alternants placés</span>
-                <span className="landing-billing-billed">Facturés</span>
+                <span className="landing-billing-label"><Icon name="check-circle" />3 apprenants placés</span>
+                <span className="landing-billing-billed">Au mois</span>
               </div>
             </div>
           </div>
@@ -190,12 +189,11 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Vos apprenants ne voient que des offres compatibles</h3>
+            <h2 className="landing-showcase-title">Fini les offres qui ne collent pas</h2>
             <p className="landing-showcase-body">
-              Altora récupère les offres d&apos;alternance, écarte celles qui
-              ne correspondent ni au rythme que vous avez défini ni à vos
-              villes d&apos;implantation, et ne présente à l&apos;apprenant que
-              ce qui reste.
+              Altora récupère les offres d&apos;alternance, écarte celles qui ne
+              correspondent ni au rythme que vous avez défini ni à vos villes
+              d&apos;implantation, et ne présente que ce qui reste.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -205,11 +203,10 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row--kanban">
           <div className="landing-showcase-text landing-showcase-text--right">
-            <h3 className="landing-showcase-title">Une seule boîte à outils, deux utilisations complémentaires</h3>
+            <h3 className="landing-showcase-title">Un seul outil, deux usages</h3>
             <p className="landing-showcase-body">
-              Côté apprenant, c&apos;est le cockpit de son alternance. Côté
-              école, c&apos;est le même espace qui devient un outil de suivi
-              et d&apos;accompagnement, jamais plus que ce que
+              Côté apprenant, c&apos;est le cockpit de son alternance. Côté école,
+              le même espace devient un outil de suivi, limité à ce que
               l&apos;apprenant choisit de partager.
             </p>
           </div>
@@ -223,7 +220,7 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">À faire</h3>
               </div>
               <p className="landing-feature-text">
-                Chaque étudiant suit ses candidatures sur un tableau
+                Chaque apprenant suit ses candidatures sur un tableau
                 unique, avec les offres qu&apos;il ajoute et celles
                 suggérées par l&apos;école. L&apos;équipe pédagogique
                 s&apos;appuie sur ce même tableau pour ses points de suivi :
@@ -242,7 +239,7 @@ export default function LandingPage() {
               </div>
               <p className="landing-feature-text">
                 Les rappels de candidature arrivent directement dans la
-                boîte de réception de l&apos;étudiant. L&apos;école y
+                boîte de réception de l&apos;apprenant. L&apos;école y
                 dispose du même canal direct vers chaque apprenant, sans
                 dépendre de sa messagerie personnelle.
               </p>
@@ -259,7 +256,7 @@ export default function LandingPage() {
               <p className="landing-feature-text">
                 Deadlines, entretiens, rentrées, périodes en entreprise et
                 suivi pédagogique : un seul calendrier, partagé par
-                l&apos;étudiant et l&apos;école.
+                l&apos;apprenant et l&apos;école.
               </p>
             </div>
             </div>
@@ -377,7 +374,7 @@ export default function LandingPage() {
               </div>
               <p className="landing-feature-text">
                 CV, lettres de motivation, cours et documents administratifs
-                partagés entre étudiant et école au même endroit, stockés
+                partagés entre apprenant et école au même endroit, stockés
                 localement et jamais transmis à nos serveurs.
               </p>
             </div>
@@ -388,12 +385,12 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
           <div className="landing-showcase-text">
-            <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
+            <h2 className="landing-showcase-title">Les recruteurs viennent à vos apprenants</h2>
             <p className="landing-showcase-body">
-              Vos entreprises partenaires consultent le trombinoscope de
-              toute l&apos;école, toutes promotions confondues, et contactent
-              directement les profils qui les intéressent. Vos équipes
-              n&apos;envoient plus les candidatures une par une.
+              Vos entreprises partenaires consultent le trombinoscope de toute
+              l&apos;école et contactent directement les profils qui les
+              intéressent. Vos équipes n&apos;envoient plus les candidatures une
+              par une.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -403,14 +400,11 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--ats">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Chaque candidature prête avant l&apos;envoi</h3>
+            <h2 className="landing-showcase-title">Aucune candidature envoyée au hasard</h2>
             <p className="landing-showcase-body">
-              Altora commence par expliquer à l&apos;alternant ce qu&apos;est
-              un ATS et comment reformuler son CV et sa lettre de motivation
-              pour le passer. Pour chaque fiche de poste, l&apos;IA retravaille
-              ensuite son CV pour qu&apos;il corresponde parfaitement à
-              l&apos;offre, réécrit sa lettre de motivation dans un format
-              idéal, et prépare si besoin le mail à envoyer au recruteur.
+              Altora explique à l&apos;apprenant comment passer les filtres
+              automatiques des recruteurs, puis retravaille son CV et sa lettre
+              pour chaque offre visée, et prépare le mail au recruteur.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -439,7 +433,7 @@ export default function LandingPage() {
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="lock" /></div>
               <h3 className="landing-feature-title">Sécurité by design</h3>
-              <p className="landing-feature-text">Données hébergées et traitées en conformité RGPD, accès limité à l&apos;équipe pédagogique et à l&apos;étudiant concerné.</p>
+              <p className="landing-feature-text">Données hébergées et traitées en conformité RGPD, accès limité à l&apos;équipe pédagogique et à l&apos;apprenant concerné.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="refresh-cw" /></div>
@@ -459,7 +453,7 @@ export default function LandingPage() {
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="user-cog" /></div>
               <h3 className="landing-feature-title">Confidentialité totale</h3>
-              <p className="landing-feature-text">École, étudiant, entreprise : chacun ne voit que ce qui le concerne, jamais plus.</p>
+              <p className="landing-feature-text">École, apprenant, entreprise : chacun ne voit que ce qui le concerne, jamais plus.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="plus" /></div>
@@ -481,22 +475,22 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--priorise">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
+            <h2 className="landing-showcase-title">Vous savez qui relancer, et quand</h2>
             <p className="landing-showcase-body">
-              Altora analyse en continu les candidatures de la promotion et
-              suggère les actions à mener en priorité, pour accompagner chaque
-              étudiant avant qu&apos;il ne décroche.
+              L&apos;analyse en continu des candidatures de la promotion suggère
+              les actions à mener en priorité, pour accompagner chaque apprenant
+              avant qu&apos;il ne décroche.
             </p>
           </div>
           <div className="landing-showcase-visual">
             <div className="landing-copilot-card">
               <div className="landing-copilot-item landing-copilot-item--positive">
                 <Icon name="check-circle" />
-                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
+                <p>8 apprenants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
               </div>
               <div className="landing-copilot-item landing-copilot-item--warning">
                 <Icon name="target" />
-                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
+                <p>12 apprenants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
               </div>
               <div className="landing-copilot-item landing-copilot-item--urgent">
                 <Icon name="circle-alert" />
@@ -508,13 +502,11 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--roster">
           <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Une vue d&apos;ensemble fiable, pas un outil de surveillance</h3>
+            <h2 className="landing-showcase-title">Suivre sans surveiller</h2>
             <p className="landing-showcase-body">
-              D&apos;un coup d&apos;œil sur toute la promotion, chaque pastille
-              reprend les couleurs du tableau de suivi (à faire, envoyé,
-              entretien, refus), sans jamais afficher le détail des
-              démarches de chacun. De quoi ouvrir la conversation avec un
-              étudiant, pas la remplacer.
+              Chaque pastille reprend les couleurs du tableau de suivi, à faire,
+              envoyé, entretien, refus, sans jamais détailler les démarches. De
+              quoi ouvrir la conversation avec un apprenant, pas la remplacer.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -591,112 +583,115 @@ export default function LandingPage() {
           pointe sur cette ancre, elle doit rester atteignable. */}
       <Reveal id="tarifs" className="pricing-plans pricing-plans--merged">
         <div className="pricing-plan pricing-plan--merged">
-          <h2 className="landing-closing-title">Prêt à améliorer le taux de placement de votre promotion ?</h2>
+          <h2 className="landing-closing-title">Prêt à placer votre prochaine promotion ?</h2>
           <p className="landing-closing-text">
-            Rejoignez les écoles qui centralisent le suivi de leurs alternants avec Altora.
+            Rejoignez les écoles qui pilotent le placement de leurs apprenants avec Altora.
           </p>
-          <p className="pricing-plan-tagline pricing-plan-tagline--name">La plateforme complète pour votre établissement, facturée au placement, accès étudiant inclus</p>
           <div className="pricing-plan-price">Facturé au placement</div>
-          <p className="pricing-plan-price-note">Contactez-nous pour un chiffrage</p>
-          <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing" icon="message-circle">Contacter un expert</QuoteCtaButton>
+          <p className="pricing-plan-price-note">Abonnement mensuel par apprenant placé, accès apprenant inclus</p>
+          <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing" icon="message-circle">Demander un chiffrage</QuoteCtaButton>
 
-          <div className="pricing-merged-groups">
-            <div className="pricing-merged-group">
-              <h4 className="pricing-merged-group-title"><Icon name="graduation-cap" />Inclus, facturé au placement</h4>
+          {/* Trois colonnes de quatre puces faisaient tableau comparatif
+              alors qu'il n'y a qu'une seule offre. Deux colonnes suffisent
+              a dire ce qui compte : ce qui est compris, et ce qui est en
+              option. Les fonctionnalites detaillees sont deja montrees par
+              les mockups plus haut, les repeter ici alourdissait pour rien. */}
+          <div className="pricing-included">
+            <div className="pricing-included-col">
+              <h4 className="pricing-included-title">Compris</h4>
               <ul className="pricing-plan-features">
-                <li><Icon name="check-circle" />Gestion des étudiants et des offres partenaires</li>
-                <li><Icon name="check-circle" />Tableaux de bord et suivi des candidatures</li>
-                <li><Icon name="check-circle" />Copilote IA pour l&apos;équipe pédagogique</li>
-                <li><Icon name="check-circle" />Statistiques de placement de la promotion</li>
+                <li><Icon name="check-circle" />La plateforme complète, école et apprenants</li>
+                <li><Icon name="check-circle" />Suivi, matching et génération de CV</li>
+                <li><Icon name="check-circle" />Mises à jour et support</li>
               </ul>
             </div>
-            <div className="pricing-merged-group">
-              <h4 className="pricing-merged-group-title"><Icon name="users" />Pour l&apos;étudiant, gratuit et inclus</h4>
-              <ul className="pricing-plan-features">
-                <li><Icon name="check-circle" />Tableau de suivi de ses candidatures</li>
-                <li><Icon name="check-circle" />CV et lettre de motivation générés par IA</li>
-                <li><Icon name="check-circle" />Score de matching sur chaque offre</li>
-                <li><Icon name="check-circle" />CV structuré pour passer les ATS</li>
-              </ul>
-            </div>
-            <div className="pricing-merged-group">
-              <h4 className="pricing-merged-group-title">
-                <Icon name="sparkles" />Accompagnement Premium
-                <span className="pricing-merged-group-badge">En option</span>
+            <div className="pricing-included-col">
+              <h4 className="pricing-included-title">
+                Accompagnement
+                <span className="pricing-included-badge">En option</span>
               </h4>
               <ul className="pricing-plan-features">
-                <li><Icon name="check-circle" />Prospection de nouvelles entreprises</li>
-                <li><Icon name="check-circle" />Prise de contact et qualification des besoins</li>
-                <li><Icon name="check-circle" />Organisation des entretiens, relances</li>
-                <li><Icon name="check-circle" />Suivi jusqu&apos;à la signature du contrat</li>
+                <li><Icon name="check-circle" />Prospection d&apos;entreprises partenaires</li>
+                <li><Icon name="check-circle" />Qualification des besoins et relances</li>
+                <li><Icon name="check-circle" />Suivi jusqu&apos;à la signature</li>
               </ul>
             </div>
           </div>
         </div>
       </Reveal>
 
+      {/* <details> natif plutot qu'un accordeon maison : ouverture au
+          clavier, annonce correcte aux lecteurs d'ecran et recherche dans
+          la page qui deplie toute seule, sans une ligne de JavaScript.
+          Replier la FAQ retire 180 mots de la surface visible sans
+          supprimer une reponse : elle ne concerne que le lecteur qui a
+          deja une objection precise. */}
       <Reveal className="pricing-faq">
         <h2 className="pricing-faq-title">Questions fréquentes</h2>
 
-        <div className="pricing-faq-item">
-          <h3 className="pricing-faq-question">Les étudiants paient-ils pour utiliser Altora ?</h3>
+        <details className="pricing-faq-item">
+          <summary className="pricing-faq-question">
+            Les apprenants paient-ils pour utiliser Altora ?
+            <Icon name="chevron-down" />
+          </summary>
           <p className="pricing-faq-answer">
-            Non. L&apos;accès étudiant est inclus, sans coût pour l&apos;étudiant
-            ni pour l&apos;école.
+            Non, jamais. L&apos;accès est inclus dans ce que souscrit leur école.
           </p>
-        </div>
-
-        <div className="pricing-faq-item">
-          <h3 className="pricing-faq-question">Comment est calculé le prix ?</h3>
+        </details>
+        <details className="pricing-faq-item">
+          <summary className="pricing-faq-question">
+            Comment est calculé le prix ?
+            <Icon name="chevron-down" />
+          </summary>
           <p className="pricing-faq-answer">
-            Altora ne facture votre école qu&apos;à partir du moment où un
-            alternant est effectivement placé, jamais pour un accès à la
-            plateforme. Contactez-nous pour un chiffrage.
+            Des frais de mise en place et de support sont facturés à la signature, remboursés intégralement si aucun apprenant n&apos;est placé. Chaque apprenant placé fait ensuite l&apos;objet d&apos;un abonnement mensuel, à la charge de l&apos;école. Contactez-nous pour un chiffrage.
           </p>
-        </div>
-
-        <div className="pricing-faq-item">
-          <h3 className="pricing-faq-question">Qu&apos;est-ce que l&apos;Accompagnement Premium ?</h3>
+        </details>
+        <details className="pricing-faq-item">
+          <summary className="pricing-faq-question">
+            Qu&apos;est-ce que l&apos;accompagnement en option ?
+            <Icon name="chevron-down" />
+          </summary>
           <p className="pricing-faq-answer">
-            Un service humain en complément de la plateforme : notre équipe prend
-            en charge la prospection d&apos;entreprises partenaires, les relances et
-            le suivi jusqu&apos;à la signature du contrat.
+            Un service humain en complément de la plateforme : notre équipe prend en charge la prospection d&apos;entreprises partenaires, les relances et le suivi jusqu&apos;à la signature.
           </p>
-        </div>
-
-        <div className="pricing-faq-item">
-          <h3 className="pricing-faq-question">Proposez-vous une offre pour les cabinets de recrutement ou les agences d&apos;intérim ?</h3>
+        </details>
+        <details className="pricing-faq-item">
+          <summary className="pricing-faq-question">
+            Proposez-vous une offre pour les cabinets de recrutement ?
+            <Icon name="chevron-down" />
+          </summary>
           <p className="pricing-faq-answer">
-            Pas encore, cette offre est en cours de construction. Contactez-nous
-            pour en discuter.
+            Pas encore, elle est en cours de construction. Contactez-nous pour en discuter.
           </p>
-        </div>
-
-        <div className="pricing-faq-item">
-          <h3 className="pricing-faq-question">Qui a accès aux données de vos étudiants ?</h3>
+        </details>
+        <details className="pricing-faq-item">
+          <summary className="pricing-faq-question">
+            Qui a accès aux données de vos apprenants ?
+            <Icon name="chevron-down" />
+          </summary>
           <p className="pricing-faq-answer">
-            Seules l&apos;équipe pédagogique de l&apos;école et l&apos;étudiant
-            lui-même. Les entreprises ne voient que ce que l&apos;étudiant
-            choisit de partager via ses candidatures.
+            Seules l&apos;équipe pédagogique et l&apos;apprenant lui-même. Les entreprises ne voient que ce qu&apos;il choisit de partager via ses candidatures.
           </p>
-        </div>
-
-        <div className="pricing-faq-item">
-          <h3 className="pricing-faq-question">Pouvez-vous récupérer vos données si vous quittez Altora ?</h3>
+        </details>
+        <details className="pricing-faq-item">
+          <summary className="pricing-faq-question">
+            Pouvez-vous récupérer vos données si vous quittez Altora ?
+            <Icon name="chevron-down" />
+          </summary>
           <p className="pricing-faq-answer">
-            Oui, export complet disponible à tout moment depuis l&apos;espace
-            admin.
+            Oui, export complet disponible à tout moment depuis l&apos;espace admin.
           </p>
-        </div>
-
-        <div className="pricing-faq-item">
-          <h3 className="pricing-faq-question">Comment est calculé le score de matching IA d&apos;un étudiant ?</h3>
+        </details>
+        <details className="pricing-faq-item">
+          <summary className="pricing-faq-question">
+            Comment est calculé le score de matching d&apos;un apprenant ?
+            <Icon name="chevron-down" />
+          </summary>
           <p className="pricing-faq-answer">
-            Il combine compétences, expériences, niveau d&apos;études,
-            localisation et préférences renseignées à l&apos;inscription.
-            L&apos;IA explique aussi ce qui le fait monter ou baisser.
+            Il combine compétences, expériences, niveau d&apos;études, localisation et préférences renseignées à l&apos;inscription, et détaille ce qui le fait monter ou baisser.
           </p>
-        </div>
+        </details>
       </Reveal>
 
       <SiteFooter />
