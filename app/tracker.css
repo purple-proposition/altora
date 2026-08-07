@@ -3861,7 +3861,10 @@ legend.field-label { padding: 0; }
    simple fondu. */
 :root {
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
-  --reveal-duree: 0.8s;
+  /* La courbe passe l'essentiel de la course dans son premier tiers :
+     allonger la duree n'allonge pas l'attente, ca etire la fin, qui est
+     justement la partie qui donne le calme. */
+  --reveal-duree: 1s;
 }
 
 .reveal {
@@ -3908,10 +3911,10 @@ legend.field-label { padding: 0; }
 
 /* Titre, corps, puis mockup. Le visuel part de plus loin et arrive en
    dernier : c'est ce decalage qui fait la profondeur. */
-.landing-showcase-text > *:nth-child(2) { --reveal-delai: 0.08s; }
-.landing-showcase-visual { --reveal-delai: 0.16s; --reveal-ecart: 40px; }
+.landing-showcase-text > *:nth-child(2) { --reveal-delai: 0.1s; }
+.landing-showcase-visual { --reveal-delai: 0.2s; --reveal-ecart: 40px; }
 
-.landing-features-subtitle { --reveal-delai: 0.08s; }
+.landing-features-subtitle { --reveal-delai: 0.1s; }
 /* Balayage en diagonale de la grille : chaque colonne suit la
    precedente, chaque rangee suit la sienne. Les valeurs sont posees a la
    main plutot que par nth-child(4n+k), qui aurait rendu la seconde
@@ -4644,12 +4647,40 @@ legend.field-label { padding: 0; }
 }
 .landing-roster-avatar img { object-fit: cover; }
 .landing-roster-name { font-size: 12px; font-weight: 600; color: var(--text); }
-.landing-roster-dots { display: flex; align-items: center; justify-content: center; gap: var(--space-4); }
+/* L'ecart entre pastilles passe de gap a une marge portee par chaque
+   pastille : une pastille qui entre ou qui sort doit pouvoir replier son
+   ecart en meme temps que sa largeur, sinon le gap subsiste autour d'un
+   element de largeur nulle et les voisines sautent d'un cran au lieu de
+   glisser. La marge negative du conteneur rattrape celle de la premiere
+   pastille pour que la rangee reste centree. */
+.landing-roster-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: calc(-1 * var(--space-4));
+}
 /* Back to a flat, fully-saturated dot : the tint+border "pastille"
    treatment read as too soft/low-contrast at this size (10px), harder
    to tell apart at a glance than a solid color, which is the whole
    point of this mockup. */
-.landing-roster-dot { width: 10px; height: 10px; border-radius: 50%; }
+.landing-roster-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  margin-left: var(--space-4);
+  border-radius: 50%;
+  transition: background 0.4s ease, width 0.4s var(--ease-reveal),
+              margin-left 0.4s var(--ease-reveal), opacity 0.4s ease,
+              transform 0.4s var(--ease-reveal);
+}
+/* Etat replie, commun a l'entree et a la sortie : largeur et ecart nuls,
+   donc les voisines viennent occuper la place d'elles-memes. */
+.landing-roster-dot--repliee {
+  width: 0;
+  margin-left: 0;
+  opacity: 0;
+  transform: scale(0.3);
+}
 .landing-roster-dot--slate { background: var(--text-muted); }
 .landing-roster-dot--amber { background: var(--amber); }
 .landing-roster-dot--green { background: var(--green); }
@@ -4969,7 +5000,14 @@ legend.field-label { padding: 0; }
   padding: var(--space-24);
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   gap: var(--space-16);
+  /* Les suggestions defilent en boucle et ne font pas toutes le meme
+     nombre de lignes : sans hauteur reservee, la carte se retrecirait
+     puis grandirait a chaque cycle et pousserait toute la page. 316
+     pixels, soit trois suggestions de trois lignes plus les marges, ce
+     qui est le maximum atteignable dans cette colonne. */
+  min-height: 316px;
 }
 /* Each suggestion slides in from the right once the row's own scroll
    reveal fires (.reveal--visible, see Reveal.tsx wrapping the whole
@@ -6212,18 +6250,9 @@ legend.field-label { padding: 0; }
   margin: 0 0 var(--space-20);
 }
 
-/* Serif + larger, matching the site's other big display numbers
-   (.landing-match-score) : a bold sans 28px read as a form label, not
-   the centerpiece of a pricing card. */
-.pricing-plan-price {
-  font-family: 'Goudy Bookletter 1911', Georgia, serif;
-  font-synthesis: none;
-  font-size: 48px;
-  line-height: 1;
-  font-weight: 400;
-  color: var(--text);
-}
-
+/* .pricing-plan-price a disparu : "Facturé au placement" est devenu le
+   titre de la section, plus une ligne de prix sous un titre d'appel. La
+   note ci-dessous commente donc desormais le titre. */
 .pricing-plan-price-note {
   font-size: 12px;
   color: var(--text-muted);
@@ -6268,7 +6297,7 @@ legend.field-label { padding: 0; }
 }
 
 .pricing-faq-title {
-  font-size: 24px;
+  font-size: 32px;
   line-height: 1;
   font-weight: 600;
   color: var(--text);

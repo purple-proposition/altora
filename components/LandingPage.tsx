@@ -13,6 +13,8 @@ import TalentStack from '@/components/TalentStack';
 import DragScrollCarousel from '@/components/DragScrollCarousel';
 import QuoteCtaButton from '@/components/QuoteCtaButton';
 import FaqItem from '@/components/FaqItem';
+import RosterAnimation from '@/components/RosterAnimation';
+import CopilotAnimation from '@/components/CopilotAnimation';
 
 // Public marketing landing page, shown at "/" only when signed out (see
 // app/(tracker)/page.tsx and middleware.ts). Built entirely from the
@@ -493,20 +495,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="landing-showcase-visual">
-            <div className="landing-copilot-card">
-              <div className="landing-copilot-item landing-copilot-item--positive">
-                <Icon name="check-circle" />
-                <p>8 apprenants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
-              </div>
-              <div className="landing-copilot-item landing-copilot-item--warning">
-                <Icon name="target" />
-                <p>12 apprenants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
-              </div>
-              <div className="landing-copilot-item landing-copilot-item--urgent">
-                <Icon name="circle-alert" />
-                <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
-              </div>
-            </div>
+            <CopilotAnimation />
           </div>
         </Reveal>
 
@@ -520,69 +509,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="landing-showcase-visual">
-            <div className="landing-roster-card">
-              <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar.jpg" alt="" fill sizes="48px" /></span>
-                <span className="landing-roster-name">Camille</span>
-                <span className="landing-roster-dots">
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--green" />
-                </span>
-              </div>
-              <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-2.jpg" alt="" fill sizes="48px" /></span>
-                <span className="landing-roster-name">Inès</span>
-                <span className="landing-roster-dots">
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--green" />
-                </span>
-              </div>
-              <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-3.jpg" alt="" fill sizes="48px" /></span>
-                <span className="landing-roster-name">Thomas</span>
-                <span className="landing-roster-dots">
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--rose" />
-                </span>
-              </div>
-              <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-lina.jpg" alt="" fill sizes="48px" /></span>
-                <span className="landing-roster-name">Lina</span>
-                <span className="landing-roster-dots">
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--green" />
-                </span>
-              </div>
-              <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-sofiane.jpg" alt="" fill sizes="48px" /></span>
-                <span className="landing-roster-name">Sofiane</span>
-                <span className="landing-roster-dots">
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--green" />
-                </span>
-              </div>
-              <div className="landing-roster-student">
-                <span className="landing-roster-avatar"><Image src="/landing-preview-avatar-manon.jpg" alt="" fill sizes="48px" /></span>
-                <span className="landing-roster-name">Manon</span>
-                <span className="landing-roster-dots">
-                  <span className="landing-roster-dot landing-roster-dot--slate" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--amber" />
-                  <span className="landing-roster-dot landing-roster-dot--green" />
-                </span>
-              </div>
-            </div>
+            <RosterAnimation />
           </div>
         </Reveal>
       </section>
@@ -593,11 +520,15 @@ export default function LandingPage() {
           pointe sur cette ancre, elle doit rester atteignable. */}
       <Reveal id="tarifs" className="pricing-plans pricing-plans--merged">
         <div className="pricing-plan pricing-plan--merged">
-          <h2 className="landing-closing-title">Prêt à placer votre prochaine promotion ?</h2>
+          {/* "Facturé au placement" etait la ligne de prix, sous un titre
+              d'appel. C'est pourtant le message de la section : il passe en
+              titre, et l'appel devient le sous-titre. La ligne de prix
+              disparait, sinon la meme phrase se lisait deux fois. */}
+          <h2 className="landing-closing-title">Facturé au placement</h2>
           <p className="landing-closing-text">
-            Rejoignez les écoles qui pilotent le placement de leurs apprenants avec Altora.
+            Prêt à placer votre prochaine promotion ? Rejoignez les écoles qui
+            pilotent le placement de leurs apprenants avec Altora.
           </p>
-          <div className="pricing-plan-price">Facturé au placement</div>
           <p className="pricing-plan-price-note">Abonnement mensuel par apprenant placé, accès apprenant inclus</p>
           <QuoteCtaButton className="landing-nav-cta pricing-plan-cta" location="landing_pricing" icon="message-circle">Demander un chiffrage</QuoteCtaButton>
 
