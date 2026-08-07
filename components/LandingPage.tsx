@@ -469,17 +469,17 @@ export default function LandingPage() {
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="lock" /></div>
               <h3 className="landing-feature-title">Sécurité by design</h3>
-              <p className="landing-feature-text">Données hébergées et traitées en conformité RGPD, accès limité à l&apos;équipe pédagogique et à l&apos;apprenant concerné.</p>
+              <p className="landing-feature-text">Données traitées en conformité RGPD, accès limité aux seules personnes concernées.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="refresh-cw" /></div>
               <h3 className="landing-feature-title">Toujours synchronisé</h3>
-              <p className="landing-feature-text">Offres et outils existants de l&apos;école synchronisés automatiquement, sans ressaisie manuelle.</p>
+              <p className="landing-feature-text">Offres et outils de l&apos;école synchronisés automatiquement, sans ressaisie manuelle.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="sparkles" /></div>
               <h3 className="landing-feature-title">Intelligence transparente</h3>
-              <p className="landing-feature-text">Chaque score de matching détaille ce qui le fait monter ou baisser, jamais une boîte noire.</p>
+              <p className="landing-feature-text">Chaque score détaille ce qui le fait monter ou baisser, jamais une boîte noire.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="download" /></div>
@@ -487,8 +487,8 @@ export default function LandingPage() {
                   local en neuvieme laissait une carte orpheline sur une
                   troisieme ligne. Il rejoint donc l'export, meme promesse
                   au fond, vos donnees restent les votres. */}
-              <h3 className="landing-feature-title">Vos données vous appartiennent</h3>
-              <p className="landing-feature-text">Documents stockés localement et jamais transmis à nos serveurs, export complet à tout moment depuis l&apos;espace admin.</p>
+              <h3 className="landing-feature-title">Vos données restent vôtres</h3>
+              <p className="landing-feature-text">Documents stockés localement, jamais transmis à nos serveurs, export à tout moment.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="user-cog" /></div>
@@ -497,18 +497,18 @@ export default function LandingPage() {
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="plus" /></div>
-              <h3 className="landing-feature-title">Toujours à jour</h3>
-              <p className="landing-feature-text">De nouvelles fonctionnalités livrées en continu, sans coût supplémentaire.</p>
+              <h3 className="landing-feature-title">Une plateforme qui évolue</h3>
+              <p className="landing-feature-text">De nouvelles fonctionnalités livrées en continu, sans jamais de coût supplémentaire.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="monitor" /></div>
               <h3 className="landing-feature-title">Disponible partout</h3>
-              <p className="landing-feature-text">Une plateforme accessible à tout moment, hébergée sur une infrastructure fiable.</p>
+              <p className="landing-feature-text">Accessible à tout moment et depuis n&apos;importe quel appareil, sans installation.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="mail" /></div>
-              <h3 className="landing-feature-title">Un accompagnement humain</h3>
-              <p className="landing-feature-text">Une équipe disponible pour vous accompagner dans la prise en main d&apos;Altora.</p>
+              <h3 className="landing-feature-title">Une équipe derrière l&apos;outil</h3>
+              <p className="landing-feature-text">Un interlocuteur pour la prise en main, et qui répond quand vous avez une question.</p>
             </div>
           </div>
         </Reveal>
