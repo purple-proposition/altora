@@ -43,6 +43,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={inter.variable}>
       <body style={{ margin: 0, padding: 0, fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}>
+        {/* Les sections en apparition au defilement partent a opacite nulle
+            et c'est le script qui les revele. Sans JavaScript, personne ne
+            les revelerait jamais et la page se reduirait a son en-tete :
+            on annule donc l'etat de depart des l'absence de script. */}
+        <noscript>
+          <style>{`.reveal,
+            .landing-showcase-row > .landing-showcase-text > *,
+            .landing-showcase-row > .landing-showcase-visual,
+            .landing-features-section > .landing-features-title,
+            .landing-features-section > .landing-features-subtitle,
+            .landing-features-section .landing-feature,
+            .pricing-faq > .pricing-faq-title,
+            .pricing-faq > .pricing-faq-item {
+              opacity: 1 !important;
+              transform: none !important;
+            }`}</style>
+        </noscript>
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
         <Script id="ga4-init" strategy="afterInteractive">
           {`

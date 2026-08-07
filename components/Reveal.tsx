@@ -30,18 +30,20 @@ export default function Reveal({ children, className = '', id }: { children: Rea
       { threshold: 0, rootMargin: '0px 0px -12% 0px' }
     );
     observer.observe(el);
-    // Safari's "Export as PDF" renders the page without ever actually
-    // scrolling it, so sections below the fold never intersect and stay
-    // invisible forever, a blank gap instead of content. This fallback
-    // reveals everything anyway after a couple of seconds regardless of
-    // intersection, so any tool that renders the page and waits (export,
-    // a crawler, a screenshot tool) eventually gets the real content;
-    // real visitors will have scrolled well before this fires.
-    const fallback = setTimeout(() => setVisible(true), 2000);
-    return () => {
-      observer.disconnect();
-      clearTimeout(fallback);
-    };
+    // Il y avait ici un repli qui revelait la section au bout de deux
+    // secondes, quelle que soit sa position, pour les outils qui rendent
+    // la page sans jamais la faire defiler. Il annulait en fait toute
+    // l'animation : un visiteur qui reste plus de deux secondes sur le
+    // titre trouve, quand il commence a defiler, une page entierement
+    // revelee d'avance. Mesure faite en production, defilement a zero sur
+    // sept mille cinq cents pixels de contenu, les dix sections etaient
+    // deja visibles, y compris la derniere.
+    //
+    // Le cas d'origine, l'export PDF de Safari, passe par les styles
+    // d'impression : la regle @media print de tracker.css force deja
+    // l'affichage, sans JavaScript et sans delai. Le cas sans script est
+    // couvert par le <noscript> du layout.
+    return () => observer.disconnect();
   }, []);
 
   return (
