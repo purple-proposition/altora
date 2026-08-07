@@ -6376,3 +6376,101 @@ legend.field-label { padding: 0; }
   .pricing-plans { grid-template-columns: 1fr; }
   .pricing-included { grid-template-columns: 1fr; gap: var(--space-32); }
 }
+
+/* ==========================================================================
+   Icones vivantes au survol
+   ==========================================================================
+
+   Meme intention que lucide-animated, obtenue sans dependance : les
+   tracés de lucide sont stables et nommés, donc chaque geste se pose
+   directement sur le bon élément interne plutot que sur l'icone entiere,
+   ce qui est justement ce qui separe une animation qui a du sens d'un
+   simple grossissement.
+
+   Le survol ne concerne que les zones reellement survolables. Les icones
+   des mockups vivent dans des cartes en pointer-events: none et ne
+   recevront jamais l'evenement : les animer serait du code mort.
+
+   Les gestes partent et reviennent tous a la transformation identite,
+   pour qu'un survol interrompu en cours de route ne laisse jamais une
+   icone de travers. */
+:is(.landing-feature, .landing-showcase-caption, .landing-nav-cta) :is(svg.lucide, svg.lucide *) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Le cadenas souleve son anse. */
+@keyframes icone-anse { 45% { transform: translateY(-2px); } }
+.landing-feature:hover .lucide-lock path { animation: icone-anse 0.5s ease-out; }
+
+/* Le rafraichissement fait un tour, et le garde : c'est une transition
+   et non une animation, donc il revient dans l'autre sens en sortant. */
+.landing-feature .lucide-refresh-cw { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.landing-feature:hover .lucide-refresh-cw { transform: rotate(180deg); }
+
+/* L'etincelle grossit pendant que sa petite croix scintille. */
+@keyframes icone-etincelle { 40% { transform: scale(1.18); } }
+@keyframes icone-scintille { 0%, 100% { opacity: 1; } 45% { opacity: 0.25; } }
+.landing-feature:hover .lucide-sparkles path:first-child { animation: icone-etincelle 0.5s ease-out; }
+.landing-feature:hover .lucide-sparkles path:nth-child(2),
+.landing-feature:hover .lucide-sparkles path:nth-child(3) { animation: icone-scintille 0.5s ease-out; }
+
+/* La fleche du telechargement plonge puis remonte. Le corps du bac ne
+   bouge pas, sinon le geste ne se lit plus comme un depot. */
+@keyframes icone-plonge { 45% { transform: translateY(3px); } }
+.landing-feature:hover .lucide-download path:nth-child(1),
+.landing-feature:hover .lucide-download path:nth-child(3) { animation: icone-plonge 0.5s ease-out; }
+
+/* L'engrenage avance d'une dent. Huit dents, donc quarante-cinq degres
+   tombent pile sur la suivante. Le repere est en unites du viewBox et
+   non au centre de chaque trace, sinon chaque dent tournerait sur
+   elle-meme au lieu de tourner autour de l'axe. */
+.landing-feature .lucide-user-cog path:nth-child(n+2):nth-child(-n+9) {
+  transform-box: view-box;
+  transform-origin: 17.6px 15.1px;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.landing-feature:hover .lucide-user-cog path:nth-child(n+2):nth-child(-n+9) { transform: rotate(45deg); }
+
+/* Le plus pivote en croix. */
+.landing-feature .lucide-plus { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.landing-feature:hover .lucide-plus { transform: rotate(90deg); }
+
+/* L'ecran respire. */
+@keyframes icone-respire { 45% { transform: scale(1.12); } }
+.landing-feature:hover .lucide-monitor { animation: icone-respire 0.5s ease-out; }
+
+/* Le rabat de l'enveloppe s'enfonce, le corps reste en place. */
+@keyframes icone-rabat { 45% { transform: translateY(1.5px); } }
+.landing-feature:hover .lucide-mail path:first-child,
+.landing-showcase-caption:hover .lucide-mail path:first-child { animation: icone-rabat 0.5s ease-out; }
+
+/* Les deux coches se retracent, la haute avant la basse. Le trace fait
+   environ huit unites de long, douze couvre donc largement. */
+@keyframes icone-coche { from { stroke-dashoffset: 12; } to { stroke-dashoffset: 0; } }
+.landing-showcase-caption:hover .lucide-list-checks path:nth-child(5),
+.landing-showcase-caption:hover .lucide-list-checks path:nth-child(4) {
+  stroke-dasharray: 12;
+  animation: icone-coche 0.4s ease-out;
+}
+.landing-showcase-caption:hover .lucide-list-checks path:nth-child(4) { animation-delay: 0.12s; }
+
+/* Les deux attaches du calendrier se soulevent. */
+.landing-showcase-caption:hover .lucide-calendar path:nth-child(1),
+.landing-showcase-caption:hover .lucide-calendar path:nth-child(2) { animation: icone-anse 0.5s ease-out; }
+
+/* Le dossier se souleve, comme une pochette qu'on attrape. */
+@keyframes icone-souleve { 45% { transform: translateY(-2px) rotate(-4deg); } }
+.landing-showcase-caption:hover .lucide-folder { animation: icone-souleve 0.5s ease-out; }
+
+/* La bulle du bouton rebondit. */
+@keyframes icone-rebond { 35% { transform: translateY(-2px) scale(1.08); } }
+.landing-nav-cta:hover .lucide-message-circle { animation: icone-rebond 0.45s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.landing-feature, .landing-showcase-caption, .landing-nav-cta):hover :is(svg.lucide, svg.lucide *) {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+}
