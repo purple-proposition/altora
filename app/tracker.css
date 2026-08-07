@@ -43,25 +43,41 @@
   --radius-input: 12px;  /* inputs, select, textarea */
   --radius-pill: 999px;  /* every pill/button/badge */
 
-  /* Spacing scale (named by their own px value, not an abstract index -
-     e.g. --space-24 is 24px) for every fixed margin/padding/gap on the
-     public landing page, instead of the same numbers written as magic
-     literals at each call site. Doesn't cover the page's viewport-relative
-     grid math (calc(33.3333vw - 32px) and friends) : those constants are
-     column-formula corrections, not spacing decisions, and stay literal. */
-  --space-1: 1px;
-  --space-2: 2px;
-  --space-3: 3px;
+  /* ÉCHELLE D'ESPACEMENT. Nommée par sa valeur en pixels, pas par un
+     index abstrait : --space-24 vaut 24px.
+
+     Trois règles, sans exception :
+
+     1. Tout espacement passe par un token. Jamais de pixel écrit en dur
+        dans un gap, un padding ou une marge. Seul 0 s'écrit littéral.
+     2. Tous les paliers sont des multiples de 4. C'est la grille du
+        design system, valable pour l'app comme pour la landing.
+     3. L'échelle est volontairement courte. Les paliers 1, 2, 3, 5, 6,
+        10 et 28 ont été retirés : ils permettaient d'ajuster à l'œil au
+        lieu de choisir un palier, ce qui produisait des écarts presque
+        identiques mais jamais égaux, et un rendu brouillon.
+
+     Sémantique de chaque palier, pour choisir sans hésiter :
+       4   écart interne à un composant (icône et son libellé)
+       8   écart entre éléments d'un même groupe
+       12  titre et son texte, éléments d'une liste
+       16  padding des petits composants, champs de formulaire
+       24  padding des cartes et écart entre blocs frères. Valeur
+           canonique du repo, celle qu'on prend par défaut en cas de doute
+       32  padding des grands blocs
+       48  respiration interne forte
+       64  respiration d'un bloc de mise en avant
+       96  rythme entre deux sections de la page
+
+     Hors périmètre : les calculs de grille en unités de vue
+     (calc(33.3333vw - 32px) et compagnie) restent littéraux, ce sont des
+     corrections de formule de colonne, pas des décisions d'espacement. */
   --space-4: 4px;
-  --space-5: 5px;
-  --space-6: 6px;
   --space-8: 8px;
-  --space-10: 10px;
   --space-12: 12px;
   --space-16: 16px;
   --space-20: 20px;
   --space-24: 24px;
-  --space-28: 28px;
   --space-32: 32px;
   --space-40: 40px;
   --space-48: 48px;
@@ -1413,7 +1429,7 @@ body {
 .landing-kanban-pill.is-revealed {
   opacity: 1;
   transform: translateY(0);
-  margin-top: 8px;
+  margin-top: var(--space-8);
   max-height: 24px;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3683,7 +3699,7 @@ legend.field-label { padding: 0; }
   padding: var(--space-24) 0;
   transition: padding 0.3s cubic-bezier(0.48, 0.72, 0, 1);
 }
-.landing-nav--scrolled { padding: 12px 0; }
+.landing-nav--scrolled { padding: var(--space-12) 0; }
 
 .landing-nav-brand {
   grid-column: 1;
@@ -3703,7 +3719,7 @@ legend.field-label { padding: 0; }
 }
 .landing-nav--scrolled .landing-nav-logo { width: 55px; height: 16px; }
 
-.landing-nav-actions { grid-column: 2; position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.landing-nav-actions { grid-column: 2; position: relative; display: flex; align-items: center; justify-content: flex-end; gap: var(--space-16); }
 
 .landing-nav-login {
   font-size: 14px;
@@ -4024,7 +4040,7 @@ legend.field-label { padding: 0; }
 .landing-preview-crumb {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-8);
   font-size: 12px;
   font-weight: 500;
   color: var(--text-muted);
@@ -4032,7 +4048,7 @@ legend.field-label { padding: 0; }
 .landing-preview-crumb--active { color: var(--text-muted); }
 .landing-preview-crumb .lucide { width: 14px; height: 14px; }
 
-.landing-preview-window-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.landing-preview-window-actions { display: flex; align-items: center; gap: var(--space-8); margin-left: auto; }
 /* Matches the real .topbar-bell exactly: 32px bordered square, same
    radius/icon size as .landing-preview-collapse-btn, so every button in
    the titlebar reads as one consistent family instead of two sizes. */
@@ -4084,7 +4100,7 @@ legend.field-label { padding: 0; }
 }
 .landing-preview-sidebar-logo .lucide { width: 16px; height: 16px; }
 
-.landing-preview-sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
+.landing-preview-sidebar-nav { display: flex; flex-direction: column; gap: var(--space-8); }
 .landing-preview-sidebar-icon {
   display: flex;
   align-items: center;
@@ -4158,7 +4174,7 @@ legend.field-label { padding: 0; }
 .landing-preview-greeting-text .inline-pill {
   gap: var(--space-4);
   padding: var(--space-4) var(--space-8);
-  margin: 0 var(--space-2);
+  margin: 0 var(--space-4);
 }
 
 /* Grid, not flex-wrap: with flex-grow, a wrapped row's items can end up
@@ -4188,7 +4204,7 @@ legend.field-label { padding: 0; }
 .landing-preview-panel-title {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-8);
   font-size: 14px;
   font-weight: 500;
   color: var(--text-muted);
@@ -4219,7 +4235,7 @@ legend.field-label { padding: 0; }
   justify-content: center;
   min-width: 18px;
   height: 18px;
-  padding: 0 var(--space-6);
+  padding: 0 var(--space-8);
   border-radius: var(--radius-pill);
   background: var(--border);
   color: var(--text);
@@ -4231,13 +4247,13 @@ legend.field-label { padding: 0; }
 .landing-preview-panel-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 .landing-preview-panel-list .inline-pill {
   margin: 0;
   gap: var(--space-8);
   min-height: 28px;
-  padding: var(--space-6) var(--space-8);
+  padding: var(--space-8) var(--space-8);
   width: 100%;
   align-items: center;
   white-space: normal;
@@ -4616,7 +4632,7 @@ legend.field-label { padding: 0; }
 }
 .landing-roster-avatar img { object-fit: cover; }
 .landing-roster-name { font-size: 12px; font-weight: 600; color: var(--text); }
-.landing-roster-dots { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.landing-roster-dots { display: flex; align-items: center; justify-content: center; gap: var(--space-4); }
 /* Back to a flat, fully-saturated dot : the tint+border "pastille"
    treatment read as too soft/low-contrast at this size (10px), harder
    to tell apart at a glance than a solid color, which is the whole
@@ -4793,8 +4809,8 @@ legend.field-label { padding: 0; }
    all 3 captions are the same height regardless of how much each one
    actually wraps : otherwise the boards above them (flex:1) would each
    claim a different amount of remaining space and end up uneven again. */
-.landing-showcase-caption { display: flex; flex-direction: column; gap: 12px; min-height: 180px; }
-.landing-showcase-caption-header { display: flex; align-items: center; gap: 16px; }
+.landing-showcase-caption { display: flex; flex-direction: column; gap: var(--space-12); min-height: 180px; }
+.landing-showcase-caption-header { display: flex; align-items: center; gap: var(--space-16); }
 /* Icon keeps its square styling from .landing-feature-icon but loses
    that class's own margin-bottom (sits beside the title in a row here,
    not stacked above it) and swaps its indigo tint for a plain neutral
@@ -5026,7 +5042,7 @@ legend.field-label { padding: 0; }
   color: var(--indigo);
 }
 .landing-matching-step-icon .lucide { width: 20px; height: 20px; }
-.landing-matching-step-label { margin: 0 0 2px; font-size: 12px; font-weight: 600; color: var(--text); }
+.landing-matching-step-label { margin: 0 0 var(--space-4); font-size: 12px; font-weight: 600; color: var(--text); }
 .landing-matching-step-result { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
 /* Date matching is deliberately soft (a heads-up, not a hard filter -
    start dates are usually negotiable), so its bead and label read as
@@ -5071,16 +5087,16 @@ legend.field-label { padding: 0; }
    which a single flex gap can't give two different sibling boundaries -
    so gap is dropped to 0 here and each boundary gets its own explicit
    margin-bottom below instead. */
-.landing-matching-offer .card { padding: 16px; gap: 0; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
-.landing-matching-offer .card-heading { font-size: 14px; line-height: 1.3; margin-bottom: 8px; }
+.landing-matching-offer .card { padding: var(--space-16); gap: 0; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
+.landing-matching-offer .card-heading { font-size: 14px; line-height: 1.3; margin-bottom: var(--space-8); }
 .landing-matching-offer .card-title,
 .landing-matching-offer .card-company { font-weight: 600; }
 .landing-matching-offer .card-heading-sep { font-weight: 400; }
-.landing-matching-offer .card-meta-row { gap: 8px; margin-bottom: 16px; }
-.landing-matching-offer .card-meta-item { font-size: 14px; gap: 4px; }
+.landing-matching-offer .card-meta-row { gap: var(--space-8); margin-bottom: var(--space-16); }
+.landing-matching-offer .card-meta-item { font-size: 14px; gap: var(--space-4); }
 .landing-matching-offer .card-meta-item .lucide { width: 14px; height: 14px; }
-.landing-matching-offer .card-link-row { gap: 8px; }
-.landing-matching-offer .card-link { font-size: 14px; gap: 4px; }
+.landing-matching-offer .card-link-row { gap: var(--space-8); }
+.landing-matching-offer .card-link { font-size: 14px; gap: var(--space-4); }
 .landing-matching-offer .card-link .lucide { width: 14px; height: 14px; }
 
 
@@ -5149,18 +5165,18 @@ legend.field-label { padding: 0; }
    this mockup only, so the real .column/.card classes elsewhere on the
    site (and in the actual product) stay untouched. */
 .landing-kanban-board .column { padding: 0; min-height: 0; }
-.landing-kanban-board .column-header { padding: 5px 8px; gap: 5px; font-size: 11px; }
+.landing-kanban-board .column-header { padding: var(--space-4) var(--space-8); gap: var(--space-4); font-size: 11px; }
 .landing-kanban-board .column-header .lucide { width: 11px; height: 11px; }
 .landing-kanban-board .column-header-count { font-size: 10px; }
-.landing-kanban-board .card-list { position: relative; gap: 8px; margin-top: 8px; }
-.landing-kanban-board .card { padding: 10px; gap: 6px; border-radius: var(--radius-inner); transition: background 0.4s linear; }
+.landing-kanban-board .card-list { position: relative; gap: var(--space-8); margin-top: var(--space-8); }
+.landing-kanban-board .card { padding: var(--space-12); gap: var(--space-8); border-radius: var(--radius-inner); transition: background 0.4s linear; }
 .landing-kanban-board .card-heading { font-size: 12px; line-height: 1.3; }
 .landing-kanban-board .card-heading-sep { font-weight: 400; }
-.landing-kanban-board .card-meta-row { gap: 6px; margin-bottom: 6px; }
-.landing-kanban-board .card-meta-item { font-size: 12px; gap: 3px; }
+.landing-kanban-board .card-meta-row { gap: var(--space-8); margin-bottom: var(--space-8); }
+.landing-kanban-board .card-meta-item { font-size: 12px; gap: var(--space-4); }
 .landing-kanban-board .card-meta-item .lucide { width: 10px; height: 10px; }
-.landing-kanban-board .card-link-row { gap: 8px; }
-.landing-kanban-board .card-link { font-size: 10px; gap: 3px; }
+.landing-kanban-board .card-link-row { gap: var(--space-8); }
+.landing-kanban-board .card-link { font-size: 10px; gap: var(--space-4); }
 /* Base state has an explicit max-width/margin (rather than relying on
    intrinsic sizing) so both can be transitioned down to 0 : driven by
    the .is-hidden class KanbanAnimation.tsx's Card component adds once
@@ -5187,13 +5203,13 @@ legend.field-label { padding: 0; }
 .landing-kanban-board .card-link--generate.is-hidden {
   opacity: 0;
   max-width: 0;
-  margin-left: -8px;
+  margin-left: calc(-1 * var(--space-8));
   pointer-events: none;
 }
 .landing-kanban-board .card-link .lucide { width: 10px; height: 10px; }
-.landing-kanban-board .card-school-badge { margin-bottom: 6px; padding: 2px 6px; gap: 4px; font-size: 9px; }
+.landing-kanban-board .card-school-badge { margin-bottom: var(--space-8); padding: var(--space-4) var(--space-8); gap: var(--space-4); font-size: 9px; }
 .landing-kanban-board .card-school-badge .lucide { width: 9px; height: 9px; }
-.landing-kanban-board .card-interview-pill { margin-top: 6px; padding: 3px 6px; gap: 3px; font-size: 9px; }
+.landing-kanban-board .card-interview-pill { margin-top: var(--space-8); padding: var(--space-4) var(--space-8); gap: var(--space-4); font-size: 9px; }
 .landing-kanban-board .card-interview-pill .lucide { width: 9px; height: 9px; }
 
 /* Second carousel slide, same 4-column width and outer card chrome as
@@ -5219,7 +5235,7 @@ legend.field-label { padding: 0; }
    compact mockup : same avatar/sender/subject/preview structure, tighter
    padding/font-size, unread vs. read told apart by fill vs. plain border
    (not the small indigo dot alone, which reads too subtly at this size). */
-.landing-inbox-message { position: relative; padding: 10px 12px; gap: 8px; min-width: 0; transition: background-color 0.6s ease, border-color 0.6s ease; }
+.landing-inbox-message { position: relative; padding: var(--space-12) var(--space-12); gap: var(--space-8); min-width: 0; transition: background-color 0.6s ease, border-color 0.6s ease; }
 .landing-inbox-message--unread { background: var(--bg); border-color: transparent; }
 .landing-inbox-message--read { background: var(--card-bg); }
 /* Both the dot and the time are anchored straight to the card (hence
@@ -5239,10 +5255,10 @@ legend.field-label { padding: 0; }
 .landing-messaging-board .inbox-message-unread-dot.is-read { opacity: 0; transform: scale(0.4); }
 /* gap:0 + explicit margins instead of a shared gap, so the sender→
    subject spacing is independent of subject→preview. */
-.landing-messaging-board .inbox-message-body { gap: 0; min-width: 0; padding-right: 44px; }
-.landing-messaging-board .inbox-message-top { flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.landing-messaging-board .inbox-message-body { gap: 0; min-width: 0; padding-right: var(--space-48); }
+.landing-messaging-board .inbox-message-top { flex-wrap: wrap; gap: var(--space-4); margin-bottom: var(--space-8); }
 .landing-messaging-board .inbox-message-sender { font-size: 12px; }
-.landing-messaging-board .inbox-message-subject { font-size: 14px; margin: 0 0 2px; }
+.landing-messaging-board .inbox-message-subject { font-size: 14px; margin: 0 0 var(--space-4); }
 /* 16px (card edge) + 8px (dot) + 4px (gap) = 28px while unread; slides
    to a flush 16px once the dot has faded away on the read transition. */
 .landing-messaging-board .inbox-message-time {
@@ -5302,7 +5318,7 @@ legend.field-label { padding: 0; }
   gap: var(--space-12);
 }
 .landing-calendar-weekdays,
-.landing-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.landing-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--space-4); }
 /* .landing-showcase-carousel stretches every card to the tallest one's
    height by default (flex align-items:stretch), so .landing-calendar-board
    already has room to match .landing-kanban-board : the grid just needs
@@ -5330,7 +5346,7 @@ legend.field-label { padding: 0; }
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 2px;
+  gap: var(--space-4);
   min-width: 0;
   padding: var(--space-4);
   border: 1px solid var(--border);
@@ -5353,9 +5369,9 @@ legend.field-label { padding: 0; }
    synced motion rather than two separately-timed animations. */
 .landing-calendar-day-event {
   max-width: 100%;
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-4);
   font-size: 9px;
-  gap: var(--space-1);
+  gap: var(--space-4);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5367,7 +5383,7 @@ legend.field-label { padding: 0; }
 }
 .landing-calendar-day-event.is-visible {
   max-height: 24px;
-  margin-top: 2px;
+  margin-top: var(--space-4);
   opacity: 1;
   transform: translateY(0);
 }
@@ -5419,24 +5435,24 @@ legend.field-label { padding: 0; }
   gap: var(--space-12);
 }
 .landing-documents-board .folder-card { display: flex; flex-direction: column; height: 100%; min-height: 0; }
-.landing-documents-board .folder-card-header { padding: 8px 10px; gap: 6px; }
+.landing-documents-board .folder-card-header { padding: var(--space-8) var(--space-12); gap: var(--space-8); }
 .landing-documents-board .folder-card-header .lucide { width: 12px; height: 12px; }
 .landing-documents-board .folder-card-name { font-size: 11px; }
 .landing-documents-board .folder-card-body {
   flex: 1;
-  padding: var(--space-6);
+  padding: var(--space-8);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.landing-documents-board .folder-empty { font-size: 9px; padding: 8px; text-align: center; }
+.landing-documents-board .folder-empty { font-size: 9px; padding: var(--space-8); text-align: center; }
 .landing-documents-board .doc-thumb-grid { padding: 0; }
 .landing-documents-board .doc-thumb-bare { width: 56px; height: 56px; }
 /* Fake cover page instead of a generic file icon : a title bar plus a
    few text-line bars, purely decorative, so the fanned thumbnails read
    as "here's what's in this folder" rather than an abstract file glyph. */
-.landing-documents-board .doc-thumb-sheet { align-items: flex-start; padding: 5px 4px; }
-.landing-documents-board .doc-thumb-page { display: flex; flex-direction: column; gap: 3px; width: 100%; }
+.landing-documents-board .doc-thumb-sheet { align-items: flex-start; padding: var(--space-4) var(--space-4); }
+.landing-documents-board .doc-thumb-page { display: flex; flex-direction: column; gap: var(--space-4); width: 100%; }
 .landing-documents-board .doc-thumb-page-title,
 .landing-documents-board .doc-thumb-page-line {
   display: block;
@@ -5444,7 +5460,7 @@ legend.field-label { padding: 0; }
   border-radius: 1px;
   background: var(--border);
 }
-.landing-documents-board .doc-thumb-page-title { width: 60%; height: 3px; background: var(--text-muted); opacity: 0.6; margin-bottom: 1px; }
+.landing-documents-board .doc-thumb-page-title { width: 60%; height: 3px; background: var(--text-muted); opacity: 0.6; margin-bottom: var(--space-4); }
 .landing-documents-board .doc-thumb-page-line--short { width: 45%; }
 
 /* Fanned stack of 3 talent cards: the front one sits in normal flow
@@ -5563,12 +5579,12 @@ legend.field-label { padding: 0; }
    can live in one specific place (see .landing-talent-skills' margin-
    top:auto below) instead of the whole body just growing/leaving a
    gap wherever content happened to end. */
-.landing-talent-body { flex: 1; display: flex; flex-direction: column; padding: 16px; }
+.landing-talent-body { flex: 1; display: flex; flex-direction: column; padding: var(--space-16); }
 /* First name is the card's title (everyone shown here is on an
    alternance contract, so that tag/status line was redundant) -
    the degree becomes a plain muted subtitle underneath instead. */
-.landing-talent-name { font-family: 'Goudy Bookletter 1911', Georgia, serif; font-synthesis: none; font-size: 24px; color: var(--text); margin-bottom: 8px; }
-.landing-talent-degree { font-size: 14px; line-height: 1.4; color: var(--text-muted); margin-bottom: 16px; }
+.landing-talent-name { font-family: 'Goudy Bookletter 1911', Georgia, serif; font-synthesis: none; font-size: 24px; color: var(--text); margin-bottom: var(--space-8); }
+.landing-talent-degree { font-size: 14px; line-height: 1.4; color: var(--text-muted); margin-bottom: var(--space-16); }
 /* Row that wraps once it runs out of width : override .inline-pill's
    own margin:0 8px (meant for pills sitting inline in a sentence)
    since it ate into the available row width here.
@@ -5578,7 +5594,7 @@ legend.field-label { padding: 0; }
    pills, never the one below them. The gap below stays fixed : down
    to .landing-talent-body's own 16px padding-bottom, since
    .landing-talent-footer is a sibling of the body, not a child. */
-.landing-talent-skills { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; margin-top: auto; }
+.landing-talent-skills { display: flex; flex-wrap: wrap; gap: var(--space-8); align-content: flex-start; margin-top: auto; }
 .landing-talent-skills .inline-pill { margin: 0; }
 .landing-talent-footer {
   display: flex;
@@ -5767,18 +5783,18 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
   margin: 0 0 var(--space-24);
 }
-.quote-modal-form { display: flex; flex-direction: column; gap: 16px; }
-.quote-modal-error { margin: -8px 0 0; font-size: 12px; color: var(--rose); }
+.quote-modal-form { display: flex; flex-direction: column; gap: var(--space-16); }
+.quote-modal-error { margin: calc(-1 * var(--space-8)) 0 0; font-size: 12px; color: var(--rose); }
 .quote-modal-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-.quote-modal-field-row { display: flex; gap: 16px; }
+.quote-modal-field-row { display: flex; gap: var(--space-16); }
 .quote-modal-field-row .quote-modal-field { flex: 1; min-width: 0; }
-.quote-modal-field { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text); }
+.quote-modal-field { display: flex; flex-direction: column; gap: var(--space-8); font-size: 12px; font-weight: 500; color: var(--text); }
 .quote-modal-field input,
 .quote-modal-field textarea {
   font: inherit;
   font-size: 14px;
   font-weight: 400;
-  padding: var(--space-10) var(--space-12);
+  padding: var(--space-12);
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
   background: var(--bg);
@@ -5819,7 +5835,7 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
 }
 
-.landing-footer-links { display: flex; align-items: center; gap: 16px; }
+.landing-footer-links { display: flex; align-items: center; gap: var(--space-16); }
 .landing-footer-link { color: var(--text-muted); text-decoration: none; }
 .landing-footer-link:hover { color: var(--text); }
 
@@ -5931,8 +5947,8 @@ legend.field-label { padding: 0; }
   .landing-features { grid-template-columns: repeat(2, 1fr); }
   .landing-features-title { font-size: 28px; }
   .landing-closing-title { font-size: 24px; }
-  .landing-closing-actions { flex-direction: column; gap: 16px; }
-  .landing-hero { max-width: 100%; padding: 64px 24px 0; }
+  .landing-closing-actions { flex-direction: column; gap: var(--space-16); }
+  .landing-hero { max-width: 100%; padding: var(--space-64) var(--space-24) 0; }
   /* Below 720px there's no room for the full "Contacter un expert"
      label next to the logo, so the nav's own CTA collapses to the same
      icon-only square as .landing-nav--scrolled, unconditionally here,
@@ -5974,8 +5990,8 @@ legend.field-label { padding: 0; }
     padding-bottom: var(--space-24);
   }
   .landing-nav--scrolled {
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
   }
   /* .landing-preview-shell's width (calc(50vw - 36px)) is sized for the
      desktop hero, where the mini app window sits at half the viewport
@@ -6063,13 +6079,13 @@ legend.field-label { padding: 0; }
      centered between its two fanned siblings instead, since they now
      rotate away from it by equal amounts on equal padding. */
   .landing-talent-stack {
-    padding: 32px 48px;
+    padding: var(--space-32) var(--space-48);
   }
 }
 
 @media (max-width: 480px) {
   .landing-features { grid-template-columns: 1fr; }
-  .landing-hero-actions { flex-direction: column; gap: 16px; }
+  .landing-hero-actions { flex-direction: column; gap: var(--space-16); }
 }
 
 /* --- Pricing page (app/pricing/page.tsx) --- */
@@ -6078,7 +6094,7 @@ legend.field-label { padding: 0; }
   max-width: 640px;
   width: 100%;
   margin: var(--space-96) auto 0;
-  padding: 0 24px;
+  padding: 0 var(--space-24);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -6090,7 +6106,7 @@ legend.field-label { padding: 0; }
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin: 20px 0 12px;
+  margin: var(--space-20) 0 var(--space-12);
   color: var(--text);
 }
 /* Landing page version only (scoped to #tarifs, not /pricing's own
@@ -6103,10 +6119,10 @@ legend.field-label { padding: 0; }
   max-width: 1120px;
   width: 100%;
   margin: var(--space-96) auto 0;
-  padding: 0 24px;
+  padding: 0 var(--space-24);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: var(--space-24);
 }
 /* Landing page version: one merged card instead of 3 separate plans,
    with a single "Contacter un expert" CTA, the 3 plans become
@@ -6130,7 +6146,7 @@ legend.field-label { padding: 0; }
    competing cards), so it earns a bit more visual weight/elevation. */
 .pricing-plan--merged {
   text-align: center;
-  padding: 56px 48px;
+  padding: var(--space-64) var(--space-48);
   box-shadow: 0 4px 16px color-mix(in srgb, black 4%, transparent), 0 24px 48px color-mix(in srgb, black 6%, transparent);
 }
 .pricing-plan--merged .pricing-plan-tagline { max-width: 480px; margin-left: auto; margin-right: auto; }
@@ -6138,10 +6154,10 @@ legend.field-label { padding: 0; }
 .pricing-merged-groups {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+  gap: var(--space-32);
   text-align: left;
-  padding-top: 32px;
-  margin-top: 32px;
+  padding-top: var(--space-32);
+  margin-top: var(--space-32);
   border-top: 1px solid var(--border);
 }
 /* Vertical hairlines between the 3 groups (not on the last one) : the
@@ -6149,23 +6165,23 @@ legend.field-label { padding: 0; }
    as one structured table instead. */
 .pricing-merged-group:not(:last-child) {
   border-right: 1px solid var(--border);
-  padding-right: 32px;
+  padding-right: var(--space-32);
 }
 .pricing-merged-group-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-16);
 }
 .pricing-merged-group-title .lucide { width: 14px; height: 14px; flex-shrink: 0; }
 /* Sits on its own line if the title + badge don't fit one row, rather
    than forcing the badge to shrink or wrap mid-word. */
 .pricing-merged-group-badge {
   margin-left: auto;
-  padding: 2px 8px;
+  padding: var(--space-4) var(--space-8);
   border-radius: var(--radius-pill);
   background: var(--bg);
   border: 1px solid var(--border);
@@ -6181,14 +6197,14 @@ legend.field-label { padding: 0; }
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  padding: 32px;
+  padding: var(--space-32);
 }
 
 .pricing-plan-badge {
   position: absolute;
   top: -12px;
   right: 32px;
-  padding: 4px 12px;
+  padding: var(--space-4) var(--space-12);
   border-radius: var(--radius-pill);
   background: var(--indigo);
   color: #fff;
@@ -6201,13 +6217,13 @@ legend.field-label { padding: 0; }
   line-height: 1;
   font-weight: 600;
   color: var(--text);
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-8);
 }
 
 .pricing-plan-tagline {
   font-size: 14px;
   color: var(--text-muted);
-  margin: 0 0 20px;
+  margin: 0 0 var(--space-20);
 }
 
 /* Serif + larger, matching the site's other big display numbers
@@ -6225,13 +6241,13 @@ legend.field-label { padding: 0; }
 .pricing-plan-price-note {
   font-size: 12px;
   color: var(--text-muted);
-  margin: 4px 0 24px;
+  margin: var(--space-4) 0 var(--space-24);
 }
 
 .pricing-plan-cta {
   display: flex;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-24);
 }
 
 .pricing-plan-cta--secondary {
@@ -6243,16 +6259,16 @@ legend.field-label { padding: 0; }
 .pricing-plan-features {
   list-style: none;
   margin: 0;
-  padding: 20px 0 0;
+  padding: var(--space-20) 0 0;
   border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-12);
 }
 .pricing-plan-features li {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
   font-size: 14px;
   color: var(--text);
 }
@@ -6262,7 +6278,7 @@ legend.field-label { padding: 0; }
   max-width: 720px;
   width: 100%;
   margin: var(--space-96) auto 0;
-  padding: 0 24px;
+  padding: 0 var(--space-24);
 }
 
 .pricing-faq-title {
@@ -6270,11 +6286,11 @@ legend.field-label { padding: 0; }
   line-height: 1;
   font-weight: 600;
   color: var(--text);
-  margin: 0 0 24px;
+  margin: 0 0 var(--space-24);
 }
 
 .pricing-faq-item {
-  padding: 24px 0;
+  padding: var(--space-24) 0;
   border-top: 1px solid var(--border);
 }
 .pricing-faq-item:last-child { padding-bottom: 0; }
@@ -6287,7 +6303,7 @@ legend.field-label { padding: 0; }
   line-height: 1;
   font-weight: 600;
   color: var(--text);
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-8);
 }
 
 .pricing-faq-answer {
@@ -6310,7 +6326,7 @@ legend.field-label { padding: 0; }
   .pricing-merged-group:not(:last-child) {
     border-right: none;
     padding-right: 0;
-    padding-bottom: 24px;
+    padding-bottom: var(--space-24);
     border-bottom: 1px solid var(--border);
   }
 }
