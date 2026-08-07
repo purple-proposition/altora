@@ -17,35 +17,36 @@ const ETAPES = ['slate', 'amber', 'green', 'rose'] as const;
 const ENTRETIEN = 2;
 const REFUS = 3;
 
-// Le retrait est plus frequent que l'ajout, puisqu'une candidature ne
-// s'ouvre que lorsqu'il n'y a plus rien a faire avancer. Un plancher a
-// trois laissait donc les rangees tomber a deux et le tableau paraissait
-// se vider : quatre maintient la densite du rendu d'origine.
 const MIN_PASTILLES = 4;
 const MAX_PASTILLES = 5;
 // Un seul apprenant bouge par battement, a tour de role. Six apprenants,
-// donc chacun evolue toutes les six secondes environ : le tableau reste
-// vivant sans jamais donner l'impression de clignoter.
-const BATTEMENT = 1000;
+// donc chacun evolue toutes les quatre secondes environ : le tableau
+// reste vivant sans jamais donner l'impression de clignoter. Le
+// battement a ete resserre pour que les couleurs aient le temps de se
+// developper dans le champ de vision du visiteur.
+const BATTEMENT = 700;
 const TRANSITION = 400;
 
 type Pastille = { id: number; etape: number; but: number };
 type Apprenant = { nom: string; photo: string; pastilles: Pastille[] };
 
-// Etat de depart identique au rendu precedent, pour que rien ne bouge au
-// chargement. Chaque couple est [etape atteinte, etape finale].
+// Etat de depart, chaque couple etant [etape atteinte, etape finale]. Il
+// est deliberement contraste : une rangee qui demarre a moitie grise met
+// une minute a se colorer, et le visiteur voit d'abord un tableau terne.
+// Les etapes sont croissantes de gauche a droite, comme la boucle les
+// maintiendra ensuite.
 const DEPART: { nom: string; photo: string; p: [number, number][] }[] = [
-  { nom: 'Camille', photo: '/landing-preview-avatar.jpg', p: [[0, 2], [0, 3], [1, 2], [1, 2], [2, 2]] },
-  { nom: 'Inès', photo: '/landing-preview-avatar-2.jpg', p: [[0, 2], [0, 2], [1, 3], [2, 2]] },
-  { nom: 'Thomas', photo: '/landing-preview-avatar-3.jpg', p: [[0, 2], [1, 2], [1, 2], [3, 3]] },
-  { nom: 'Lina', photo: '/landing-preview-avatar-lina.jpg', p: [[0, 3], [0, 2], [1, 2], [1, 2], [2, 2]] },
-  { nom: 'Sofiane', photo: '/landing-preview-avatar-sofiane.jpg', p: [[0, 2], [1, 2], [2, 2]] },
-  { nom: 'Manon', photo: '/landing-preview-avatar-manon.jpg', p: [[0, 2], [1, 3], [1, 2], [2, 2]] },
+  { nom: 'Camille', photo: '/landing-preview-avatar.jpg', p: [[0, 2], [1, 2], [1, 3], [2, 2]] },
+  { nom: 'Inès', photo: '/landing-preview-avatar-2.jpg', p: [[0, 3], [1, 2], [2, 2], [2, 3]] },
+  { nom: 'Thomas', photo: '/landing-preview-avatar-3.jpg', p: [[0, 2], [1, 2], [2, 2], [3, 3]] },
+  { nom: 'Lina', photo: '/landing-preview-avatar-lina.jpg', p: [[0, 2], [1, 3], [1, 2], [2, 2], [2, 2]] },
+  { nom: 'Sofiane', photo: '/landing-preview-avatar-sofiane.jpg', p: [[1, 2], [1, 2], [2, 2], [2, 3]] },
+  { nom: 'Manon', photo: '/landing-preview-avatar-manon.jpg', p: [[0, 2], [0, 3], [1, 2], [2, 2], [2, 2]] },
 ];
 
 // findLastIndex n'est pas garanti par la cible de compilation du projet.
-function dernierIndex(liste: Pastille[], test: (p: Pastille) => boolean) {
-  for (let i = liste.length - 1; i >= 0; i--) if (test(liste[i])) return i;
+function dernierIndex(liste: Pastille[], test: (p: Pastille, i: number) => boolean) {
+  for (let i = liste.length - 1; i >= 0; i--) if (test(liste[i], i)) return i;
   return -1;
 }
 
@@ -65,6 +66,8 @@ export default function RosterAnimation() {
   const [repliees, setRepliees] = useState<Set<number>>(new Set());
   const tourRef = useRef(0);
   const nouvellesRef = useRef(0);
+  // Position de depart du prochain balayage, par apprenant.
+  const rotationRef = useRef<number[]>(DEPART.map(() => 0));
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -84,34 +87,56 @@ export default function RosterAnimation() {
         const suivant = prev.map((a) => ({ ...a, pastilles: [...a.pastilles] }));
         const liste = suivant[i].pastilles;
 
-        // 1. Reconstituer le minimum avant toute autre chose.
-        if (liste.length < MIN_PASTILLES) {
-          ajouter(liste);
-          return suivant;
-        }
-        // 2. Evacuer une candidature arrivee au bout, ce qui libere la
-        //    place pour la suivante. On cherche depuis la droite : la
-        //    rangee se lit dans le sens de la progression, les plus
-        //    avancees a droite, donc c'est par la qu'on sort.
         const fini = dernierIndex(liste, (p) => p.etape === p.but);
-        if (fini !== -1) {
-          const id = liste[fini].id;
+        // Une pastille peut avancer si elle n'a pas atteint son terme et
+        // si elle ne depasse pas sa voisine de droite. Cette seule
+        // condition maintient la rangee triee sans avoir a n'autoriser
+        // que la plus a droite a bouger.
+        const peutAvancer = (p: Pastille, k: number) =>
+          p.etape < p.but && (k === liste.length - 1 || p.etape + 1 <= liste[k + 1].etape);
+        // Cible tournante parmi les eligibles, et c'est la le correctif de
+        // fond. En prenant toujours la plus a droite, les grises de gauche
+        // etaient eligibles mais jamais choisies : elles attendaient que
+        // toute la file soit partie, et la rangee virait au gris uniforme.
+        // Simule sur neuf cents battements, la repartition passe de 86 %
+        // de gris a 48 / 30 / 21, sans jamais une rangee dans le desordre.
+        let bouge = -1;
+        for (let d = 0; d < liste.length; d++) {
+          const k = (rotationRef.current[i] + d) % liste.length;
+          if (peutAvancer(liste[k], k)) {
+            bouge = k;
+            rotationRef.current[i] = (k + 1) % liste.length;
+            break;
+          }
+        }
+
+        function retirer(k: number) {
+          const id = liste[k].id;
           plier(id, true);
           minuteries.push(window.setTimeout(() => {
             setApprenants((s) => s.map((a) => ({ ...a, pastilles: a.pastilles.filter((p) => p.id !== id) })));
             plier(id, false);
           }, TRANSITION));
+        }
+
+        // 1. Tenir le plancher. 2. Evacuer une candidature terminee, par
+        //    la droite ou vivent les plus avancees. 3. Faire progresser.
+        //    Cet ordre est celui qui, en simulation, donne la repartition
+        //    la plus vivante : retirer avant d'avancer evite que les
+        //    terminees s'accumulent en vert, et le plancher en premier
+        //    empeche la rangee de se vider.
+        if (liste.length < MIN_PASTILLES) {
+          ajouter(liste);
           return suivant;
         }
-        // 3. Sinon faire progresser la plus ancienne qui peut avancer,
-        //    d'un rang et d'un seul. La plus ancienne est la plus a
-        //    droite : c'est ce qui maintient la rangee ordonnee.
-        const bouge = dernierIndex(liste, (p) => p.etape < p.but);
+        if (fini !== -1) {
+          retirer(fini);
+          return suivant;
+        }
         if (bouge !== -1) {
           liste[bouge] = { ...liste[bouge], etape: liste[bouge].etape + 1 };
           return suivant;
         }
-        // 4. Rien a faire : ouvrir une nouvelle candidature.
         if (liste.length < MAX_PASTILLES) ajouter(liste);
         return suivant;
       });

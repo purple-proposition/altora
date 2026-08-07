@@ -260,9 +260,12 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Calendrier</h3>
               </div>
               <p className="landing-feature-text">
+                {/* "Partage" est garde pour Documents, ou c'est le sujet
+                    meme de la legende. Ici l'argument est le regroupement,
+                    et le duo apprenant plus ecole est deja porte par les
+                    trois autres legendes. */}
                 Deadlines, entretiens, périodes en entreprise et suivi
-                pédagogique dans un calendrier partagé par l&apos;apprenant et
-                l&apos;école.
+                pédagogique réunis dans un seul calendrier.
               </p>
             </div>
             </div>
