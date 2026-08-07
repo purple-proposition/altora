@@ -3835,17 +3835,124 @@ legend.field-label { padding: 0; }
 .landing-in--3 { animation-delay: 0.25s; }
 .landing-in--4 { animation-delay: 0.35s; }
 
-/* Scroll reveal: sections fade/slide in the first time they enter the
-   viewport (see components/Reveal.tsx), then stay visible. */
+/* Apparition au defilement : chaque section se revele la premiere fois
+   qu'elle entre dans la fenetre (voir components/Reveal.tsx), puis reste
+   visible.
+
+   Trois choix font toute la difference entre l'effet generique et un
+   rendu soigne.
+
+   La courbe d'abord. Un "ease" symetrique demarre mollement et s'arrete
+   net, ce qui se lit comme une transition de gabarit. La courbe ci-
+   dessous part vite et met tres longtemps a se poser : l'element est
+   deja presque arrive quand l'oeil le capte, et la fin est une
+   decelaration si douce qu'on ne voit jamais l'arret. C'est elle qui
+   donne la sensation de matiere, et elle autorise une duree longue sans
+   paraitre lente.
+
+   L'ecart ensuite. Les elements montent de 32 pixels au lieu de 24, et
+   les visuels de 40 : ce leger retard du mockup sur son texte cree une
+   profondeur, comme deux plans qui ne se deplacent pas a la meme
+   vitesse.
+
+   La choregraphie enfin. Une section qui apparait d'un bloc reste un
+   bloc. Titre, texte puis visuel arrivent decales de quelques dizaines
+   de millisecondes, ce qui donne un ordre de lecture au lieu d'un
+   simple fondu. */
+:root {
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --reveal-duree: 0.8s;
+}
+
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(32px);
+  transition: opacity var(--reveal-duree) var(--ease-reveal),
+              transform var(--reveal-duree) var(--ease-reveal);
 }
 .reveal--visible { opacity: 1; transform: translateY(0); }
 
+/* Sections choregraphiees : le conteneur ne bouge plus, sinon son
+   deplacement s'ajouterait a celui de ses enfants et doublerait la
+   course. Ce sont les enfants qui portent l'animation. */
+.reveal.landing-showcase-row,
+.reveal.landing-features-section,
+.reveal.pricing-faq {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.landing-showcase-row > .landing-showcase-text > *,
+.landing-showcase-row > .landing-showcase-visual,
+.landing-features-section > .landing-features-title,
+.landing-features-section > .landing-features-subtitle,
+.landing-features-section .landing-feature,
+.pricing-faq > .pricing-faq-title,
+.pricing-faq > .pricing-faq-item {
+  opacity: 0;
+  transform: translateY(var(--reveal-ecart, 32px));
+  transition: opacity var(--reveal-duree) var(--ease-reveal) var(--reveal-delai, 0s),
+              transform var(--reveal-duree) var(--ease-reveal) var(--reveal-delai, 0s);
+}
+.reveal--visible > .landing-showcase-text > *,
+.reveal--visible > .landing-showcase-visual,
+.reveal--visible > .landing-features-title,
+.reveal--visible > .landing-features-subtitle,
+.reveal--visible .landing-feature,
+.reveal--visible > .pricing-faq-title,
+.reveal--visible > .pricing-faq-item {
+  opacity: 1;
+  transform: none;
+}
+
+/* Titre, corps, puis mockup. Le visuel part de plus loin et arrive en
+   dernier : c'est ce decalage qui fait la profondeur. */
+.landing-showcase-text > *:nth-child(2) { --reveal-delai: 0.08s; }
+.landing-showcase-visual { --reveal-delai: 0.16s; --reveal-ecart: 40px; }
+
+.landing-features-subtitle { --reveal-delai: 0.08s; }
+/* Balayage en diagonale de la grille : chaque colonne suit la
+   precedente, chaque rangee suit la sienne. Les valeurs sont posees a la
+   main plutot que par nth-child(4n+k), qui aurait rendu la seconde
+   rangee identique a la premiere au lieu de la decaler. */
+.landing-feature:nth-child(1) { --reveal-delai: 0.16s; }
+.landing-feature:nth-child(2) { --reveal-delai: 0.21s; }
+.landing-feature:nth-child(3) { --reveal-delai: 0.26s; }
+.landing-feature:nth-child(4) { --reveal-delai: 0.31s; }
+.landing-feature:nth-child(5) { --reveal-delai: 0.24s; }
+.landing-feature:nth-child(6) { --reveal-delai: 0.29s; }
+.landing-feature:nth-child(7) { --reveal-delai: 0.34s; }
+.landing-feature:nth-child(8) { --reveal-delai: 0.39s; }
+
+.pricing-faq-item:nth-child(2) { --reveal-delai: 0.06s; }
+.pricing-faq-item:nth-child(3) { --reveal-delai: 0.12s; }
+.pricing-faq-item:nth-child(4) { --reveal-delai: 0.18s; }
+.pricing-faq-item:nth-child(5) { --reveal-delai: 0.24s; }
+.pricing-faq-item:nth-child(6) { --reveal-delai: 0.30s; }
+.pricing-faq-item:nth-child(7) { --reveal-delai: 0.36s; }
+.pricing-faq-item:nth-child(8) { --reveal-delai: 0.42s; }
+
+/* En une seule colonne la diagonale n'a plus de sens et les cartes du
+   bas attendraient sans raison : on ramene tout a un balayage court. */
+@media (max-width: 768px) {
+  .landing-feature:nth-child(n) { --reveal-delai: 0.12s; }
+  .landing-showcase-visual { --reveal-ecart: 32px; }
+}
+
+/* Les deux echappatoires ci-dessous doivent desormais neutraliser aussi
+   les enfants choregraphies : le conteneur seul ne suffit plus, ce sont
+   eux qui portent l'opacite nulle. */
 @media (prefers-reduced-motion: reduce) {
-  .landing-in, .reveal {
+  .landing-in,
+  .reveal,
+  .landing-showcase-row > .landing-showcase-text > *,
+  .landing-showcase-row > .landing-showcase-visual,
+  .landing-features-section > .landing-features-title,
+  .landing-features-section > .landing-features-subtitle,
+  .landing-features-section .landing-feature,
+  .pricing-faq > .pricing-faq-title,
+  .pricing-faq > .pricing-faq-item {
     animation: none;
     transition: none;
     opacity: 1;
@@ -3859,7 +3966,15 @@ legend.field-label { padding: 0; }
    reduced-motion fallback above, forced for print regardless of the
    visitor's motion preference. */
 @media print {
-  .landing-in, .reveal {
+  .landing-in,
+  .reveal,
+  .landing-showcase-row > .landing-showcase-text > *,
+  .landing-showcase-row > .landing-showcase-visual,
+  .landing-features-section > .landing-features-title,
+  .landing-features-section > .landing-features-subtitle,
+  .landing-features-section .landing-feature,
+  .pricing-faq > .pricing-faq-title,
+  .pricing-faq > .pricing-faq-item {
     animation: none;
     transition: none;
     opacity: 1;
