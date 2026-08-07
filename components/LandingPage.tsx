@@ -56,11 +56,11 @@ export default function LandingPage() {
       <div className="landing-card">
       <main className="landing-hero">
         <h1 className="landing-title landing-in landing-in--1">
-          Toute votre promotion placée,<br />sans relancer personne
+          Votre taux de placement en hausse,<br />sans relancer personne
         </h1>
         <p className="landing-subtitle landing-in landing-in--2">
           Altora réunit la recherche d&apos;alternance de vos apprenants et son
-          pilotage côté école. Aucun placement, et vous êtes remboursé.
+          pilotage côté école, et vous rembourse si aucun n&apos;est placé.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
           <QuoteCtaButton className="landing-nav-cta" location="hero" icon="message-circle">Contacter un expert</QuoteCtaButton>
@@ -156,9 +156,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">Remboursé si aucun apprenant n&apos;est placé</h2>
             <p className="landing-showcase-body">
-              Les frais de mise en place et de support sont facturés à la
-              signature, puis intégralement remboursés si aucun apprenant
-              n&apos;est placé. Chaque apprenant placé est ensuite facturé au mois.
+              Les frais de mise en place et de support sont intégralement
+              remboursés si aucun apprenant n&apos;est placé, et chaque apprenant
+              placé est ensuite facturé au mois.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -191,9 +191,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">Fini les offres qui ne collent pas</h2>
             <p className="landing-showcase-body">
-              Altora récupère les offres d&apos;alternance, écarte celles qui ne
-              correspondent ni au rythme que vous avez défini ni à vos villes
-              d&apos;implantation, et ne présente que ce qui reste.
+              Vos apprenants ne perdent plus de candidatures sur des offres qui
+              ne pouvaient pas aboutir, et vos équipes ne trient plus à leur
+              place.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -203,11 +203,11 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row--kanban">
           <div className="landing-showcase-text landing-showcase-text--right">
-            <h3 className="landing-showcase-title">Un seul outil, deux usages</h3>
+            <h3 className="landing-showcase-title">Une boîte à outils, deux usages complémentaires</h3>
             <p className="landing-showcase-body">
-              Côté apprenant, c&apos;est le cockpit de son alternance. Côté école,
-              le même espace devient un outil de suivi, limité à ce que
-              l&apos;apprenant choisit de partager.
+              Le même espace est le cockpit de l&apos;apprenant et l&apos;outil de
+              suivi et d&apos;accompagnement de l&apos;école, jamais plus que ce
+              qu&apos;il choisit de partager.
             </p>
           </div>
           <CalendarSyncProvider>
@@ -387,10 +387,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">Les recruteurs viennent à vos apprenants</h2>
             <p className="landing-showcase-body">
-              Vos entreprises partenaires consultent le trombinoscope de toute
-              l&apos;école et contactent directement les profils qui les
-              intéressent. Vos équipes n&apos;envoient plus les candidatures une
-              par une.
+              Vos entreprises partenaires contactent directement les profils qui
+              les intéressent dans le trombinoscope de l&apos;école, sans que vos
+              équipes envoient une seule candidature.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -402,9 +401,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">Aucune candidature envoyée au hasard</h2>
             <p className="landing-showcase-body">
-              Altora explique à l&apos;apprenant comment passer les filtres
-              automatiques des recruteurs, puis retravaille son CV et sa lettre
-              pour chaque offre visée, et prépare le mail au recruteur.
+              Pour chaque offre visée, le CV et la lettre de motivation sont
+              retravaillés ensemble et taillés pour passer les filtres
+              automatiques des recruteurs.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -504,9 +503,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">Suivre sans surveiller</h2>
             <p className="landing-showcase-body">
-              Chaque pastille reprend les couleurs du tableau de suivi, à faire,
-              envoyé, entretien, refus, sans jamais détailler les démarches. De
-              quoi ouvrir la conversation avec un apprenant, pas la remplacer.
+              Chaque pastille reprend les couleurs du tableau de suivi sans jamais
+              détailler les démarches, de quoi ouvrir la conversation avec un
+              apprenant plutôt que la remplacer.
             </p>
           </div>
           <div className="landing-showcase-visual">
