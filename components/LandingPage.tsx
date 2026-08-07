@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import Icon from '@/components/Icon';
 import MatchingAnimation from '@/components/MatchingAnimation';
 import HeroCalendar from '@/components/HeroCalendar';
@@ -21,22 +20,28 @@ import QuoteCtaButton from '@/components/QuoteCtaButton';
 // stays visually identical to the rest of the app and follows the same
 // light/dark theme switch instead of hardcoding one look like /login does.
 //
-// Hero and category order lead with écoles, not étudiants: per
-// Altora_Concept_Projet.docx the paying decision-maker is a school's
-// "responsable des relations entreprises / pédagogique", not the student:
-// the doc explicitly warns against mirroring a candidate-first competitor's
-// positioning, since Altora's real differentiation is being the CRM/copilot
-// the school runs its whole promotion on.
+// Toute la page s'adresse à l'école, à la deuxième personne, et décrit les
+// apprenants à la troisième ("vos apprenants", "votre promotion"). L'outil
+// sert réellement les deux, mais c'est l'école qui signe : per
+// Altora_Concept_Projet.docx le décideur payeur est un "responsable des
+// relations entreprises / pédagogique", et le document met en garde contre
+// le fait de copier le positionnement candidat d'un concurrent, puisque la
+// différenciation d'Altora est d'être le poste de pilotage de l'école.
+// C'est cette voix unique qui a rendu inutile l'ancienne grille
+// "écoles / étudiants / entreprises" : la question de savoir à qui on parle
+// ne se pose plus.
 //
-// Section order below follows the MentorGoal differentiation note: the
-// écoles/étudiants/entreprises split comes right after the hero so a
-// visitor knows which lens to read the rest through, and the annuaire
-// (entreprise sourcing) row leads the feature sections: per that note,
-// it's the one angle MentorGoal doesn't publicly compete on, so it earns
-// the spot generic AI/matching claims used to hold. Kanban, roster, ATS
-// and "priorise" (all closer to table-stakes centralization/matching, the
-// note's own words for MentorGoal's actual territory) sit in the middle
-// as supporting depth, not the opening hook.
+// Rythme des sections : un temps fort centré, puis deux alignées à gauche,
+// en boucle. Les quatre temps forts sont la facturation au résultat (le
+// seul avantage qu'un acteur installé ne peut pas copier sans cannibaliser
+// son revenu récurrent), le carrousel produit, "Pensé pour durer" et les
+// tarifs. L'annuaire ouvre les sections alignées à gauche : per la note de
+// différenciation, c'est le seul angle sur lequel MentorGoal ne se bat pas
+// publiquement. "Vue d'ensemble" ferme le bloc produit parce qu'elle
+// s'appuie sur les statuts (à faire, envoyé, entretien, refus) que le
+// carrousel introduit plus haut. La FAQ est volontairement hors rythme,
+// en clôture : c'est la convention sur une landing page, et elle répond
+// symétriquement au hero qui ouvre hors rythme lui aussi.
 export default function LandingPage() {
   // Same formatting as the real summary-date (app/(tracker)/page.tsx),
   // computed at request time, so it always reads as "today" rather than
@@ -54,9 +59,9 @@ export default function LandingPage() {
           La plateforme qui optimise<br />votre taux de placement
         </h1>
         <p className="landing-subtitle landing-in landing-in--2">
-          Les écoles et leurs apprenants jonglent aujourd&apos;hui entre une multitude
-          d&apos;outils. Avec Altora, tout se gère au même endroit pour les
-          accompagner vers la réussite de leur alternance.
+          Altora réunit la recherche d&apos;alternance de vos apprenants et son
+          pilotage côté école. Vous ne payez qu&apos;à partir du moment où un
+          alternant est placé.
         </p>
         <div className="landing-hero-actions landing-in landing-in--3">
           <QuoteCtaButton className="landing-nav-cta" location="hero" icon="message-circle">Contacter un expert</QuoteCtaButton>
@@ -162,83 +167,34 @@ export default function LandingPage() {
         </ul>
       </Reveal>
 
-      <section className="landing-categories">
-        <Reveal id="ecoles" className="landing-category">
-          <div className="landing-category-icon"><Icon name="users" /></div>
-          <h2 className="landing-category-title">Écoles &amp; organismes de formation</h2>
-          <p className="landing-category-text">
-            Suis la recherche d&apos;alternance de toute une promotion, sans
-            relancer chaque étudiant un par un pour savoir où il en est.
-          </p>
-          <ul className="landing-category-list">
-            <li><Icon name="check-circle" />Vue d&apos;ensemble de toute la promotion</li>
-            <li><Icon name="check-circle" />Rythme d&apos;alternance de l&apos;école appliqué automatiquement</li>
-            <li><Icon name="check-circle" />Suivi des candidatures de chaque alternant</li>
-          </ul>
-          <QuoteCtaButton className="landing-nav-cta landing-category-cta--btn" location="category_ecoles" icon="message-circle">Contacter un expert</QuoteCtaButton>
-        </Reveal>
-
-        <Reveal id="etudiants" className="landing-category">
-          <div className="landing-category-icon"><Icon name="list-checks" /></div>
-          <h2 className="landing-category-title">Étudiants en alternance</h2>
-          <p className="landing-category-text">
-            Chaque étudiant garde son rythme d&apos;alternance, ses
-            candidatures et ses documents au même endroit, prêts à temps.
-            Vous suivez sa progression sans avoir à la lui demander.
-          </p>
-          <ul className="landing-category-list">
-            <li><Icon name="check-circle" />Un tableau pour suivre chaque candidature</li>
-            <li><Icon name="check-circle" />CV et lettre de motivation générés pour chaque offre</li>
-            <li><Icon name="check-circle" />Un CV structuré pour passer les ATS</li>
-          </ul>
-          <Link href="/signup" className="landing-category-cta">Créer mon compte <Icon name="chevron-right" /></Link>
-        </Reveal>
-
-        <Reveal className="landing-category">
-          <div className="landing-category-icon"><Icon name="file-check-2" /></div>
-          <h2 className="landing-category-title">Un accès direct à votre promotion</h2>
-          <p className="landing-category-text">
-            Les entreprises partenaires consultent directement le
-            trombinoscope de la promotion et contactent les profils qui
-            les intéressent, sans que vos équipes aient à envoyer des
-            candidatures une par une.
-          </p>
-          <ul className="landing-category-list">
-            <li><Icon name="check-circle" />Trombinoscope de toute l&apos;école, toutes promotions confondues</li>
-            <li><Icon name="check-circle" />Prise de contact directe entre entreprise et étudiant</li>
-            <li><Icon name="check-circle" />Suivi des recrutements en alternance</li>
-          </ul>
-          <span className="landing-category-cta landing-category-cta--soon">Bientôt disponible</span>
-        </Reveal>
-      </section>
-
       <section className="landing-showcase">
-        <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
-          <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Votre matching sans effort</h3>
-            <p className="landing-showcase-body">
-              Altora se connecte aux job boards, filtre les entreprises
-              qui recrutent vraiment, et ne propose à l&apos;apprenant
-              que les offres qui lui correspondent.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <MatchingAnimation />
-          </div>
-        </Reveal>
-
         <Reveal className="landing-showcase-row landing-showcase-row--annuaire">
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">L&apos;annuaire de votre promotion ouvert aux recruteurs</h2>
             <p className="landing-showcase-body">
-              Vos entreprises partenaires consultent directement le
-              trombinoscope de toute l&apos;école, toutes promotions
-              confondues, et contactent les profils qui les intéressent
-              sans intermédiaire.
+              Vos entreprises partenaires consultent le trombinoscope de
+              toute l&apos;école, toutes promotions confondues, et contactent
+              directement les profils qui les intéressent. Vos équipes
+              n&apos;envoient plus les candidatures une par une.
             </p>
           </div>
           <div className="landing-showcase-visual">
             <TalentStack />
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">Le matching suit vos règles</h3>
+            <p className="landing-showcase-body">
+              Altora récupère les offres d&apos;alternance, écarte celles qui
+              ne correspondent ni au rythme que vous avez défini ni à vos
+              villes d&apos;implantation, et ne présente à l&apos;apprenant que
+              ce qui reste.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <MatchingAnimation />
           </div>
         </Reveal>
 
@@ -425,6 +381,111 @@ export default function LandingPage() {
           </CalendarSyncProvider>
         </Reveal>
 
+        <Reveal className="landing-showcase-row landing-showcase-row--ats">
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">Chaque candidature prête avant l&apos;envoi</h3>
+            <p className="landing-showcase-body">
+              Altora commence par expliquer à l&apos;alternant ce qu&apos;est
+              un ATS et comment reformuler son CV et sa lettre de motivation
+              pour le passer. Pour chaque fiche de poste, l&apos;IA retravaille
+              ensuite son CV pour qu&apos;il corresponde parfaitement à
+              l&apos;offre, réécrit sa lettre de motivation dans un format
+              idéal, et prépare si besoin le mail à envoyer au recruteur.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-match-card">
+              <CountUpPercent value={84} />
+              <div className="landing-match-label">de compatibilité ATS avec l&apos;offre</div>
+              <ul className="landing-match-notes">
+                <li className="is-positive"><Icon name="check-circle" />Suite Adobe, CRM et gestion de campagnes maîtrisés</li>
+                <li className="is-positive"><Icon name="check-circle" />Disponibilité alignée avec la date de début de l&apos;offre</li>
+                <li className="is-warning"><Icon name="circle-help" />Aucune certification Adobe mentionnée</li>
+                <li className="is-warning"><Icon name="circle-help" />Ne maîtrise pas l&apos;espagnol, demandé dans l&apos;offre</li>
+                <li className="is-ai"><Icon name="sparkles" />Verbes d&apos;action renforcés : administre, pilote, anime</li>
+                <li className="is-ai"><Icon name="sparkles" />Compétences réordonnées par pertinence pour ce poste</li>
+              </ul>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-showcase-row landing-showcase-row--priorise">
+          <div className="landing-showcase-text">
+            <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
+            <p className="landing-showcase-body">
+              Altora analyse en continu les candidatures de la promotion et
+              suggère les actions à mener en priorité, pour accompagner chaque
+              étudiant avant qu&apos;il ne décroche.
+            </p>
+          </div>
+          <div className="landing-showcase-visual">
+            <div className="landing-copilot-card">
+              <div className="landing-copilot-item landing-copilot-item--positive">
+                <Icon name="check-circle" />
+                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
+              </div>
+              <div className="landing-copilot-item landing-copilot-item--warning">
+                <Icon name="target" />
+                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
+              </div>
+              <div className="landing-copilot-item landing-copilot-item--urgent">
+                <Icon name="circle-alert" />
+                <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="landing-features-section">
+          <h2 className="landing-features-title">Pensé pour durer</h2>
+          <p className="landing-features-subtitle">
+            Une base technique solide, pensée pour accompagner votre école
+            sur la durée, pas seulement pour la démo.
+          </p>
+          <div className="landing-features">
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="lock" /></div>
+              <h3 className="landing-feature-title">Sécurité by design</h3>
+              <p className="landing-feature-text">Données hébergées et traitées en conformité RGPD, accès limité à l&apos;équipe pédagogique et à l&apos;étudiant concerné.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="refresh-cw" /></div>
+              <h3 className="landing-feature-title">Toujours synchronisé</h3>
+              <p className="landing-feature-text">Offres et outils existants de l&apos;école synchronisés automatiquement, sans ressaisie manuelle.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="sparkles" /></div>
+              <h3 className="landing-feature-title">Intelligence transparente</h3>
+              <p className="landing-feature-text">Chaque score de matching détaille ce qui le fait monter ou baisser, jamais une boîte noire.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="download" /></div>
+              <h3 className="landing-feature-title">Vos données vous appartiennent</h3>
+              <p className="landing-feature-text">Export complet disponible à tout moment depuis l&apos;espace admin.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="user-cog" /></div>
+              <h3 className="landing-feature-title">Confidentialité totale</h3>
+              <p className="landing-feature-text">École, étudiant, entreprise : chacun ne voit que ce qui le concerne, jamais plus.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="plus" /></div>
+              <h3 className="landing-feature-title">Toujours à jour</h3>
+              <p className="landing-feature-text">De nouvelles fonctionnalités livrées en continu, sans coût supplémentaire.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="monitor" /></div>
+              <h3 className="landing-feature-title">Disponible partout</h3>
+              <p className="landing-feature-text">Une plateforme accessible à tout moment, hébergée sur une infrastructure fiable.</p>
+            </div>
+            <div className="landing-feature">
+              <div className="landing-feature-icon"><Icon name="mail" /></div>
+              <h3 className="landing-feature-title">Un accompagnement humain</h3>
+              <p className="landing-feature-text">Une équipe disponible pour vous accompagner dans la prise en main d&apos;Altora.</p>
+            </div>
+          </div>
+        </Reveal>
+
         <Reveal className="landing-showcase-row landing-showcase-row--roster">
           <div className="landing-showcase-text">
             <h3 className="landing-showcase-title">Une vue d&apos;ensemble fiable, pas un outil de surveillance</h3>
@@ -502,123 +563,13 @@ export default function LandingPage() {
             </div>
           </div>
         </Reveal>
-
-        <Reveal className="landing-showcase-row landing-showcase-row--ats">
-          <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">Chaque candidature prête avant l&apos;envoi</h3>
-            <p className="landing-showcase-body">
-              Altora commence par expliquer à l&apos;alternant ce qu&apos;est
-              un ATS et comment reformuler son CV et sa lettre de motivation
-              pour le passer. Pour chaque fiche de poste, l&apos;IA retravaille
-              ensuite son CV pour qu&apos;il corresponde parfaitement à
-              l&apos;offre, réécrit sa lettre de motivation dans un format
-              idéal, et prépare si besoin le mail à envoyer au recruteur.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <div className="landing-match-card">
-              <CountUpPercent value={84} />
-              <div className="landing-match-label">de compatibilité ATS avec l&apos;offre</div>
-              <ul className="landing-match-notes">
-                <li className="is-positive"><Icon name="check-circle" />Suite Adobe, CRM et gestion de campagnes maîtrisés</li>
-                <li className="is-positive"><Icon name="check-circle" />Disponibilité alignée avec la date de début de l&apos;offre</li>
-                <li className="is-warning"><Icon name="circle-help" />Aucune certification Adobe mentionnée</li>
-                <li className="is-warning"><Icon name="circle-help" />Ne maîtrise pas l&apos;espagnol, demandé dans l&apos;offre</li>
-                <li className="is-ai"><Icon name="sparkles" />Verbes d&apos;action renforcés : administre, pilote, anime</li>
-                <li className="is-ai"><Icon name="sparkles" />Compétences réordonnées par pertinence pour ce poste</li>
-              </ul>
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal className="landing-showcase-row landing-showcase-row--priorise">
-          <div className="landing-showcase-text">
-            <h3 className="landing-showcase-title">L&apos;IA priorise les actions, pas seulement les chiffres</h3>
-            <p className="landing-showcase-body">
-              Altora analyse en continu les candidatures de la promotion et
-              suggère les actions à mener en priorité, pour accompagner chaque
-              étudiant avant qu&apos;il ne décroche.
-            </p>
-          </div>
-          <div className="landing-showcase-visual">
-            <div className="landing-copilot-card">
-              <div className="landing-copilot-item landing-copilot-item--positive">
-                <Icon name="check-circle" />
-                <p>8 étudiants présentent plus de 90% de compatibilité avec cette nouvelle offre.</p>
-              </div>
-              <div className="landing-copilot-item landing-copilot-item--warning">
-                <Icon name="target" />
-                <p>12 étudiants n&apos;ont envoyé aucune candidature depuis 10 jours : proposez-leur ces 5 offres adaptées.</p>
-              </div>
-              <div className="landing-copilot-item landing-copilot-item--urgent">
-                <Icon name="circle-alert" />
-                <p><strong>Thomas</strong> n&apos;a obtenu aucun entretien malgré 20 candidatures : une prise de contact individuelle est recommandée.</p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal className="landing-features-section">
-          <h2 className="landing-features-title">Pensé pour durer</h2>
-          <p className="landing-features-subtitle">
-            Une base technique solide, pensée pour accompagner votre école
-            sur la durée, pas seulement pour la démo.
-          </p>
-          <div className="landing-features">
-            <div className="landing-feature">
-              <div className="landing-feature-icon"><Icon name="lock" /></div>
-              <h3 className="landing-feature-title">Sécurité by design</h3>
-              <p className="landing-feature-text">Données hébergées et traitées en conformité RGPD, accès limité à l&apos;équipe pédagogique et à l&apos;étudiant concerné.</p>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon"><Icon name="refresh-cw" /></div>
-              <h3 className="landing-feature-title">Toujours synchronisé</h3>
-              <p className="landing-feature-text">Job boards et outils existants de l&apos;école synchronisés automatiquement, sans ressaisie manuelle.</p>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon"><Icon name="sparkles" /></div>
-              <h3 className="landing-feature-title">Intelligence transparente</h3>
-              <p className="landing-feature-text">Chaque score de matching détaille ce qui le fait monter ou baisser, jamais une boîte noire.</p>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon"><Icon name="download" /></div>
-              <h3 className="landing-feature-title">Vos données vous appartiennent</h3>
-              <p className="landing-feature-text">Export complet disponible à tout moment depuis l&apos;espace admin.</p>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon"><Icon name="user-cog" /></div>
-              <h3 className="landing-feature-title">Confidentialité totale</h3>
-              <p className="landing-feature-text">École, étudiant, entreprise : chacun ne voit que ce qui le concerne, jamais plus.</p>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon"><Icon name="plus" /></div>
-              <h3 className="landing-feature-title">Toujours à jour</h3>
-              <p className="landing-feature-text">De nouvelles fonctionnalités livrées en continu, sans coût supplémentaire.</p>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon"><Icon name="monitor" /></div>
-              <h3 className="landing-feature-title">Disponible partout</h3>
-              <p className="landing-feature-text">Une plateforme accessible à tout moment, hébergée sur une infrastructure fiable.</p>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon"><Icon name="mail" /></div>
-              <h3 className="landing-feature-title">Un accompagnement humain</h3>
-              <p className="landing-feature-text">Une équipe disponible pour vous accompagner dans la prise en main d&apos;Altora.</p>
-            </div>
-          </div>
-        </Reveal>
       </section>
 
-      <Reveal id="tarifs" className="pricing-hero">
-        <h2 className="pricing-title">Un tarif pour chaque acteur de l&apos;alternance</h2>
-        <p className="landing-subtitle">
-          L&apos;accès étudiant est inclus, sans coût pour l&apos;école.
-          L&apos;école n&apos;est facturée qu&apos;à partir du moment où un
-          alternant est placé, avec un accompagnement humain disponible en option.
-        </p>
-      </Reveal>
-
-      <Reveal className="pricing-plans pricing-plans--merged">
+      {/* id="tarifs" vit ici depuis que l'en-tête tarifaire a été
+          supprimé : elle ne faisait que redire la facturation au résultat,
+          déjà portée par le premier temps fort de la page. Le footer
+          pointe sur cette ancre, elle doit rester atteignable. */}
+      <Reveal id="tarifs" className="pricing-plans pricing-plans--merged">
         <div className="pricing-plan pricing-plan--merged">
           <h2 className="landing-closing-title">Prêt à améliorer le taux de placement de votre promotion ?</h2>
           <p className="landing-closing-text">
