@@ -226,12 +226,11 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">À faire</h3>
               </div>
               <p className="landing-feature-text">
-                Chaque apprenant suit ses candidatures sur un tableau
-                unique, avec les offres qu&apos;il ajoute et celles
-                suggérées par l&apos;école. L&apos;équipe pédagogique
-                s&apos;appuie sur ce même tableau pour ses points de suivi :
-                où il en est, à quoi il a déjà postulé, s&apos;il faut
-                relancer.
+                {/* Les quatre legendes du carrousel suivent la meme forme :
+                    une phrase, une quinzaine de mots, et a chaque fois ce
+                    que l'outil apporte aux deux cotes. */}
+                Un même tableau pour les candidatures de l&apos;apprenant et
+                les points de suivi de l&apos;équipe pédagogique.
               </p>
             </div>
             </div>
@@ -244,10 +243,8 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Boîte de réception</h3>
               </div>
               <p className="landing-feature-text">
-                Les rappels de candidature arrivent directement dans la
-                boîte de réception de l&apos;apprenant. L&apos;école y
-                dispose du même canal direct vers chaque apprenant, sans
-                dépendre de sa messagerie personnelle.
+                Un canal direct entre l&apos;école et chaque apprenant, où
+                arrivent aussi ses rappels de candidature.
               </p>
             </div>
             </div>
@@ -260,9 +257,9 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Calendrier</h3>
               </div>
               <p className="landing-feature-text">
-                Deadlines, entretiens, rentrées, périodes en entreprise et
-                suivi pédagogique : un seul calendrier, partagé par
-                l&apos;apprenant et l&apos;école.
+                Deadlines, entretiens, périodes en entreprise et suivi
+                pédagogique dans un calendrier partagé par l&apos;apprenant et
+                l&apos;école.
               </p>
             </div>
             </div>
@@ -379,9 +376,12 @@ export default function LandingPage() {
                 <h3 className="landing-showcase-caption-title">Documents</h3>
               </div>
               <p className="landing-feature-text">
+                {/* Le stockage local est remonte dans "Pense pour durer" :
+                    c'est un argument de confiance, il porte plus dans la
+                    section qui traite des fondations que noye dans une
+                    legende de carrousel. */}
                 CV, lettres de motivation, cours et documents administratifs
-                partagés entre apprenant et école au même endroit, stockés
-                localement et jamais transmis à nos serveurs.
+                partagés entre apprenant et école au même endroit.
               </p>
             </div>
             </div>
@@ -407,9 +407,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">Aucune candidature envoyée au hasard</h2>
             <p className="landing-showcase-body">
-              Pour chaque offre visée, le CV et la lettre de motivation sont
-              retravaillés ensemble et taillés pour passer les filtres
-              automatiques des recruteurs.
+              Pour chaque offre, le CV et la lettre de motivation sont
+              retravaillés sur mesure pour passer les filtres automatiques des
+              recruteurs.
             </p>
           </div>
           <div className="landing-showcase-visual">
@@ -431,8 +431,8 @@ export default function LandingPage() {
         <Reveal className="landing-features-section">
           <h2 className="landing-features-title">Pensé pour durer</h2>
           <p className="landing-features-subtitle">
-            Une base technique solide, pensée pour accompagner votre école
-            sur la durée, pas seulement pour la démo.
+            Sécurité, confidentialité et maîtrise de vos données : des
+            fondations, pas des arguments de démo.
           </p>
           <div className="landing-features">
             <div className="landing-feature">
@@ -452,8 +452,12 @@ export default function LandingPage() {
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="download" /></div>
+              {/* Huit cartes pour quatre colonnes : ajouter le stockage
+                  local en neuvieme laissait une carte orpheline sur une
+                  troisieme ligne. Il rejoint donc l'export, meme promesse
+                  au fond, vos donnees restent les votres. */}
               <h3 className="landing-feature-title">Vos données vous appartiennent</h3>
-              <p className="landing-feature-text">Export complet disponible à tout moment depuis l&apos;espace admin.</p>
+              <p className="landing-feature-text">Documents stockés localement et jamais transmis à nos serveurs, export complet à tout moment depuis l&apos;espace admin.</p>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon"><Icon name="user-cog" /></div>
@@ -509,9 +513,9 @@ export default function LandingPage() {
           <div className="landing-showcase-text">
             <h2 className="landing-showcase-title">Suivre sans surveiller</h2>
             <p className="landing-showcase-body">
-              Chaque pastille reprend les couleurs du tableau de suivi sans jamais
-              détailler les démarches, de quoi ouvrir la conversation avec un
-              apprenant plutôt que la remplacer.
+              Chaque pastille reprend les couleurs du tableau de suivi, de quoi
+              voir en un coup d&apos;œil l&apos;état d&apos;avancement de votre
+              promotion.
             </p>
           </div>
           <div className="landing-showcase-visual">
