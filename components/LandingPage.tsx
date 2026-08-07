@@ -195,11 +195,12 @@ export default function LandingPage() {
 
         <Reveal className="landing-showcase-row landing-showcase-row--jobboards">
           <div className="landing-showcase-text">
-            <h2 className="landing-showcase-title">Fini les offres qui ne collent pas</h2>
+            <h2 className="landing-showcase-title">Vos apprenants ne voient que des offres compatibles</h2>
             <p className="landing-showcase-body">
-              Vos apprenants ne perdent plus de candidatures sur des offres qui
-              ne pouvaient pas aboutir, et vos équipes ne trient plus à leur
-              place.
+              Altora récupère les offres d&apos;alternance, écarte celles qui ne
+              correspondent ni au rythme que vous avez défini ni à vos villes
+              d&apos;implantation, et ne présente à l&apos;apprenant que ce qui
+              reste.
             </p>
           </div>
           <div className="landing-showcase-visual">
