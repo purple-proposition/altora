@@ -5519,6 +5519,11 @@ legend.field-label { padding: 0; }
    (background/border/shadow/padding) as .landing-kanban-board and the
    other mockups so all 4 carousel slides match. */
 .landing-documents-board {
+  /* Repere de la feuille en vol, qui traverse le plateau d'un dossier a
+     l'autre. Elle doit vivre sur le plateau et non dans une carte : les
+     cartes ont un debordement cache et la rogneraient des qu'elle en
+     sortirait. */
+  position: relative;
   width: 100%;
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -5540,6 +5545,26 @@ legend.field-label { padding: 0; }
   align-items: center;
   justify-content: center;
 }
+/* Feuille en transit. Meme gabarit qu'une couche d'eventail, soit 60 %
+   sur 84 % d'une vignette de 56 pixels, pour qu'elle se confonde avec la
+   pile qu'elle quitte et celle qu'elle rejoint. Le leger pivot en fin de
+   course evite le rendu de vignette qui glisse en ligne droite. */
+.landing-documents-vol {
+  position: absolute;
+  z-index: 4;
+  width: 34px;
+  height: 47px;
+  border-radius: 6px;
+  overflow: hidden;
+  pointer-events: none;
+  transition: transform 0.7s var(--ease-reveal);
+}
+.landing-documents-vol .doc-thumb-sheet { width: 100%; height: 100%; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-documents-vol { transition: none; }
+}
+
 .landing-documents-board .folder-empty { font-size: 9px; padding: var(--space-8); text-align: center; }
 .landing-documents-board .doc-thumb-grid { padding: 0; }
 .landing-documents-board .doc-thumb-bare { width: 56px; height: 56px; }

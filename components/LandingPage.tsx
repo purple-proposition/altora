@@ -15,6 +15,7 @@ import QuoteCtaButton from '@/components/QuoteCtaButton';
 import FaqItem from '@/components/FaqItem';
 import RosterAnimation from '@/components/RosterAnimation';
 import CopilotAnimation from '@/components/CopilotAnimation';
+import DocumentsAnimation from '@/components/DocumentsAnimation';
 
 // Public marketing landing page, shown at "/" only when signed out (see
 // app/(tracker)/page.tsx and middleware.ts). Built entirely from the
@@ -296,111 +297,7 @@ export default function LandingPage() {
             </div>
 
             <div className="landing-showcase-carousel-item" key="documents">
-            <div className="documents-grid landing-documents-board">
-              <div className="folder-card">
-                <div className="folder-card-header">
-                  <Icon name="folder" />
-                  <span className="folder-card-name">Mes CV</span>
-                </div>
-                <div className="folder-card-body">
-                  <div className="doc-thumb-grid">
-                    <div className="doc-thumb-bare">
-                      <div className="doc-thumb-sheet">
-                        <div className="doc-thumb-page">
-                          <span className="doc-thumb-page-title" />
-                          <span className="doc-thumb-page-line" />
-                          <span className="doc-thumb-page-line" />
-                          <span className="doc-thumb-page-line doc-thumb-page-line--short" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="folder-card">
-                <div className="folder-card-header">
-                  <Icon name="folder" />
-                  <span className="folder-card-name">Mes lettres de motivation</span>
-                </div>
-                <div className="folder-card-body">
-                  <p className="folder-empty">Aucune lettre générée pour le moment.</p>
-                </div>
-              </div>
-              <div className="folder-card">
-                <div className="folder-card-header">
-                  <Icon name="folder" />
-                  <span className="folder-card-name">Cours</span>
-                </div>
-                <div className="folder-card-body">
-                  <div className="doc-thumb-grid">
-                    <div className="doc-thumb-bare doc-thumb-fan">
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--0">
-                        <div className="doc-thumb-sheet">
-                          <div className="doc-thumb-page">
-                            <span className="doc-thumb-page-title" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--1">
-                        <div className="doc-thumb-sheet">
-                          <div className="doc-thumb-page">
-                            <span className="doc-thumb-page-title" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="folder-card">
-                <div className="folder-card-header">
-                  <Icon name="folder" />
-                  <span className="folder-card-name">Administratif</span>
-                </div>
-                <div className="folder-card-body">
-                  <div className="doc-thumb-grid">
-                    <div className="doc-thumb-bare doc-thumb-fan">
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--0">
-                        <div className="doc-thumb-sheet">
-                          <div className="doc-thumb-page">
-                            <span className="doc-thumb-page-title" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--1">
-                        <div className="doc-thumb-sheet">
-                          <div className="doc-thumb-page">
-                            <span className="doc-thumb-page-title" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="doc-thumb-fan-layer doc-thumb-fan-layer--2">
-                        <div className="doc-thumb-sheet">
-                          <div className="doc-thumb-page">
-                            <span className="doc-thumb-page-title" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line" />
-                            <span className="doc-thumb-page-line doc-thumb-page-line--short" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <DocumentsAnimation />
             <div className="landing-showcase-caption">
               <div className="landing-showcase-caption-header">
                 <div className="landing-feature-icon"><Icon name="folder" /></div>
