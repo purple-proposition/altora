@@ -5,7 +5,7 @@ import { useCalendarSync } from '@/components/CalendarSyncContext';
 
 // Same "story" the calendar always told (an exam week, a break, a
 // training week, a business-days-only company period), anchored to real
-// "today" via day offsets instead of hardcoded dates — so the
+// "today" via day offsets instead of hardcoded dates, so the
 // "aujourd'hui" marker (and the whole narrative around it) is always
 // correct for whoever's viewing the page, no more manual bumping every
 // time the date moves on. The interview event itself is no longer one

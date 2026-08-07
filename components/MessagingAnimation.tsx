@@ -8,17 +8,17 @@ import Icon from '@/components/Icon';
 // board scrolls into view, then repeats forever instead of settling into
 // a final state. One list, one parent (unlike the kanban board's three
 // columns), so a status change never causes React to remount the DOM
-// node into a different parent — read/unread is driven purely by
+// node into a different parent : read/unread is driven purely by
 // declarative state + CSS transitions, no imperative DOM needed there.
 //
 // Each cycle: every currently-unread message is marked read one at a
 // time, oldest first; then the oldest read message (the one sitting at
-// the bottom) is deleted — slid right out of the board's own clipped
+// the bottom) is deleted : slid right out of the board's own clipped
 // edge while reddening over the same transition, a manual FLIP glides
 // the remaining messages up to close the gap; then a fresh unread
 // message fades/slides in at the top. After the first cycle there's
 // usually only one unread message left, so later cycles mark just that
-// one — the loop is self-consistent rather than assuming exactly two
+// one : the loop is self-consistent rather than assuming exactly two
 // forever.
 type Avatar = { kind: 'person'; src: string; alt: string } | { kind: 'icon'; icon: string } | { kind: 'logo' };
 
@@ -112,7 +112,7 @@ export default function MessagingAnimation() {
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const seenIdsRef = useRef<Set<string>>(new Set(messages.map((m) => m.id)));
   // ids the layout effect below is allowed to FLIP-reposition for the
-  // render about to commit, and their pre-mutation rects — same scoped
+  // render about to commit, and their pre-mutation rects : same scoped
   // pattern as KanbanAnimation, so a message still animating out from
   // one commit is never re-measured mid-flight by an unrelated one.
   const movedIdsRef = useRef<Set<string>>(new Set());
@@ -120,7 +120,7 @@ export default function MessagingAnimation() {
   // carrousel parent réécrit un translateX à chaque frame et les deux
   // moitiés d'un FLIP sont séparées par une frontière de commit React.
   // Aujourd'hui seul dy est utilisé ici, donc une translation purement
-  // horizontale ne corromprait rien — mais rien ne garantit que
+  // horizontale ne corromprait rien, mais rien ne garantit que
   // l'accrochage reste strictement horizontal à l'avenir, et
   // addNewMessage passe TOUS les messages existants dans movedIds : le
   // moindre composant vertical partirait toute la liste en FLIP parasite.
@@ -197,7 +197,7 @@ export default function MessagingAnimation() {
     function addNewMessage() {
       const fresh = makeMessage(cycleRef.current++, false);
       // The existing messages need to FLIP-glide down to make room, in
-      // step with the new one fading in above them — without listing
+      // step with the new one fading in above them : without listing
       // their ids as moved, they'd just snap straight to their new
       // (lower) position instantly, which is what read as choppy rather
       // than one organic motion.
@@ -228,14 +228,14 @@ export default function MessagingAnimation() {
   // Same scoped FLIP as KanbanAnimation: only ids in movedIdsRef get
   // repositioned (the messages that shifted up to close the gap left by
   // a removal), and any id never seen before gets a fade/slide-in
-  // entrance instead — nothing else is touched.
+  // entrance instead : nothing else is touched.
   useLayoutEffect(() => {
     const board = boardRef.current;
     if (!board) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const moved = movedIdsRef.current;
     const firsts = firstRectsRef.current;
-    // Origine fraîche, lue dans cette tâche-ci — voir firstRectsRef.
+    // Origine fraîche, lue dans cette tâche-ci : voir firstRectsRef.
     const origin = board.getBoundingClientRect();
 
     board.querySelectorAll<HTMLElement>('[data-msg-id]').forEach((msgEl) => {

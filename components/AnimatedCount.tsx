@@ -4,12 +4,12 @@ import { useRef } from 'react';
 
 // A small odometer-style digit swap: the new number slides in from the
 // bottom when the count increases, from the top when it decreases (the
-// standard convention for counters). Deliberately simple — a `key`-driven
+// standard convention for counters). Deliberately simple : a `key`-driven
 // remount plus a plain CSS animation on the incoming digit, no imperative
 // rAF/timeout choreography. An earlier version drove this by hand
 // (measuring rects, toggling inline styles across two nested rAFs) and
-// under rapid successive value changes — exactly what happens here, since
-// every kanban beat can touch a column's count — it could end up leaving
+// under rapid successive value changes : exactly what happens here, since
+// every kanban beat can touch a column's count : it could end up leaving
 // a digit permanently invisible. A CSS animation triggered by React's own
 // key-based remount can't get stuck like that: each mount runs its
 // animation independently and there's no shared imperative state to race.

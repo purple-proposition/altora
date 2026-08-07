@@ -144,21 +144,21 @@ export default function LandingPage() {
         </div>
       </main>
 
-      {/* Leads with the billing model, not a feature, right after the hero —
+      {/* Leads with the billing model, not a feature, right after the hero:
           per Altora's differentiation strategy, the pay-on-placement model
           is the one advantage an installed competitor can't copy without
           cannibalizing its own recurring revenue, whereas the suivi/CV/
           matching features further down are table-stakes any competitor
           already covers. Deliberately qualitative (no % or fee amount):
           the real commercial terms aren't finalized yet, only the
-          mechanism — billed on result, not on access — is. */}
+          mechanism (billed on result, not on access) is. */}
       <Reveal className="landing-risk-banner">
         <div className="landing-risk-banner-icon"><Icon name="shield-check" /></div>
         <h2 className="landing-risk-banner-title">Vous ne payez qu&apos;un alternant placé</h2>
         <p className="landing-risk-banner-text">
           Aucun coût d&apos;entrée, aucun engagement à la signature. Altora ne
           facture votre école qu&apos;à partir du moment où un alternant est
-          effectivement placé — jamais pour un simple accès à la plateforme.
+          effectivement placé, jamais pour un simple accès à la plateforme.
         </p>
         <ul className="landing-risk-banner-list">
           <li><Icon name="check-circle" />Zéro risque financier pour tester la plateforme sur votre promotion</li>
@@ -630,7 +630,7 @@ export default function LandingPage() {
           <h3 className="pricing-faq-question">Comment est calculé le prix ?</h3>
           <p className="pricing-faq-answer">
             Altora ne facture votre école qu&apos;à partir du moment où un
-            alternant est effectivement placé — jamais pour un accès à la
+            alternant est effectivement placé, jamais pour un accès à la
             plateforme. Contactez-nous pour un chiffrage.
           </p>
         </div>

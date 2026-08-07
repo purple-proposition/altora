@@ -19,8 +19,8 @@ import { useCalendarSync } from '@/components/CalendarSyncContext';
 // ids it's touching (the one moving, plus any siblings that shift to fill
 // the gap it leaves behind) via commit()'s `movedIds` argument. Only those
 // ids get measured and transformed. Earlier versions re-measured every card
-// on the board on every state change — including cards mid-transition from
-// an unrelated, still-in-flight beat — which could catch a card at its
+// on the board on every state change (including cards mid-transition from
+// an unrelated, still-in-flight beat), which could catch a card at its
 // current animated (not resting) position and "correct" it against the
 // wrong baseline, sending it to an absurd offset. Scoping to exactly the
 // ids each beat names removes that class of bug entirely: a card is only
@@ -34,7 +34,7 @@ type CardData = {
   company: string;
   location: string;
   interviewPill?: string;
-  // The card's own displayed color — kept as the column it came from while
+  // The card's own displayed color : kept as the column it came from while
   // sliding, only switched to the destination color once it has actually
   // landed (see the recolor() calls in beat3/beat4). recolor() is a plain
   // DOM class swap, not a state commit: it never touches `columns`, so it
@@ -61,7 +61,7 @@ const POOL: Template[] = [
 
 const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 // Fixed day-of-month anchors + hours: deterministic, not random, so the
-// same dates show up all month regardless of when the page is loaded —
+// same dates show up all month regardless of when the page is loaded -
 // each anchor is nudged forward to the nearest weekday.
 const DAY_ANCHORS = [4, 7, 11, 14, 19];
 const HOURS = ['18h00', '10h30', '11h00', '14h00', '9h30'];
@@ -69,7 +69,7 @@ const HOURS = ['18h00', '10h30', '11h00', '14h00', '9h30'];
 type PillInfo = { text: string; day: number };
 
 // `day` (the nudged, real day-of-month) is what HeroCalendar's own
-// CalendarSyncContext lookup matches against — both mockups compute the
+// CalendarSyncContext lookup matches against : both mockups compute the
 // nudge from the same DAY_ANCHORS, so they always agree on which real
 // date an interview pill refers to.
 function buildPillDates(): PillInfo[] {
@@ -97,7 +97,7 @@ function makeCard(cycle: number, variant: Variant): CardData {
   return { id: `${t.company}-${t.title}-${cycle}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'), variant, ...t };
 }
 
-// Starting point: 2 in "À faire", 3 in "Envoyé", 2 in "Entretien" — the
+// Starting point: 2 in "À faire", 3 in "Envoyé", 2 in "Entretien" : the
 // loop below always returns here exactly, so it can repeat forever
 // without ever drifting or needing a reset.
 function initialColumns(): Columns {
@@ -112,7 +112,7 @@ const BEAT_PAUSE = 2600;
 const EXIT_DURATION = 400;
 const MOVE_DURATION = 400;
 // recolor() must fire strictly after the move's own inline transition has
-// been released (see releaseTransitionAfter) — releasing it is what lets
+// been released (see releaseTransitionAfter) : releasing it is what lets
 // the CSS class's "background 1s linear" transition actually take over.
 // Firing recolor at exactly MOVE_DURATION races that release (which
 // itself lands a beat late, via transitionend + a small fallback
@@ -203,7 +203,7 @@ export default function KanbanAnimation() {
   const calendarSync = useCalendarSync();
 
   // The two interview cards present at mount need to register with the
-  // calendar too, not just the ones beat3 adds later — otherwise the
+  // calendar too, not just the ones beat3 adds later : otherwise the
   // calendar starts empty until the first cycle catches up.
   useEffect(() => {
     const initialInterview = columns.interview;
@@ -216,7 +216,7 @@ export default function KanbanAnimation() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Mutable pipeline state read/written synchronously by the beat loop —
+  // Mutable pipeline state read/written synchronously by the beat loop -
   // React state (`columns`) mirrors it for rendering, but the loop's own
   // scheduling never depends on when a render actually commits.
   const pipelineRef = useRef<Columns>(columns);
@@ -225,18 +225,18 @@ export default function KanbanAnimation() {
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   // ids the FLIP effect is allowed to touch for the commit about to
-  // render, and their pre-mutation ("First") rects — populated by
+  // render, and their pre-mutation ("First") rects : populated by
   // commit() right before it mutates, consumed and cleared by the effect
   // right after. Any card whose id isn't in this set is left completely
   // untouched by that render, however many other cards changed around it.
   const movedIdsRef = useRef<Set<string>>(new Set());
-  // Coordonnées relatives au plateau, pas un DOMRect viewport — voir
+  // Coordonnées relatives au plateau, pas un DOMRect viewport : voir
   // l'explication dans commit().
   const firstRectsRef = useRef<Map<string, { left: number; top: number }>>(new Map());
-  // ids ever rendered — anything not in here yet is a brand-new card and
+  // ids ever rendered : anything not in here yet is a brand-new card and
   // gets the fade/scale-in entrance instead of a FLIP move. Pre-seeded
   // with the starting cards so the mockup is already fully in place,
-  // static, the moment it scrolls into view — only offers added later by
+  // static, the moment it scrolls into view : only offers added later by
   // the loop itself (beat1) get the entrance animation.
   const seenIdsRef = useRef<Set<string>>(new Set([...columns.todo, ...columns.sent, ...columns.interview].map((c) => c.id)));
 
@@ -251,7 +251,7 @@ export default function KanbanAnimation() {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // `movedIds` lists every card this particular change is allowed to
-    // reposition — the one moving, plus any siblings left behind in its
+    // reposition : the one moving, plus any siblings left behind in its
     // old column that shift to close the gap. Rects for those ids are
     // captured here, synchronously, before the mutation, so the FLIP
     // effect has an accurate "First" position to animate from.
@@ -292,12 +292,12 @@ export default function KanbanAnimation() {
     // "Générer CV" collapse are driven declaratively off card.variant in
     // the Card component/CSS, so they survive a card remounting into a
     // different column's own <div className="card-list"> (React treats
-    // that as a fresh element, not the same node moved — any styling
+    // that as a fresh element, not the same node moved : any styling
     // applied by directly poking the DOM would be lost the moment that
     // happens, then reappear once poked again, which is exactly the
     // flash previously seen on "Générer CV" when a card changed column).
     // Passing no movedIds means this render leaves every card's position
-    // alone — safe now that the FLIP effect only ever touches ids it's
+    // alone : safe now that the FLIP effect only ever touches ids it's
     // explicitly told to.
     function recolor(id: string, variant: Variant) {
       commit((cols) => {
@@ -310,7 +310,7 @@ export default function KanbanAnimation() {
 
     // Takes the leaving card out of flex flow immediately (position
     // fixed to its current on-screen spot via absolute positioning),
-    // then fades it in place — the SAME instant, not after. Pulling it
+    // then fades it in place : the SAME instant, not after. Pulling it
     // out of flow is what lets the remaining cards in that column
     // reflow to their final position right away too, so both the fade
     // and the sibling shift run in the same 0.4s window instead of the
@@ -340,7 +340,7 @@ export default function KanbanAnimation() {
       leavingEl.style.transform = 'scale(0.92)';
 
       // Pulling the leaving card out of flow just reflowed the siblings
-      // synchronously — measure their new position now and FLIP them
+      // synchronously : measure their new position now and FLIP them
       // from the rects captured above, in parallel with the fade.
       siblingIds.forEach((sid) => {
         const el = board?.querySelector<HTMLElement>(`[data-flip-id="${sid}"]`);
@@ -363,7 +363,7 @@ export default function KanbanAnimation() {
       timeoutsRef.current.push(setTimeout(done, EXIT_DURATION));
     }
 
-    // Which card within a column moves next — not always the oldest
+    // Which card within a column moves next : not always the oldest
     // (top) one; alternating between top/middle/bottom keeps it from
     // reading as a fixed, predictable conveyor.
     function pickIndex(len: number) {
@@ -377,10 +377,10 @@ export default function KanbanAnimation() {
     // A fixed 4-beat loop, always returning to the exact starting counts
     // (2 À faire / 3 Envoyé / 2 Entretien), one offer moving at a time:
     //   1. a fresh offer appears in "À faire" (3)
-    //   2. an offer already in "Entretien" leaves — Entretien drops to 1
-    //   3. an "Envoyé" offer slides into "Entretien" — back to 2, Envoyé
+    //   2. an offer already in "Entretien" leaves : Entretien drops to 1
+    //   3. an "Envoyé" offer slides into "Entretien" : back to 2, Envoyé
     //      drops to 2
-    //   4. an "À faire" offer slides into "Envoyé" — back to the starting
+    //   4. an "À faire" offer slides into "Envoyé" : back to the starting
     //      counts (2/3/2)
     function beat1() {
       commit((cols) => { cols.todo.push(makeCard(cycleRef.current++, 'slate')); });
@@ -390,12 +390,12 @@ export default function KanbanAnimation() {
       const idx = pickIndex(pipelineRef.current.interview.length);
       const placed = pipelineRef.current.interview[idx];
       const remainingIds = idsExcept(pipelineRef.current.interview, idx);
-      // Removed from the calendar the moment the card starts leaving —
+      // Removed from the calendar the moment the card starts leaving -
       // same instant as its own exit animation begins, not after.
       calendarSync?.removeEvent(placed.id);
       fadeOutAndReflow(placed.id, remainingIds, () => {
         // Siblings already sit at their final position (fadeOutAndReflow
-        // moved them there itself) — no movedIds here, this commit is
+        // moved them there itself) : no movedIds here, this commit is
         // just catching React's state up to what's already on screen.
         commit((cols) => { cols.interview.splice(idx, 1); });
         timeoutsRef.current.push(setTimeout(beat3, BEAT_PAUSE));
@@ -408,11 +408,11 @@ export default function KanbanAnimation() {
       const pillInfo = PILL_DATES[dateIdxRef.current++ % PILL_DATES.length];
       commit((cols) => {
         cols.sent.splice(idx, 1);
-        // Still amber here — recolored to green only once it lands.
+        // Still amber here : recolored to green only once it lands.
         cols.interview.push({ ...promoted, interviewPill: pillInfo.text });
       }, [...remainingIds, promoted.id]);
       // Added to the calendar at the same moment the card starts sliding
-      // into "Entretien", not once it has settled — matches beat2's exit
+      // into "Entretien", not once it has settled : matches beat2's exit
       // timing so both mockups move together.
       calendarSync?.addEvent({ id: promoted.id, day: pillInfo.day, label: promoted.company });
       timeoutsRef.current.push(setTimeout(() => {
@@ -478,7 +478,7 @@ export default function KanbanAnimation() {
       if (reduceMotion) return;
 
       // Once the transform/opacity transition below finishes, the inline
-      // `transition` is cleared back to '' — leaving it pinned to
+      // `transition` is cleared back to '' : leaving it pinned to
       // "transform ...ms ..." (or "opacity ...ms ..., transform ...ms
       // ...") would otherwise permanently shadow the CSS class's own
       // `background 1s linear` transition (inline styles always win over
@@ -500,7 +500,7 @@ export default function KanbanAnimation() {
         cardEl.style.opacity = '0';
         cardEl.style.transform = 'scale(0.92) translateY(18px)';
         // Two rAFs: one to let the "from" state above actually paint
-        // before the transition is re-enabled, one to then trigger it —
+        // before the transition is re-enabled, one to then trigger it -
         // a single rAF can land before that first paint on some
         // browsers and skip straight to the end state with no motion.
         requestAnimationFrame(() => {
@@ -540,8 +540,8 @@ export default function KanbanAnimation() {
   // La jauge (colonne fantôme de 3 cartes) est publiée comme custom
   // property, pas comme min-height inline : un style inline ne peut être
   // neutralisé que par !important, or en mobile le plateau reçoit une
-  // hauteur fixe et cette jauge — mesurée sur 3 cartes empilées à largeur
-  // étroite, donc très haute — la ferait exploser. En variable, c'est le
+  // hauteur fixe et cette jauge : mesurée sur 3 cartes empilées à largeur
+  // étroite, donc très haute : la ferait exploser. En variable, c'est le
   // CSS qui décide où elle s'applique.
   return (
     <div className="landing-kanban-board" ref={boardRef} style={boardMinHeight ? ({ '--kanban-gauge-h': `${boardMinHeight}px` } as React.CSSProperties) : undefined}>

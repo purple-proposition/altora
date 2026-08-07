@@ -8,8 +8,8 @@
   --shadow: 0 2px 8px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.05);
 
   /* Accent colors follow Tailwind's default palette (50/100/500/600) */
-  --indigo: #171717;       /* was #4f46e5 (indigo-600) — replaced site-wide per request, kept only on the "école" feature icon (see .landing-feature-icon--school) */
-  --indigo-tint: var(--bg); /* was #eef2ff (indigo-50) — neutral now, same monochrome cleanup as --indigo above */
+  --indigo: #171717;       /* was #4f46e5 (indigo-600) : replaced site-wide per request, kept only on the "école" feature icon (see .landing-feature-icon--school) */
+  --indigo-tint: var(--bg); /* was #eef2ff (indigo-50) : neutral now, same monochrome cleanup as --indigo above */
 
   --amber: #b45309;        /* amber-700 (was amber-600, failed WCAG AA on --amber-tint) */
   --amber-fill: #f59e0b;   /* amber-500 */
@@ -43,11 +43,11 @@
   --radius-input: 12px;  /* inputs, select, textarea */
   --radius-pill: 999px;  /* every pill/button/badge */
 
-  /* Spacing scale (named by their own px value, not an abstract index —
+  /* Spacing scale (named by their own px value, not an abstract index -
      e.g. --space-24 is 24px) for every fixed margin/padding/gap on the
      public landing page, instead of the same numbers written as magic
      literals at each call site. Doesn't cover the page's viewport-relative
-     grid math (calc(33.3333vw - 32px) and friends) — those constants are
+     grid math (calc(33.3333vw - 32px) and friends) : those constants are
      column-formula corrections, not spacing decisions, and stay literal. */
   --space-1: 1px;
   --space-2: 2px;
@@ -70,10 +70,10 @@
 }
 
 /* The public marketing landing page always renders in its light design
-   regardless of OS/app dark-mode preference — unlike the product itself
+   regardless of OS/app dark-mode preference : unlike the product itself
    (dashboard etc.), which still follows prefers-color-scheme/[data-theme]
    below. Re-declaring these custom properties directly on .landing
-   overrides whatever :root set for its descendants, unconditionally —
+   overrides whatever :root set for its descendants, unconditionally -
    no media query or [data-theme] check needed here, and no specificity
    contest with the :root rules below since they target a different
    (ancestor) element. */
@@ -233,15 +233,15 @@ body {
 }
 
 /* Collapsed: the sidebar's own width morphs from 280px to 84px (see
-   .sidebar above) — animating width directly, rather than a grid track via
+   .sidebar above) : animating width directly, rather than a grid track via
    grid-template-columns, is what actually glides instead of getting stuck
    (grid-template-columns transitions proved unreliable across engines).
    Text labels fade out fast (no delay) on the
    way out and fade back in with a short delay on the way in, so they never
-   sit half-legible at a half-collapsed width — same asymmetric timing idea
+   sit half-legible at a half-collapsed width : same asymmetric timing idea
    as the reference component, just done with plain opacity transitions
    instead of a spring/motion library. */
-/* Same 24px padding as expanded (not a narrower 12px) — the whole point
+/* Same 24px padding as expanded (not a narrower 12px) : the whole point
    below is that the logo/icons/avatar keep the EXACT same left inset
    (sidebar padding + the element's own padding) in both states, so nothing
    visibly shifts position when the rail collapses or expands. Centering
@@ -251,14 +251,14 @@ body {
 .sidebar--collapsed { width: 84px; padding: 24px; }
 
 /* Only padding-top is overridden (to 0, matching the avatar's own 24px gap
-   from the rail's bottom edge) — left/right stay at the base rule's 8px,
+   from the rail's bottom edge) : left/right stay at the base rule's 8px,
    same as expanded, so the logo's left edge doesn't move. gap:0 keeps the
    faded-out (opacity 0, but still flex-participating) brand text from
    adding its 8px gap on top of the logo's own width. No justify-content
    override: default flex-start already puts the logo flush at that fixed
-   left inset instead of centering it — centering was the actual source of
+   left inset instead of centering it : centering was the actual source of
    drift, not something to fix the centering math of. */
-/* padding-right:0 (not the base rule's 8px) — the logo itself is already
+/* padding-right:0 (not the base rule's 8px) : the logo itself is already
    32px, so 8px of left padding to keep the same inset as expanded (24 +
    8 = 32px) plus 8px of right padding left no room at all for the logo
    inside this narrower rail: it overflowed its own box by 8px and
@@ -266,7 +266,7 @@ body {
    the image. Dropping the right padding (brand's width isn't fixed, so
    it just grows to fit: 8px left padding + 32px logo = 40px) removes the
    crop without touching the left inset that keeps its position stable. */
-/* align-self:flex-start — .sidebar-brand is a direct child of .sidebar
+/* align-self:flex-start : .sidebar-brand is a direct child of .sidebar
    (a column flex container with default 'stretch' cross-axis sizing), so
    without this it gets stretched to the rail's full 36px content width
    regardless of its own padding, right back to not having room for the
@@ -315,7 +315,7 @@ body {
 }
 
 /* width/height stay 32px (same fixed hover-box size as before) but padding
-   is now 8px — same as the base/expanded rule — instead of 0. Combined
+   is now 8px (same as the base/expanded rule) instead of 0. Combined
    with dropping the centering below, this keeps the icon at EXACTLY the
    same left inset (sidebar padding 24 + item padding 8 = 32px from the
    rail's edge) as its expanded-state position, instead of recentering it
@@ -330,7 +330,7 @@ body {
 
 /* .sidebar-user can't share the rule above: its content is the 32px
    avatar image itself (not a 16px icon), so 8px of padding on every side
-   left no room for it in a 32px box — it overflowed and got cropped by
+   left no room for it in a 32px box : it overflowed and got cropped by
    overflow:hidden, same issue .sidebar-brand's logo had. Dropping the
    right padding (like .sidebar-brand) gives it room to grow to the width
    it actually needs (8px left inset + 32px avatar = 40px) without
@@ -338,7 +338,7 @@ body {
 .sidebar--collapsed .sidebar-user {
   height: 32px;
   padding: 8px 0 8px 8px;
-  /* The base rule's width:100% otherwise wins regardless of align-self —
+  /* The base rule's width:100% otherwise wins regardless of align-self -
      that's an explicit size, not a stretch default, so it has to be
      overridden directly. Explicit 40px (not fit-content/auto): the hidden
      name/email text is opacity:0 but still has real, non-zero intrinsic
@@ -347,7 +347,7 @@ body {
   width: 40px;
   align-self: flex-start;
   /* .sidebar-user's own gap (8px, for the avatar/name/chevron row) still
-     applies even though the name text is opacity:0 — an invisible flex
+     applies even though the name text is opacity:0 : an invisible flex
      item with zero width still keeps its gap on either side, so the
      visible content (avatar + nothing) came out 8px wider than intended.
      Same fix already applied to .sidebar-brand above. */
@@ -356,7 +356,7 @@ body {
 
 /* --card-bg (the default .sidebar-item hover/active background) sits only
    one step above the sidebar's own background and reads as barely-there
-   at this small, icon-only size — --border gives real, visible contrast
+   at this small, icon-only size : --border gives real, visible contrast
    without changing anything about the wider expanded rail's hover style. */
 .sidebar--collapsed .sidebar-item:hover,
 .sidebar--collapsed .sidebar-item--active,
@@ -369,7 +369,7 @@ body {
   gap: 0;
 }
 
-/* flex-start (not center) at every container level below — the icons'
+/* flex-start (not center) at every container level below : the icons'
    fixed 32px boxes now carry their own correct left inset via padding
    (see .sidebar-item/.sidebar-user above), so nothing here should
    recenter them within the rail's slightly wider content area. Centering
@@ -378,7 +378,7 @@ body {
    jump sideways on every collapse/expand. */
 .sidebar--collapsed .sidebar-nav {
   align-items: flex-start;
-  /* Same 4px gap as the base/expanded rule (not 0) — collapsing to icons
+  /* Same 4px gap as the base/expanded rule (not 0) : collapsing to icons
      shouldn't also squeeze adjacent icons' hover boxes flush against each
      other; they should keep the exact same breathing room the full-width
      rows have. */
@@ -437,7 +437,7 @@ body {
 }
 
 .sidebar-item .lucide { width: 16px; height: 16px; flex-shrink: 0; }
-/* No longer flex:1 — the label now only takes the width of its own text, so
+/* No longer flex:1 : the label now only takes the width of its own text, so
    the notification badge sits right next to the name instead of being
    pushed to the far edge. The chevron button's own margin-left:auto is what
    pushes IT alone to the right now (see .sidebar-item-chevron-btn below). */
@@ -662,7 +662,7 @@ body {
 }
 
 /* Espacement des enfants directs du fil d'Ariane : 24px entre le bouton de
-   collapse et le premier item (Accueil), 8px partout ailleurs — c'est-à-dire
+   collapse et le premier item (Accueil), 8px partout ailleurs : c'est-à-dire
    uniquement de part et d'autre du séparateur "/". .topbar-actions garde son
    propre margin-left:auto pour se pousser à droite. */
 .topbar-breadcrumb > *:not(:first-child):not(.topbar-actions) {
@@ -705,13 +705,13 @@ body {
 .topbar-action-wrap { position: relative; }
 
 .topbar-popover {
-  /* Portaled onto <body> (see TopbarActions.tsx) — position:fixed with
+  /* Portaled onto <body> (see TopbarActions.tsx) : position:fixed with
      top/right computed in JS from the trigger button's own position, so
      escaping .topbar-sticky's own backdrop-filter/stacking context doesn't
      leave the popover mispositioned. */
   position: fixed;
   width: 320px;
-  /* Same 8px padding as .context-menu — the site's standard treatment for
+  /* Same 8px padding as .context-menu : the site's standard treatment for
      this kind of popup is a small uniform inset around the whole card,
      with each row keeping its own rounded-corner hover inside that inset
      (see .topbar-notification-item), not a row that bleeds to the card's
@@ -759,7 +759,7 @@ body {
   overflow-y: auto;
 }
 
-/* No dividers between items on purpose — just a rounded hover highlight
+/* No dividers between items on purpose : just a rounded hover highlight
    per row, same treatment as .context-item: the popover's own 8px padding
    is the only outer inset, and each row gets its own rounded corners
    inside that, instead of a row that spans edge-to-edge. */
@@ -773,7 +773,7 @@ body {
 }
 /* A solid var(--bg) here (as used for hover elsewhere on the site) reads as
    a flat, mismatched patch against this frosted-glass popover's own blurred
-   translucent background — use a translucent overlay instead so the hover
+   translucent background : use a translucent overlay instead so the hover
    blends with the glass effect. */
 .topbar-notification-item:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
 .topbar-notification-item .lucide { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; margin-top: 2px; }
@@ -813,7 +813,7 @@ body {
   color: inherit;
   transition: background 0.15s ease;
 }
-/* Same frosted-glass mismatch as .topbar-notification-item — translucent
+/* Same frosted-glass mismatch as .topbar-notification-item : translucent
    overlay instead of a solid var(--bg) patch. */
 .inbox-message--compact:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
 
@@ -1107,7 +1107,7 @@ body {
   transition: background 0.15s ease;
 }
 
-/* Same frosted-glass mismatch as .topbar-notification-item — translucent
+/* Same frosted-glass mismatch as .topbar-notification-item : translucent
    overlay instead of a solid var(--bg) patch. */
 .period-option:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
 
@@ -1183,12 +1183,12 @@ body {
 }
 
 /* AnimatedCount: a fixed-height clipped slot so the incoming digit can
-   slide up/down into place instead of just popping to the new value —
+   slide up/down into place instead of just popping to the new value -
    see AnimatedCount.tsx for why this is a plain CSS animation on mount
    (key-driven) rather than anything imperative. */
 /* inline-flex + align-items:center centers the digit against however
    the glyph actually renders, rather than assuming a 1em line-height
-   box is symmetric around it (it usually isn't quite) — vertical-align
+   box is symmetric around it (it usually isn't quite) : vertical-align
    also has no effect here anyway since the parent (.column-header) is
    itself a flex container. */
 .animated-count {
@@ -1311,7 +1311,7 @@ body {
 
 /* A card flagged as proposed by the school stands out with a slow
    pulsing glow on its "Proposée par l'école" badge, instead of a
-   border (cards no longer have one at all — see .card above). */
+   border (cards no longer have one at all : see .card above). */
 .card--school .card-school-badge {
   animation: card-school-glow 3s ease-in-out infinite;
 }
@@ -2054,7 +2054,7 @@ legend.field-label { padding: 0; }
 .url-parse-status--error { color: var(--rose); }
 .url-parse-status--success { color: var(--green); }
 
-/* Fields the AI is about to (maybe) fill in — the extraction call can take
+/* Fields the AI is about to (maybe) fill in : the extraction call can take
    a couple of seconds, so the fields themselves pulse while it's in flight
    instead of just sitting there looking unresponsive. */
 @keyframes field-ai-pulse {
@@ -2141,7 +2141,7 @@ legend.field-label { padding: 0; }
 
 /* var(--text), not var(--indigo): --indigo became a near-black
    monochrome token site-wide (see its own comment above), so this
-   button rendered black in light mode — the dark-mode override below
+   button rendered black in light mode : the dark-mode override below
    still hardcoded the old indigo-400 (#818cf8), never updated after
    that change, so the same button read black in light mode and purple
    in dark mode. var(--text) already flips correctly per theme on its
@@ -2233,7 +2233,7 @@ legend.field-label { padding: 0; }
 /* Tablet */
 @media (max-width: 1000px) {
   /* These forms/hints are capped at 640px on desktop for readability
-     next to a lot of spare side space — at tablet/mobile widths the
+     next to a lot of spare side space : at tablet/mobile widths the
      card itself is already narrow, so the cap just wastes the width
      it has instead of helping legibility. */
   .generate-view,
@@ -2244,7 +2244,7 @@ legend.field-label { padding: 0; }
     max-width: none;
   }
 
-  /* Tablet keeps the exact desktop layout otherwise — .app-shell stays a
+  /* Tablet keeps the exact desktop layout otherwise : .app-shell stays a
      flex row and .sidebar stays an in-flow rail that shrinks to icons via
      .sidebar--collapsed (same rule as desktop, defined outside any media
      query above), rather than becoming an off-canvas overlay. Only true
@@ -2261,15 +2261,15 @@ legend.field-label { padding: 0; }
   /* Below this width there's no room to show the sidebar and content
      side by side at all, so it drops out of the flex row entirely and
      becomes a fixed off-canvas drawer instead (see the .sidebar rules
-     just below) — .app-shell no longer needs to reserve space for it. */
+     just below) : .app-shell no longer needs to reserve space for it. */
   .app-shell { display: block; height: auto; min-height: 100vh; }
 
   /* The sidebar used to just be display:none below this width, with no
-     replacement way to reach it at all — Accueil, Mes documents, the whole
+     replacement way to reach it at all : Accueil, Mes documents, the whole
      nav was simply unreachable on phones. It's now an off-canvas drawer
      instead: hidden by a transform (not display), toggled by the same
      topbar button that shrinks it to icons at every wider width (see
-     SidebarCollapseContext — that button means something different below
+     SidebarCollapseContext : that button means something different below
      this breakpoint), and closed by tapping the backdrop or navigating. */
   .sidebar {
     position: fixed;
@@ -2283,7 +2283,7 @@ legend.field-label { padding: 0; }
     transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
   }
   .sidebar--mobile-open { transform: translateX(0); }
-  /* The tablet/desktop icon-rail width doesn't apply here — on mobile the
+  /* The tablet/desktop icon-rail width doesn't apply here : on mobile the
      drawer is either fully open (280px) or fully off-screen, never a
      narrow rail. */
   .sidebar--collapsed { width: 280px; padding: 24px; }
@@ -2295,7 +2295,7 @@ legend.field-label { padding: 0; }
     pointer-events: auto;
   }
   .sidebar--collapsed .sidebar-item-label {
-    /* Not flex:1 here either (see the base rule) — otherwise the label
+    /* Not flex:1 here either (see the base rule) : otherwise the label
        stretches the full row width on the mobile drawer, pushing the
        notification badge flush against the chevron again. */
     flex: 0 1 auto;
@@ -2742,7 +2742,7 @@ legend.field-label { padding: 0; }
   text-decoration: none;
 }
 
-/* Purely visual — just a peek at the sheet itself, no frame, no background,
+/* Purely visual : just a peek at the sheet itself, no frame, no background,
    no name. Opening the folder's full list (names + sort) happens via this
    click-through link, not on the thumbnail itself. */
 .doc-thumb-bare {
@@ -2756,7 +2756,7 @@ legend.field-label { padding: 0; }
 }
 .doc-thumb-sheet {
   /* Sized to an A4 portrait page (1 : 1.414) and fit to the square's full
-     height so the whole page is visible, letterboxed — never cropped.
+     height so the whole page is visible, letterboxed : never cropped.
      position:relative is required for the next/image `fill` thumbnail. */
   position: relative;
   width: 70.7%;
@@ -2780,7 +2780,7 @@ legend.field-label { padding: 0; }
 .doc-thumb-sheet .lucide { width: 28px; height: 28px; }
 
 /* Multiple documents in one folder collapse into a single fanned stack
-   instead of a wall of squares — a "there's more than one file here" cue,
+   instead of a wall of squares : a "there's more than one file here" cue,
    not a per-file browser. */
 .doc-thumb-fan { overflow: visible; }
 .doc-thumb-fan-layer {
@@ -3350,7 +3350,7 @@ legend.field-label { padding: 0; }
 
 .method-card { display: flex; flex-direction: column; gap: 8px; }
 
-/* "C'est quoi un ATS ?" stays plain, full-width text — only the 4
+/* "C'est quoi un ATS ?" stays plain, full-width text : only the 4
    numbered cards below it get a frame (see .method-explain-grid). */
 .method-card--intro { padding: 0; }
 .method-card--intro .method-card-text { font-size: 16px; }
@@ -3376,7 +3376,7 @@ legend.field-label { padding: 0; }
 }
 
 /* Icon stacked above the title (not inline) and enlarged, like a
-   feature-card pattern — icon, bold title, muted paragraph below. */
+   feature-card pattern : icon, bold title, muted paragraph below. */
 .method-explain-grid .method-card-head {
   flex-direction: column;
   align-items: flex-start;
@@ -3491,7 +3491,7 @@ legend.field-label { padding: 0; }
 .btn-remove-contact:hover { opacity: 0.75; }
 
 /* --rose/--indigo are tuned for text-on-tint or filled-button use (light
-   backgrounds either way) — used as plain text directly on --card-bg here,
+   backgrounds either way) : used as plain text directly on --card-bg here,
    they fall to ~2.4:1 in dark mode (card-bg is dark too), well under WCAG
    AA's 4.5:1 for normal-weight text. Lighter dark-mode-only overrides fix
    the contrast without touching --indigo/--rose everywhere else they're
@@ -3572,12 +3572,12 @@ legend.field-label { padding: 0; }
    content card like .app, touching the nav with zero gap (negative top
    margin cancelling .landing's own gap, exactly like .app's negative
    left margin cancels .app-shell's gap against .sidebar) while keeping
-   24px on its other 3 sides. Only .landing-card scrolls — the nav stays
+   24px on its other 3 sides. Only .landing-card scrolls : the nav stays
    put as a flex sibling outside it; it reacts to that scroll (see
    .landing-nav--scrolled) without moving or overlaying the card itself. */
 /* Every passive mockup reuses real dashboard classes (.card, .card-link,
    .folder-card...) for visual fidelity, which brings their real :hover
-   states along for free — fine on the actual product where they're
+   states along for free : fine on the actual product where they're
    interactive, but on a static marketing screenshot they just read as
    broken/mismatched feedback for something no one can actually click.
    pointer-events: none on each mockup's own root kills every descendant
@@ -3599,7 +3599,7 @@ legend.field-label { padding: 0; }
 }
 .landing {
   /* height, not min-height: .landing-card below (flex:1, min-height:0,
-     overflow-y:auto) is deliberately its own nested scroll container —
+     overflow-y:auto) is deliberately its own nested scroll container -
      that's what keeps its rounded top/bottom corners permanently
      visible right under the sticky nav while scrolling, instead of
      scrolling away with the rest of the page like a plain block would.
@@ -3626,7 +3626,7 @@ legend.field-label { padding: 0; }
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  /* Its own scroll container again (see .landing above) — overflow-y:
+  /* Its own scroll container again (see .landing above) : overflow-y:
      auto here, not the page/body, is what keeps the rounded corners
      fixed in place under the sticky nav while the content inside
      scrolls. overflow-x:hidden stays: the showcase carousel rows'
@@ -3637,14 +3637,14 @@ legend.field-label { padding: 0; }
 }
 
 /* Full-width sticky wrapper around the narrow, centered .landing-nav
-   below — its own opaque background spans the whole viewport once
+   below : its own opaque background spans the whole viewport once
    pinned, so content scrolling behind it can't show through on the
    sides the way it did when .landing-nav itself was position:sticky
    directly (see git history, "Corrige la position de la nav (revert)":
    sticky was tried once already on the narrow element alone and
-   reverted for exactly that reason). Keeping the two concerns apart —
+   reverted for exactly that reason). Keeping the two concerns apart -
    this wrapper owns "stick to the viewport", .landing-nav below still
-   owns "look like a floating centered pill" — means either can change
+   owns "look like a floating centered pill" : means either can change
    independently without reintroducing that bug. */
 .landing-nav-sticky {
   position: sticky;
@@ -3660,7 +3660,7 @@ legend.field-label { padding: 0; }
      would push the middle nav-links off true center. Two equal 1fr side
      columns keep the middle column mathematically centered regardless.
      Spans 8/12 grid columns (calc(66.6667vw - 40px), wider than
-     .landing-preview-shell's 6/12 below by design) — was a fixed 1120px,
+     .landing-preview-shell's 6/12 below by design) : was a fixed 1120px,
      so the logo and "Essayer Altora" button sat well inside those
      columns instead of spanning their full width. No horizontal padding:
      with the width already matching the grid columns exactly, any inset
@@ -3669,9 +3669,9 @@ legend.field-label { padding: 0; }
      Standardized scroll reaction past an 8px threshold, read off
      window.scrollY (.landing-nav--scrolled, set in SiteNav.tsx): padding
      halves (24px -> 12px) and the logo shrinks (164x41 -> 80x20, same
-     4:1 ratio), all values kept on a 4px scale — the nav itself never
+     4:1 ratio), all values kept on a 4px scale : the nav itself never
      moves or changes position; .landing-nav-sticky above handles that. */
-  /* 2 columns now (brand, actions) — was 1fr auto 1fr for a middle
+  /* 2 columns now (brand, actions) : was 1fr auto 1fr for a middle
      landing-nav-links column that no longer exists (Fonctionnalités/
      Tarifs links removed along with those pages). */
   display: grid;
@@ -3692,7 +3692,7 @@ legend.field-label { padding: 0; }
   gap: var(--space-8);
 }
 
-/* Same height as .landing-nav-cta ("Essayer Altora", 41px) — width
+/* Same height as .landing-nav-cta ("Essayer Altora", 41px) : width
    scaled proportionally from the SVG's own 112:28 (4:1) viewBox ratio. */
 .landing-nav-logo {
   display: block;
@@ -3727,7 +3727,7 @@ legend.field-label { padding: 0; }
      them never involves a border popping in or out on top of it. */
   border: 1px solid rgba(255, 255, 255, 0.16);
   /* Same rounded-rect radius as the rest of the app's base buttons/
-     inputs (--radius-input), not the pill shape — just elongated to fit
+     inputs (--radius-input), not the pill shape : just elongated to fit
      the label, instead of a stadium-shaped CTA unlike everything else. */
   border-radius: var(--radius-input);
   background: var(--indigo);
@@ -3741,11 +3741,11 @@ legend.field-label { padding: 0; }
   -webkit-appearance: none;
   outline: none;
   /* Every part of the collapse (width, text, icon) shares this one
-     curve and duration below — mismatched timings (a faster opacity
+     curve and duration below : mismatched timings (a faster opacity
      fade finishing well before the width/max-width settle) is what
      made the close animation read as glitchy rather than one clean
      motion. cubic-bezier(0.65,0,0.35,1) is a symmetric "ease" premium
-     curve — decelerates into the rest state instead of the previous
+     curve : decelerates into the rest state instead of the previous
      ease-out-only feel. */
   transition: background 0.15s ease, border-color 0.15s ease, color 0.4s cubic-bezier(0.65, 0, 0.35, 1), border-radius 0.4s cubic-bezier(0.65, 0, 0.35, 1), padding 0.4s cubic-bezier(0.65, 0, 0.35, 1), min-width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -3760,7 +3760,7 @@ legend.field-label { padding: 0; }
    fading out, so the CTA stays reachable, just as an icon-only pill,
    instead of disappearing behind a hamburger menu. A small translateX
    alongside the opacity fade reads as the text sliding away under the
-   icon rather than just dissolving in place — closer to how a native
+   icon rather than just dissolving in place : closer to how a native
    iOS/macOS control collapses. */
 .landing-nav-cta-text {
   display: inline-block;
@@ -3778,7 +3778,7 @@ legend.field-label { padding: 0; }
    unscoped elsewhere on the page (hero, pricing, closing) where it
    always stays the full indigo pill.
    No explicit width here on purpose: this button has none in its base
-   state either (inline-flex, sized by its own content) — an explicit
+   state either (inline-flex, sized by its own content) : an explicit
    width: 41px here used to animate on its own timer alongside the
    text's independent max-width collapse, and the two were never
    perfectly in sync, which is what read as a jerky, two-step motion
@@ -3787,7 +3787,7 @@ legend.field-label { padding: 0; }
    land the button at the same 41px, driven by one set of transitions
    instead of two competing ones. min-width (a static constraint, not
    itself transitioning) just keeps the box from shrinking past the
-   41x41 square once its content-driven width drops below that — the
+   41x41 square once its content-driven width drops below that : the
    collapse naturally decelerates into that floor on its own instead
    of needing a second width animation to catch it back up to it. */
 .landing-nav--scrolled .landing-nav-cta {
@@ -3839,7 +3839,7 @@ legend.field-label { padding: 0; }
 
 /* Printing/exporting to PDF never scrolls the page, so the
    IntersectionObserver behind .reveal (components/Reveal.tsx) never
-   fires and every section stays stuck at opacity:0 — same fix as the
+   fires and every section stays stuck at opacity:0 : same fix as the
    reduced-motion fallback above, forced for print regardless of the
    visitor's motion preference. */
 @media print {
@@ -3851,12 +3851,12 @@ legend.field-label { padding: 0; }
   }
 }
 
-/* Was a flat 720px — this is the real 6-of-12 column span (columns
+/* Was a flat 720px : this is the real 6-of-12 column span (columns
    4-9), same k=6 formula as .landing-preview-shell below (50vw - 36px).
    Centering 6 of 12 columns lands symmetrically on its own (3 free
    columns each side), so margin:0 auto still works unchanged. */
 /* Top padding clears the sticky nav above (this section's own content
-   need, first thing on the page, nothing to space away from) — bottom
+   need, first thing on the page, nothing to space away from) : bottom
    is 0 on purpose: the 96px gap to the next section comes from that
    section's own margin-top below, one single rule per gap instead of
    each side contributing an uncoordinated half. */
@@ -3933,12 +3933,12 @@ legend.field-label { padding: 0; }
 /* Mirrors the real .app-shell/.sidebar/.app split exactly: a transparent
    sidebar rail flat on the page background (var(--bg)), next to a
    separate white bordered card (.landing-preview-card, standing in for
-   .app) — not one single box wrapping both. The shell's own bg/radius/
+   .app) : not one single box wrapping both. The shell's own bg/radius/
    shadow just lift the illustration off the hero as a self-contained
    "screenshot"; the actual card look lives on .landing-preview-card. */
 .landing-preview-shell {
   /* True 6-of-12 viewport grid columns (matches the "g" debug overlay:
-     24px margin, repeat(12,1fr), 24px gap, 24px margin) — half the width
+     24px margin, repeat(12,1fr), 24px gap, 24px margin) : half the width
      of .landing-nav above, which spans 8/12. For k columns out of N with
      gap g and outer margin m over width W: span = k*c + (k-1)*g, where
      c = (W - 2m - (N-1)g)/N. For k=6, N=12, g=24, m=24 that simplifies
@@ -3956,7 +3956,7 @@ legend.field-label { padding: 0; }
   /* Left at 0: the sidebar's own 16px padding is the only space
      between an icon and the shell's border on that side (was stacking
      on top of this shell's own padding, 16+12=28px total). Right keeps
-     its 12px — the content card has no padding of its own on that
+     its 12px : the content card has no padding of its own on that
      side, so removing it too left the card flush against the shell's
      border with no inset at all. */
   padding: var(--space-12) var(--space-12) var(--space-12) 0;
@@ -3977,7 +3977,7 @@ legend.field-label { padding: 0; }
 }
 
 /* border-bottom on a pseudo-element inset by the same amount as the
-   horizontal padding — a plain border-bottom on this box spans its full
+   horizontal padding : a plain border-bottom on this box spans its full
    width edge-to-edge, past the buttons on either side (which stop short
    at that same padding). The real .topbar-breadcrumb never has this
    problem since its border lives on the row itself with no padding of
@@ -4000,7 +4000,7 @@ legend.field-label { padding: 0; }
 }
 
 /* Matches the real .topbar-collapse-btn exactly: 32px bordered square,
-   var(--radius-input) corners, 16px icon — same button used right before
+   var(--radius-input) corners, 16px icon : same button used right before
    the breadcrumb in components/SidebarCollapseToggle.tsx. Was 24px/12px
    icon here, out of step with the real button this is meant to mirror. */
 .landing-preview-collapse-btn {
@@ -4019,7 +4019,7 @@ legend.field-label { padding: 0; }
 
 /* Real breadcrumb (app/(tracker)/page.tsx) shows two segments on the home
    page: "Accueil" (home icon, link-styled) then a separator then a second
-   "Accueil" (users icon, active/current-page styled, plain color change —
+   "Accueil" (users icon, active/current-page styled, plain color change -
    no pill background). */
 .landing-preview-crumb {
   display: flex;
@@ -4050,10 +4050,10 @@ legend.field-label { padding: 0; }
 .landing-preview-window-btn .lucide { width: 16px; height: 16px; }
 
 /* Collapsed icon-only sidebar rail (the real Sidebar's .sidebar--collapsed
-   state), not the fully labeled expanded one — logo only (no brand text),
+   state), not the fully labeled expanded one : logo only (no brand text),
    icon-only nav items, avatar pinned to the bottom via margin-top:auto.
    The logo is a generic placeholder, not any specific partner school's.
-   Transparent, no border — same as the real .sidebar, it just sits flat
+   Transparent, no border : same as the real .sidebar, it just sits flat
    on .landing-preview-shell's own var(--bg) background. */
 .landing-preview-sidebar {
   display: flex;
@@ -4062,13 +4062,13 @@ legend.field-label { padding: 0; }
   flex-shrink: 0;
   gap: var(--space-16);
   /* Same 16px used as the gap between the "À faire"/"Calendrier"/
-     "Boîte de réception" panels (.landing-preview-panel-row) — one
+     "Boîte de réception" panels (.landing-preview-panel-row) : one
      consistent spacing value reused instead of a different ad hoc one
      here. */
   padding: var(--space-4) var(--space-16);
 }
 
-/* Same 32px box as .landing-preview-sidebar-icon/-avatar below — every
+/* Same 32px box as .landing-preview-sidebar-icon/-avatar below : every
    element stacked in this rail (logo, nav icons, avatar) shares one
    consistent width so they all line up on the same vertical axis. */
 .landing-preview-sidebar-logo {
@@ -4095,9 +4095,9 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
 }
 /* Real active state is a neutral background (var(--card-bg), same as
-   hover), not an indigo tint — no color change beyond bg + text darkening. */
+   hover), not an indigo tint : no color change beyond bg + text darkening. */
 /* Matches the real collapsed rail's own active/hover background exactly
-   (.sidebar--collapsed .sidebar-item--active) — var(--border), not
+   (.sidebar--collapsed .sidebar-item--active) : var(--border), not
    var(--bg), which reads as barely-there at this icon-only size. */
 .landing-preview-sidebar-icon.is-active { background: var(--border); color: var(--text); }
 .landing-preview-sidebar-icon .lucide { width: 16px; height: 16px; }
@@ -4126,7 +4126,7 @@ legend.field-label { padding: 0; }
 }
 
 /* Same serif display font as every real h1 (see app/fonts.css), applied
-   directly rather than via an actual <h1> tag — this is a decorative,
+   directly rather than via an actual <h1> tag : this is a decorative,
    aria-hidden mockup, and the page's real hero title is the only <h1>
    that should exist here. */
 .landing-preview-greeting-title {
@@ -4151,7 +4151,7 @@ legend.field-label { padding: 0; }
   color: var(--text-muted);
   margin: 0;
 }
-/* Tighter pill sizing scoped to this mockup only — .inline-pill is the
+/* Tighter pill sizing scoped to this mockup only : .inline-pill is the
    real dashboard's own shared component (app/(tracker)/page.tsx's
    summary-subtitle), so its own padding/gap/margin stay untouched; this
    override only affects the decorative landing preview. */
@@ -4164,7 +4164,7 @@ legend.field-label { padding: 0; }
 /* Grid, not flex-wrap: with flex-grow, a wrapped row's items can end up
    consuming slightly more or less than the exact remaining space,
    leaving the last item's right edge flush against the card border
-   instead of the intended 16px — grid's auto-fit/minmax columns divide
+   instead of the intended 16px : grid's auto-fit/minmax columns divide
    the row's own width (already inset by .landing-preview-content's
    16px padding) exactly, with a real 16px gap between and at both
    edges, at any container width. */
@@ -4176,7 +4176,7 @@ legend.field-label { padding: 0; }
   margin-top: var(--space-16);
 }
 /* Small bordered widget used for "À faire", "Événements à venir" and
-   "Boîte de réception" below the greeting — same card treatment,
+   "Boîte de réception" below the greeting : same card treatment,
    different content. No fixed height: each card hugs its own list
    (align-items:start on the row keeps a shorter list from being
    stretched to match its taller sibling). */
@@ -4246,7 +4246,7 @@ legend.field-label { padding: 0; }
 .landing-preview-panel-list .inline-pill .lucide { flex-shrink: 0; }
 /* Task-count marker at the end of an "À faire" pill: a plain number in
    the pill's own color (currentColor), same convention as the real
-   kanban's .column-header-count — no separate badge/circle behind it. */
+   kanban's .column-header-count : no separate badge/circle behind it. */
 .landing-preview-panel-count {
   font-size: 12px;
   font-weight: 600;
@@ -4266,8 +4266,8 @@ legend.field-label { padding: 0; }
 .landing-preview-period .lucide { width: 12px; height: 12px; }
 
 /* Odometer-style roll (matches rollNumber() in public/tracker.js, the
-   real board's own counter animation): the old digit slides fully out —
-   up if the value rose, down if it fell — while the new one slides in
+   real board's own counter animation): the old digit slides fully out -
+   up if the value rose, down if it fell : while the new one slides in
    from the opposite edge, instead of the text just snapping. */
 .landing-preview-count { display: inline-block; }
 .landing-preview-count-roll {
@@ -4302,17 +4302,17 @@ legend.field-label { padding: 0; }
 
 /* Audience categories: Altora serves two distinct audiences (see
    app/(tracker)/ecole/page.tsx for the school-admin dashboard this mirrors)
-   — students tracking their own applications, and schools overseeing a
+   students tracking their own applications, and schools overseeing a
    whole promotion. Each gets its own card, bullet points, and CTA rather
    than a single generic "features" list, so each visitor sees their own
    use case first. */
 /* margin-top, not vertical padding: this section has no visible
    border/background of its own, so padding here was indistinguishable
-   from margin — moved to the shared 96px inter-section rhythm instead
+   from margin : moved to the shared 96px inter-section rhythm instead
    of an independent value that had to be eyeballed against its
    neighbors. */
 /* Full-width, centered, tinted apart from every plain white card
-   around it — this is a standalone claim, not another feature tile, so
+   around it : this is a standalone claim, not another feature tile, so
    it needs to visually interrupt the page's rhythm rather than blend
    into the categories grid right below it. */
 .landing-risk-banner {
@@ -4443,7 +4443,7 @@ legend.field-label { padding: 0; }
 
 /* Shared by 3 category-card CTAs: "Créer mon compte" (étudiants) and
    "Bientôt disponible" (entreprises) are deliberately lightweight text
-   links, not buttons — only the "Contacter un expert" one (écoles) was
+   links, not buttons : only the "Contacter un expert" one (écoles) was
    pulled out to share .landing-nav-cta's full button look instead (see
    .landing-category-cta--btn below), so this base class must stay as
    plain text-link styling for the other two. */
@@ -4461,7 +4461,7 @@ legend.field-label { padding: 0; }
 .landing-category-cta .lucide { width: 16px; height: 16px; }
 /* Overrides the text-link styling above back to nothing but the
    bottom-pinning, since .landing-nav-cta (applied alongside it) already
-   supplies the real black-pill look — this class just still needs to be
+   supplies the real black-pill look : this class just still needs to be
    what places the button at the bottom of its card. */
 .landing-category-cta--btn {
   display: inline-flex;
@@ -4485,18 +4485,18 @@ legend.field-label { padding: 0; }
    in Altora_Concept_Projet.docx, not invented screenshots. */
 /* Every row below broke out of this container individually to reach the
    site's true 12-column grid (columns 3-10), since this box itself was a
-   legacy centered max-width: 1120px — not grid-aligned, and visibly
+   legacy centered max-width: 1120px : not grid-aligned, and visibly
    narrower than what its own children actually rendered at, the mismatch
    this comment used to describe. The container now carries that same
    full-bleed breakout itself (once), so every row can just be width:
    100% of a correctly-sized parent instead of repeating the breakout
    math 6 times. */
 /* Vertical padding removed in favor of margin-top (see .landing-
-   categories above for why) — margin-left stays: that's the full-bleed
+   categories above for why) : margin-left stays: that's the full-bleed
    breakout, a horizontal concern, unrelated to the vertical gap. gap:
    96px below is a separate rhythm (between this section's own rows),
    coincidentally the same number as the inter-section one but not the
-   same rule — don't conflate the two if either ever needs to change
+   same rule : don't conflate the two if either ever needs to change
    independently. */
 .landing-showcase {
   width: calc(100vw - 48px);
@@ -4524,7 +4524,7 @@ legend.field-label { padding: 0; }
    N=12, g=24 simplifies to (1/6)*W + 4px. */
 .landing-showcase-row--annuaire {
   /* Text and visual each span exactly 4 of the 12 grid columns (columns
-     3-6 and 7-10), with the real 24px inter-column gutter between them —
+     3-6 and 7-10), with the real 24px inter-column gutter between them -
      not an even 50/50 split of the row's own content width with an
      arbitrary 48px gap, which fell 12px short of the true column edges.
      Same span formula as elsewhere: (k/12)*100vw + g*[(k-1) - (k/12)*11],
@@ -4534,14 +4534,14 @@ legend.field-label { padding: 0; }
 }
 .landing-showcase-row--annuaire .landing-showcase-visual { justify-content: flex-end; }
 
-/* Text left, mockup right — same convention as every other showcase
+/* Text left, mockup right : same convention as every other showcase
    row now (was visual-left/text-right; flipped in the JSX so the whole
    page reads consistently, text always on the left). */
 .landing-showcase-row--priorise {
   /* Text keeps its 4-column span; the copilot mockup is 3 columns
      (calc(25vw - 30px), same 3-column span formula as the ATS/carousel
      cards elsewhere) instead of matching the text's 4. Gap widened to
-     the same formula --ats uses below (8.3333vw + 22px) — a flat 24px
+     the same formula --ats uses below (8.3333vw + 22px) : a flat 24px
      gap leaves a full column of dead space unused after the mockup
      instead of pushing its right edge out to column 10. */
   grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
@@ -4551,7 +4551,7 @@ legend.field-label { padding: 0; }
 
 /* Same 4+4 column split as --annuaire below (text left, visual right). */
 /* Text 4 columns, matching frise mockup 3 columns (calc(25vw - 30px))
-   pushed out to column 10 — same treatment as --priorise above, gap
+   pushed out to column 10 : same treatment as --priorise above, gap
    widened with the same formula instead of a flat 24px. */
 .landing-showcase-row--jobboards {
   grid-template-columns: calc(33.3333vw - 32px) calc(25vw - 30px);
@@ -4564,7 +4564,7 @@ legend.field-label { padding: 0; }
    instead of two matching 4-column halves: text spans columns 3-6 (4
    columns, same calc(33.3333vw - 32px) span formula as --annuaire's own
    text/visual columns), the card spans exactly 3 columns ending at
-   column 10's right edge (columns 8-10, calc(25vw - 30px) — same
+   column 10's right edge (columns 8-10, calc(25vw - 30px) : same
    3-column span formula as the carousel's drag step), and column 7 sits
    empty between them. That empty column is why `gap` here isn't the
    usual 24px: it has to cover a full column's width plus its two
@@ -4586,7 +4586,7 @@ legend.field-label { padding: 0; }
 .landing-showcase-row--roster .landing-showcase-visual { justify-content: flex-end; }
 
 /* Promotion roster mockup: a compact grid of student avatars, each
-   with plain colored dots (no counts) — the same colors as the real
+   with plain colored dots (no counts) : the same colors as the real
    kanban columns (slate/amber/green/rose), so a viewer familiar with
    the kanban reads them the same way without a legend. Deliberately no
    number on the dot: a fast "what's the color" glance is the point,
@@ -4620,7 +4620,7 @@ legend.field-label { padding: 0; }
 .landing-roster-avatar img { object-fit: cover; }
 .landing-roster-name { font-size: 12px; font-weight: 600; color: var(--text); }
 .landing-roster-dots { display: flex; align-items: center; justify-content: center; gap: 4px; }
-/* Back to a flat, fully-saturated dot — the tint+border "pastille"
+/* Back to a flat, fully-saturated dot : the tint+border "pastille"
    treatment read as too soft/low-contrast at this size (10px), harder
    to tell apart at a glance than a solid color, which is the whole
    point of this mockup. */
@@ -4632,10 +4632,10 @@ legend.field-label { padding: 0; }
 
 /* Stacked layout (not the shared 2-column .landing-showcase-row grid):
    left-aligned text on top, a horizontally-scrollable carousel of
-   mockups below — room to add more slides later instead of a single
+   mockups below : room to add more slides later instead of a single
    fixed visual next to the text, like the alternating rows above. Both
    the text and the carousel are pinned to the left margin (column 1) and
-   sized to exactly 4 of the 12 grid columns — same span formula as
+   sized to exactly 4 of the 12 grid columns : same span formula as
    --annuaire/--priorise above (k=4, g=24 -> 33.3333vw - 32px), just
    anchored at the left edge (24px) instead of centered on columns 3-10. */
 .landing-showcase-row--kanban {
@@ -4644,21 +4644,21 @@ legend.field-label { padding: 0; }
   align-items: flex-start;
   gap: var(--space-32);
   /* Every other row wants .landing-showcase's own right padding (columns
-     3-10 on both sides) — this is the one row that doesn't: the carousel
+     3-10 on both sides) : this is the one row that doesn't: the carousel
      needs the extra room past column 10 to bleed toward the true
      viewport edge (see .landing-showcase-carousel's own width/margin
      math below). Cancels the parent's right padding for this row only
      instead of also giving every row the old per-row breakout back. */
   margin-right: calc(-1 * (16.6667vw - 4px));
   /* Now also cancels the LEFT padding (matching the right cancellation
-     above) — the carousel needs the row at the page's true full width
+     above) : the carousel needs the row at the page's true full width
      on both sides for the half-item peeks on either side to add up
      correctly (see .landing-showcase-carousel's own math below). */
   margin-left: calc(-1 * (16.6667vw - 4px));
 }
 /* Same 4-column span as before (calc(33.3333vw - 32px)), just shifted
    2 columns right from where the row's own padding-left starts
-   (column 3) to column 5 — landing it centered on the middle 4 of 12
+   (column 3) to column 5 : landing it centered on the middle 4 of 12
    columns. Text itself is also center-aligned, matching the block's
    own centered position on the page. */
 .landing-showcase-row--kanban .landing-showcase-text--right {
@@ -4666,13 +4666,13 @@ legend.field-label { padding: 0; }
   align-items: center;
   width: calc(33.3333vw - 32px);
   /* The row itself now starts a further (16.6667vw - 4px) to the left
-     (see margin-left cancellation above) — added back here so this
+     (see margin-left cancellation above) : added back here so this
      text block keeps the exact same absolute on-page position it had
      before that change. */
   margin-left: calc(16.6667vw - 28px + 16.6667vw - 4px);
 }
 
-/* Carrousel infini — voir components/DragScrollCarousel.tsx pour la
+/* Carrousel infini : voir components/DragScrollCarousel.tsx pour la
    mécanique. Le défilement natif et scroll-snap ont été abandonnés : ils
    ne peuvent pas produire de boucle sans fin, parce qu'avec N éléments
    il existe toujours un vrai bord, et le contenu suivant ne pouvait
@@ -4694,7 +4694,7 @@ legend.field-label { padding: 0; }
   /* clip, surtout pas hidden : hidden crée un conteneur de défilement
      programmatique, et n'importe quoi peut le décaler à l'insu du JS
      (Ctrl+F qui révèle un mot dans une légende tronquée, un
-     scrollIntoView…) — le carrousel resterait décalé définitivement.
+     scrollIntoView…) : le carrousel resterait décalé définitivement.
      clip n'en crée aucun. Il autorise en prime overflow-y: visible,
      impossible avec hidden, donc l'ombre portée des cartes n'est plus
      rognée verticalement. */
@@ -4722,7 +4722,7 @@ legend.field-label { padding: 0; }
    pixels (elle est substituée telle quelle, on récupérerait la chaîne
    "calc(16.6667vw - 4px)"), alors qu'une largeur réelle, si. Cette sonde
    donne donc au JS la valeur en px du peek à n'importe quel point de
-   rupture, sans jamais dupliquer une formule vw côté JS — duplication
+   rupture, sans jamais dupliquer une formule vw côté JS : duplication
    qui serait fausse sous 720px, et fausse aussi dès qu'une scrollbar
    classique ampute la largeur de contenu sans changer 100vw. */
 .landing-showcase-carousel-peek {
@@ -4741,7 +4741,7 @@ legend.field-label { padding: 0; }
    ~600px contenant du texte (sur Safari, un will-change permanent sur
    celles-ci rend le texte flou).
    Le décalage de base vit ici, en CSS, et non en JS : le tout premier
-   rendu — avant hydratation, et même sans JS du tout — est donc déjà
+   rendu (avant hydratation, et même sans JS du tout) est donc déjà
    aligné sur la grille, sans saut au démarrage. */
 .landing-showcase-carousel-track {
   display: flex;
@@ -4757,7 +4757,7 @@ legend.field-label { padding: 0; }
 
 /* flex-basis via le raccourci (et non une width séparée) + min-width et
    max-width épinglés à la même valeur : ceinture et bretelles contre le
-   min-width auto de flex (taille min-content du contenu) — les titres
+   min-width auto de flex (taille min-content du contenu) : les titres
    non sécables du kanban 3 colonnes poussaient l'item au-delà de ses
    4 colonnes malgré une largeur explicite. */
 .landing-showcase-carousel-item {
@@ -4766,14 +4766,14 @@ legend.field-label { padding: 0; }
   max-width: calc(33.3333vw - 32px);
   display: flex;
   flex-direction: column;
-  /* Exactement 24px entre le mockup et sa légende — un gap flex, pas une
+  /* Exactement 24px entre le mockup et sa légende : un gap flex, pas une
      marge sur la légende, donc rien à resoustraire ailleurs. La légende
      vit dans le même item que son mockup pour défiler avec lui. */
   gap: var(--space-24);
 }
 /* Every item is already stretched to the tallest one (default flex
    align-items:stretch on the row), but that only affects the item box
-   itself — its mockup child still only took its own content height,
+   itself : its mockup child still only took its own content height,
    leaving the shorter mockups (messaging, calendar) visibly shorter
    than the kanban one with blank space absorbed after the caption
    instead. flex:1 on the mockup makes it, not the gap below the
@@ -4787,21 +4787,21 @@ legend.field-label { padding: 0; }
 }
 /* Hauteur réservée par la jauge de KanbanAnimation (une colonne fantôme
    de 3 cartes), publiée par le composant en custom property pour que le
-   mobile puisse la neutraliser proprement — voir le bloc 720px. */
+   mobile puisse la neutraliser proprement : voir le bloc 720px. */
 .landing-showcase-carousel-item > .landing-kanban-board {
   min-height: var(--kanban-gauge-h, 0px);
 }
 
 /* min-height reserves room for the longest caption text (4 lines) so
    all 3 captions are the same height regardless of how much each one
-   actually wraps — otherwise the boards above them (flex:1) would each
+   actually wraps : otherwise the boards above them (flex:1) would each
    claim a different amount of remaining space and end up uneven again. */
 .landing-showcase-caption { display: flex; flex-direction: column; gap: 12px; min-height: 180px; }
 .landing-showcase-caption-header { display: flex; align-items: center; gap: 16px; }
 /* Icon keeps its square styling from .landing-feature-icon but loses
    that class's own margin-bottom (sits beside the title in a row here,
    not stacked above it) and swaps its indigo tint for a plain neutral
-   look — var(--card-bg)/var(--border)/var(--text-muted), not hardcoded
+   look : var(--card-bg)/var(--border)/var(--text-muted), not hardcoded
    hex, so this stays in sync with the rest of the theme instead of
    silently drifting if those tokens ever change. */
 .landing-showcase-caption-header .landing-feature-icon {
@@ -4855,7 +4855,7 @@ legend.field-label { padding: 0; }
   text-align: center;
 }
 /* Bursts from the top edge of the card once CountUpPercent's count-up
-   finishes — anchored to .landing-match-card (position:relative above),
+   finishes : anchored to .landing-match-card (position:relative above),
    not to the score number itself, so it always reads as coming from the
    card's top regardless of where the number sits inside it. */
 .landing-match-confetti {
@@ -4890,7 +4890,7 @@ legend.field-label { padding: 0; }
   color: var(--indigo);
 }
 /* Same tone thresholds as the real ATS score card (GenerateForm.tsx's
-   scoreTone: >=80 good, >=60 mid, else low) — own modifier classes
+   scoreTone: >=80 good, >=60 mid, else low) : own modifier classes
    rather than reusing .ats-score-card--good/--mid/--low, whose own
    background would otherwise show through behind this plain display
    number instead of a tinted pill/tile. */
@@ -4939,7 +4939,7 @@ legend.field-label { padding: 0; }
 }
 /* Each suggestion slides in from the right once the row's own scroll
    reveal fires (.reveal--visible, see Reveal.tsx wrapping the whole
-   row), staggered per card instead of all 3 appearing at once — same
+   row), staggered per card instead of all 3 appearing at once : same
    one-shot trigger the rest of the page already uses, just applied per
    child instead of to the row as a whole. */
 .landing-copilot-item {
@@ -4963,7 +4963,7 @@ legend.field-label { padding: 0; }
 .landing-copilot-item .lucide { width: 16px; height: 16px; color: var(--indigo); flex-shrink: 0; }
 .landing-copilot-item p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text); }
 /* Green = positive news, amber = a point worth watching, rose = needs
-   action now — same tint/color pairing as the kanban's own column
+   action now : same tint/color pairing as the kanban's own column
    headers, so the severity reads instantly without a legend. */
 .landing-copilot-item--positive { background: var(--green-tint); }
 .landing-copilot-item--positive .lucide { color: var(--green); }
@@ -4975,7 +4975,7 @@ legend.field-label { padding: 0; }
 /* Job boards matching frise ("job boards" showcase row): a vertical
    timeline of match criteria, applied in order. The connecting line is
    one continuous ::before behind every step (not a border per step),
-   so it reads as a single thread running through the card — each
+   so it reads as a single thread running through the card : each
    icon's own solid background sits on top and visually breaks it at
    the bead, the standard timeline trick instead of fiddly per-segment
    height math. */
@@ -5015,7 +5015,7 @@ legend.field-label { padding: 0; }
   position: relative;
 }
 /* Same rounded-square badge as .landing-feature-icon/.landing-category-
-   icon (40x40, radius-input, indigo-tint) instead of a circular bead —
+   icon (40x40, radius-input, indigo-tint) instead of a circular bead -
    consistent with every other icon badge on the site. */
 .landing-matching-step-icon {
   flex-shrink: 0;
@@ -5031,7 +5031,7 @@ legend.field-label { padding: 0; }
 .landing-matching-step-icon .lucide { width: 20px; height: 20px; }
 .landing-matching-step-label { margin: 0 0 2px; font-size: 12px; font-weight: 600; color: var(--text); }
 .landing-matching-step-result { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
-/* Date matching is deliberately soft (a heads-up, not a hard filter —
+/* Date matching is deliberately soft (a heads-up, not a hard filter -
    start dates are usually negotiable), so its bead and label read as
    muted/dashed instead of matching the others' solid indigo. */
 .landing-matching-step--muted .landing-matching-step-icon {
@@ -5071,7 +5071,7 @@ legend.field-label { padding: 0; }
 }
 /* gap: 8px replaces the card's own uniform gap (6px, off the 4px grid):
    heading-to-city and city-to-links need different spacing (8px, 16px),
-   which a single flex gap can't give two different sibling boundaries —
+   which a single flex gap can't give two different sibling boundaries -
    so gap is dropped to 0 here and each boundary gets its own explicit
    margin-bottom below instead. */
 .landing-matching-offer .card { padding: 16px; gap: 0; border-radius: var(--radius-inner); box-shadow: var(--shadow); }
@@ -5089,12 +5089,12 @@ legend.field-label { padding: 0; }
 
 /* .ai-result: marks a container as showing an AI-generated result (the
    ATS match score, the copilot suggestions, the personalized offer) with
-   a soft breathing inner halo, in violet — the site's established
-   "IA-attributed content" color (see .landing-match-notes li.is-ai) —
+   a soft breathing inner halo, in violet : the site's established
+   "IA-attributed content" color (see .landing-match-notes li.is-ai) -
    so it reads as the same AI cue as those elsewhere instead of a
    separate, unrelated visual language. Replaces
    an earlier rotating conic-gradient ring (BorderBeam) that relied on
-   mask-composite: exclude — Safari doesn't handle -webkit-mask-composite:
+   mask-composite: exclude : Safari doesn't handle -webkit-mask-composite:
    xor the same as the standard exclude value, so the ring's hard edge
    showed through unmasked as a stray diagonal line. A plain inset
    box-shadow pulse has no such cross-browser edge case, and is applied
@@ -5117,7 +5117,7 @@ legend.field-label { padding: 0; }
   50% { opacity: 1; }
 }
 
-/* Kanban mockup ("suivi pédagogique" showcase row) — reuses the real
+/* Kanban mockup ("suivi pédagogique" showcase row) : reuses the real
    board's own classes (.column, .card, .card-title, .card-school-badge,
    .card-interview-pill, etc. from the dashboard kanban) instead of a
    parallel one-off style, so this marketing mockup is pixel-identical to
@@ -5139,14 +5139,14 @@ legend.field-label { padding: 0; }
 }
 /* .card:hover (real dashboard: filter:brightness(0.97), a drag-and-drop
    affordance) comes along for free by reusing the real .card class here
-   — this mockup is a static marketing screenshot, not an interactive
+   this mockup is a static marketing screenshot, not an interactive
    board, so that hover feedback reads as a rendering glitch instead of
    a hint. Cancelled scoped to this mockup only, real product untouched. */
 .landing-kanban-board .card:hover { filter: none; }
 
 /* The real board's own type scale (14-16px body text, 16-24px icons,
    generous padding) is sized for a full dashboard column, not this
-   cramped 3-up mockup — at that width "chez" and company names wrap
+   cramped 3-up mockup : at that width "chez" and company names wrap
    awkwardly. Same fix as the hero preview mockup above (see
    .landing-preview-greeting-text .inline-pill): scope a tighter scale to
    this mockup only, so the real .column/.card classes elsewhere on the
@@ -5165,13 +5165,13 @@ legend.field-label { padding: 0; }
 .landing-kanban-board .card-link-row { gap: 8px; }
 .landing-kanban-board .card-link { font-size: 10px; gap: 3px; }
 /* Base state has an explicit max-width/margin (rather than relying on
-   intrinsic sizing) so both can be transitioned down to 0 — driven by
+   intrinsic sizing) so both can be transitioned down to 0 : driven by
    the .is-hidden class KanbanAnimation.tsx's Card component adds once
    card.variant leaves "slate" ("À faire"). Declarative on purpose: a
    card moving column remounts as a fresh DOM node (different column =
    different parent list in React), so anything applied by poking the
    DOM directly would be lost on that remount and only reappear once
-   re-applied — this way the correct state always renders immediately,
+   re-applied : this way the correct state always renders immediately,
    remount or not. The negative margin cancels .card-link-row's own gap
    once collapsed, so no dead space is left behind. */
 .landing-kanban-board .card-link--generate {
@@ -5182,7 +5182,7 @@ legend.field-label { padding: 0; }
   opacity: 1;
   pointer-events: auto;
   /* Same 0.4s as .landing-kanban-board .card's own background transition
-     — both are triggered by the same card.variant change, so "Générer
+     both are triggered by the same card.variant change, so "Générer
      CV" needs to finish disappearing exactly when the card finishes
      turning fully amber/green, not before or after. */
   transition: opacity 0.4s ease, max-width 0.4s cubic-bezier(0.65, 0, 0.35, 1), margin-left 0.4s cubic-bezier(0.65, 0, 0.35, 1);
@@ -5200,7 +5200,7 @@ legend.field-label { padding: 0; }
 .landing-kanban-board .card-interview-pill .lucide { width: 9px; height: 9px; }
 
 /* Second carousel slide, same 4-column width and outer card chrome as
-   .landing-kanban-board — a messaging mockup instead of the board.
+   .landing-kanban-board : a messaging mockup instead of the board.
    Reuses .inline-pill (the same component the real inbox/summary
    sentences use) via .landing-preview-panel-list's existing stacked,
    full-width override, instead of a new one-off pill style. */
@@ -5219,7 +5219,7 @@ legend.field-label { padding: 0; }
 }
 
 /* Real .inbox-message (app/(tracker)/inbox/page.tsx) scaled down for this
-   compact mockup — same avatar/sender/subject/preview structure, tighter
+   compact mockup : same avatar/sender/subject/preview structure, tighter
    padding/font-size, unread vs. read told apart by fill vs. plain border
    (not the small indigo dot alone, which reads too subtly at this size). */
 .landing-inbox-message { position: relative; padding: 10px 12px; gap: 8px; min-width: 0; transition: background-color 0.6s ease, border-color 0.6s ease; }
@@ -5227,7 +5227,7 @@ legend.field-label { padding: 0; }
 .landing-inbox-message--read { background: var(--card-bg); }
 /* Both the dot and the time are anchored straight to the card (hence
    .landing-inbox-message needing position:relative) rather than placed
-   in normal flow — that's what lets the time slide smoothly from "4px
+   in normal flow : that's what lets the time slide smoothly from "4px
    left of the dot" to "flush at the card edge" as the dot fades out,
    instead of the two being independently laid out and just happening to
    line up. The dot sits fixed at 16px from the edge always; only the
@@ -5286,7 +5286,7 @@ legend.field-label { padding: 0; }
 
 /* Third carousel slide: a scaled-down but faithful copy of the real
    calendar view (app/(tracker)/page.tsx .calendar-*), not an invented
-   layout — same title/nav row, same Lun-Dim weekday header, same
+   layout : same title/nav row, same Lun-Dim weekday header, same
    per-category tint tokens and inset-ring "today" treatment. Two weeks
    instead of the real month grid's five to six: at 4 grid columns wide,
    7 day-columns already makes each cell tiny, and the real grid's
@@ -5308,7 +5308,7 @@ legend.field-label { padding: 0; }
 .landing-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 /* .landing-showcase-carousel stretches every card to the tallest one's
    height by default (flex align-items:stretch), so .landing-calendar-board
-   already has room to match .landing-kanban-board — the grid just needs
+   already has room to match .landing-kanban-board : the grid just needs
    to actually claim it instead of sizing to its own fixed-height cells,
    which left empty space below the 6 weeks. */
 .landing-calendar-grid { flex: 1; grid-template-rows: repeat(6, 1fr); }
@@ -5322,7 +5322,7 @@ legend.field-label { padding: 0; }
   text-align: center;
 }
 
-/* Always a column (number on top, event slot below) — every cell, event
+/* Always a column (number on top, event slot below) : every cell, event
    or not, so a day can gain/lose its event without the cell's own
    layout direction flipping. A plain day's number still lands top-
    centered either way (align-items:center handles the horizontal axis,
@@ -5347,11 +5347,11 @@ legend.field-label { padding: 0; }
 .landing-calendar-day--ferie { background: var(--rose-tint); border-color: transparent; }
 
 /* Cross-references the kanban mockup's own interview pill (same target
-   icon, same .card-interview-pill class/colors, not a lookalike) — both
+   icon, same .card-interview-pill class/colors, not a lookalike) : both
    mockups are driven by the same CalendarSyncContext event, so they
    read as the same data rather than two coincidentally similar ones.
    Collapsed by default (0 height, scaled down) and expanded via
-   .is-visible, both over 0.8s — the same duration KanbanAnimation uses
+   .is-visible, both over 0.8s : the same duration KanbanAnimation uses
    for its own color swap, since the two are meant to read as one
    synced motion rather than two separately-timed animations. */
 .landing-calendar-day-event {
@@ -5376,7 +5376,7 @@ legend.field-label { padding: 0; }
 }
 .landing-calendar-day-event .lucide { width: 8px; height: 8px; flex-shrink: 0; }
 /* Thin border in the cell's own category color (darker shade), plus a soft
-   colored drop-shadow instead of a thick inset ring — a standard "this
+   colored drop-shadow instead of a thick inset ring : a standard "this
    card is highlighted" treatment rather than a heavy outline. Falls back
    to indigo for a plain (no-category) day; the combined selectors below
    win on specificity whenever "today" lands on a tinted week. */
@@ -5392,10 +5392,10 @@ legend.field-label { padding: 0; }
 .landing-calendar-day--today.landing-calendar-day--examen-oral { border-color: var(--violet); color: var(--violet); box-shadow: 0 2px 8px color-mix(in srgb, var(--violet) 35%, transparent); }
 /* Not --indigo-tint: that token was flattened to var(--bg) in the
    monochrome color cleanup, which makes it visually identical to
-   --muted's own background — a "formation" week would look exactly
+   --muted's own background : a "formation" week would look exactly
    like an out-of-month grey day. --violet-tint stays a real color.
    None of these five reuse --amber/--green: those are the kanban
-   mockup's own colors (Envoyé/Entretien) — reusing them here would make
+   mockup's own colors (Envoyé/Entretien) : reusing them here would make
    the two mockups' color-coding read as related when they aren't.
    --rose is kept exclusively for --ferie (a genuine holiday) and grey
    exclusively for --muted (out-of-month), matching the rest of the site. */
@@ -5435,7 +5435,7 @@ legend.field-label { padding: 0; }
 .landing-documents-board .folder-empty { font-size: 9px; padding: 8px; text-align: center; }
 .landing-documents-board .doc-thumb-grid { padding: 0; }
 .landing-documents-board .doc-thumb-bare { width: 56px; height: 56px; }
-/* Fake cover page instead of a generic file icon — a title bar plus a
+/* Fake cover page instead of a generic file icon : a title bar plus a
    few text-line bars, purely decorative, so the fanned thumbnails read
    as "here's what's in this folder" rather than an abstract file glyph. */
 .landing-documents-board .doc-thumb-sheet { align-items: flex-start; padding: 5px 4px; }
@@ -5453,7 +5453,7 @@ legend.field-label { padding: 0; }
 /* Fanned stack of 3 talent cards: the front one sits in normal flow
    (centering the whole stack), the other two are absolutely positioned
    off its left/right edge, rotated, and spread further apart on
-   hover/focus — a hover-driven reveal is the standard interaction for
+   hover/focus : a hover-driven reveal is the standard interaction for
    a decorative card fan like this (vs. requiring a click on a purely
    illustrative element). */
 .landing-talent-stack {
@@ -5462,15 +5462,15 @@ legend.field-label { padding: 0; }
   justify-content: center;
   /* .landing-showcase-row--annuaire gives the parent .landing-showcase-
      visual justify-content:flex-end, so this stack's own right edge
-     (padding box) always sits exactly on the visual slot's right edge —
-     column 10's right edge — regardless of padding. That pins down
+     (padding box) always sits exactly on the visual slot's right edge -
+     column 10's right edge : regardless of padding. That pins down
      exactly what padding-right needs to be for the front card to land
      on columns 8-9: front's right edge = stack's right edge minus
      padding-right, and it needs to land on column 9's right edge, which
      sits exactly one column-and-gap short of column 10's right edge.
      padding-right = c + 24 (one column width + one gutter), c being the
      shared column-width term used everywhere else on this page
-     (100vw/12 - 26px) — simplifies to 8.3333vw - 2px. (A previous,
+     (100vw/12 - 26px) : simplifies to 8.3333vw - 2px. (A previous,
      eyeballed-and-then-trig-adjusted value here, calc(9.08vw - 11px),
      drifted a few px off column 8 at wide viewports; this one is exact
      at any width, derived from the same span/offset formulas as the
@@ -5478,20 +5478,20 @@ legend.field-label { padding: 0; }
   padding: 32px calc(8.3333vw - 2px) 32px 48px;
 }
 /* Student directory card ("annuaire de promotion" for partner
-   companies) — same card shell as .landing-match-card/.landing-
+   companies) : same card shell as .landing-match-card/.landing-
    copilot-card (border, radius, shadow), built entirely from existing
    tokens instead of the flat navy/white reference mockup. True 2-of-12
    viewport grid columns (matches the "g" debug overlay): for k columns
    out of N with gap g, span = (k/N)*W + g*[(k-1) - (k/N)(N-1)], which
    for k=2, N=12, g=24 simplifies to exactly (1/6)W - 20px. */
 /* .landing-talent-card--left/--right are position:absolute (needed for
-   the rotated fan effect), which takes them out of flow — align-items:
+   the rotated fan effect), which takes them out of flow : align-items:
    stretch/grid auto-rows can't equalize their height the way the rest
    of the site does, and a fixed min-height alone is only a floor: it
    can't catch up shorter cards to whichever one has the longest content
    at a given viewport width, so TalentStack.tsx measures the 3 cards'
    natural heights and sets the tallest as an explicit height on all
-   three (see its cardHeight state) — the min-height below is only a
+   three (see its cardHeight state) : the min-height below is only a
    flash-of-unstyled-height floor for the instant before that JS
    measurement runs, not the actual equalizing mechanism anymore.
    .landing-talent-body's own flex:1 absorbs the slack for shorter cards
@@ -5521,7 +5521,7 @@ legend.field-label { padding: 0; }
 /* left:50% on an absolutely positioned child resolves against the
    stack's full padding box (padding included), but the front card
    (a normal-flow flex child, centered by justify-content) sits in the
-   content box instead (padding excluded) — and the stack's own padding
+   content box instead (padding excluded), and the stack's own padding
    is deliberately asymmetric (48px left, calc(8.3333vw - 2px) right,
    see .landing-talent-stack above), so those two boxes don't share a
    center. Without correction the fan's own left/right symmetry axis
@@ -5568,17 +5568,17 @@ legend.field-label { padding: 0; }
    gap wherever content happened to end. */
 .landing-talent-body { flex: 1; display: flex; flex-direction: column; padding: 16px; }
 /* First name is the card's title (everyone shown here is on an
-   alternance contract, so that tag/status line was redundant) —
+   alternance contract, so that tag/status line was redundant) -
    the degree becomes a plain muted subtitle underneath instead. */
 .landing-talent-name { font-family: 'Goudy Bookletter 1911', Georgia, serif; font-synthesis: none; font-size: 24px; color: var(--text); margin-bottom: 8px; }
 .landing-talent-degree { font-size: 14px; line-height: 1.4; color: var(--text-muted); margin-bottom: 16px; }
-/* Row that wraps once it runs out of width — override .inline-pill's
+/* Row that wraps once it runs out of width : override .inline-pill's
    own margin:0 8px (meant for pills sitting inline in a sentence)
    since it ate into the available row width here.
    margin-top:auto is the one flexible space in this card: it absorbs
    the difference between a 1-line degree (Inès) and a 4-line one
    (Thomas), so the gap that varies is always the one right above the
-   pills, never the one below them. The gap below stays fixed — down
+   pills, never the one below them. The gap below stays fixed : down
    to .landing-talent-body's own 16px padding-bottom, since
    .landing-talent-footer is a sibling of the body, not a child. */
 .landing-talent-skills { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; margin-top: auto; }
@@ -5601,7 +5601,7 @@ legend.field-label { padding: 0; }
 }
 .landing-talent-action .lucide { width: 16px; height: 16px; }
 
-/* Wraps the title + grid together so both share the same width — the
+/* Wraps the title + grid together so both share the same width : the
    real 8-of-12 column span (columns 3-10), same k=8 formula as
    .landing-nav (66.6667vw - 40px), not an arbitrary 1120px cap. */
 /* Full-bleed breakout to the true viewport grid, same pattern as
@@ -5617,7 +5617,7 @@ legend.field-label { padding: 0; }
   padding-left: calc(16.6667vw - 4px);
   padding-right: calc(16.6667vw - 4px);
 }
-/* Centered like the kanban row's own header — text-align lives on the
+/* Centered like the kanban row's own header : text-align lives on the
    title/subtitle specifically, not the whole section, so it doesn't
    cascade into the 8 feature cards below (those stay left-aligned). */
 .landing-features-title {
@@ -5688,7 +5688,7 @@ legend.field-label { padding: 0; }
   margin: 0;
 }
 
-/* "Contacter un expert" modal — frosted glass like the nav popup
+/* "Contacter un expert" modal : frosted glass like the nav popup
    (.landing-nav-popup / the real CRM's .period-popup), just centered as
    an overlay instead of anchored under a button. */
 .quote-modal-overlay {
@@ -5709,7 +5709,7 @@ legend.field-label { padding: 0; }
   width: 100%;
   /* Exactly 4 grid columns (the middle 4 of 12), same span(4) formula
      used everywhere else on the page (showcase text/visual split
-     columns) — the overlay's own flex align/justify-content: center
+     columns) : the overlay's own flex align/justify-content: center
      already centers it in the viewport. */
   max-width: calc(33.3333vw - 32px);
   max-height: 90vh;
@@ -5803,7 +5803,7 @@ legend.field-label { padding: 0; }
 
 /* Standard landing-page convention, applied deliberately here rather
    than as a one-off tweak: a footer is chrome (like the nav), not a
-   content section — it already reads as visually separate via its own
+   content section : it already reads as visually separate via its own
    border-top, so it doesn't need the full 96px content-section rhythm
    on top of that. Half the value (48px) is the general rule for any
    trailing chrome element that closes a page, not a footer-specific
@@ -5828,14 +5828,14 @@ legend.field-label { padding: 0; }
 
 /* Closing CTA banner: a distinct tinted section right before the footer,
    the way Tripsy closes on "Your next trip starts here" before its
-   footer — no fabricated testimonials/press badges here since Altora is
+   footer : no fabricated testimonials/press badges here since Altora is
    pre-launch, just a direct final call to action. */
-/* 8-of-12 grid columns, centered — same span formula as .landing-nav
-   above (k=8, N=12, g=24, m=24 simplifies to 66.6667vw - 40px) — with
+/* 8-of-12 grid columns, centered : same span formula as .landing-nav
+   above (k=8, N=12, g=24, m=24 simplifies to 66.6667vw - 40px) : with
    an actual card look (white background, border, radius, shadow)
    instead of just blending into the page's own --bg. */
 /* .landing-closing (the standalone bordered-card wrapper) and
-   .landing-closing-actions are gone — that section was merged into
+   .landing-closing-actions are gone : that section was merged into
    .pricing-plan--merged (its title/text classes live on below, reused
    inside that card instead of their own box) so the page doesn't ask
    twice, one screen apart, for the same "contact us" click. */
@@ -5854,7 +5854,7 @@ legend.field-label { padding: 0; }
   margin: 0 auto var(--space-32);
 }
 /* The old plan name ("Abonnement SaaS") drops a rank once the closing
-   headline above takes over as the card's actual title — a small
+   headline above takes over as the card's actual title : a small
    muted label introducing the price, not a heading of its own. */
 .pricing-plan-tagline--name {
   font-size: 12px;
@@ -5874,21 +5874,21 @@ legend.field-label { padding: 0; }
   .landing-categories { grid-template-columns: 1fr; }
   .landing-features { grid-template-columns: repeat(2, 1fr); }
   .landing-showcase-row { grid-template-columns: 1fr; }
-  /* Regardless of desktop layout — --priorise puts the visual first in
-     the DOM so it can sit on the left there — mobile always reads
+  /* Regardless of desktop layout : --priorise puts the visual first in
+     the DOM so it can sit on the left there : mobile always reads
      title, then body text, then mockup/illustration. Explicit order on
      both (not just order:-1 on the visual) so this holds no matter
      which one happens to come first in a given row's markup. */
   .landing-showcase-row .landing-showcase-text { order: 0; }
   .landing-showcase-row .landing-showcase-visual { order: 1; }
   /* .landing-showcase itself now carries the full-bleed breakout (every
-     row is just width: 100% of it) — on a narrow phone that same
+     row is just width: 100% of it) : on a narrow phone that same
      vw-locked padding (16.6667vw - 4px, worked out for the desktop
      12-column grid) shrinks to near nothing, which is what forced "Une
      seule boîte à outils" to wrap one word per line. Reset to a fluid
      width with a flat 24px inset (the same page-margin gutter used
      everywhere else on the site) instead of the desktop's column-width-
-     based offset — every row resets for free along with it now, instead
+     based offset : every row resets for free along with it now, instead
      of needing its own copy of this same reset. */
   .landing-showcase,
   .landing-features-section {
@@ -5899,7 +5899,7 @@ legend.field-label { padding: 0; }
     padding-right: var(--space-24);
   }
   /* Cancels its own desktop-only margin-right (the negative vw value
-     that lets the carousel bleed past column 10 at desktop widths) —
+     that lets the carousel bleed past column 10 at desktop widths) -
      without this it stacks on top of .landing-showcase's own reset
      above and drags the row further right than intended. */
   .landing-showcase-row--kanban {
@@ -5908,7 +5908,7 @@ legend.field-label { padding: 0; }
        la version desktop décale la ligne d'une valeur négative en vw
        pour lui donner toute la largeur de page, ce qui ne veut plus
        rien dire ici où la gouttière est plate. Sans ça, la ligne partait
-       d'une centaine de pixels hors de l'écran à gauche — invisible tant
+       d'une centaine de pixels hors de l'écran à gauche : invisible tant
        que le carrousel était un scroller à moitié vide, franchement
        cassé depuis qu'il a une fenêtre de rognage nette. */
     margin-left: 0;
@@ -5922,7 +5922,7 @@ legend.field-label { padding: 0; }
     width: 100%;
   }
   /* Sa marge desktop la recentrait sur les colonnes 5-8 et compensait
-     l'annulation de padding du parent — deux notions qui n'existent plus
+     l'annulation de padding du parent : deux notions qui n'existent plus
      à cette largeur, et qui la poussaient d'une centaine de pixels vers
      la droite. Règle séparée du bloc width ci-dessus, qui est partagé
      avec cinq autres lignes du showcase. */
@@ -5958,11 +5958,11 @@ legend.field-label { padding: 0; }
   /* .landing-nav's own max-width (calc(66.6667vw - 40px), sized for the
      desktop 12-column grid) leaves the logo/hamburger stranded well
      short of the real page margin on a narrow viewport instead of
-     hugging it — full width plus an explicit 24px horizontal inset
+     hugging it : full width plus an explicit 24px horizontal inset
      (grid column 1/12's own margin) replaces that grid-column math
      here. Horizontal padding is set unconditionally (not scoped to
      :not(.landing-nav--scrolled)) so it survives the scrolled state
-     too — .landing-nav--scrolled's own "padding: 12px 0" only zeroes
+     too : .landing-nav--scrolled's own "padding: 12px 0" only zeroes
      the horizontal component by using the 2-value shorthand, which
      was previously winning outright and snapping the logo/hamburger
      flush to the true viewport edge (0px) once scrolled, instead of
@@ -5982,11 +5982,11 @@ legend.field-label { padding: 0; }
   }
   /* .landing-preview-shell's width (calc(50vw - 36px)) is sized for the
      desktop hero, where the mini app window sits at half the viewport
-     next to empty space. On mobile there's no space to spare — half the
+     next to empty space. On mobile there's no space to spare : half the
      viewport is too narrow for the sidebar + content card inside, which
      is what was clipping "Bonjour Camille" and the calendar events.
      .landing-preview (its parent) is already full-bleed to the page
-     margins — but the window itself should keep a flat 24px of
+     margins, but the window itself should keep a flat 24px of
      breathing room next to its own border on each side (the standard
      page-margin gutter, not a full grid column), rather than filling
      that edge completely. .landing-preview's own justify-content:center
@@ -5995,13 +5995,13 @@ legend.field-label { padding: 0; }
     width: calc(100% - 48px);
   }
   /* Mobile : un mockup entier, plus un tiers du suivant qui déborde pour
-     signaler qu'on peut faire défiler. Pas de peek à gauche — le mockup
+     signaler qu'on peut faire défiler. Pas de peek à gauche : le mockup
      de tête commence franchement à la gouttière entre les colonnes 1 et
      2, ce qui laisse les colonnes 1 et 12 libres.
 
      Le retrait vaut une colonne, avec un plancher : la grille est
      12 colonnes à 24px de gouttière SANS adaptation mobile, donc plus
-     l'écran rétrécit plus les gouttières mangent tout — une colonne fait
+     l'écran rétrécit plus les gouttières mangent tout : une colonne fait
      22,7px à 584px mais seulement 5,25px à 375px, où le retrait serait
      invisible. max() garde un décrochement lisible sur petit écran.
 
@@ -6025,13 +6025,13 @@ legend.field-label { padding: 0; }
   }
   /* Hauteur fixe, identique pour les quatre. Deux problèmes réglés d'un
      coup :
-     — les plateaux n'avaient pas la même hauteur (602 / 616 / 704 / 679
+     les plateaux n'avaient pas la même hauteur (602 / 616 / 704 / 679
        mesurés à 584px) alors que les items, eux, faisaient déjà tous
        908px. La cause n'était pas le flex mais les légendes, qui se
        replient sur un nombre de lignes différent à largeur étroite
        (282 / 268 / 180 / 206) et grignotent d'autant le plateau au
        dessus ; min-height: 180px ne planchérait que la plus courte ;
-     — l'étalement vertical, dont la vraie source est la jauge du kanban
+     l'étalement vertical, dont la vraie source est la jauge du kanban
        (3 cartes empilées) : elle imposait 602px, devenait le plus grand
        des quatre, et l'étirement flex propageait sa hauteur à tous.
      Le rapport reste proche du desktop sans rendre les mockups
@@ -6052,7 +6052,7 @@ legend.field-label { padding: 0; }
     overflow: hidden;
   }
   /* .landing-talent-card's width (calc(16.6667vw - 28px), one grid
-     column) shrinks to ~35px at 375px wide — unreadable. A fixed mobile
+     column) shrinks to ~35px at 375px wide : unreadable. A fixed mobile
      width keeps the fanned-card effect legible without chasing the
      desktop grid down to a size it was never meant to hit. */
   .landing-talent-card {
@@ -6062,7 +6062,7 @@ legend.field-label { padding: 0; }
      desktop (48px left, ~1 grid column right) so the front card's flex-
      centered position lands off-center on purpose, shifted so the
      right card's edge hits column 10. That grid target doesn't exist
-     on mobile — same padding both sides puts the front card visibly
+     on mobile : same padding both sides puts the front card visibly
      centered between its two fanned siblings instead, since they now
      rotate away from it by equal amounts on equal padding. */
   .landing-talent-stack {
@@ -6147,7 +6147,7 @@ legend.field-label { padding: 0; }
   margin-top: 32px;
   border-top: 1px solid var(--border);
 }
-/* Vertical hairlines between the 3 groups (not on the last one) — the
+/* Vertical hairlines between the 3 groups (not on the last one) : the
    plain grid gap alone read as 3 loose lists; a divider makes it read
    as one structured table instead. */
 .pricing-merged-group:not(:last-child) {
@@ -6214,7 +6214,7 @@ legend.field-label { padding: 0; }
 }
 
 /* Serif + larger, matching the site's other big display numbers
-   (.landing-match-score) — a bold sans 28px read as a form label, not
+   (.landing-match-score) : a bold sans 28px read as a form label, not
    the centerpiece of a pricing card. */
 .pricing-plan-price {
   font-family: 'Goudy Bookletter 1911', Georgia, serif;
@@ -6284,7 +6284,7 @@ legend.field-label { padding: 0; }
 
 .pricing-faq-question {
   /* h3 picks up the global h1/h2/h3 rule (Goudy Bookletter 1911) by
-     default — FAQ questions read better in the site's plain body font. */
+     default : FAQ questions read better in the site's plain body font. */
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1;
@@ -6309,7 +6309,7 @@ legend.field-label { padding: 0; }
   .pricing-plans { grid-template-columns: 1fr; }
   .pricing-merged-groups { grid-template-columns: 1fr; }
   /* Vertical dividers between side-by-side columns make no sense once
-     stacked to 1 column — horizontal ones between rows instead. */
+     stacked to 1 column : horizontal ones between rows instead. */
   .pricing-merged-group:not(:last-child) {
     border-right: none;
     padding-right: 0;

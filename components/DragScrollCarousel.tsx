@@ -8,7 +8,7 @@ import { trackEvent } from '@/lib/gtag';
 // Pourquoi le défilement natif a été abandonné : avec N éléments et un
 // conteneur qui défile, il existe toujours un vrai bord. On peut bien
 // réordonner le DOM une fois ce bord atteint, mais le contenu suivant
-// n'apparaît alors qu'APRÈS que l'utilisateur ait buté dessus — c'est
+// n'apparaît alors qu'APRÈS que l'utilisateur ait buté dessus : c'est
 // structurellement « ça apparaît au dernier moment », et aucun réglage
 // ne le corrige. S'y ajoutaient deux conflits permanents : muter
 // scrollLeft en pleine inertie (Safari poursuit son animation vers une
@@ -22,7 +22,7 @@ import { trackEvent } from '@/lib/gtag';
 //
 // Les 4 composants ne sont JAMAIS démontés ni réordonnés : leurs
 // animations internes continuent exactement où elles en sont, même hors
-// écran, et aucun mockup n'est cloné — il n'y a que N nœuds DOM.
+// écran, et aucun mockup n'est cloné : il n'y a que N nœuds DOM.
 //
 // Géométrie (voir aussi .landing-showcase-carousel dans tracker.css) :
 // la piste porte l'unique transform réécrit à chaque frame, les
@@ -78,7 +78,7 @@ export default function DragScrollCarousel({ children, className, circular = fal
       const slack = trackLen - viewportW - itemW;
       lo = -(itemW + Math.max(slack, 0) / 2);
       // Invalide les sauts de rebouclage mémorisés. paint() ne réécrit le
-      // transform d'un élément que si son NOMBRE de tours a changé — or au
+      // transform d'un élément que si son NOMBRE de tours a changé. Or au
       // franchissement d'un point de rupture c'est la longueur de piste
       // qui change, pas ce nombre : sans cette purge, les éléments
       // gardaient un saut calculé sur l'ancienne géométrie et partaient à
@@ -188,7 +188,7 @@ export default function DragScrollCarousel({ children, className, circular = fal
     // --- Molette -----------------------------------------------------
     // Listener manuel non passif : React enregistre `wheel` en passive
     // sur son conteneur racine, donc un preventDefault dans un onWheel
-    // JSX ne fait rien (et log un avertissement) — la page défilerait
+    // JSX ne fait rien (et log un avertissement) : la page défilerait
     // horizontalement, ou déclencherait le geste retour du navigateur,
     // pendant que le JS bouge aussi le carrousel.
     let wheelAxis: 'x' | 'y' | null = null;
@@ -201,7 +201,7 @@ export default function DragScrollCarousel({ children, className, circular = fal
       // Verrou d'axe sur toute la rafale, et non événement par événement :
       // sur un geste diagonal de trackpad le rapport bascule d'un
       // événement à l'autre, ce qui ferait alterner défilement de page et
-      // défilement du carrousel — la page tressaute et le carrousel
+      // défilement du carrousel : la page tressaute et le carrousel
       // avance par à-coups.
       if (now - lastWheelAt > 150) wheelAxis = null;
       lastWheelAt = now;
@@ -274,7 +274,7 @@ export default function DragScrollCarousel({ children, className, circular = fal
       if (!moved) return;
       // Inertie : on projette où le geste « voulait » aller, puis on
       // accroche. Indispensable au tactile, où c'est l'interaction
-      // principale — sans elle un swipe s'arrête net au lever du doigt et
+      // principale : sans elle un swipe s'arrête net au lever du doigt et
       // le carrousel paraît cassé. Bornée à deux pas pour ne pas
       // s'envoler sur un geste brusque.
       const projected = s + velocity * 180;

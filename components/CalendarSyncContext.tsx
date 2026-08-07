@@ -5,7 +5,7 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from 're
 // Lets KanbanAnimation report which interview dates are currently
 // "active" (a card is sitting in the Entretien column with that date)
 // so HeroCalendar can light up the matching day at the exact same
-// moment — both mockups are telling the same story, so an interview
+// moment : both mockups are telling the same story, so an interview
 // appearing/disappearing on one has to show up on the other too,
 // instead of the calendar carrying its own unrelated static date.
 export type CalendarSyncEvent = { id: string; day: number; label: string };
@@ -31,7 +31,7 @@ export function CalendarSyncProvider({ children }: { children: ReactNode }) {
 }
 
 // Returns null outside a provider (e.g. if either mockup is ever reused
-// somewhere without the other) — callers should treat that as "no sync
+// somewhere without the other) : callers should treat that as "no sync
 // available" rather than throwing.
 export function useCalendarSync() {
   return useContext(CalendarSyncContext);
