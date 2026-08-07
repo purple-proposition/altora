@@ -4521,11 +4521,30 @@ legend.field-label { padding: 0; }
    coincidentally the same number as the inter-section one but not the
    same rule : don't conflate the two if either ever needs to change
    independently. */
+/* Marge laterale des sections, mesuree depuis l'interieur de
+   .landing-card, qui porte deja les 24 pixels de marge de page. Une
+   seule variable pour toutes les sections : la grille est la meme
+   partout, elle n'a aucune raison d'etre reecrite section par section,
+   et une valeur unique garantit que le titre, le corps et le mockup
+   s'alignent sur la meme verticale.
+
+   Rappel de la grille : douze colonnes, marge et gouttiere a 24, donc
+   une colonne vaut 8.3333vw - 26px.
+
+   Bureau, deux colonnes de marge : 2 colonnes + 2 gouttieres.
+   Tablette, la colonne 1 en entier plus sa gouttiere, le contenu
+   commence donc au bord de la colonne 2.
+   Mobile, la colonne 1 seule, le contenu commence a l'intergrille entre
+   les colonnes 1 et 2. */
+:root { --marge-section: calc(16.6667vw - 4px); }
+@media (max-width: 960px) { :root { --marge-section: calc(8.3333vw - 2px); } }
+@media (max-width: 720px) { :root { --marge-section: calc(8.3333vw - 26px); } }
+
 .landing-showcase {
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
   margin-top: var(--space-96);
-  padding: 0 calc(16.6667vw - 4px);
+  padding: 0 var(--marge-section);
   display: flex;
   flex-direction: column;
   gap: var(--space-96);
@@ -5690,8 +5709,8 @@ legend.field-label { padding: 0; }
 .landing-features-section {
   width: calc(100vw - 48px);
   margin-left: calc(50% - 50vw + 24px);
-  padding-left: calc(16.6667vw - 4px);
-  padding-right: calc(16.6667vw - 4px);
+  padding-left: var(--marge-section);
+  padding-right: var(--marge-section);
 }
 /* Centered like the kanban row's own header : text-align lives on the
    title/subtitle specifically, not the whole section, so it doesn't
@@ -5936,7 +5955,23 @@ legend.field-label { padding: 0; }
   letter-spacing: 0.04em;
 }
 
+/* La tarification et le hero avaient chacun leur gouttiere fixe de 24
+   pixels et ne suivaient donc plus la grille des que l'ecran retrecit :
+   ils s'alignent desormais sur la meme verticale que les autres
+   sections. */
 @media (max-width: 960px) {
+  /* La variante fusionnee est visee par une double classe, pas par son
+     seul modificateur : elle porte son propre max-width en vw et remet
+     ses gouttieres a zero, et sa regle vit plus bas dans le fichier. A
+     specificite egale c'est la derniere qui gagne, la marge restait donc
+     a 243 pixels au lieu de 97. */
+  .pricing-plans,
+  .pricing-plans.pricing-plans--merged,
+  .landing-hero {
+    max-width: 100%;
+    padding-left: var(--marge-section);
+    padding-right: var(--marge-section);
+  }
 }
 
 @media (max-width: 720px) {
@@ -5960,13 +5995,36 @@ legend.field-label { padding: 0; }
      everywhere else on the site) instead of the desktop's column-width-
      based offset : every row resets for free along with it now, instead
      of needing its own copy of this same reset. */
-  .landing-showcase,
+  /* Ce reset ramenait les sections a une gouttiere plate de 24 pixels,
+     parce que la valeur de bureau, calee sur deux colonnes, ne laissait
+     presque plus rien a cette largeur. Elles suivent maintenant
+     --marge-section, qui vaut ici la colonne 1 : la grille reste la
+     meme du telephone au bureau, seul le nombre de colonnes de marge
+     change. */
+  .landing-showcase {
+    width: auto;
+    /* Les marges negatives de bureau sont annulees, pas conservees. Elles
+       tiraient la section jusqu'au bord de la fenetre, si bien que sa
+       gouttiere ne partait plus du meme bord qu'en bureau : la marge
+       aurait ete comptee depuis la fenetre au lieu de l'interieur de la
+       carte, soit 24 pixels d'ecart avec le reste de la page. */
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: var(--marge-section);
+    padding-right: var(--marge-section);
+  }
+  /* La section des cartes vit a l'interieur du showcase. En bureau elle
+     s'en extrait par une marge negative pleine largeur, ce qui annule la
+     gouttiere du parent avant de reposer la sienne. Sans cette sortie,
+     les deux gouttieres s'additionnent : elle se retrouvait a une
+     colonne de plus que les autres sections. Ici elle n'a donc aucune
+     gouttiere propre, celle du parent suffit. */
   .landing-features-section {
     width: auto;
-    margin-left: calc(-1 * var(--space-24));
-    margin-right: calc(-1 * var(--space-24));
-    padding-left: var(--space-24);
-    padding-right: var(--space-24);
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
   }
   /* Cancels its own desktop-only margin-right (the negative vw value
      that lets the carousel bleed past column 10 at desktop widths) -
@@ -6006,7 +6064,10 @@ legend.field-label { padding: 0; }
   .landing-features-title { font-size: 28px; }
   .landing-closing-title { font-size: 24px; }
   .landing-closing-actions { flex-direction: column; gap: var(--space-16); }
-  .landing-hero { max-width: 100%; padding: var(--space-64) var(--space-24) 0; }
+  /* Le raccourci padding reecrivait la gouttiere en 24 pixels et
+     annulait la regle de grille posee plus haut : seul le haut change
+     ici. */
+  .landing-hero { max-width: 100%; padding-top: var(--space-64); }
   /* Below 720px there's no room for the full "Contacter un expert"
      label next to the logo, so the nav's own CTA collapses to the same
      icon-only square as .landing-nav--scrolled, unconditionally here,
