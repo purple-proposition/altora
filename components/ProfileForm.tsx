@@ -219,8 +219,8 @@ export default function ProfileForm({
 
       <fieldset className="field-group">
         <legend className="field-label">Langues</legend>
-        <input type="text" value={profile.langues} onChange={e => set('langues', e.target.value)} placeholder="Français : natif · Anglais : B2…" />
-        <span className="field-hint">Chaque langue avec son niveau, séparées par « · ».</span>
+        <input type="text" value={profile.langues} onChange={e => set('langues', e.target.value)} placeholder="Français · langue maternelle · Anglais · courant…" />
+        <span className="field-hint">Séparateur « · » partout, y compris entre une langue et son niveau. Niveaux en toutes lettres.</span>
       </fieldset>
 
       <fieldset className="field-group">

@@ -11,7 +11,7 @@ Règles :
 — "dates" au format "MM/AAAA – MM/AAAA" ou "MM/AAAA – Présent". Ordre antichronologique pour experiences et formation.
 — "competences", "outils" et "interests" : items séparés par " · ".
 — "interests" : centres d'intérêt, loisirs, engagements associatifs, sports, bénévolat.
-— "langues" : chaque langue avec son niveau s'il est indiqué, séparées par " · ".
+— "langues" : séparateur " · " PARTOUT, y compris entre une langue et son niveau. Jamais de deux-points. Niveaux en toutes lettres en français ("langue maternelle", "courant", "intermédiaire", "notions"), jamais de code CECRL (A1, B2, C1). Exemple exact : "Français · langue maternelle · Anglais · courant · Espagnol · intermédiaire".
 — "school" : l'établissement de la formation EN COURS (la plus récente, si elle n'est pas terminée), pas toute la liste.
 — "soughtContract" : "alternance", "stage" ou "cdi" UNIQUEMENT si le CV l'indique explicitement (mention "recherche une alternance", "en vue d'un stage"…), sinon "".
 — "availability" : date ou période de début mentionnée dans le CV, sinon "".

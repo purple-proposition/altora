@@ -973,6 +973,14 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
          .replace(/\bCofondateur\b/g, 'Co-fondateur')
          .replace(/\bcofondateur\b/g, 'co-fondateur');
 
+      // La ligne des langues suit le même séparateur que le reste du CV, y
+      // compris entre une langue et son niveau. Les profils enregistrés avant
+      // ce format contiennent "Français : natif · Anglais : B2", qui mélange
+      // deux ponctuations sur une même ligne — normalisé ici pour ne pas
+      // imposer de réimporter son CV.
+      const normalizeLangues = (s: string) =>
+        s.replace(/\s*:\s*/g, ' · ').replace(/\s{2,}/g, ' ').trim();
+
       // Filtre mécanique générique sur les bullets CV — aucune règle propre à
       // une entreprise ou un outil précis, ça c'est le rôle de customInstructions.
       const sanitizeBullet = (s: string): string =>
@@ -1019,6 +1027,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         // protectList: si Claude tronque compétences ou outils → on garde la base complète
         competences: protectList(rawCV.competences, profile.competences),
         outils:      protectList(rawCV.outils,      profile.outils),
+        langues:     normalizeLangues(rawCV.langues),
       };
 
       // Sanitize letter + email body: remove any English jargon Claude may have missed
