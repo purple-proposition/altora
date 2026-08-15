@@ -2060,6 +2060,21 @@ legend.field-label { padding: 0; }
   text-transform: none;
 }
 
+/* Champ obligatoire non renseigné : la bordure seule ne suffit pas (invisible
+   pour qui ne distingue pas les couleurs), d'où le message explicite dessous. */
+.field-invalid select,
+.field-invalid input {
+  border-color: var(--rose);
+}
+.field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--rose);
+  text-transform: none;
+}
+
 .url-parse-status {
   margin: -8px 0 0;
   font-size: 12px;

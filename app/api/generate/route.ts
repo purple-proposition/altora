@@ -16,6 +16,23 @@ const MAX_JOB_POSTING_RESPONSE_BYTES = 2 * 1024 * 1024;
 // exists for the duration of one generation.
 type CVProfile = UserProfile & { title: string };
 
+// Le type de contrat visé apparaît dans le titre du CV, l'objet de la lettre
+// et celui de l'email. Il était écrit "alternance" en dur partout, ce qui
+// devient faux dès qu'on cherche un stage ou un CDI. Non renseigné, on
+// n'annonce aucun type plutôt que d'en supposer un.
+function contractLabel(p: UserProfile): string {
+  return p.soughtContract === 'alternance' ? 'Alternance'
+    : p.soughtContract === 'stage' ? 'Stage'
+    : p.soughtContract === 'cdi' ? 'CDI'
+    : '';
+}
+function contractSuffix(p: UserProfile): string {
+  return p.soughtContract === 'alternance' ? ' en alternance'
+    : p.soughtContract === 'stage' ? ' en stage'
+    : p.soughtContract === 'cdi' ? ' en CDI'
+    : '';
+}
+
 // ── PDF helpers ──────────────────────────────────────────────────────────────
 
 function generatePDF(doc_fn: (doc: InstanceType<typeof PDFDocument>) => void): Promise<Buffer> {
@@ -176,6 +193,17 @@ function renderCVContent(doc: InstanceType<typeof PDFDocument>, cv: CVProfile, s
   section('LANGUES', 42);
   doc.font('Helvetica').fontSize(9).fillColor(C.noir);
   ln(cv.langues, M, y);
+
+  // ── Centres d'intérêt ───────────────────────────────────────────
+  // Rubrique facultative : rendue seulement si elle est renseignée, pour ne
+  // pas consommer de la hauteur (le CV tient sur une page stricte) avec un
+  // en-tête suivi de rien.
+  if (cv.interests?.trim()) {
+    y = doc.y + S.afterInline;
+    section("CENTRES D'INTÉRÊT", 42);
+    doc.font('Helvetica').fontSize(9).fillColor(C.noir);
+    ln(cv.interests, M, y);
+  }
 }
 
 // Strict 1-page enforcement: try shrink=1.0 → 0.91 → 0.83.
@@ -324,7 +352,7 @@ async function buildLetterPdf(profile: UserProfile, data: { company: string; pos
     // French elision: "de" → "d'" before a vowel or h
     const dePoste = /^[aeiouéèêëàâîïôùûüh]/i.test(posteLower) ? `d'${posteLower}` : `de ${posteLower}`;
     doc.font('Helvetica-Bold').fontSize(10).fillColor('#000');
-    doc.text(`Objet : Candidature au poste ${dePoste} en alternance`, M, y, { width: W, lineBreak: true });
+    doc.text(`Objet : Candidature au poste ${dePoste}${contractSuffix(profile)}`, M, y, { width: W, lineBreak: true });
     y = doc.y + 24;
 
     doc.font('Helvetica').fontSize(10).fillColor('#000');
@@ -582,22 +610,38 @@ export async function POST(req: NextRequest) {
 
       const client = new Anthropic({ apiKey });
 
-      // Altora est dédié aux alternances et stages — écarter tôt un CDI/CDD
-      // détecté dans le texte, avant de payer le coût de la génération complète.
-      const contractCheck = await client.messages.create({
-        model: 'claude-haiku-4-5',
-        max_tokens: 10,
-        system: 'Réponds UNIQUEMENT par un mot, sans ponctuation : ALTERNANCE, STAGE, CDI, CDD, ou AUTRE si le type de contrat de cette offre est ambigu ou non précisé.',
-        messages: [{ role: 'user', content: jobText.slice(0, 4000) }],
-      });
-      const contractLabel = (contractCheck.content[0].type === 'text' ? contractCheck.content[0].text : '').trim().toUpperCase();
-      if (contractLabel === 'CDI' || contractLabel === 'CDD') {
-        await send({ error: "Cette offre a l'air d'être un CDI ou un CDD. Altora t'accompagne uniquement sur les alternances et les stages, essaie avec une offre de ce type !" });
-        return;
+      // Le garde-fou ne vaut que pour qui cherche une alternance ou un stage :
+      // recevoir "cette offre est un CDI" quand on cherche précisément un CDI
+      // serait absurde. Quand le type recherché n'est pas renseigné, on ne
+      // présume rien et on laisse passer.
+      const rejectsPermanent = profile.soughtContract === 'alternance' || profile.soughtContract === 'stage';
+      if (rejectsPermanent) {
+        const contractCheck = await client.messages.create({
+          model: 'claude-haiku-4-5',
+          max_tokens: 10,
+          system: 'Réponds UNIQUEMENT par un mot, sans ponctuation : ALTERNANCE, STAGE, CDI, CDD, ou AUTRE si le type de contrat de cette offre est ambigu ou non précisé.',
+          messages: [{ role: 'user', content: jobText.slice(0, 4000) }],
+        });
+        const contractLabel = (contractCheck.content[0].type === 'text' ? contractCheck.content[0].text : '').trim().toUpperCase();
+        if (contractLabel === 'CDI' || contractLabel === 'CDD') {
+          const cherche = profile.soughtContract === 'stage' ? 'un stage' : 'une alternance';
+          await send({ error: `Cette offre a l'air d'être un CDI ou un CDD, alors que tu cherches ${cherche}. Change le type de contrat recherché dans ton profil si tu veux quand même postuler.` });
+          return;
+        }
       }
 
-      // Titre CV : "Alternance" puis rentrée et rythme définis par l'école, si renseignés.
-      const titleSuffix = [profile.availability, profile.rhythm].filter(Boolean).map(v => ` · ${v}`).join('');
+      // Suffixe du titre du CV : le type de contrat visé, puis début et rythme
+      // s'ils sont renseignés. Un CDI n'a pas de rythme d'alternance, d'où le
+      // filtrage plutôt qu'une concaténation systématique.
+      const contractLabelFr = profile.soughtContract === 'cdi' ? 'CDI'
+        : profile.soughtContract === 'stage' ? 'Stage'
+        : profile.soughtContract === 'alternance' ? 'Alternance'
+        : '';
+      const titleSuffix = [
+        profile.availability,
+        profile.soughtContract === 'cdi' ? '' : profile.rhythm,
+      ].filter(Boolean).map(v => ` · ${v}`).join('');
+      const cvTitleExample = `[intitulé EXACT du poste dans la fiche]${contractLabelFr ? ` · ${contractLabelFr}` : ''}${titleSuffix}`;
 
       // L'ancienne consigne ne parlait que des formes épicènes des INTITULÉS
       // (H/F, point médian). Le modèle les résolvait bien, puis glissait sur
@@ -661,7 +705,7 @@ Réordonner bullets, compétences et outils par pertinence décroissante pour le
 Profil : 3 phrases max. Jamais de "Fort intérêt pour…" ni d'affinité sectorielle non prouvée par une expérience concrète.
 Interdit dans le profil et les bullets : "compétences validées", "compétences certifiées", "compétences prouvées", "compétences démontrées" — sauf si une certification réelle existe. Une compétence se montre par un résultat ou une action concrète, pas par une auto-déclaration de validation.
 Formation : nom de l'école + diplôme + dates uniquement. Zéro bullet, zéro description pédagogique. "bullets":[] dans le JSON.
-Title : "[intitulé EXACT du poste dans la fiche] · Alternance${titleSuffix}". Séparateur " · " entre les parties, obligatoire et immuable.
+Title : "${cvTitleExample}". Séparateur " · " entre les parties, obligatoire et immuable.
 RÈGLE IMMUABLE — SÉPARATEURS CV : dans les champs structurés du CV (titre sous le nom, intitulés de poste, diplômes, ligne de contact), le séparateur est toujours " · ". Le " – " est réservé aux intervalles de dates uniquement. ❌ "Bac +4 – Manager…" ✅ "Bac +4 · Manager…"
 RÈGLE IMMUABLE — PONCTUATION LETTRE : dans le corps de la lettre de motivation, le point médian " · " est ABSOLUMENT INTERDIT sous toutes ses variantes. Ni tiret d'incise (—), ni parenthèse, ni liste avec séparateur. Toute énumération ou incise doit être reformulée avec : virgule, deux-points, point-virgule, ou point. ❌ "concrètement · la gestion social media" ✅ "concrètement : la gestion social media et l'optimisation e-commerce." Construire des phrases complètes avec sujet-verbe-complément. Ne jamais utiliser · comme deux-points, tiret ou virgule.
 RÈGLE IMMUABLE — UN SEUL DEUX-POINTS PAR PHRASE : jamais deux " : " dans la même phrase, même séparés par une proposition. Un deux-points ouvre une seule fois ; s'il faut annoncer puis détailler, couper en deux phrases distinctes. Avant de finaliser chaque paragraphe, compter les " : " par phrase — si une phrase en contient plus d'un, la scinder.
@@ -781,7 +825,7 @@ Durée d'expérience → ne jamais écrire "depuis X ans", "depuis trois ans", "
 ━━━ EMAIL ━━━
 
 "to" : email détecté dans la fiche, sinon "". Ne jamais inventer.
-Objet : si la fiche prescrit un format → l'utiliser exactement. Sinon : "Candidature au poste de [intitulé en minuscules] en alternance".
+Objet : si la fiche prescrit un format → l'utiliser exactement. Sinon : "Candidature au poste de [intitulé en minuscules]${contractSuffix(profile)}".
 Corps (5 lignes max) :
 1. "Bonjour [Prénom]," ou "Bonjour,"
 2. Candidature + poste${profile.availability ? ' + disponibilité' : ''}.
@@ -837,9 +881,8 @@ ATS : mots-clés pertinents repris, compétences standard, verbes d'action, date
 PROFIL DE BASE DU CANDIDAT
 ${JSON.stringify(profile)}`;
 
-      const cvTitleExample = `[intitulé EXACT du poste dans la fiche] · Alternance${titleSuffix}`;
-      const emailObjetExample = 'Candidature au poste de [intitulé] en alternance';
-      const emailCorpsExample = `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé] en alternance et je vous adresse ma candidature${profile.availability ? ` pour une prise de poste ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`;
+      const emailObjetExample = `Candidature au poste de [intitulé]${contractSuffix(profile)}`;
+      const emailCorpsExample = `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé]${contractSuffix(profile)} et je vous adresse ma candidature${profile.availability ? ` pour une prise de poste ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`;
 
       const userPrompt = `Fiche de poste :
 ${jobText}
@@ -999,7 +1042,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
           /Candidature au poste (?:de |d['''])?(.+?)(\s+en\s+alternance\b.*)?$/ui,
           (_, rawTitle) => {
             const title = stripAlt(rawTitle);
-            return `Candidature au poste ${prep(title)}${title} en alternance`;
+            return `Candidature au poste ${prep(title)}${title}${contractSuffix(profile)}`;
           }
         );
       };

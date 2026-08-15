@@ -28,6 +28,8 @@ export async function PUT(req: NextRequest) {
     portfolio: String(body.portfolio ?? '').slice(0, 200),
     city: String(body.city ?? '').slice(0, 100),
     civility: (['M', 'Mme'].includes(body.civility) ? body.civility : '') as '' | 'M' | 'Mme',
+    soughtContract: (['alternance', 'stage', 'cdi'].includes(body.soughtContract) ? body.soughtContract : '') as UserProfile['soughtContract'],
+    school: String(body.school ?? '').slice(0, 200),
     availability: String(body.availability ?? '').slice(0, 200),
     rhythm: String(body.rhythm ?? '').slice(0, 100),
     profil: String(body.profil ?? '').slice(0, 1000),
@@ -46,6 +48,7 @@ export async function PUT(req: NextRequest) {
     competences: String(body.competences ?? '').slice(0, 2000),
     outils: String(body.outils ?? '').slice(0, 2000),
     langues: String(body.langues ?? '').slice(0, 500),
+    interests: String(body.interests ?? '').slice(0, 1000),
     customInstructions: String(body.customInstructions ?? '').slice(0, 8000),
   };
 

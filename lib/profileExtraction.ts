@@ -4,8 +4,18 @@ import WordExtractor from 'word-extractor';
 import { UserProfile, emptyProfile } from './profile';
 
 const EXTRACTION_INSTRUCTIONS = `Extrait les informations de ce CV et retourne UNIQUEMENT un objet JSON valide (sans markdown, sans backticks), avec exactement cette forme :
-{"name":"...","email":"...","phone":"...","linkedin":"...","portfolio":"...","city":"...","availability":"...","profil":"...","experiences":[{"company":"...","title":"...","dates":"...","bullets":["..."]}],"formation":[{"school":"...","degree":"...","dates":"...","bullets":[]}],"competences":"item1 · item2 · ...","outils":"item1 · item2 · ...","langues":"Français : ... · Anglais : ..."}
-Règles : ne rien inventer — si une info est absente du CV, laisser une chaîne vide "" ou un tableau vide []. "dates" au format "MM/AAAA – MM/AAAA" ou "MM/AAAA – Présent". "competences"/"outils" séparés par " · ". Ordre antichronologique pour experiences et formation.`;
+{"name":"...","email":"...","phone":"...","linkedin":"...","portfolio":"...","city":"...","school":"...","soughtContract":"","availability":"...","rhythm":"...","profil":"...","experiences":[{"company":"...","title":"...","dates":"...","bullets":["..."]}],"formation":[{"school":"...","degree":"...","dates":"...","bullets":[]}],"competences":"item1 · item2 · ...","outils":"item1 · item2 · ...","langues":"Français : ... · Anglais : ...","interests":"item1 · item2 · ..."}
+
+Règles :
+— Ne rien inventer : si une info est absente du CV, laisser une chaîne vide "" ou un tableau vide [].
+— "dates" au format "MM/AAAA – MM/AAAA" ou "MM/AAAA – Présent". Ordre antichronologique pour experiences et formation.
+— "competences", "outils" et "interests" : items séparés par " · ".
+— "interests" : centres d'intérêt, loisirs, engagements associatifs, sports, bénévolat.
+— "langues" : chaque langue avec son niveau s'il est indiqué, séparées par " · ".
+— "school" : l'établissement de la formation EN COURS (la plus récente, si elle n'est pas terminée), pas toute la liste.
+— "soughtContract" : "alternance", "stage" ou "cdi" UNIQUEMENT si le CV l'indique explicitement (mention "recherche une alternance", "en vue d'un stage"…), sinon "".
+— "availability" : date ou période de début mentionnée dans le CV, sinon "".
+— "rhythm" : rythme d'alternance s'il est indiqué (ex: "4 jours entreprise / 1 jour école"), sinon "".`;
 
 function parseProfileJSON(raw: string, fallbackName: string, fallbackEmail: string): UserProfile | null {
   const match = raw.match(/\{[\s\S]*\}/);

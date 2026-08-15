@@ -29,6 +29,7 @@ export default function ProfileForm({
   const [profile, setProfile] = useState<UserProfile>(initialProfile);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
 
   function set<K extends keyof UserProfile>(key: K, value: UserProfile[K]) {
     setProfile(p => ({ ...p, [key]: value }));
@@ -42,7 +43,18 @@ export default function ProfileForm({
     set('formation', profile.formation.map((f, idx) => (idx === i ? { ...f, ...patch } : f)));
   }
 
+  // La civilité n'est jamais déduite du CV et pilote l'accord de tous les
+  // documents générés : la laisser vide produisait des lettres au masculin
+  // par défaut, sans que personne ne l'ait choisi. C'est le seul champ dont
+  // l'absence bloque l'enregistrement.
+  const missingCivility = !profile.civility;
+
   async function handleSave() {
+    if (missingCivility) {
+      setShowErrors(true);
+      document.getElementById('profile-civility')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return;
+    }
     setSaving(true);
     try {
       const res = await fetch('/api/profile', {
@@ -82,12 +94,20 @@ export default function ProfileForm({
           </label>
         </div>
         <div className="field-row">
-          <label>Civilité <span className="field-hint">(pour l&apos;accord des intitulés)</span>
-            <select value={profile.civility} onChange={e => set('civility', e.target.value as typeof profile.civility)}>
-              <option value="">Non précisé</option>
-              <option value="M">M.</option>
-              <option value="Mme">Mme</option>
+          <label htmlFor="profile-civility" className={showErrors && missingCivility ? 'field-invalid' : undefined}>
+            Civilité *<span className="field-hint"> (accord de tous les documents générés)</span>
+            <select
+              id="profile-civility"
+              value={profile.civility}
+              onChange={e => { set('civility', e.target.value as typeof profile.civility); setShowErrors(false); }}
+            >
+              <option value="">À choisir</option>
+              <option value="Mme">Féminin</option>
+              <option value="M">Masculin</option>
             </select>
+            {showErrors && missingCivility && (
+              <span className="field-error">Choisis une civilité : elle décide de l&apos;accord du CV et de la lettre.</span>
+            )}
           </label>
           <label>LinkedIn
             <input type="text" value={profile.linkedin} onChange={e => set('linkedin', e.target.value)} placeholder="linkedin.com/in/..." />
@@ -96,6 +116,31 @@ export default function ProfileForm({
         <label>Portfolio / site
           <input type="text" value={profile.portfolio} onChange={e => set('portfolio', e.target.value)} />
         </label>
+      </fieldset>
+
+      <fieldset className="field-group">
+        <legend className="field-label">Ta recherche</legend>
+        <div className="field-row">
+          <label>Type de contrat recherché
+            <select value={profile.soughtContract} onChange={e => set('soughtContract', e.target.value as typeof profile.soughtContract)}>
+              <option value="">Non précisé</option>
+              <option value="alternance">Alternance</option>
+              <option value="stage">Stage</option>
+              <option value="cdi">CDI</option>
+            </select>
+          </label>
+          <label>École ou organisme de formation
+            <input type="text" value={profile.school} onChange={e => set('school', e.target.value)} placeholder="Rocket School…" />
+          </label>
+        </div>
+        <div className="field-row">
+          <label>Début souhaité
+            <input type="text" value={profile.availability} onChange={e => set('availability', e.target.value)} placeholder="septembre 2026, immédiate…" />
+          </label>
+          <label>Rythme d&apos;alternance
+            <input type="text" value={profile.rhythm} onChange={e => set('rhythm', e.target.value)} placeholder="4 jours entreprise / 1 jour école" />
+          </label>
+        </div>
       </fieldset>
 
       <fieldset className="field-group">
@@ -161,16 +206,27 @@ export default function ProfileForm({
       </fieldset>
 
       <fieldset className="field-group">
-        <legend className="field-label">Compétences, outils, langues</legend>
-        <label>Compétences <span className="field-hint">(séparées par « · »)</span>
-          <textarea rows={2} value={profile.competences} onChange={e => set('competences', e.target.value)} />
-        </label>
-        <label>Outils <span className="field-hint">(séparés par « · »)</span>
-          <textarea rows={2} value={profile.outils} onChange={e => set('outils', e.target.value)} />
-        </label>
-        <label>Langues
-          <input type="text" value={profile.langues} onChange={e => set('langues', e.target.value)} />
-        </label>
+        <legend className="field-label">Compétences</legend>
+        <textarea rows={2} value={profile.competences} onChange={e => set('competences', e.target.value)} placeholder="SEO · Réseaux sociaux · Emailing…" />
+        <span className="field-hint">Séparées par « · ».</span>
+      </fieldset>
+
+      <fieldset className="field-group">
+        <legend className="field-label">Outils</legend>
+        <textarea rows={2} value={profile.outils} onChange={e => set('outils', e.target.value)} placeholder="Suite Adobe · Canva · Google Analytics…" />
+        <span className="field-hint">Séparés par « · ».</span>
+      </fieldset>
+
+      <fieldset className="field-group">
+        <legend className="field-label">Langues</legend>
+        <input type="text" value={profile.langues} onChange={e => set('langues', e.target.value)} placeholder="Français : natif · Anglais : B2…" />
+        <span className="field-hint">Chaque langue avec son niveau, séparées par « · ».</span>
+      </fieldset>
+
+      <fieldset className="field-group">
+        <legend className="field-label">Centres d&apos;intérêt</legend>
+        <textarea rows={2} value={profile.interests} onChange={e => set('interests', e.target.value)} placeholder="Course à pied · Photographie · Bénévolat associatif…" />
+        <span className="field-hint">Séparés par « · ».</span>
       </fieldset>
 
       <fieldset className="field-group">
@@ -181,7 +237,7 @@ export default function ProfileForm({
           défaut à tout le monde, n&apos;écris ici que ce qui t&apos;est propre.
         </p>
         <textarea
-          rows={8}
+          rows={6}
           value={profile.customInstructions}
           onChange={e => set('customInstructions', e.target.value)}
           placeholder="ex: ne jamais mentionner tel outil sur telle expérience, toujours citer telle donnée chiffrée pour tel projet, disponibilité à formuler ainsi…"
@@ -192,6 +248,9 @@ export default function ProfileForm({
         <button type="button" className="btn-primary" onClick={handleSave} disabled={saving}>
           {saving ? savingLabel : submitLabel}
         </button>
+        {showErrors && missingCivility && (
+          <span className="field-error">Il manque la civilité.</span>
+        )}
         {saved && !onSaved && <span className="field-hint">Profil enregistré.</span>}
       </div>
     </div>
