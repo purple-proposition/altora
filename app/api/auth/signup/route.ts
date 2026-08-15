@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { sql, ensureSchema } from '@/lib/db';
 import { rateLimit, clientIp } from '@/lib/rateLimit';
+import { getInvite } from '@/lib/invites';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,13 +17,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Trop de tentatives, réessaie dans quelques minutes.' }, { status: 429 });
   }
 
-  let body: { email?: unknown; password?: unknown; name?: unknown; school?: unknown; promotion?: unknown };
+  let body: { email?: unknown; password?: unknown; name?: unknown; school?: unknown; promotion?: unknown; invite?: unknown };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: 'Corps de requête invalide' }, { status: 400 });
   }
   const { password } = body;
+
+  // Closed beta: the client-side page only ever shows the form once it
+  // already recognizes the invite (see app/signup/page.tsx), but that's
+  // just UI — someone could still POST here directly, so the actual gate
+  // has to live here too, not just in what's displayed.
+  if (typeof body.invite !== 'string' || !getInvite(body.invite)) {
+    return NextResponse.json({ error: "Cette invitation n'est pas valide." }, { status: 403 });
+  }
 
   const cleanEmail = (typeof body.email === 'string' ? body.email : '').trim().toLowerCase().slice(0, 255);
   const name = capString(body.name, 200);
