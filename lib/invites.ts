@@ -5,6 +5,7 @@
 // one specific inbox). Add a new entry here for each person invited.
 export const INVITES: Record<string, { name: string }> = {
   'leo-86124f9ab6d1': { name: 'Léo' },
+  'jesse-a216c9add011': { name: 'Jesse' },
 };
 
 export function getInvite(code: string | null | undefined) {
