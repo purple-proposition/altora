@@ -395,6 +395,10 @@ function sanitizeLetter(paragraphs: string[]): string[] {
     [/\bpipeline\b/gi,                       "suivi des contacts"],
     [/\bscalable\b/gi,                       "reproductible"],
     [/\bbuzzword\b/gi,                       "effet de mode"],
+    // Anglicisme discret, à une lettre du mot français : passe inaperçu à la
+    // relecture alors qu'il saute aux yeux d'un recruteur francophone.
+    [/\bresources\b/gi,                      "ressources"],
+    [/\bresource\b/gi,                       "ressource"],
     // slide-deck / roadmap vocabulary
     [/\broadmap\b/gi,                        "plan d'action"],
     [/\bframeworks?\b/gi,                    "méthode"],

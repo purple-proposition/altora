@@ -32,6 +32,7 @@ export default function GenerateForm(props: {
   cvFilename?: string;
   profile: UserProfile;
   profileReady: boolean;
+  hasGenerations: boolean;
 }) {
   return (
     <Suspense fallback={null}>
@@ -40,12 +41,13 @@ export default function GenerateForm(props: {
   );
 }
 
-function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, profileReady }: {
+function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, profileReady, hasGenerations }: {
   firstName: string;
   hasCv: boolean;
   cvFilename?: string;
   profile: UserProfile;
   profileReady: boolean;
+  hasGenerations: boolean;
 }) {
   const searchParams = useSearchParams();
   const historyId = searchParams.get('historyId');
@@ -81,6 +83,9 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   const [email, setEmail] = useState<{ to: string; objet: string; corps: string } | null>(null);
   const [emailCopied, setEmailCopied] = useState(false);
   const [poste, setPoste] = useState('');
+  // Une candidature déjà produite (dans cette session ou lors d'une visite
+  // précédente) suffit à ne plus présenter l'écran comme le tout premier.
+  const [everGenerated, setEverGenerated] = useState(hasGenerations);
 
   // Ouvrir une génération passée depuis le panneau de gauche restaure le
   // résultat tel quel depuis le stockage, sans rien régénérer.
@@ -203,6 +208,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             setEmail(data.email ?? null);
             setGeneratedAt(null);
             setDuration(Math.round((Date.now() - t0) / 1000));
+            setEverGenerated(true);
             setStep('done');
 
             // Enregistré pour que le panneau de gauche puisse rouvrir ce
@@ -318,7 +324,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
         {step === 'offer' && (
           <div className="onboard-step">
             <h1 className="onboard-title">
-              {company || poste ? 'Une autre candidature' : 'Ta première offre'}
+              {everGenerated ? 'Une autre candidature' : 'Ta première offre'}
             </h1>
             <p className="onboard-lead">
               Colle l&apos;offre qui t&apos;intéresse, ou simplement son lien. L&apos;IA
