@@ -53,6 +53,11 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
   const [profile, setProfile] = useState<UserProfile>(initialProfile);
   const [cvReady, setCvReady] = useState(hasCv);
+  // Suit le nom du fichier importé pendant la session : l'étape de
+  // vérification monte son propre encart d'import après l'envoi, et sans cet
+  // état il repartait de la valeur rendue par le serveur (vide) et affichait
+  // « Importer » alors que le CV venait juste d'être déposé.
+  const [cvName, setCvName] = useState(cvFilename ?? '');
 
   const [step, setStep] = useState<Step>(() => {
     if (historyId) return 'done';
@@ -110,8 +115,9 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   // récupère ce qu'elle a produit pour le soumettre à vérification plutôt que
   // de laisser la personne découvrir des champs vides.
   const [extracting, setExtracting] = useState(false);
-  async function handleCvUploaded() {
+  async function handleCvUploaded(filename: string) {
     setCvReady(true);
+    setCvName(filename);
     setExtracting(true);
     try {
       const res = await fetch('/api/profile');
@@ -273,7 +279,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             </p>
 
             <div className="onboard-card">
-              <CvUpload initialFilename={cvFilename} onUploaded={handleCvUploaded} />
+              <CvUpload initialFilename={cvName} onUploaded={handleCvUploaded} />
               <p className="field-hint">PDF, DOC ou DOCX, 10 Mo maximum.</p>
             </div>
 
@@ -293,7 +299,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             </p>
 
             <div className="onboard-card">
-              <CvUpload initialFilename={cvFilename} onUploaded={handleCvUploaded} />
+              <CvUpload initialFilename={cvName} onUploaded={handleCvUploaded} />
             </div>
 
             <ProfileForm
