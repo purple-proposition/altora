@@ -16,9 +16,6 @@
 export const INVITES: Record<string, { name: string; email: string }> = {
   'leo-86124f9ab6d1': { name: 'Léo', email: 'leo.beneitomounard@rocket-school.eu' },
   'jesse-a216c9add011': { name: 'Jesse', email: 'jesse.sotomayor@rocket-school.eu' },
-  // TEMPORAIRE : compte jetable pour vérifier le parcours complet en
-  // production sans toucher à un vrai compte. À supprimer après le test.
-  'tmptest-c362c0536bd9': { name: 'Test', email: 'qa-parcours@altora.test' },
 };
 
 export function getInvite(code: string | null | undefined) {
