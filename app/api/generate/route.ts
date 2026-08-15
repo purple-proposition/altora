@@ -26,6 +26,26 @@ function contractLabel(p: UserProfile): string {
     : p.soughtContract === 'cdi' ? 'CDI'
     : '';
 }
+// Résout les intitulés épicènes selon la civilité. L'ancien traitement se
+// contentait de supprimer le marqueur, ce qui donnait toujours le masculin :
+// une femme recevait un CV titré "Chargé de Marketing Digital". Il ne gérait
+// par ailleurs que le point médian, pas la forme entre parenthèses, la plus
+// courante dans les offres — d'où des titres "Chargé(e)" laissés tels quels.
+function resolveEpicene(s: string, civility: UserProfile['civility']): string {
+  const feminine = civility === 'Mme';
+  return s
+    // Mentions H/F, sans intérêt dans un titre de CV quelle que soit la civilité.
+    .replace(/\s*[[(]?\s*[hf]\s*\/\s*[fh]\s*[\])]?\s*/gi, ' ')
+    // "Coordinateur(trice)" / "Coordinateur·trice" → "Coordinatrice" ou "Coordinateur"
+    .replace(/(\p{L}+?)eur[([·.]\s*(?:trice|rice)\s*\)?/giu, (_m, base: string) => feminine ? `${base}rice` : `${base}eur`)
+    // "Vendeur(euse)" → "Vendeuse" ou "Vendeur"
+    .replace(/(\p{L}+?)eur[([·.]\s*euse\s*\)?/giu, (_m, base: string) => feminine ? `${base}euse` : `${base}eur`)
+    // "Chargé(e)" / "Chargé·e" / "Apprenti(e)" → "Chargée" ou "Chargé"
+    .replace(/(\p{L}+?)[([·.]\s*(e|es|ée|ées)\s*\)?(?=\P{L}|$)/giu, (_m, base: string, suffix: string) => feminine ? `${base}${suffix}` : base)
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 function contractSuffix(p: UserProfile): string {
   return p.soughtContract === 'alternance' ? ' en alternance'
     : p.soughtContract === 'stage' ? ' en stage'
@@ -966,13 +986,29 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         return retCount >= baseCount ? noEm(returned) : base;
       };
 
-      const rawCV = { ...profile, title: profile.experiences[0]?.title ?? '', ...parsed.cv } as CVProfile;
+      // Seuls les champs que le modèle est censé produire sont repris de sa
+      // réponse. Étaler `parsed.cv` en entier le laissait écraser n'importe
+      // quel champ du profil, y compris ceux qu'on ne lui demande pas : il
+      // renvoyait spontanément "langues" en remplaçant les deux-points par des
+      // points médians, et "Français : natif" devenait "Français · natif" dans
+      // le CV alors que le profil, lui, était intact.
+      const modelCV = (parsed.cv ?? {}) as Partial<CVProfile>;
+      const rawCV: CVProfile = {
+        ...profile,
+        title: modelCV.title ?? profile.experiences[0]?.title ?? '',
+        profil: modelCV.profil ?? profile.profil,
+        experiences: modelCV.experiences ?? profile.experiences,
+        formation: modelCV.formation ?? profile.formation,
+        competences: modelCV.competences ?? profile.competences,
+        outils: modelCV.outils ?? profile.outils,
+      };
       const cvData: CVProfile = {
         ...rawCV,
-        // Strip epicene markers from the intitulé part (before the first ·)
-        title: noEm(rawCV.title ?? '')
-          .replace(/^(.*?)\s+en\s+alternance(\s*·)/i, '$1$2')
-          .replace(/[.··](e|es|ée|ées|trice|rice|euse|eure)\b/gi, ''),
+        // Accorde l'intitulé plutôt que d'en effacer la marque de genre.
+        title: resolveEpicene(
+          noEm(rawCV.title ?? '').replace(/^(.*?)\s+en\s+alternance(\s*·)/i, '$1$2'),
+          profile.civility,
+        ),
         profil: noEm(rawCV.profil ?? profile.profil),
         experiences: (rawCV.experiences ?? profile.experiences).map((e) => ({
           ...e,
