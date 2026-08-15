@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import AltoraLogo from '@/components/AltoraLogo';
 import { getInvite } from '@/lib/invites';
@@ -64,10 +63,6 @@ function SignupInner() {
         ) : (
           <p style={{ fontSize: '13px', color: '#666', margin: 0 }}>Connexion en cours…</p>
         )}
-
-        <p style={{ fontSize: '13px', color: '#666', textAlign: 'center', marginTop: '16px' }}>
-          Déjà un compte ? <Link href="/login" style={{ color: '#4f46e5', fontWeight: 600 }}>Se connecter</Link>
-        </p>
       </div>
     </main>
   );
