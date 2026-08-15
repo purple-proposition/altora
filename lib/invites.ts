@@ -5,11 +5,17 @@
 // one specific inbox). There is no separate signup form anymore: visiting
 // the link with a valid token signs you straight in (see the "invite"
 // Credentials provider in auth.ts), provisioning the account on first
-// visit. `email` here is just an internal DB key, never shown or used to
-// log in some other way — the token is the only credential.
+// visit. The token is the only credential — no password is ever set for
+// these accounts.
+//
+// `email` must be the person's REAL address when they already have an
+// account: it's what the invite provider looks the user up by, so a
+// placeholder address would silently strand them in a second, empty
+// account instead of the one holding their CV, profile and past
+// generations.
 export const INVITES: Record<string, { name: string; email: string }> = {
-  'leo-86124f9ab6d1': { name: 'Léo', email: 'leo@invite.altora.local' },
-  'jesse-a216c9add011': { name: 'Jesse', email: 'jesse@invite.altora.local' },
+  'leo-86124f9ab6d1': { name: 'Léo', email: 'leo.beneitomounard@rocket-school.eu' },
+  'jesse-a216c9add011': { name: 'Jesse', email: 'jesse.sotomayor@rocket-school.eu' },
 };
 
 export function getInvite(code: string | null | undefined) {

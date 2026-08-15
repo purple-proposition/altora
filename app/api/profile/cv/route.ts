@@ -43,48 +43,59 @@ export async function POST(req: NextRequest) {
 
   const safeName = (file.name || 'cv').replace(/[<>&"'\x00-\x1f]/g, '_').slice(0, 150);
 
-  const blob = await put(`cv/${session.user.id}-${Date.now()}${ext}`, file, {
-    access: 'public',
-    addRandomSuffix: false,
-    contentType: detected.contentType,
-  });
+  // Everything past this point can throw for reasons the visitor can't act
+  // on (Blob store unreachable or unconfigured, a malformed PDF, the DB, the
+  // extraction model). Uncaught, the route answers 500 with an empty body,
+  // and the client's own res.json() then fails with "Unexpected end of JSON
+  // input" — so the user is shown a JSON parser message instead of anything
+  // about what actually went wrong.
+  try {
+    const blob = await put(`cv/${session.user.id}-${Date.now()}${ext}`, file, {
+      access: 'public',
+      addRandomSuffix: false,
+      contentType: detected.contentType,
+    });
 
-  // Only PDFs can be rendered to a page image — DOC/DOCX just keep the
-  // generic file icon. A failed render (corrupt/unusual PDF) does too.
-  let thumbnailUrl: string | null = null;
-  if (detected.ext === '.pdf') {
-    const png = await renderPdfFirstPageToPng(Buffer.from(await file.arrayBuffer()));
-    if (png) {
-      const thumbBlob = await put(`cv-thumbnails/${session.user.id}-${Date.now()}.png`, png, {
-        access: 'public',
-        addRandomSuffix: false,
-        contentType: 'image/png',
-      });
-      thumbnailUrl = thumbBlob.url;
+    // Only PDFs can be rendered to a page image — DOC/DOCX just keep the
+    // generic file icon. A failed render (corrupt/unusual PDF) does too.
+    let thumbnailUrl: string | null = null;
+    if (detected.ext === '.pdf') {
+      const png = await renderPdfFirstPageToPng(Buffer.from(await file.arrayBuffer()));
+      if (png) {
+        const thumbBlob = await put(`cv-thumbnails/${session.user.id}-${Date.now()}.png`, png, {
+          access: 'public',
+          addRandomSuffix: false,
+          contentType: 'image/png',
+        });
+        thumbnailUrl = thumbBlob.url;
+      }
     }
-  }
 
-  await ensureSchema();
-  await sql`UPDATE users SET cv_url = ${blob.url}, cv_filename = ${safeName}, cv_thumbnail_url = ${thumbnailUrl} WHERE id = ${session.user.id}`;
-  invalidateUserCv(session.user.id);
+    await ensureSchema();
+    await sql`UPDATE users SET cv_url = ${blob.url}, cv_filename = ${safeName}, cv_thumbnail_url = ${thumbnailUrl} WHERE id = ${session.user.id}`;
+    invalidateUserCv(session.user.id);
 
-  // Pre-fill the structured profile from the uploaded CV the first time
-  // only — once a user has a real profile (edited or already extracted),
-  // re-uploading a CV must never silently overwrite their edits.
-  let profileExtracted = false;
-  const existing = await getUserProfile(session.user.id);
-  if (!isProfileComplete(existing)) {
-    const extracted = await extractProfileFromCV(
-      Buffer.from(await file.arrayBuffer()),
-      ext as '.pdf' | '.docx' | '.doc',
-      session.user.name ?? '',
-      session.user.email ?? '',
-    );
-    if (extracted) {
-      await saveUserProfile(session.user.id, extracted);
-      profileExtracted = true;
+    // Pre-fill the structured profile from the uploaded CV the first time
+    // only — once a user has a real profile (edited or already extracted),
+    // re-uploading a CV must never silently overwrite their edits.
+    let profileExtracted = false;
+    const existing = await getUserProfile(session.user.id);
+    if (!isProfileComplete(existing)) {
+      const extracted = await extractProfileFromCV(
+        Buffer.from(await file.arrayBuffer()),
+        ext as '.pdf' | '.docx' | '.doc',
+        session.user.name ?? '',
+        session.user.email ?? '',
+      );
+      if (extracted) {
+        await saveUserProfile(session.user.id, extracted);
+        profileExtracted = true;
+      }
     }
-  }
 
-  return NextResponse.json({ url: blob.url, filename: safeName, thumbnailUrl, profileExtracted });
+    return NextResponse.json({ url: blob.url, filename: safeName, thumbnailUrl, profileExtracted });
+  } catch (err) {
+    console.error('CV upload failed:', err);
+    return NextResponse.json({ error: "L'envoi du CV a échoué. Réessaie dans un instant." }, { status: 500 });
+  }
 }

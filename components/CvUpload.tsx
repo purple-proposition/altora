@@ -31,8 +31,13 @@ export default function CvUpload({
 
     try {
       const res = await fetch('/api/profile/cv', { method: 'POST', body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Échec de l'envoi du CV.");
+      // The route always answers JSON, but something in front of it (a proxy
+      // rejecting the body size, a gateway timeout) may not — parsing
+      // defensively keeps those cases showing a real message rather than a
+      // JSON syntax error.
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error || "Échec de l'envoi du CV.");
+      if (!data?.filename) throw new Error("Échec de l'envoi du CV.");
       setFilename(data.filename);
       onUploaded?.(data.filename);
     } catch (err) {
