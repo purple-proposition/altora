@@ -20,10 +20,10 @@ const EMPTY_ANALYSIS: Analysis = {
   keywords: [], adjustments: [], missing: [], atsScore: 0, atsImprovements: [],
 };
 
-export default function GenerateForm({ hasCv, cvFilename }: { hasCv: boolean; cvFilename?: string }) {
+export default function GenerateForm({ hasCv, cvFilename, civility }: { hasCv: boolean; cvFilename?: string; civility?: '' | 'M' | 'Mme' }) {
   return (
     <Suspense fallback={null}>
-      <GenerateInner hasCv={hasCv} cvFilename={cvFilename} />
+      <GenerateInner hasCv={hasCv} cvFilename={cvFilename} initialCivility={civility} />
     </Suspense>
   );
 }
@@ -78,7 +78,7 @@ function MethodExplanation() {
   );
 }
 
-function GenerateInner({ hasCv, cvFilename }: { hasCv: boolean; cvFilename?: string }) {
+function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean; cvFilename?: string; initialCivility?: '' | 'M' | 'Mme' }) {
   const searchParams = useSearchParams();
   const historyId = searchParams.get('historyId');
   const cardId = searchParams.get('cardId');
@@ -110,6 +110,22 @@ function GenerateInner({ hasCv, cvFilename }: { hasCv: boolean; cvFilename?: str
   // page now. Tracked locally (not just the server-computed `hasCv` prop)
   // so uploading updates the gate immediately, without a full reload.
   const [cvReady, setCvReady] = useState(hasCv);
+  // Pilote l'accord masculin/féminin du CV et de la lettre (voir civility dans
+  // lib/profile.ts). Il n'est jamais extrait du CV et la page profil complète
+  // n'est plus accessible : sans ce sélecteur le champ resterait vide en
+  // permanence et le modèle accorderait au hasard, ce qui donnait des lettres
+  // mélangeant "intéressée" et "je suis prêt". Demandé plutôt que déduit du
+  // prénom, qui ne dit pas de façon fiable comment quelqu'un s'accorde.
+  const [civility, setCivility] = useState<'' | 'M' | 'Mme'>(initialCivility ?? '');
+
+  function saveCivility(value: 'M' | 'Mme') {
+    setCivility(value);
+    fetch('/api/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ civility: value }),
+    }).catch(() => {});
+  }
 
   // A card imported from a URL already has its posting text saved (see the
   // import modal) — reuse it here instead of asking the user to paste it
@@ -337,6 +353,26 @@ function GenerateInner({ hasCv, cvFilename }: { hasCv: boolean; cvFilename?: str
             </div>
 
             <CvUpload initialFilename={cvFilename} onUploaded={() => setCvReady(true)} />
+
+            <div className="field-group">
+              <span className="field-label">Accord du CV et de la lettre</span>
+              <div className="generate-civility-row">
+                <button
+                  type="button"
+                  className={`btn-secondary${civility === 'Mme' ? ' is-selected' : ''}`}
+                  onClick={() => saveCivility('Mme')}
+                >
+                  Féminin
+                </button>
+                <button
+                  type="button"
+                  className={`btn-secondary${civility === 'M' ? ' is-selected' : ''}`}
+                  onClick={() => saveCivility('M')}
+                >
+                  Masculin
+                </button>
+              </div>
+            </div>
 
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>

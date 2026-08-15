@@ -3230,6 +3230,15 @@ legend.field-label { padding: 0; }
 .generate-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
 .generate-actions--split { justify-content: space-between; }
 
+/* Choix binaire (féminin/masculin) qui pilote l'accord des documents générés,
+   rendu comme deux boutons plutôt qu'un select : à deux options, l'état
+   sélectionné est visible sans ouvrir de menu. */
+.generate-civility-row { display: flex; gap: 8px; }
+.generate-civility-row .btn-secondary.is-selected {
+  background: var(--indigo);
+  color: #fff;
+}
+
 .generate-progress-wrap { padding: 24px 0; }
 .generate-progress-label {
   display: flex;

@@ -102,16 +102,27 @@ function renderCVContent(doc: InstanceType<typeof PDFDocument>, cv: CVProfile, s
   doc.font('Helvetica-Bold').fontSize(18).fillColor(C.noir); ln(cv.name, M, y); y += S.nameToTitle;
   doc.font('Helvetica-Bold').fontSize(9).fillColor(C.noir); ln(cv.title, M, y); y += S.titleToContact;
   doc.font('Helvetica').fontSize(9).fillColor(C.noir);
-  const contactStr = `${cv.phone}  ·  ${cv.email}  ·  ${cv.linkedin}  ·  ${cv.portfolio}  ·  ${cv.city}`;
-  ln(contactStr, M, y);
-  // Liens cliquables sur chaque élément (doc.link() — l'option link de doc.text() est cassée dans PDFKit 0.15.2)
+  // Champs vides écartés avant le join : LinkedIn et portfolio sont facultatifs,
+  // et les concaténer tels quels laissait des séparateurs orphelins bien
+  // visibles ("06 12 34 56 78 · nom@mail.com ·  ·  · Lyon"). Filtrer ici plutôt
+  // qu'après coup garde aussi les liens cliquables alignés sur le texte réel,
+  // puisque les deux parcourent désormais la même liste.
   const sep = '  ·  ';
+  const contactParts: { text: string; url?: string }[] = [
+    { text: cv.phone, url: `tel:${cv.phone.replace(/\s/g, '')}` },
+    { text: cv.email, url: `mailto:${cv.email}` },
+    { text: cv.linkedin, url: `https://${cv.linkedin}` },
+    { text: cv.portfolio, url: `https://${cv.portfolio}` },
+    { text: cv.city },
+  ].filter(p => p.text?.trim());
+  ln(contactParts.map(p => p.text).join(sep), M, y);
+  // Liens cliquables sur chaque élément (doc.link() — l'option link de doc.text() est cassée dans PDFKit 0.15.2)
   let lx = M;
-  const addLink = (text: string, url: string) => { const w = doc.widthOfString(text); doc.link(lx, y, w, 9, url); lx += w + doc.widthOfString(sep); };
-  addLink(cv.phone,    `tel:${cv.phone.replace(/\s/g, '')}`);
-  addLink(cv.email,    `mailto:${cv.email}`);
-  addLink(cv.linkedin, `https://${cv.linkedin}`);
-  addLink(cv.portfolio,`https://${cv.portfolio}`);
+  for (const part of contactParts) {
+    const w = doc.widthOfString(part.text);
+    if (part.url) doc.link(lx, y, w, 9, part.url);
+    lx += w + doc.widthOfString(sep);
+  }
   y += S.contactToProfile;
 
   // ── Profil ──────────────────────────────────────────────────────
@@ -184,10 +195,16 @@ async function buildCVPdf(cv: CVProfile): Promise<Buffer> {
 }
 
 async function buildLetterPdf(profile: UserProfile, data: { company: string; poste: string; paragraphs: string[] }): Promise<Buffer> {
-  // Separators: em-dash and en-dash (non-date) → middle dot
+  // Le point médian est le séparateur des CHAMPS STRUCTURÉS du CV, pas une
+  // ponctuation de prose : le prompt l'interdit d'ailleurs explicitement dans
+  // le corps de la lettre (voir "RÈGLE IMMUABLE — PONCTUATION LETTRE"). Le
+  // convertir ici produisait exactement ce que cette règle cherche à éviter,
+  // du type "j'ai travaillé concrètement · la gestion des réseaux sociaux".
+  // La virgule est l'équivalent correct d'un tiret d'incise en prose.
   const clean = (s: string) =>
-    s.replace(/\s*—\s*/g, ' · ')      // em-dash → point médian
-     .replace(/\s+–\s+/g, ' · ');     // en-dash connecteur → point médian
+    s.replace(/\s*—\s*/g, ', ')       // tiret d'incise → virgule
+     .replace(/\s+–\s+/g, ', ')       // demi-cadratin connecteur → virgule
+     .replace(/,\s*([,.;:])/g, '$1'); // évite ", ," ou ", ." si le tiret jouxtait déjà une ponctuation
   return generatePDF((doc) => {
     const M = 56.69; const W = 595.28 - M * 2; let y = M;
     const ln = (str: string, x: number, yPos: number, opts: object = {}) =>

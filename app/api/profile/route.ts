@@ -52,3 +52,29 @@ export async function PUT(req: NextRequest) {
   await saveUserProfile(session.user.id, profile);
   return NextResponse.json({ profile });
 }
+
+// Mise à jour partielle : PUT ci-dessus remplace le profil entier, donc
+// enregistrer un seul champ par ce biais effacerait expériences et formation.
+// Utilisé par le sélecteur de civilité de la page de génération, seul endroit
+// qui reste pour renseigner ce champ depuis que le profil complet n'est plus
+// accessible.
+export async function PATCH(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== 'object') {
+    return NextResponse.json({ error: 'Requête invalide' }, { status: 400 });
+  }
+
+  const existing = await getUserProfile(session.user.id)
+    ?? emptyProfile(session.user.name ?? '', session.user.email ?? '');
+
+  const updated: UserProfile = { ...existing };
+  if ('civility' in body) {
+    updated.civility = (['M', 'Mme'].includes(body.civility) ? body.civility : '') as '' | 'M' | 'Mme';
+  }
+
+  await saveUserProfile(session.user.id, updated);
+  return NextResponse.json({ profile: updated });
+}
