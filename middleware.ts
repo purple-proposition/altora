@@ -6,12 +6,20 @@ const { auth } = NextAuth(authConfig);
 
 const PUBLIC_PATHS = ['/login', '/signup', '/robots.txt'];
 
+// The authenticated app was cut down to a single flow: upload a CV,
+// paste/link a job posting, generate the tailored CV + lettre — see
+// components/GenerateForm.tsx. Every other authenticated route (the
+// kanban/calendar dashboard, inbox, école, documents, profil) still
+// exists in the codebase but is no longer reachable — redirected here
+// instead of deleted, so it stays easy to bring back.
+const ALLOWED_AUTHED_PATHS = ['/generate'];
+
 export default auth((req) => {
   const { pathname } = req.nextUrl;
   // "/" is the one exception: signed out, it's the public marketing landing
   // page (see app/(tracker)/page.tsx and layout.tsx, both branch on session);
-  // signed in, it's the dashboard, same as always. Every other route still
-  // requires a session.
+  // signed in, it now redirects straight to /generate below instead of the
+  // old dashboard. Every other route still requires a session.
   const isPublic = pathname === '/' || PUBLIC_PATHS.some(p => pathname.startsWith(p)) || pathname.startsWith('/api/auth');
 
   if (!req.auth && !isPublic) {
@@ -21,7 +29,11 @@ export default auth((req) => {
   }
 
   if (req.auth && (pathname === '/login' || pathname === '/signup')) {
-    return NextResponse.redirect(new URL('/', req.nextUrl.origin));
+    return NextResponse.redirect(new URL('/generate', req.nextUrl.origin));
+  }
+
+  if (req.auth && !pathname.startsWith('/api/') && !ALLOWED_AUTHED_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'))) {
+    return NextResponse.redirect(new URL('/generate', req.nextUrl.origin));
   }
 });
 

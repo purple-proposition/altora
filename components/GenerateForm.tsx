@@ -3,9 +3,8 @@ import Icon from '@/components/Icon';
 
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import TopbarActions from '@/components/TopbarActions';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
+import CvUpload from '@/components/CvUpload';
 
 type State = 'intro' | 'idle' | 'loading' | 'done' | 'error';
 
@@ -21,10 +20,10 @@ const EMPTY_ANALYSIS: Analysis = {
   keywords: [], adjustments: [], missing: [], atsScore: 0, atsImprovements: [],
 };
 
-export default function GenerateForm({ hasCv }: { hasCv: boolean }) {
+export default function GenerateForm({ hasCv, cvFilename }: { hasCv: boolean; cvFilename?: string }) {
   return (
     <Suspense fallback={null}>
-      <GenerateInner hasCv={hasCv} />
+      <GenerateInner hasCv={hasCv} cvFilename={cvFilename} />
     </Suspense>
   );
 }
@@ -79,7 +78,7 @@ function MethodExplanation() {
   );
 }
 
-function GenerateInner({ hasCv }: { hasCv: boolean }) {
+function GenerateInner({ hasCv, cvFilename }: { hasCv: boolean; cvFilename?: string }) {
   const searchParams = useSearchParams();
   const historyId = searchParams.get('historyId');
   const cardId = searchParams.get('cardId');
@@ -105,6 +104,12 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
   const [emailCopied, setEmailCopied] = useState(false);
   const [poste, setPoste] = useState('');
   const [methodOpen, setMethodOpen] = useState(false);
+  // The app was cut down to a single flow (upload CV → paste/link the
+  // offer → generate), so the CV import step — previously only reachable
+  // from the old home page's profile overlay — lives directly on this
+  // page now. Tracked locally (not just the server-computed `hasCv` prop)
+  // so uploading updates the gate immediately, without a full reload.
+  const [cvReady, setCvReady] = useState(hasCv);
 
   // A card imported from a URL already has its posting text saved (see the
   // import modal) — reuse it here instead of asking the user to paste it
@@ -294,10 +299,7 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
       <div className="topbar-sticky">
         <div className="topbar-breadcrumb">
           <SidebarCollapseToggle />
-          <Link className="breadcrumb-item breadcrumb-item--link" href="/?view=home"><Icon name="home" />Accueil</Link>
-          <span className="breadcrumb-sep">/</span>
           <span className="breadcrumb-item breadcrumb-item--active"><Icon name="file-text" />ATS Booster</span>
-          <TopbarActions />
         </div>
       </div>
 
@@ -334,6 +336,8 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
               </div>
             </div>
 
+            <CvUpload initialFilename={cvFilename} onUploaded={() => setCvReady(true)} />
+
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>
               {usingStoredDescription ? (
@@ -365,7 +369,8 @@ function GenerateInner({ hasCv }: { hasCv: boolean }) {
                 type="button"
                 className="btn-primary"
                 onClick={handleGenerate}
-                disabled={!jobPosting.trim()}
+                disabled={!jobPosting.trim() || !cvReady}
+                title={!cvReady ? "Importe d'abord ton CV" : undefined}
               >
                 Générer →
               </button>

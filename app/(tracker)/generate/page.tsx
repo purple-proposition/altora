@@ -4,12 +4,12 @@ import GenerateForm from '@/components/GenerateForm';
 
 export default async function GeneratePage() {
   const session = await auth();
-  let hasCv = false;
+  let cvFilename = '';
 
   if (session?.user?.id) {
     const cv = await getUserCv(session.user.id);
-    hasCv = Boolean(cv.cvUrl);
+    cvFilename = cv.cvUrl ? cv.cvFilename : '';
   }
 
-  return <GenerateForm hasCv={hasCv} />;
+  return <GenerateForm hasCv={Boolean(cvFilename)} cvFilename={cvFilename} />;
 }
