@@ -11,7 +11,21 @@ function emptyFormation(): Formation {
   return { school: '', degree: '', dates: '', bullets: [] };
 }
 
-export default function ProfileForm({ initialProfile }: { initialProfile: UserProfile }) {
+export default function ProfileForm({
+  initialProfile,
+  submitLabel = 'Enregistrer mon profil',
+  savingLabel = 'Enregistrement…',
+  onSaved,
+}: {
+  initialProfile: UserProfile;
+  // Le même formulaire sert à deux moments : la vérification des informations
+  // extraites du CV pendant l'onboarding, où il enchaîne sur l'import d'une
+  // offre, et l'édition libre du profil ensuite. Seuls le libellé du bouton et
+  // ce qui suit l'enregistrement changent.
+  submitLabel?: string;
+  savingLabel?: string;
+  onSaved?: (profile: UserProfile) => void;
+}) {
   const [profile, setProfile] = useState<UserProfile>(initialProfile);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -40,6 +54,7 @@ export default function ProfileForm({ initialProfile }: { initialProfile: UserPr
         const { profile: saved } = await res.json();
         setProfile(saved);
         setSaved(true);
+        onSaved?.(saved);
       }
     } finally {
       setSaving(false);
@@ -175,9 +190,9 @@ export default function ProfileForm({ initialProfile }: { initialProfile: UserPr
 
       <div className="profile-form-actions">
         <button type="button" className="btn-primary" onClick={handleSave} disabled={saving}>
-          {saving ? 'Enregistrement…' : 'Enregistrer mon profil'}
+          {saving ? savingLabel : submitLabel}
         </button>
-        {saved && <span className="field-hint">Profil enregistré.</span>}
+        {saved && !onSaved && <span className="field-hint">Profil enregistré.</span>}
       </div>
     </div>
   );

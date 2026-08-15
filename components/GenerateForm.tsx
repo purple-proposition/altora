@@ -5,8 +5,14 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import CvUpload from '@/components/CvUpload';
+import ProfileForm from '@/components/ProfileForm';
+import type { UserProfile } from '@/lib/profile';
 
-type State = 'intro' | 'idle' | 'loading' | 'done' | 'error';
+// Parcours en quatre temps : accueil nominatif et import du CV, vérification
+// de ce que l'IA en a extrait, import d'une offre, résultat. Chaque étape ne
+// demande qu'une chose, et les personnes déjà équipées (CV importé, profil
+// rempli) démarrent directement à l'import d'une offre.
+type Step = 'welcome' | 'verify' | 'offer' | 'loading' | 'done';
 
 type Analysis = {
   keywords: string[];
@@ -20,81 +26,48 @@ const EMPTY_ANALYSIS: Analysis = {
   keywords: [], adjustments: [], missing: [], atsScore: 0, atsImprovements: [],
 };
 
-export default function GenerateForm({ hasCv, cvFilename, civility }: { hasCv: boolean; cvFilename?: string; civility?: '' | 'M' | 'Mme' }) {
+export default function GenerateForm(props: {
+  firstName: string;
+  hasCv: boolean;
+  cvFilename?: string;
+  profile: UserProfile;
+  profileReady: boolean;
+}) {
   return (
     <Suspense fallback={null}>
-      <GenerateInner hasCv={hasCv} cvFilename={cvFilename} initialCivility={civility} />
+      <GenerateInner {...props} />
     </Suspense>
   );
 }
 
-function MethodExplanation() {
-  return (
-    <>
-      <div className="method-card method-card--intro">
-        <p className="method-card-text">
-          Avant que 9 candidatures sur 10 ne soient lu pas un recruteur, elle passent d&apos;abord par un ATS (Applicant Tracking System, « système de suivi des candidatures »). Le logiciel la scanne en extrait le texte et cherche les mots-clés de l&apos;offre : intitulé du poste, compétences, outils. Le premier « lecteur » de ton CV est donc un algorithme, pas un humain, et mal structuré, il sera écarté avant même d&apos;être lu, même si ton profil est parfait pour le poste.
-        </p>
-      </div>
-
-      <div className="method-explain-grid">
-        <div className="method-card">
-          <div className="method-card-head">
-            <h3 className="method-card-title">Conçu pour passer les robots</h3>
-          </div>
-          <p className="method-card-text">
-            Un CV sur une seule page, en une seule colonne, sans jargon, pour passer le filtre et enfin être lu.
-          </p>
-        </div>
-
-        <div className="method-card">
-          <div className="method-card-head">
-            <h3 className="method-card-title">Tes propres règles en priorité</h3>
-          </div>
-          <p className="method-card-text">
-            Chaque profil est unique et notre outil tient aussi compte de tes consignes pour que le résultat te ressemble vraiment.
-          </p>
-        </div>
-
-        <div className="method-card">
-          <div className="method-card-head">
-            <h3 className="method-card-title">Sur mesure pour chaque offre</h3>
-          </div>
-          <p className="method-card-text">
-            Tes expériences, compétences et outils sont réorganisés pour être pertinent pour chaque fiche de poste. Le modèle s&apos;en tient strictement à ton profil réel : zéro expérience inventée, zéro compétence que tu ne pourrais pas justifier en entretien.
-          </p>
-        </div>
-
-        <div className="method-card">
-          <div className="method-card-head">
-            <h3 className="method-card-title">Une motivation qui ne se répète pas</h3>
-          </div>
-          <p className="method-card-text">
-            Ta lettre de motivation ne répète pas le CV en phrases et suit une structure en 4 temps pour capter directement l&apos;attention du recruteur.
-          </p>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean; cvFilename?: string; initialCivility?: '' | 'M' | 'Mme' }) {
+function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, profileReady }: {
+  firstName: string;
+  hasCv: boolean;
+  cvFilename?: string;
+  profile: UserProfile;
+  profileReady: boolean;
+}) {
   const searchParams = useSearchParams();
   const historyId = searchParams.get('historyId');
-  const cardId = searchParams.get('cardId');
-  const hasAutoTrigger = Boolean(historyId || cardId || searchParams.get('job'));
-  const [jobPosting, setJobPosting] = useState(() => searchParams.get('job') ?? '');
-  const [usingStoredDescription, setUsingStoredDescription] = useState(false);
-  const [markedSent, setMarkedSent] = useState(false);
-  // A history reopen or a prefilled posting (card link, ?job=) means the
-  // user already made their intent clear — skip the intro pitch and go
-  // straight to idle/loading, that's what the effects below expect.
-  const [state, setState] = useState<State>(() => (hasAutoTrigger ? 'idle' : 'intro'));
+  const wantsProfile = searchParams.get('step') === 'profil';
+
+  const [profile, setProfile] = useState<UserProfile>(initialProfile);
+  const [cvReady, setCvReady] = useState(hasCv);
+
+  const [step, setStep] = useState<Step>(() => {
+    if (historyId) return 'done';
+    if (wantsProfile) return 'verify';
+    if (!hasCv) return 'welcome';
+    if (!profileReady) return 'verify';
+    return 'offer';
+  });
+
+  const [jobPosting, setJobPosting] = useState('');
   const [error, setError] = useState('');
   const [duration, setDuration] = useState(0);
   const [generatedAt, setGeneratedAt] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
-  const [step, setStep] = useState('');
+  const [progressStep, setProgressStep] = useState('');
   const [cvUrl, setCvUrl] = useState('');
   const [lettreUrl, setLettreUrl] = useState('');
   const [analysis, setAnalysis] = useState<Analysis>(EMPTY_ANALYSIS);
@@ -103,51 +76,9 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
   const [email, setEmail] = useState<{ to: string; objet: string; corps: string } | null>(null);
   const [emailCopied, setEmailCopied] = useState(false);
   const [poste, setPoste] = useState('');
-  const [methodOpen, setMethodOpen] = useState(false);
-  // The app was cut down to a single flow (upload CV → paste/link the
-  // offer → generate), so the CV import step — previously only reachable
-  // from the old home page's profile overlay — lives directly on this
-  // page now. Tracked locally (not just the server-computed `hasCv` prop)
-  // so uploading updates the gate immediately, without a full reload.
-  const [cvReady, setCvReady] = useState(hasCv);
-  // Pilote l'accord masculin/féminin du CV et de la lettre (voir civility dans
-  // lib/profile.ts). Il n'est jamais extrait du CV et la page profil complète
-  // n'est plus accessible : sans ce sélecteur le champ resterait vide en
-  // permanence et le modèle accorderait au hasard, ce qui donnait des lettres
-  // mélangeant "intéressée" et "je suis prêt". Demandé plutôt que déduit du
-  // prénom, qui ne dit pas de façon fiable comment quelqu'un s'accorde.
-  const [civility, setCivility] = useState<'' | 'M' | 'Mme'>(initialCivility ?? '');
 
-  function saveCivility(value: 'M' | 'Mme') {
-    setCivility(value);
-    fetch('/api/profile', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ civility: value }),
-    }).catch(() => {});
-  }
-
-  // A card imported from a URL already has its posting text saved (see the
-  // import modal) — reuse it here instead of asking the user to paste it
-  // again or re-fetching a page that might now be gone/blocked.
-  useEffect(() => {
-    if (!cardId || historyId) return;
-    let cancelled = false;
-    fetch(`/api/cards/${encodeURIComponent(cardId)}`)
-      .then(res => (res.ok ? res.json() : null))
-      .then(card => {
-        if (cancelled || !card?.jobDescription) return;
-        setJobPosting(card.jobDescription);
-        setUsingStoredDescription(true);
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, [cardId, historyId]);
-
-  // Reopening a past generation from the sidebar history — restore the full
-  // result view straight from storage instead of regenerating anything. The
-  // job posting/contract type come back too, so "Appliquer" (below) still
-  // has what it needs to re-run with modifications.
+  // Ouvrir une génération passée depuis le panneau de gauche restaure le
+  // résultat tel quel depuis le stockage, sans rien régénérer.
   useEffect(() => {
     if (!historyId) return;
     let cancelled = false;
@@ -169,27 +100,29 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
         setPoste(record.poste || '');
         setEmail(record.email || null);
         setGeneratedAt(record.createdAt || null);
-        setState('done');
+        setStep('done');
       })
       .catch(() => {});
     return () => { cancelled = true; };
   }, [historyId]);
 
-  // Arriving here already carrying a posting (a card's "Générer CV" link,
-  // or a prefilled ?job= link) skips the idle form entirely and starts
-  // generating right away — only someone who lands with nothing typed
-  // still has to press the button themselves. A history reopen is handled
-  // entirely by the effect above and must never also trigger a fresh run.
-  const autoTriggeredRef = useRef(false);
-  useEffect(() => {
-    if (historyId) return;
-    if (autoTriggeredRef.current) return;
-    if (!jobPosting.trim()) return;
-    if (!cardId && !searchParams.get('job')) return;
-    autoTriggeredRef.current = true;
-    handleGenerate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobPosting, cardId, historyId]);
+  // Le CV vient d'être importé : l'extraction a tourné côté serveur, on
+  // récupère ce qu'elle a produit pour le soumettre à vérification plutôt que
+  // de laisser la personne découvrir des champs vides.
+  const [extracting, setExtracting] = useState(false);
+  async function handleCvUploaded() {
+    setCvReady(true);
+    setExtracting(true);
+    try {
+      const res = await fetch('/api/profile');
+      if (res.ok) {
+        const { profile: fetched } = await res.json();
+        if (fetched) setProfile(fetched);
+      }
+    } catch { /* le formulaire reste éditable même si la relecture échoue */ }
+    setExtracting(false);
+    setStep('verify');
+  }
 
   async function handleCopyEmail() {
     if (!email) return;
@@ -200,19 +133,19 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
   }
 
   function normalizeFilename(s: string): string {
-    // NFD decomposes accented chars, then strip combining diacriticals U+0300–U+036F
     const noAccents = s.normalize('NFD').replace(/[̀-ͯ]/g, '');
     const noSpecial = noAccents.replace(/[^a-zA-Z0-9 ]/g, '');
-    const underscored = noSpecial.trim().replace(/\s+/g, '_');
-    return underscored || 'Entreprise';
+    return noSpecial.trim().replace(/\s+/g, '_') || 'Entreprise';
   }
+
+  const lastNameForFile = normalizeFilename(profile.name || firstName);
 
   async function handleGenerate() {
     if (!jobPosting.trim()) return;
-    setState('loading');
+    setStep('loading');
     setError('');
     setProgress(0);
-    setStep('Démarrage…');
+    setProgressStep('Démarrage…');
     const t0 = Date.now();
 
     try {
@@ -242,7 +175,7 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
 
           if (data.error) throw new Error(data.error);
           if (data.progress !== undefined) setProgress(data.progress);
-          if (data.step) setStep(data.step);
+          if (data.step) setProgressStep(data.step);
 
           if (data.done) {
             const toUrl = (b64: string) => {
@@ -264,16 +197,15 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
             setEmail(data.email ?? null);
             setGeneratedAt(null);
             setDuration(Math.round((Date.now() - t0) / 1000));
-            setState('done');
+            setStep('done');
 
-            // Persisted so the sidebar history can list it and reopen the
-            // exact same result later — best-effort, a failure here shouldn't
-            // block the user from seeing/downloading what was just generated.
+            // Enregistré pour que le panneau de gauche puisse rouvrir ce
+            // résultat plus tard. Au mieux : un échec ici ne doit pas
+            // empêcher de voir et télécharger ce qui vient d'être produit.
             fetch('/api/generations', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                cardId,
                 company: data.company ?? '',
                 poste: data.poste ?? '',
                 jobDescription: jobPosting,
@@ -282,30 +214,34 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
                 analysis: doneAnalysis,
                 email: data.email ?? null,
               }),
-            }).catch(() => {});
+            })
+              .then(() => { window.dispatchEvent(new Event('altora-generations-changed')); })
+              .catch(() => {});
           }
         }
       }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Erreur inconnue');
-      setState('error');
+      setStep('offer');
     }
   }
 
-  function handleReset() {
+  function startNewApplication() {
     if (cvUrl && cvUrl.startsWith('blob:')) URL.revokeObjectURL(cvUrl);
     if (lettreUrl && lettreUrl.startsWith('blob:')) URL.revokeObjectURL(lettreUrl);
     setCvUrl(''); setLettreUrl('');
     setAnalysis(EMPTY_ANALYSIS);
     setModifications('');
-    setCompany('');
-    setPoste('');
-    setEmail(null);
-    setEmailCopied(false);
+    setCompany(''); setPoste('');
+    setEmail(null); setEmailCopied(false);
     setGeneratedAt(null);
     setJobPosting('');
-    setProgress(0); setStep('');
-    setState('idle');
+    setProgress(0); setProgressStep('');
+    setError('');
+    setStep('offer');
+    // Enlève ?historyId de l'URL, sinon revenir ici rouvrirait l'ancienne
+    // fiche au lieu de la nouvelle candidature qu'on vient de commencer.
+    window.history.replaceState(null, '', '/generate');
   }
 
   const scoreTone = analysis.atsScore >= 80 ? 'good' : analysis.atsScore >= 60 ? 'mid' : 'low';
@@ -319,86 +255,110 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
         </div>
       </div>
 
-      <section className={`generate-view${state === 'done' || state === 'intro' ? ' generate-view--wide' : ''}`}>
-        <div className="documents-header">
-          <h1 className="documents-title">ATS Booster</h1>
-        </div>
+      <section className={`generate-view${step === 'done' ? ' generate-view--wide' : ''}`}>
 
-        {state === 'intro' && (
-          <div className="generate-intro">
-            <div className="method-card method-card--intro-standalone">
-              <MethodExplanation />
+        {step === 'welcome' && (
+          <div className="onboard-step">
+            <h1 className="onboard-title">Bienvenue {firstName} 👋</h1>
+            <p className="onboard-lead">
+              Altora réécrit ton CV et ta lettre de motivation pour chaque offre à
+              laquelle tu postules, afin qu&apos;ils passent les filtres automatiques
+              des recruteurs et arrivent jusqu&apos;à un humain.
+            </p>
+            <p className="onboard-lead">
+              Pour commencer, importe ton CV actuel. Peu importe sa mise en forme :
+              il sert de base d&apos;informations, pas de modèle. L&apos;IA en extrait
+              tes expériences, ta formation et tes compétences, et tu pourras tout
+              relire juste après.
+            </p>
+
+            <div className="onboard-card">
+              <CvUpload initialFilename={cvFilename} onUploaded={handleCvUploaded} />
+              <p className="field-hint">PDF, DOC ou DOCX, 10 Mo maximum.</p>
             </div>
-            <div className="generate-actions">
-              <button type="button" className="btn-primary generate-intro-cta" onClick={() => setState('idle')}>
-                {hasCv ? 'Génère ton CV optimisé' : 'Génère ton premier CV optimisé'}
-              </button>
-            </div>
+
+            {extracting && <p className="field-hint">Lecture de ton CV en cours…</p>}
           </div>
         )}
 
-        {(state === 'idle' || state === 'error') && (
-          <>
-            <div className={`method-explainer${methodOpen ? ' method-explainer--open' : ''}`}>
-              <button type="button" className="method-explainer-summary" onClick={() => setMethodOpen(o => !o)}>
-                <span>Comment ATS Booster est pensé pour maximiser tes chances de décrocher ton alternance</span>
-                <Icon name="chevron-down" className="method-explainer-chevron" />
-              </button>
+        {step === 'verify' && (
+          <div className="onboard-step">
+            <h1 className="onboard-title">
+              {profileReady && wantsProfile ? 'Mon profil' : 'Vérifie ce qu’on a lu dans ton CV'}
+            </h1>
+            <p className="onboard-lead">
+              {profileReady && wantsProfile
+                ? 'Ces informations servent de base à chaque CV et lettre générés. Plus elles sont complètes et exactes, meilleur est le résultat.'
+                : "Voici ce que l’IA a extrait. Corrige ce qui est inexact et complète ce qui manque : tout ce qui est ici sert de matière première, et le modèle ne s’autorise jamais à inventer au-delà."}
+            </p>
 
-              <div className="method-explainer-collapse">
-                <div className="method-explainer-body">
-                  <MethodExplanation />
-                </div>
-              </div>
+            <div className="onboard-card">
+              <CvUpload initialFilename={cvFilename} onUploaded={handleCvUploaded} />
             </div>
 
-            <CvUpload initialFilename={cvFilename} onUploaded={() => setCvReady(true)} />
+            <ProfileForm
+              key={profile.name + profile.experiences.length}
+              initialProfile={profile}
+              submitLabel={profileReady && wantsProfile ? 'Enregistrer mon profil' : 'Continuer →'}
+              savingLabel="Enregistrement…"
+              onSaved={(saved) => {
+                setProfile(saved);
+                if (!(profileReady && wantsProfile)) setStep('offer');
+              }}
+            />
+          </div>
+        )}
 
-            <div className="field-group">
-              <span className="field-label">Accord du CV et de la lettre</span>
-              <div className="generate-civility-row">
-                <button
-                  type="button"
-                  className={`btn-secondary${civility === 'Mme' ? ' is-selected' : ''}`}
-                  onClick={() => saveCivility('Mme')}
-                >
-                  Féminin
-                </button>
-                <button
-                  type="button"
-                  className={`btn-secondary${civility === 'M' ? ' is-selected' : ''}`}
-                  onClick={() => saveCivility('M')}
-                >
-                  Masculin
-                </button>
+        {step === 'offer' && (
+          <div className="onboard-step">
+            <h1 className="onboard-title">
+              {company || poste ? 'Une autre candidature' : 'Ta première offre'}
+            </h1>
+            <p className="onboard-lead">
+              Colle l&apos;offre qui t&apos;intéresse, ou simplement son lien. L&apos;IA
+              en extrait l&apos;intitulé du poste, l&apos;entreprise, les compétences
+              attendues et les mots-clés, puis réécrit ton CV et ta lettre pour cette
+              offre précise. Si une adresse de contact figure dans l&apos;annonce, le
+              mail de candidature est préparé aussi.
+            </p>
+
+            <details className="onboard-details">
+              <summary>Pourquoi réécrire à chaque fois, et qu&apos;est-ce que ça change ?</summary>
+              <div className="onboard-details-body">
+                <p>
+                  Avant d&apos;être lue par un recruteur, une candidature passe presque
+                  toujours par un ATS (<em>Applicant Tracking System</em>), un logiciel
+                  qui extrait le texte du CV et le compare aux termes de l&apos;offre.
+                  Un CV mal structuré, sur deux colonnes ou truffé de jargon est écarté
+                  avant même d&apos;être vu, même quand le profil correspond.
+                </p>
+                <p>
+                  Concrètement, Altora reprend <strong>tes</strong> expériences et
+                  réorganise leur présentation : les compétences que l&apos;offre
+                  demande remontent, le vocabulaire s&apos;aligne sur celui de
+                  l&apos;annonce, et le CV tient sur une page en une seule colonne.
+                  La lettre, elle, ne paraphrase pas le CV : elle explique pourquoi ce
+                  poste, pourquoi cette entreprise, et ce que tu apportes.
+                </p>
+                <p>
+                  Rien n&apos;est inventé : le modèle s&apos;en tient strictement à ton
+                  profil. Zéro expérience ajoutée, zéro compétence que tu ne pourrais
+                  pas justifier en entretien.
+                </p>
               </div>
-            </div>
+            </details>
 
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>
-              {usingStoredDescription ? (
-                <div className="generate-stored-description">
-                  <Icon name="check-circle" />
-                  <span>Déjà en mémoire depuis le suivi, pas besoin de la recoller.</span>
-                  <button
-                    type="button"
-                    className="generate-stored-description-edit"
-                    onClick={() => { setUsingStoredDescription(false); setJobPosting(''); }}
-                  >
-                    Remplacer
-                  </button>
-                </div>
-              ) : (
-                <textarea
-                  className="generate-textarea"
-                  placeholder="Colle la fiche de poste ou un lien…"
-                  value={jobPosting}
-                  onChange={(e) => setJobPosting(e.target.value)}
-                />
-              )}
+              <textarea
+                className="generate-textarea"
+                placeholder="Colle la fiche de poste ou son lien…"
+                value={jobPosting}
+                onChange={(e) => setJobPosting(e.target.value)}
+              />
             </div>
 
-            {state === 'error' && <div className="generate-error">{error}</div>}
+            {error && <div className="generate-error">{error}</div>}
 
             <div className="generate-actions">
               <button
@@ -408,18 +368,18 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
                 disabled={!jobPosting.trim() || !cvReady}
                 title={!cvReady ? "Importe d'abord ton CV" : undefined}
               >
-                Générer →
+                Générer mon CV et ma lettre →
               </button>
             </div>
-          </>
+          </div>
         )}
 
-        {state === 'loading' && (
+        {step === 'loading' && (
           <div className="modal-overlay visible" role="dialog" aria-modal="true" aria-label="Génération en cours">
             <div className="modal generate-loading-modal">
               <div className="generate-progress-wrap">
                 <div className="generate-progress-label">
-                  <span>{step}</span>
+                  <span>{progressStep}</span>
                   <span>{progress}%</span>
                 </div>
                 <div className="generate-progress-track">
@@ -430,16 +390,21 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
           </div>
         )}
 
-        {state === 'done' && (
+        {step === 'done' && (
           <div className="generate-dashboard">
-            <p className="generate-meta">
-              {(poste || company) && (
-                <span className="generate-meta-title">{[poste, company].filter(Boolean).join(' chez ')} · </span>
-              )}
-              {generatedAt
-                ? `Généré le ${new Date(generatedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`
-                : `Généré en ${duration}s`}
-            </p>
+            <div className="generate-done-header">
+              <p className="generate-meta">
+                {(poste || company) && (
+                  <span className="generate-meta-title">{[poste, company].filter(Boolean).join(' chez ')} · </span>
+                )}
+                {generatedAt
+                  ? `Généré le ${new Date(generatedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`
+                  : `Généré en ${duration}s`}
+              </p>
+              <button type="button" className="btn-primary" onClick={startNewApplication}>
+                <Icon name="plus" />Postuler à une autre annonce
+              </button>
+            </div>
 
             <div className="dash-row">
               {analysis.atsScore > 0 && (
@@ -459,7 +424,7 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
                 </div>
               )}
 
-              <a className="dash-tile dash-tile--download" href={cvUrl} download={`Jesse_Sotomayor_CV_${normalizeFilename(company)}.pdf`}>
+              <a className="dash-tile dash-tile--download" href={cvUrl} download={`${lastNameForFile}_CV_${normalizeFilename(company)}.pdf`}>
                 <span className="dash-tile-icon"><Icon name="file-text" /></span>
                 <span className="dash-tile-body">
                   <span className="dash-tile-title">Télécharger le CV</span>
@@ -467,7 +432,7 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
                 </span>
               </a>
 
-              <a className="dash-tile dash-tile--download" href={lettreUrl} download={`Jesse_Sotomayor_Lettre_${normalizeFilename(company)}.pdf`}>
+              <a className="dash-tile dash-tile--download" href={lettreUrl} download={`${lastNameForFile}_Lettre_${normalizeFilename(company)}.pdf`}>
                 <span className="dash-tile-icon"><Icon name="mail" /></span>
                 <span className="dash-tile-body">
                   <span className="dash-tile-title">Télécharger la lettre</span>
@@ -475,26 +440,6 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
                 </span>
               </a>
             </div>
-
-            {cardId && (
-              <button
-                type="button"
-                className="btn-secondary generate-mark-sent"
-                onClick={async () => {
-                  try {
-                    await fetch(`/api/cards/${encodeURIComponent(cardId)}`, {
-                      method: 'PATCH',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ status: 'sent' }),
-                    });
-                    setMarkedSent(true);
-                  } catch { /* ignore */ }
-                }}
-                disabled={markedSent}
-              >
-                {markedSent ? '✓ Marquée comme envoyée dans le suivi' : 'Marquer comme envoyée dans le suivi'}
-              </button>
-            )}
 
             <div className="dash-grid">
               <div className="dash-card">
@@ -552,8 +497,7 @@ function GenerateInner({ hasCv, cvFilename, initialCivility }: { hasCv: boolean;
                   onChange={(e) => setModifications(e.target.value)}
                 />
               </div>
-              <div className="generate-actions generate-actions--split">
-                <button type="button" className="btn-secondary" onClick={handleReset}>Nouvelle fiche</button>
+              <div className="generate-actions">
                 <button type="button" className="btn-primary" onClick={handleGenerate} disabled={!modifications.trim()}>Appliquer →</button>
               </div>
             </div>

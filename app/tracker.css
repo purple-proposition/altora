@@ -3230,14 +3230,88 @@ legend.field-label { padding: 0; }
 .generate-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
 .generate-actions--split { justify-content: space-between; }
 
-/* Choix binaire (féminin/masculin) qui pilote l'accord des documents générés,
-   rendu comme deux boutons plutôt qu'un select : à deux options, l'état
-   sélectionné est visible sans ouvrir de menu. */
-.generate-civility-row { display: flex; gap: 8px; }
-.generate-civility-row .btn-secondary.is-selected {
-  background: var(--indigo);
-  color: #fff;
+/* Étapes du parcours (accueil, vérification du profil, import d'une offre).
+   Une colonne étroite : chaque étape ne pose qu'une question, et le texte
+   d'explication reste dans une largeur de lecture confortable. */
+.onboard-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 720px;
 }
+.onboard-title {
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+.onboard-lead {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+.onboard-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+}
+
+/* Le « pourquoi » de la réécriture : utile à la première candidature, vite
+   redondant ensuite, donc replié par défaut plutôt qu'imposé à chaque fois. */
+.onboard-details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+}
+.onboard-details > summary {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+.onboard-details-body {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.onboard-details-body p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* En-tête du résultat : la relance vers une nouvelle candidature doit être
+   immédiatement visible, pas enterrée sous les téléchargements. */
+.generate-done-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.generate-done-header .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Intertitre de la liste des candidatures dans le panneau de gauche. */
+.sidebar-section-label {
+  padding: 16px 12px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.sidebar--collapsed .sidebar-section-label { display: none; }
 
 .generate-progress-wrap { padding: 24px 0; }
 .generate-progress-label {

@@ -194,6 +194,82 @@ async function buildCVPdf(cv: CVProfile): Promise<Buffer> {
   return generatePDF((doc) => renderCVContent(doc, cv, 0.83));
 }
 
+// Accords masculin/féminin des mots que le/la candidat·e emploie sur soi.
+// Volontairement limité aux adjectifs et participes réellement employés en
+// lettre de motivation : la liste sert de dictionnaire, ce sont les contextes
+// ci-dessous qui décident d'appliquer ou non, jamais un remplacement global.
+// Sans ancrage, "un sérieux atout" deviendrait "un sérieuse atout".
+const MASC_TO_FEM: Record<string, string> = {
+  heureux: 'heureuse', prêt: 'prête', convaincu: 'convaincue', persuadé: 'persuadée',
+  motivé: 'motivée', intéressé: 'intéressée', ravi: 'ravie', passionné: 'passionnée',
+  déterminé: 'déterminée', aligné: 'alignée', curieux: 'curieuse', rigoureux: 'rigoureuse',
+  sérieux: 'sérieuse', désireux: 'désireuse', soucieux: 'soucieuse', impliqué: 'impliquée',
+  diplômé: 'diplômée', formé: 'formée', habitué: 'habituée', préparé: 'préparée',
+  engagé: 'engagée', attaché: 'attachée', décidé: 'décidée', disposé: 'disposée',
+  satisfait: 'satisfaite', certain: 'certaine', sûr: 'sûre', fier: 'fière',
+  ouvert: 'ouverte', orienté: 'orientée', reconnaissant: 'reconnaissante',
+  candidat: 'candidate', étudiant: 'étudiante', alternant: 'alternante',
+  apprenti: 'apprentie', débutant: 'débutante', futur: 'future', content: 'contente',
+};
+const FEM_TO_MASC: Record<string, string> = Object.fromEntries(
+  Object.entries(MASC_TO_FEM).map(([m, f]) => [f, m]),
+);
+
+// Participes qui ouvrent couramment une phrase en parlant du candidat
+// ("Convaincue que…", "Motivée par…"). Restreint à ceux-là : ouvrir la porte à
+// tout le dictionnaire ferait basculer des mots qui qualifient autre chose.
+const CLAUSE_OPENERS = new Set([
+  'convaincu', 'convaincue', 'persuadé', 'persuadée', 'motivé', 'motivée',
+  'passionné', 'passionnée', 'déterminé', 'déterminée', 'curieux', 'curieuse',
+  'habitué', 'habituée', 'formé', 'formée', 'diplômé', 'diplômée',
+  'impliqué', 'impliquée', 'engagé', 'engagée', 'désireux', 'désireuse',
+  'soucieux', 'soucieuse', 'ravi', 'ravie', 'heureux', 'heureuse',
+  'prêt', 'prête', 'attaché', 'attachée', 'préparé', 'préparée',
+]);
+
+function enforceGenderAgreement(text: string, civility: UserProfile['civility']): string {
+  if (civility !== 'M' && civility !== 'Mme') return text;
+  const map = civility === 'Mme' ? MASC_TO_FEM : FEM_TO_MASC;
+
+  const convert = (word: string) => {
+    const lower = word.toLowerCase();
+    const target = map[lower];
+    if (!target) return null;
+    // Restitue la majuscule initiale du mot d'origine.
+    return word[0] === word[0].toUpperCase() ? target[0].toUpperCase() + target.slice(1) : target;
+  };
+
+  return text
+    // "je suis / je serais / j'ai été … <adjectif>", adverbes intercalés admis.
+    // La série coordonnée est capturée entière ("prête et motivée") : ne
+    // traiter que le premier adjectif laissait le second au mauvais genre.
+    // Les mots hors dictionnaire (connecteurs, adverbes, adjectifs invariables
+    // comme "disponible") traversent inchangés, et la série s'arrête d'elle-
+    // même au premier mot qui n'est pas relié par une virgule, "et" ou "ou".
+    .replace(
+      /((?:\bje\s+(?:suis|serai|serais|reste|resterai|demeure|me\s+sens|me\s+tiens)|\bj[''']ai\s+été)(?:\s+(?:tout\s+à\s+fait|très|particulièrement|vraiment|entièrement|pleinement|sincèrement|également|aussi|déjà|d[''']ailleurs|donc|toujours|plus))*\s+)(\p{L}+(?:\s*(?:,|et|ou)\s*\p{L}+)*)/giu,
+      (_whole, prefix: string, chunk: string) =>
+        prefix + chunk.replace(/\p{L}+/gu, w => convert(w) ?? w),
+    )
+    // Participe en tête de phrase : "Convaincue que…", "Motivée par…".
+    .replace(
+      /(^|[.!?]\s+|\n)(\p{L}+)(?=\s|,)/gu,
+      (whole, start: string, word: string) => {
+        if (!CLAUSE_OPENERS.has(word.toLowerCase())) return whole;
+        const fixed = convert(word);
+        return fixed ? start + fixed : whole;
+      },
+    )
+    // "en tant que candidate", "en qualité d'alternante".
+    .replace(
+      /(\ben\s+(?:tant\s+que|qualité\s+d[e'''])\s*)(\p{L}+)/giu,
+      (whole, prefix: string, word: string) => {
+        const fixed = convert(word);
+        return fixed ? prefix + fixed : whole;
+      },
+    );
+}
+
 async function buildLetterPdf(profile: UserProfile, data: { company: string; poste: string; paragraphs: string[] }): Promise<Buffer> {
   // Le point médian est le séparateur des CHAMPS STRUCTURÉS du CV, pas une
   // ponctuation de prose : le prompt l'interdit d'ailleurs explicitement dans
@@ -519,10 +595,22 @@ export async function POST(req: NextRequest) {
       // Titre CV : "Alternance" puis rentrée et rythme définis par l'école, si renseignés.
       const titleSuffix = [profile.availability, profile.rhythm].filter(Boolean).map(v => ` · ${v}`).join('');
 
+      // L'ancienne consigne ne parlait que des formes épicènes des INTITULÉS
+      // (H/F, point médian). Le modèle les résolvait bien, puis glissait sur
+      // les adjectifs que la personne emploie sur elle-même, en particulier
+      // dans les formules de clôture : une même lettre pouvait dire "je suis
+      // entièrement alignée" puis "je serais heureux". D'où la liste explicite
+      // ci-dessous, doublée d'un correcteur déterministe après génération
+      // (enforceGenderAgreement) parce qu'une consigne seule ne garantit rien.
       const civilityLine = profile.civility === 'Mme'
-        ? "Le/la candidat·e est une femme : accorder au féminin partout, résoudre toutes les formes épicènes vers le féminin (H/F, (e), (trice), point médian…) — ex: \"Chargé·e\" → \"Chargée\", \"Coordinateur·trice\" → \"Coordinatrice\"."
+        ? `Le/la candidat·e est une femme : accorder au FÉMININ absolument partout.
+— Intitulés et formes épicènes (H/F, (e), (trice), point médian…) : "Chargé·e" → "Chargée", "Coordinateur·trice" → "Coordinatrice".
+— TOUS les adjectifs et participes qui la qualifient, y compris dans la formule de clôture, qui est l'endroit le plus souvent oublié : "je serais heureuse" (JAMAIS "heureux"), "je suis prête" (JAMAIS "prêt"), "convaincue", "motivée", "intéressée", "ravie", "disponible", "passionnée", "déterminée", "alignée", "persuadée", "curieuse", "rigoureuse", "sérieuse", "fière", "étudiante", "alternante", "candidate", "diplômée", "formée".
+— Relis la dernière phrase de chaque paragraphe et de l'email avant de répondre : c'est là que l'accord masculin réapparaît.`
         : profile.civility === 'M'
-        ? "Le candidat est un homme : accorder au masculin partout, résoudre toutes les formes épicènes vers le masculin (H/F, (e), (trice), point médian…) — ex: \"Chargé·e\" → \"Chargé\", \"Coordinateur·trice\" → \"Coordinateur\"."
+        ? `Le candidat est un homme : accorder au MASCULIN absolument partout.
+— Intitulés et formes épicènes (H/F, (e), (trice), point médian…) : "Chargé·e" → "Chargé", "Coordinateur·trice" → "Coordinateur".
+— TOUS les adjectifs et participes qui le qualifient, y compris dans la formule de clôture : "je serais heureux", "je suis prêt", "convaincu", "motivé", "intéressé", "ravi", "passionné", "déterminé", "aligné", "étudiant", "alternant", "candidat".`
         : "Civilité non précisée : résoudre par défaut toutes les formes épicènes vers le masculin (H/F, (e), (trice), point médian…), forme la plus neutre en l'absence d'information.";
 
       const availabilityLine = profile.availability?.trim()
@@ -851,18 +939,28 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       };
 
       // Sanitize letter + email body: remove any English jargon Claude may have missed
-      const letterParagraphs = sanitizeLetter(parsed.lettre?.paragraphs ?? []);
+      const letterParagraphs = sanitizeLetter(parsed.lettre?.paragraphs ?? [])
+        .map(p => enforceGenderAgreement(p, profile.civility));
 
       // Enforce a single, fixed closing sentence in paragraphs[4].
       // Claude always generates two sentences (availability + closing) despite instructions.
       // Strip any sentence that looks like an availability mention or a closing formula,
       // then append one canonical sentence that combines both.
       if (letterParagraphs.length >= 5) {
+        // Cette phrase est imposée en dur, elle doit donc s'accorder ici :
+        // c'était la vraie cause des lettres qui disaient "je suis alignée"
+        // puis "je serais heureux". Le modèle accordait correctement, et le
+        // code réécrivait juste après sa clôture au masculin, quelle que soit
+        // la civilité.
+        const heureux = profile.civility === 'Mme' ? 'heureuse' : 'heureux';
         const CLOSING = profile.availability?.trim()
-          ? `Je suis disponible ${profile.availability.trim()} et serais heureux d'en parler de vive voix avec vous prochainement.`
-          : "Je serais heureux d'en parler de vive voix avec vous prochainement.";
+          ? `Je suis disponible ${profile.availability.trim()} et serais ${heureux} d'en parler de vive voix avec vous prochainement.`
+          : `Je serais ${heureux} d'en parler de vive voix avec vous prochainement.`;
+        // Reconnaît aussi les formes féminines, sinon une clôture déjà
+        // accordée par le modèle échappait au filtre et se retrouvait en
+        // double avec celle qu'on ajoute juste après.
         const isClosingSentence = (s: string) =>
-          /disponible\s+à\s+partir|je\s+ser[aio]+s?\s+(ravi|heureux|content|disponible)|d[''']en\s+dis[ck]uter|premier\s+échange|de\s+vive\s+voix|à\s+partir\s+d[''']octobre|prise\s+de\s+poste/i.test(s);
+          /disponible\s+à\s+partir|je\s+ser[aio]+s?\s+(ravie?|heureux|heureuse|contente?|disponible)|d[''']en\s+dis[ck]uter|premier\s+échange|de\s+vive\s+voix|à\s+partir\s+d[''']octobre|prise\s+de\s+poste/i.test(s);
         // Split roughly on sentence boundaries, filter closing sentences, re-append the fixed one
         const sentences = letterParagraphs[4]
           .split(/(?<=[.!?])\s+/)
@@ -906,7 +1004,7 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         ? { ...parsed.email,
             to: parsed.email.to ?? '',
             objet: lowerObjet(parsed.email.objet),
-            corps: sanitizeLetter([noEm(parsed.email.corps)])[0] }
+            corps: enforceGenderAgreement(sanitizeLetter([noEm(parsed.email.corps)])[0], profile.civility) }
         : { to: '', objet: '', corps: '' };
 
       const [cvBuf, lettreBuf] = await Promise.all([buildCVPdf(cvData), buildLetterPdf(profile, lettreData)]);
