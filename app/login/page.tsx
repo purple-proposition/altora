@@ -4,25 +4,23 @@ import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
+import { LoginForm, type LoginValues } from '@/components/forms/login-form';
 
 export default function LoginPage() {
   return (
     <Suspense fallback={null}>
-      <LoginForm />
+      <LoginPageContent />
     </Suspense>
   );
 }
 
-function LoginForm() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit({ email, password }: LoginValues) {
     setError('');
     setBusy(true);
     const res = await signIn('credentials', { email, password, redirect: false });
@@ -41,20 +39,7 @@ function LoginForm() {
         <h1 className="auth-title">Connexion à Altora</h1>
         <p className="auth-subtitle">Entre ton email et ton mot de passe.</p>
 
-        <form onSubmit={handleSubmit}>
-          <label className="auth-field">
-            <span className="auth-label">Email</span>
-            <input className="auth-input" type="email" required autoComplete="email" placeholder="nom@exemple.com" value={email} onChange={e => setEmail(e.target.value)} />
-          </label>
-          <label className="auth-field">
-            <span className="auth-label">Mot de passe</span>
-            <input className="auth-input" type="password" required autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} />
-          </label>
-          {error && <p className="auth-error">{error}</p>}
-          <button className="auth-button" type="submit" disabled={busy}>
-            {busy ? 'Connexion…' : 'Se connecter'}
-          </button>
-        </form>
+        <LoginForm busy={busy} error={error} onSubmit={handleSubmit} />
 
         <Link className="auth-link" href="/recover">Mot de passe oublié ? Utiliser mon code de secours</Link>
 

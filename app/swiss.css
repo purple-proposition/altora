@@ -1,3 +1,7 @@
+@import "tailwindcss";
+
+/* Le CSS maison vit dans la couche components : les utilitaires Tailwind gagnent. */
+@layer components {
 /* Feuille unique : style suisse. Une famille sans-serif, noir sur blanc,
    alignement à gauche, filets fins, aucune ombre, aucun arrondi. */
 
@@ -227,3 +231,5 @@ button:hover, .btn-primary:hover, .btn-secondary:hover, .btn-add-contact:hover {
 .auth-footer a { color: #f2f2f2; font-weight: 500; text-decoration: none; }
 .auth-link { display: inline-block; margin-top: 20px; font-size: 14px; color: #9a9a9a; text-decoration: none; }
 .auth-link:hover, .auth-footer a:hover { text-decoration: underline; }
+
+}
