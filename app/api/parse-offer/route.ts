@@ -40,7 +40,9 @@ async function extractWithAI(text: string): Promise<ExtractedOffer | null> {
   try {
     const client = new Anthropic({ apiKey });
     const message = await client.messages.create({
-      model: 'claude-haiku-4-5',
+      model: 'claude-haiku-5-5',
+      thinking: { type: 'disabled' },
+      output_config: { effort: 'low' },
       max_tokens: 300,
       system: 'Tu extrais des informations structurées depuis le texte brut d\'une offre d\'emploi. Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, sans markdown. Si une information est absente, mets null. Le titre ne doit jamais contenir de mention de genre ("H/F", "(H/F)", "F/H", "h/f", etc.) — retire-la systématiquement. Le contractType doit être l\'une de ces valeurs exactes si applicable : "CDI", "CDD", "Alternance", "Stage", "Freelance" — sinon null.',
       messages: [{

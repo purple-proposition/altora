@@ -637,7 +637,9 @@ export async function POST(req: NextRequest) {
       const rejectsPermanent = profile.soughtContract === 'alternance' || profile.soughtContract === 'stage';
       if (rejectsPermanent) {
         const contractCheck = await client.messages.create({
-          model: 'claude-haiku-4-5',
+          model: 'claude-haiku-5-5',
+          thinking: { type: 'disabled' },
+          output_config: { effort: 'low' },
           max_tokens: 10,
           system: 'Réponds UNIQUEMENT par un mot, sans ponctuation : ALTERNANCE, STAGE, CDI, CDD, ou AUTRE si le type de contrat de cette offre est ambigu ou non précisé.',
           messages: [{ role: 'user', content: jobText.slice(0, 4000) }],
@@ -918,7 +920,9 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       }, 1200);
 
       const message = await client.messages.create({
-        model: 'claude-haiku-4-5',
+        model: 'claude-haiku-5-5',
+        thinking: { type: 'disabled' },
+        output_config: { effort: 'low' },
         max_tokens: 6000,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: userPrompt }],

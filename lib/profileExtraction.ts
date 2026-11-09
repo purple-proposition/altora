@@ -36,7 +36,9 @@ function parseProfileJSON(raw: string, fallbackName: string, fallbackEmail: stri
 async function askClaude(content: Anthropic.MessageParam['content']): Promise<string> {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const message = await client.messages.create({
-    model: 'claude-haiku-4-5',
+    model: 'claude-haiku-5-5',
+    thinking: { type: 'disabled' },
+    output_config: { effort: 'low' },
     max_tokens: 4000,
     messages: [{ role: 'user', content }],
   });
