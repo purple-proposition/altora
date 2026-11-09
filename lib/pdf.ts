@@ -5,12 +5,12 @@ import type { UserProfile } from '@/lib/profile';
 export type CVProfile = UserProfile & { title: string };
 
 // ── Mise en page commune : CV et lettre suivent le modèle « CV anonymisé.docx » ──
-// Format Lettre (8,5 × 11 in), marges haut/bas 50 pt, gauche/droite 60 pt,
+// Format A4 (210 × 297 mm), marges haut/bas 50 pt, gauche/droite 60 pt,
 // police Arial (équivalent Helvetica, mêmes métriques), noir sur blanc.
 // Tailles en points : nom 22 gras, titres de section 10 gras, texte 10,
 // coordonnées 9. Espacements repris du modèle (en pt).
-export const PAGE_W = 612;
-export const PAGE_H = 792;
+export const PAGE_W = 595.28;
+export const PAGE_H = 841.89;
 const ML = 60;
 const MT = 50;
 const MB = 50;
@@ -24,7 +24,7 @@ const lineGapFor = (size: number) => size * 0.17;
 
 export function generatePDF(doc_fn: (doc: InstanceType<typeof PDFDocument>) => void): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ size: 'LETTER', margin: 0 });
+    const doc = new PDFDocument({ size: 'A4', margin: 0 });
     const chunks: Buffer[] = [];
     doc.on('data', (c: Buffer) => chunks.push(c));
     doc.on('end', () => resolve(Buffer.concat(chunks)));
