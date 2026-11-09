@@ -36,24 +36,32 @@ function LoginForm() {
   }
 
   return (
-    <main style={{ maxWidth: 420, margin: '0 auto', padding: 24, fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <h1 style={{ fontSize: 24, margin: '0 0 24px' }}>Connexion</h1>
-      <form onSubmit={handleSubmit}>
-        <label style={{ display: 'block', marginBottom: 16 }}>Email
-          <input type="email" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} style={{ display: 'block', width: '100%', padding: 12, fontSize: 16, boxSizing: 'border-box' }} />
-        </label>
-        <label style={{ display: 'block', marginBottom: 16 }}>Mot de passe
-          <input type="password" required autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} style={{ display: 'block', width: '100%', padding: 12, fontSize: 16, boxSizing: 'border-box' }} />
-        </label>
-        {error && <p style={{ color: '#b00', margin: '0 0 16px' }}>{error}</p>}
-        <button type="submit" disabled={busy} style={{ padding: '12px 16px', background: '#000', color: '#fff', border: 0 }}>
-          {busy ? 'Connexion…' : 'Se connecter'}
-        </button>
-      </form>
-      <p style={{ marginTop: 24 }}>
-        <Link href="/recover">Mot de passe oublié ? Utiliser mon code de secours</Link>
-      </p>
-      <p>Pas encore d&apos;espace ? <Link href="/signup">Créer mon espace</Link></p>
+    <main className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">Connexion à Altora</h1>
+        <p className="auth-subtitle">Entre ton email et ton mot de passe.</p>
+
+        <form onSubmit={handleSubmit}>
+          <label className="auth-field">
+            <span className="auth-label">Email</span>
+            <input className="auth-input" type="email" required autoComplete="email" placeholder="nom@exemple.com" value={email} onChange={e => setEmail(e.target.value)} />
+          </label>
+          <label className="auth-field">
+            <span className="auth-label">Mot de passe</span>
+            <input className="auth-input" type="password" required autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} />
+          </label>
+          {error && <p className="auth-error">{error}</p>}
+          <button className="auth-button" type="submit" disabled={busy}>
+            {busy ? 'Connexion…' : 'Se connecter'}
+          </button>
+        </form>
+
+        <Link className="auth-link" href="/recover">Mot de passe oublié ? Utiliser mon code de secours</Link>
+
+        <div className="auth-footer">
+          Pas encore de compte ? <Link href="/signup">Créer mon espace</Link>
+        </div>
+      </div>
     </main>
   );
 }
