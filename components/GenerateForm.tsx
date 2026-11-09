@@ -4,6 +4,9 @@ import Icon from '@/components/Icon';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CvUpload from '@/components/CvUpload';
+import { CvPreview } from '@/components/cv/cv-preview';
+import { CvEditor } from '@/components/cv/cv-editor';
+import { toCvDoc, toExportCv, type CvDoc } from '@/components/cv/cv-doc';
 import { Button } from '@/components/ui/button';
 import ProfileForm from '@/components/ProfileForm';
 import type { UserProfile } from '@/lib/profile';
@@ -76,6 +79,10 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   const [progress, setProgress] = useState(0);
   const [progressStep, setProgressStep] = useState('');
   const [cvUrl, setCvUrl] = useState('');
+  // Modèle éditable du CV : présent après une génération, absent pour une
+  // génération rouverte depuis l'historique (qui ne garde que les PDF).
+  const [doc, setDoc] = useState<CvDoc | null>(null);
+  const [exportError, setExportError] = useState('');
   const [lettreUrl, setLettreUrl] = useState('');
   const [analysis, setAnalysis] = useState<Analysis>(EMPTY_ANALYSIS);
   const [modifications, setModifications] = useState('');
@@ -98,6 +105,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
         if (cancelled || !record) return;
         setJobPosting(record.jobDescription || '');
         setCvUrl(record.cvUrl);
+        setDoc(null);
         setLettreUrl(record.lettreUrl);
         setAnalysis({
           keywords: record.analysis?.keywords ?? [],
@@ -153,6 +161,27 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
   // Nom des fichiers téléchargés : cv_prenom_nom_entreprise.pdf
   // et lettre_de_motivation_prenom_nom_entreprise.pdf (minuscules, sans accents).
+  // Télécharge le CV tel qu'il est édité, en ne gardant que les éléments visibles.
+  async function downloadCv(current: CvDoc) {
+    setExportError('');
+    const res = await fetch('/api/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'cv', cv: toExportCv(current) }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setExportError(data.error || "L'export a échoué.");
+      return;
+    }
+    const url = URL.createObjectURL(await res.blob());
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = downloadName('cv');
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   function downloadName(kind: 'cv' | 'lettre_de_motivation') {
     return [kind, lastNameForFile, normalizeFilename(company)].join('_').toLowerCase() + '.pdf';
   }
@@ -207,6 +236,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
               atsImprovements: data.atsImprovements ?? [],
             };
             setCvUrl(toUrl(data.cv));
+            if (data.cvData) setDoc(toCvDoc(data.cvData));
             setLettreUrl(toUrl(data.lettre));
             setAnalysis(doneAnalysis);
             setCompany(data.company ?? '');
@@ -248,6 +278,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
     if (cvUrl && cvUrl.startsWith('blob:')) URL.revokeObjectURL(cvUrl);
     if (lettreUrl && lettreUrl.startsWith('blob:')) URL.revokeObjectURL(lettreUrl);
     setCvUrl(''); setLettreUrl('');
+    setDoc(null); setExportError('');
     setAnalysis(EMPTY_ANALYSIS);
     setModifications('');
     setCompany(''); setPoste('');
@@ -366,7 +397,55 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
           </div>
         )}
 
-        {step === 'done' && (
+        {step === 'done' && doc && (
+          <div className="flex flex-col gap-8">
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-xl border border-neutral-200 p-5">
+                <p className="text-sm text-neutral-500">Compatibilité avec l&apos;offre</p>
+                <p className="mt-1 text-5xl font-bold tracking-tight">{analysis.atsScore} %</p>
+              </div>
+              <div className="rounded-xl border border-neutral-200 p-5">
+                <p className="text-sm font-semibold">Modifications faites</p>
+                <ul className="mt-2 list-disc pl-5 text-sm">
+                  {analysis.adjustments.map((a, i) => <li key={i}>{a}</li>)}
+                </ul>
+              </div>
+              <div className="rounded-xl border border-neutral-200 p-5">
+                <p className="text-sm font-semibold">Suggestions restantes</p>
+                <p className="text-xs text-neutral-500">Facultatif : à traiter seulement si tu le souhaites.</p>
+                <ul className="mt-2 list-disc pl-5 text-sm">
+                  {[...analysis.missing, ...analysis.atsImprovements].map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </div>
+            </div>
+
+            <div className="grid gap-8 lg:grid-cols-2">
+              <div className="lg:sticky lg:top-6 lg:self-start">
+                <CvPreview
+                  doc={doc}
+                  identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }}
+                />
+              </div>
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm text-neutral-500">Modifie à droite, l&apos;aperçu se met à jour.</p>
+                  <Button type="button" onClick={() => downloadCv(doc)}>Télécharger le CV</Button>
+                </div>
+                {exportError && <p className="text-sm text-red-600">{exportError}</p>}
+                <CvEditor doc={doc} onChange={setDoc} />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex flex-wrap gap-3">
+                <a className="inline-flex h-11 items-center rounded-lg border border-neutral-300 px-4 text-base font-medium text-neutral-900 hover:bg-neutral-100" href={lettreUrl} download={downloadName('lettre_de_motivation')}>Télécharger la lettre (version actuelle)</a>
+                <Button type="button" variant="outline" onClick={startNewApplication}>Postuler à une autre annonce</Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 'done' && !doc && (
           <div className="generate-dashboard">
             <div className="generate-done-header">
               <p className="generate-meta">
