@@ -7,6 +7,9 @@ import CvUpload from '@/components/CvUpload';
 import { CvPreview } from '@/components/cv/cv-preview';
 import { CvEditor } from '@/components/cv/cv-editor';
 import { toCvDoc, toExportCv, type CvDoc } from '@/components/cv/cv-doc';
+import { LetterPreview } from '@/components/cv/letter-preview';
+import { LetterEditor } from '@/components/cv/letter-editor';
+import { toLetterDoc, toExportLetter, type LetterDoc } from '@/components/cv/letter-doc';
 import { Button } from '@/components/ui/button';
 import ProfileForm from '@/components/ProfileForm';
 import type { UserProfile } from '@/lib/profile';
@@ -83,6 +86,9 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   // génération rouverte depuis l'historique (qui ne garde que les PDF).
   const [doc, setDoc] = useState<CvDoc | null>(null);
   const [exportError, setExportError] = useState('');
+  // Lettre éditable, et étape affichée : d'abord le CV, puis la lettre.
+  const [letter, setLetter] = useState<LetterDoc | null>(null);
+  const [docStep, setDocStep] = useState<'cv' | 'lettre'>('cv');
   const [lettreUrl, setLettreUrl] = useState('');
   const [analysis, setAnalysis] = useState<Analysis>(EMPTY_ANALYSIS);
   const [modifications, setModifications] = useState('');
@@ -106,6 +112,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
         setJobPosting(record.jobDescription || '');
         setCvUrl(record.cvUrl);
         setDoc(null);
+        setLetter(null);
         setLettreUrl(record.lettreUrl);
         setAnalysis({
           keywords: record.analysis?.keywords ?? [],
@@ -161,13 +168,13 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
   // Nom des fichiers téléchargés : cv_prenom_nom_entreprise.pdf
   // et lettre_de_motivation_prenom_nom_entreprise.pdf (minuscules, sans accents).
-  // Télécharge le CV tel qu'il est édité, en ne gardant que les éléments visibles.
-  async function downloadCv(current: CvDoc) {
+  // Télécharge un PDF produit par /api/export à partir des données éditées.
+  async function downloadPdf(kind: 'cv' | 'lettre_de_motivation', payload: object) {
     setExportError('');
     const res = await fetch('/api/export', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind: 'cv', cv: toExportCv(current) }),
+      body: JSON.stringify(kind === 'cv' ? { kind: 'cv', cv: payload } : { kind: 'lettre', lettre: payload }),
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -177,7 +184,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
     const url = URL.createObjectURL(await res.blob());
     const a = document.createElement('a');
     a.href = url;
-    a.download = downloadName('cv');
+    a.download = downloadName(kind);
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -237,6 +244,8 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             };
             setCvUrl(toUrl(data.cv));
             if (data.cvData) setDoc(toCvDoc(data.cvData));
+            if (data.lettreData) setLetter(toLetterDoc(data.lettreData));
+            setDocStep('cv');
             setLettreUrl(toUrl(data.lettre));
             setAnalysis(doneAnalysis);
             setCompany(data.company ?? '');
@@ -278,7 +287,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
     if (cvUrl && cvUrl.startsWith('blob:')) URL.revokeObjectURL(cvUrl);
     if (lettreUrl && lettreUrl.startsWith('blob:')) URL.revokeObjectURL(lettreUrl);
     setCvUrl(''); setLettreUrl('');
-    setDoc(null); setExportError('');
+    setDoc(null); setLetter(null); setDocStep('cv'); setExportError('');
     setAnalysis(EMPTY_ANALYSIS);
     setModifications('');
     setCompany(''); setPoste('');
@@ -419,28 +428,54 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
               </div>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-2">
-              <div className="lg:sticky lg:top-6 lg:self-start">
-                <CvPreview
-                  doc={doc}
-                  identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }}
-                />
-              </div>
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-sm text-neutral-500">Modifie à droite, l&apos;aperçu se met à jour.</p>
-                  <Button type="button" onClick={() => downloadCv(doc)}>Télécharger le CV</Button>
-                </div>
-                {exportError && <p className="text-sm text-red-600">{exportError}</p>}
-                <CvEditor doc={doc} onChange={setDoc} />
-              </div>
+            <div className="flex gap-2 text-sm">
+              <span className={docStep === 'cv' ? 'font-semibold text-neutral-950' : 'text-neutral-500'}>1. CV</span>
+              <span className="text-neutral-400">/</span>
+              <span className={docStep === 'lettre' ? 'font-semibold text-neutral-950' : 'text-neutral-500'}>2. Lettre</span>
             </div>
 
-            <div>
-              <div className="flex flex-wrap gap-3">
-                <a className="inline-flex h-11 items-center rounded-lg border border-neutral-300 px-4 text-base font-medium text-neutral-900 hover:bg-neutral-100" href={lettreUrl} download={downloadName('lettre_de_motivation')}>Télécharger la lettre (version actuelle)</a>
-                <Button type="button" variant="outline" onClick={startNewApplication}>Postuler à une autre annonce</Button>
+            {docStep === 'cv' && (
+              <div className="grid gap-8 lg:grid-cols-2">
+                <div className="lg:sticky lg:top-6 lg:self-start">
+                  <CvPreview doc={doc} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
+                </div>
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-sm text-neutral-500">Modifie à droite, l&apos;aperçu se met à jour.</p>
+                    <Button type="button" onClick={() => setDocStep('lettre')} disabled={!letter}>Passer à la lettre →</Button>
+                  </div>
+                  <CvEditor doc={doc} onChange={setDoc} />
+                </div>
               </div>
+            )}
+
+            {docStep === 'lettre' && letter && (
+              <div className="grid gap-8 lg:grid-cols-2">
+                <div className="lg:sticky lg:top-6 lg:self-start">
+                  <LetterPreview
+                    doc={letter}
+                    identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }}
+                    contractSuffix={({ alternance: ' en alternance', stage: ' en stage', cdi: ' en CDI', cdd: ' en CDD' } as Record<string, string>)[profile.soughtContract] ?? ''}
+                  />
+                </div>
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-sm text-neutral-500">Modifie à droite, la lettre se met à jour.</p>
+                    <Button type="button" variant="outline" onClick={() => setDocStep('cv')}>← Retour au CV</Button>
+                  </div>
+                  <LetterEditor doc={letter} onChange={setLetter} />
+                </div>
+              </div>
+            )}
+
+            {exportError && <p className="text-sm text-red-600">{exportError}</p>}
+
+            <div className="flex flex-wrap gap-3">
+              <Button type="button" onClick={() => downloadPdf('cv', toExportCv(doc))}>Télécharger le CV</Button>
+              {letter && (
+                <Button type="button" onClick={() => downloadPdf('lettre_de_motivation', toExportLetter(letter))}>Télécharger la lettre</Button>
+              )}
+              <Button type="button" variant="outline" onClick={startNewApplication}>Postuler à une autre annonce</Button>
             </div>
           </div>
         )}
