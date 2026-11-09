@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
+import { storePut } from '@/lib/storage';
 import { auth } from '@/auth';
 import { sql, ensureSchema, invalidateUserCv } from '@/lib/db';
 import { renderPdfFirstPageToPng } from '@/lib/pdfThumbnail';
@@ -50,11 +50,7 @@ export async function POST(req: NextRequest) {
   // input" — so the user is shown a JSON parser message instead of anything
   // about what actually went wrong.
   try {
-    const blob = await put(`cv/${session.user.id}-${Date.now()}${ext}`, file, {
-      access: 'public',
-      addRandomSuffix: false,
-      contentType: detected.contentType,
-    });
+    const blobUrl = await storePut(`cv/${session.user.id}-${Date.now()}${ext}`, new Uint8Array(await file.arrayBuffer()), detected.contentType);
 
     // Only PDFs can be rendered to a page image — DOC/DOCX just keep the
     // generic file icon. A failed render (corrupt/unusual PDF) does too.
@@ -62,17 +58,13 @@ export async function POST(req: NextRequest) {
     if (detected.ext === '.pdf') {
       const png = await renderPdfFirstPageToPng(Buffer.from(await file.arrayBuffer()));
       if (png) {
-        const thumbBlob = await put(`cv-thumbnails/${session.user.id}-${Date.now()}.png`, png, {
-          access: 'public',
-          addRandomSuffix: false,
-          contentType: 'image/png',
-        });
-        thumbnailUrl = thumbBlob.url;
+        const thumbUrl = await storePut(`cv-thumbnails/${session.user.id}-${Date.now()}.png`, png, 'image/png');
+        thumbnailUrl = thumbUrl;
       }
     }
 
     await ensureSchema();
-    await sql`UPDATE users SET cv_url = ${blob.url}, cv_filename = ${safeName}, cv_thumbnail_url = ${thumbnailUrl} WHERE id = ${session.user.id}`;
+    await sql`UPDATE users SET cv_url = ${blobUrl}, cv_filename = ${safeName}, cv_thumbnail_url = ${thumbnailUrl} WHERE id = ${session.user.id}`;
     invalidateUserCv(session.user.id);
 
     // Pre-fill the structured profile from the uploaded CV the first time
@@ -93,7 +85,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ url: blob.url, filename: safeName, thumbnailUrl, profileExtracted });
+    return NextResponse.json({ url: blobUrl, filename: safeName, thumbnailUrl, profileExtracted });
   } catch (err) {
     console.error('CV upload failed:', err);
     return NextResponse.json({ error: "L'envoi du CV a échoué. Réessaie dans un instant." }, { status: 500 });

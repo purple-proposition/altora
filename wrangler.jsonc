@@ -8,5 +8,6 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "r2_buckets": [{ "binding": "CV_BUCKET", "bucket_name": "altora-cv" }],
   "observability": { "enabled": true }
 }

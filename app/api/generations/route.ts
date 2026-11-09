@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
+import { storePut } from '@/lib/storage';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 import { rateLimit } from '@/lib/rateLimit';
@@ -57,17 +57,9 @@ export async function POST(req: NextRequest) {
   }
 
   const id = crypto.randomUUID();
-  const [cvBlob, lettreBlob] = await Promise.all([
-    put(`generations/${session.user.id}-${id}-cv.pdf`, Buffer.from(body.cv, 'base64'), {
-      access: 'public',
-      addRandomSuffix: false,
-      contentType: 'application/pdf',
-    }),
-    put(`generations/${session.user.id}-${id}-lettre.pdf`, Buffer.from(body.lettre, 'base64'), {
-      access: 'public',
-      addRandomSuffix: false,
-      contentType: 'application/pdf',
-    }),
+  const [cvUrl, lettreUrl] = await Promise.all([
+    storePut(`generations/${session.user.id}-${id}-cv.pdf`, Buffer.from(body.cv, 'base64'), 'application/pdf'),
+    storePut(`generations/${session.user.id}-${id}-lettre.pdf`, Buffer.from(body.lettre, 'base64'), 'application/pdf'),
   ]);
 
   await ensureSchema();
@@ -76,7 +68,7 @@ export async function POST(req: NextRequest) {
     VALUES (
       ${id}, ${session.user.id}, ${body.cardId || null},
       ${body.company || ''}, ${body.poste || ''}, ${body.contractType || 'alternance'}, ${body.jobDescription || ''},
-      ${cvBlob.url}, ${lettreBlob.url},
+      ${cvUrl}, ${lettreUrl},
       ${JSON.stringify(body.analysis || {})}::jsonb, ${body.email ? JSON.stringify(body.email) : null}::jsonb
     )
   `;

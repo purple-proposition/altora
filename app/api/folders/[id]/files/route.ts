@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
+import { storePut } from '@/lib/storage';
 import { auth } from '@/auth';
 import { sql, ensureSchema } from '@/lib/db';
 import { renderPdfFirstPageToPng } from '@/lib/pdfThumbnail';
@@ -52,11 +52,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     const fileId = crypto.randomUUID();
     const fileBuffer = Buffer.from(await file.arrayBuffer());
-    const blob = await put(`folder-files/${session.user.id}-${folderId}-${fileId}${ext}`, fileBuffer, {
-      access: 'public',
-      addRandomSuffix: false,
-      contentType: detected.contentType,
-    });
+    const fileUrl = await storePut(`folder-files/${session.user.id}-${folderId}-${fileId}${ext}`, fileBuffer, detected.contentType);
 
     // Only PDFs can be rendered to a page image — DOC/DOCX just keep the
     // generic file icon. A failed render (corrupt/unusual PDF) does too.
@@ -64,20 +60,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (detected.ext === '.pdf') {
       const png = await renderPdfFirstPageToPng(fileBuffer);
       if (png) {
-        const thumbBlob = await put(`folder-files/${session.user.id}-${folderId}-${fileId}-thumb.png`, png, {
-          access: 'public',
-          addRandomSuffix: false,
-          contentType: 'image/png',
-        });
-        thumbnailUrl = thumbBlob.url;
+        const thumbUrl = await storePut(`folder-files/${session.user.id}-${folderId}-${fileId}-thumb.png`, png, 'image/png');
+        thumbnailUrl = thumbUrl;
       }
     }
 
     await sql`
       INSERT INTO folder_files (id, folder_id, user_id, url, filename, thumbnail_url)
-      VALUES (${fileId}, ${folderId}, ${session.user.id}, ${blob.url}, ${safeName}, ${thumbnailUrl})
+      VALUES (${fileId}, ${folderId}, ${session.user.id}, ${fileUrl}, ${safeName}, ${thumbnailUrl})
     `;
-    saved.push({ url: blob.url, filename: safeName, thumbnailUrl });
+    saved.push({ url: fileUrl, filename: safeName, thumbnailUrl });
   }
 
   return NextResponse.json({ files: saved });
