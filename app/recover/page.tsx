@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { signIn } from 'next-auth/react';
+import { AuthShell, inputClass, primaryButtonClass, linkClass } from '@/components/forms/field';
+import { cn } from '@/lib/cn';
 
 const MIN = 12;
 
@@ -38,39 +41,43 @@ export default function RecoverPage() {
 
   if (newCode) {
     return (
-      <main style={{ maxWidth: 420, margin: '0 auto', padding: 24, fontFamily: 'Inter, system-ui, sans-serif' }}>
-        <h1 style={{ fontSize: 24, margin: '0 0 12px' }}>Nouveau code de secours</h1>
-        <p style={{ margin: '0 0 16px' }}>L&apos;ancien code ne fonctionne plus. Note celui-ci, il ne sera plus affiché.</p>
-        <pre style={{ fontSize: 20, letterSpacing: 2, padding: 16, border: '1px solid #000', margin: '0 0 16px' }}>{newCode}</pre>
-        <label style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-          <input type="checkbox" checked={saved} onChange={e => setSaved(e.target.checked)} />
+      <AuthShell title="Nouveau code de secours" subtitle="L'ancien code ne fonctionne plus. Note celui-ci : il ne sera plus affiché.">
+        <p className="rounded-lg bg-neutral-100 px-4 py-4 text-center font-mono text-xl tracking-widest text-neutral-950">{newCode}</p>
+        <label className="mt-6 flex items-center gap-3 text-sm text-neutral-900">
+          <input type="checkbox" className="h-4 w-4 accent-neutral-950" checked={saved} onChange={e => setSaved(e.target.checked)} />
           J&apos;ai noté mon nouveau code
         </label>
-        <button type="button" disabled={!saved} onClick={() => { router.push('/generate'); router.refresh(); }} style={{ padding: '12px 16px', background: '#000', color: '#fff', border: 0, opacity: saved ? 1 : 0.4 }}>
+        <button type="button" disabled={!saved} onClick={() => { router.push('/generate'); router.refresh(); }} className={cn(primaryButtonClass, 'mt-6')}>
           Accéder à mon espace
         </button>
-      </main>
+      </AuthShell>
     );
   }
 
   return (
-    <main style={{ maxWidth: 420, margin: '0 auto', padding: 24, fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <h1 style={{ fontSize: 24, margin: '0 0 24px' }}>Code de secours</h1>
-      <form onSubmit={handleSubmit}>
-        <label style={{ display: 'block', marginBottom: 16 }}>Email
-          <input type="email" required value={email} onChange={e => setEmail(e.target.value)} style={{ display: 'block', width: '100%', padding: 12, fontSize: 16, boxSizing: 'border-box' }} />
+    <AuthShell
+      title="Code de secours"
+      subtitle="Saisis le code noté à la création de ton espace, puis choisis un nouveau mot de passe."
+      footer={<><Link href="/login" className={linkClass}>Retour à la connexion</Link></>}
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <label className="block">
+          <span className="block text-sm font-medium text-neutral-900">Email</span>
+          <input className={inputClass} type="email" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} />
         </label>
-        <label style={{ display: 'block', marginBottom: 16 }}>Code de secours
-          <input type="text" required value={code} onChange={e => setCode(e.target.value)} style={{ display: 'block', width: '100%', padding: 12, fontSize: 16, boxSizing: 'border-box', letterSpacing: 2 }} />
+        <label className="block">
+          <span className="block text-sm font-medium text-neutral-900">Code de secours</span>
+          <input className={cn(inputClass, 'font-mono tracking-widest')} type="text" required value={code} onChange={e => setCode(e.target.value)} />
         </label>
-        <label style={{ display: 'block', marginBottom: 16 }}>Nouveau mot de passe ({MIN} caractères minimum)
-          <input type="password" required minLength={MIN} autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} style={{ display: 'block', width: '100%', padding: 12, fontSize: 16, boxSizing: 'border-box' }} />
+        <label className="block">
+          <span className="block text-sm font-medium text-neutral-900">Nouveau mot de passe</span>
+          <input className={inputClass} type="password" required minLength={MIN} autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} />
         </label>
-        {error && <p style={{ color: '#b00', margin: '0 0 16px' }}>{error}</p>}
-        <button type="submit" disabled={busy} style={{ padding: '12px 16px', background: '#000', color: '#fff', border: 0 }}>
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <button type="submit" disabled={busy} className={primaryButtonClass}>
           {busy ? 'Vérification…' : 'Réinitialiser'}
         </button>
       </form>
-    </main>
+    </AuthShell>
   );
 }
