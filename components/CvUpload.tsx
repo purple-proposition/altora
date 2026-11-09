@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Upload, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { FileUploadFieldInput } from '@/components/inputs/file-upload-field-input';
 
 // Import du CV : même endpoint (POST /api/profile/cv), état React local.
 export default function CvUpload({
@@ -15,16 +16,14 @@ export default function CvUpload({
   const [filename, setFilename] = useState(initialFilename ?? '');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  // Remonte le champ après chaque envoi : il repart vide, prêt à remplacer le CV.
+  const [fieldKey, setFieldKey] = useState(0);
 
-  async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function upload(file: File) {
     setUploading(true);
     setError('');
-
     const formData = new FormData();
     formData.append('file', file);
-
     try {
       const res = await fetch('/api/profile/cv', { method: 'POST', body: formData });
       const data = await res.json().catch(() => null);
@@ -36,28 +35,27 @@ export default function CvUpload({
       setError(err instanceof Error ? err.message : "Échec de l'envoi du CV.");
     } finally {
       setUploading(false);
-      e.target.value = '';
+      setFieldKey(k => k + 1);
     }
   }
 
   return (
     <div className="flex flex-col gap-3">
-      <Label htmlFor="cv-file-input-generate">Ton CV</Label>
-      <div className="flex flex-wrap items-center gap-3">
-        <input id="cv-file-input-generate" type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={handleChange} disabled={uploading} />
-        <span className="inline-flex h-11 items-center rounded-lg border border-neutral-300 bg-white px-4 text-base font-medium text-neutral-900 hover:bg-neutral-100">
-          <label htmlFor="cv-file-input-generate" className="inline-flex cursor-pointer items-center gap-2">
-            <Upload size={16} />
-            {uploading ? 'Envoi…' : filename ? 'Remplacer' : 'Importer'}
-          </label>
+      <Label>Ton CV</Label>
+      {filename && (
+        <span className="inline-flex items-center gap-2 text-sm text-neutral-700">
+          <FileText size={16} />
+          {filename}
         </span>
-        {filename && (
-          <span className="inline-flex items-center gap-2 text-sm text-neutral-700">
-            <FileText size={16} />
-            {filename}
-          </span>
-        )}
-      </div>
+      )}
+      <FileUploadFieldInput
+        key={fieldKey}
+        accept=".pdf,.doc,.docx"
+        maxFiles={1}
+        disabled={uploading}
+        label={uploading ? 'Envoi…' : filename ? 'Remplacer le CV' : 'Importer mon CV'}
+        onFilesChange={(files) => { if (files[0]) upload(files[0]); }}
+      />
       {error && <p className="text-sm text-red-600">{error}</p>}
     </div>
   );
