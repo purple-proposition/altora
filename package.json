@@ -16,13 +16,15 @@
     "@opennextjs/cloudflare": "^1.20.16",
     "@vercel/blob": "^2.6.1",
     "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
     "google-auth-library": "^11.0.0",
-    "lucide-react": "^1.28.0",
+    "lucide-react": "^1.70.0",
     "mammoth": "^1.12.0",
     "next": "^15.3.0",
     "next-auth": "^5.0.0-beta.32",
     "pdfjs-dist": "^6.2.108",
     "pdfkit": "^0.15.1",
+    "tailwind-merge": "^3.7.0",
     "word-extractor": "^1.0.4"
   },
   "devDependencies": {
