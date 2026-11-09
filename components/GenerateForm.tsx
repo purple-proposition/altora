@@ -151,6 +151,12 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
   const lastNameForFile = normalizeFilename(profile.name || firstName);
 
+  // Nom des fichiers téléchargés : cv_prenom_nom_entreprise.pdf
+  // et lettre_de_motivation_prenom_nom_entreprise.pdf (minuscules, sans accents).
+  function downloadName(kind: 'cv' | 'lettre_de_motivation') {
+    return [kind, lastNameForFile, normalizeFilename(company)].join('_').toLowerCase() + '.pdf';
+  }
+
   async function handleGenerate() {
     if (!jobPosting.trim()) return;
     setStep('loading');
@@ -392,7 +398,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
                 </div>
               )}
 
-              <a className="dash-tile dash-tile--download" href={cvUrl} download={`${lastNameForFile}_CV_${normalizeFilename(company)}.pdf`}>
+              <a className="dash-tile dash-tile--download" href={cvUrl} download={downloadName('cv')}>
                 <span className="dash-tile-icon"><Icon name="file-text" /></span>
                 <span className="dash-tile-body">
                   <span className="dash-tile-title">Télécharger le CV</span>
@@ -400,7 +406,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
                 </span>
               </a>
 
-              <a className="dash-tile dash-tile--download" href={lettreUrl} download={`${lastNameForFile}_Lettre_${normalizeFilename(company)}.pdf`}>
+              <a className="dash-tile dash-tile--download" href={lettreUrl} download={downloadName('lettre_de_motivation')}>
                 <span className="dash-tile-icon"><Icon name="mail" /></span>
                 <span className="dash-tile-body">
                   <span className="dash-tile-title">Télécharger la lettre</span>
