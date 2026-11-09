@@ -296,6 +296,10 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             </p>
 
 
+            <button type="button" className="self-start text-sm text-neutral-700 underline underline-offset-4 hover:text-neutral-950" onClick={() => setStep('welcome')}>
+              Réimporter un autre CV
+            </button>
+
             <ProfileForm
               key={profile.name + profile.experiences.length}
               initialProfile={profile}
