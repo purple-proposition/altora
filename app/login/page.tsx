@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { LoginForm, type LoginValues } from '@/components/forms/login-form';
+import { AuthShell } from '@/components/forms/auth-shell';
 
 export default function LoginPage() {
   return (
@@ -34,26 +35,12 @@ function LoginPageContent() {
   }
 
   return (
-    <main
-      className="flex min-h-screen items-center justify-center bg-white p-6 font-sans"
-      style={{
-        backgroundImage:
-          'repeating-linear-gradient(135deg, transparent 0 14px, rgba(0,0,0,0.035) 14px 15px)',
-      }}
+    <AuthShell
+      title="Bon retour"
+      subtitle="Connecte-toi pour accéder à ton espace."
+      footer={<>Pas encore de compte ? <Link href="/signup" className="font-medium text-neutral-950 underline underline-offset-4">Créer mon espace</Link></>}
     >
-      <div className="w-full max-w-[400px] rounded-2xl bg-white p-8 shadow-sm ring-1 ring-neutral-200">
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-950">Bon retour</h1>
-        <p className="mt-2 text-base text-neutral-500">Connecte-toi pour accéder à ton espace.</p>
-
-        <div className="mt-8">
-          <LoginForm busy={busy} error={error} onSubmit={handleSubmit} forgotHref="/recover" />
-        </div>
-
-        <p className="mt-8 text-center text-base text-neutral-500">
-          Pas encore de compte ?{' '}
-          <Link href="/signup" className="font-medium text-neutral-950 underline underline-offset-4">Créer mon espace</Link>
-        </p>
-      </div>
-    </main>
+      <LoginForm busy={busy} error={error} onSubmit={handleSubmit} />
+    </AuthShell>
   );
 }

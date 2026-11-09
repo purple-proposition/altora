@@ -1,14 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Icon from '@/components/Icon';
+import { Upload, FileText } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
-// Standalone, controlled version of the CV upload widget that used to
-// only exist as static markup + imperative DOM wiring inside the old
-// home page's profile overlay (see public/tracker.js) — that version
-// depended on global element IDs and a page-injected window global, so
-// it couldn't be reused here on its own. Same endpoint (POST
-// /api/profile/cv), same accepted types, just real React state instead.
+// Import du CV : même endpoint (POST /api/profile/cv), état React local.
 export default function CvUpload({
   initialFilename,
   onUploaded,
@@ -31,10 +27,6 @@ export default function CvUpload({
 
     try {
       const res = await fetch('/api/profile/cv', { method: 'POST', body: formData });
-      // The route always answers JSON, but something in front of it (a proxy
-      // rejecting the body size, a gateway timeout) may not — parsing
-      // defensively keeps those cases showing a real message rather than a
-      // JSON syntax error.
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error || "Échec de l'envoi du CV.");
       if (!data?.filename) throw new Error("Échec de l'envoi du CV.");
@@ -49,22 +41,24 @@ export default function CvUpload({
   }
 
   return (
-    <div className="field-group">
-      <span className="field-label">Ton CV</span>
-      <div className="cv-upload-row">
-        <input type="file" id="cv-file-input-generate" accept=".pdf,.doc,.docx" hidden onChange={handleChange} disabled={uploading} />
-        <label htmlFor="cv-file-input-generate" className="btn-add-contact">
-          <Icon name="upload" />
-          {uploading ? 'Envoi…' : filename ? 'Remplacer' : 'Importer'}
-        </label>
+    <div className="flex flex-col gap-3">
+      <Label htmlFor="cv-file-input-generate">Ton CV</Label>
+      <div className="flex flex-wrap items-center gap-3">
+        <input id="cv-file-input-generate" type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={handleChange} disabled={uploading} />
+        <span className="inline-flex h-11 items-center rounded-lg border border-neutral-300 bg-white px-4 text-base font-medium text-neutral-900 hover:bg-neutral-100">
+          <label htmlFor="cv-file-input-generate" className="inline-flex cursor-pointer items-center gap-2">
+            <Upload size={16} />
+            {uploading ? 'Envoi…' : filename ? 'Remplacer' : 'Importer'}
+          </label>
+        </span>
         {filename && (
-          <span className="cv-filename-btn">
-            <Icon name="file-text" />
-            <span>{filename}</span>
+          <span className="inline-flex items-center gap-2 text-sm text-neutral-700">
+            <FileText size={16} />
+            {filename}
           </span>
         )}
       </div>
-      {error && <div className="generate-error">{error}</div>}
+      {error && <p className="text-sm text-red-600">{error}</p>}
     </div>
   );
 }

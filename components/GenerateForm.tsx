@@ -4,6 +4,7 @@ import Icon from '@/components/Icon';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CvUpload from '@/components/CvUpload';
+import { Button } from '@/components/ui/button';
 import ProfileForm from '@/components/ProfileForm';
 import type { UserProfile } from '@/lib/profile';
 
@@ -321,8 +322,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>
-              <textarea
-                className="generate-textarea"
+              <textarea className="min-h-60 w-full rounded-lg border border-neutral-300 bg-white p-3.5 text-base text-neutral-900 placeholder:text-neutral-400 outline-none focus-visible:border-neutral-900"
                 placeholder="Colle la fiche de poste ou son lien…"
                 value={jobPosting}
                 onChange={(e) => setJobPosting(e.target.value)}
@@ -332,15 +332,13 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             {error && <div className="generate-error">{error}</div>}
 
             <div className="generate-actions">
-              <button
+              <Button
                 type="button"
-                className="btn-primary"
                 onClick={handleGenerate}
                 disabled={!jobPosting.trim() || !cvReady}
                 title={!cvReady ? "Importe d'abord ton CV" : undefined}
               >
-                Générer mon CV et ma lettre →
-              </button>
+                Générer mon CV et ma lettre →</Button>
             </div>
           </div>
         )}
@@ -372,9 +370,8 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
                   ? `Généré le ${new Date(generatedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`
                   : `Généré en ${duration}s`}
               </p>
-              <button type="button" className="btn-primary" onClick={startNewApplication}>
-                <Icon name="plus" />Postuler à une autre annonce
-              </button>
+              <Button type="button" onClick={startNewApplication}>
+                <Icon name="plus" />Postuler à une autre annonce</Button>
             </div>
 
             <div className="dash-row">
@@ -461,15 +458,14 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             <div className="dash-card">
               <div className="field-group">
                 <span className="field-label">Modifications à apporter</span>
-                <textarea
-                  className="generate-textarea generate-textarea--small"
+                <textarea className="min-h-32 w-full rounded-lg border border-neutral-300 bg-white p-3.5 text-base text-neutral-900 placeholder:text-neutral-400 outline-none focus-visible:border-neutral-900"
                   placeholder="Ex. : Renforcer le bullet CRM, raccourcir l'accroche, mettre davantage en avant le SEO, reformuler le 2e paragraphe de la lettre…"
                   value={modifications}
                   onChange={(e) => setModifications(e.target.value)}
                 />
               </div>
               <div className="generate-actions">
-                <button type="button" className="btn-primary" onClick={handleGenerate} disabled={!modifications.trim()}>Appliquer →</button>
+                <Button type="button" onClick={handleGenerate} disabled={!modifications.trim()}>Appliquer →</Button>
               </div>
             </div>
           </div>
