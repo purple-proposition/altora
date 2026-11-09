@@ -4,7 +4,6 @@ import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
-import AltoraLogo from '@/components/AltoraLogo';
 
 export default function LoginPage() {
   return (
@@ -20,58 +19,41 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setBusy(true);
     const res = await signIn('credentials', { email, password, redirect: false });
-    setLoading(false);
+    setBusy(false);
     if (res?.error) {
       setError('Email ou mot de passe incorrect.');
       return;
     }
-    router.push(searchParams.get('callbackUrl') || '/');
+    router.push(searchParams.get('callbackUrl') || '/generate');
     router.refresh();
   }
 
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: '#f5f5f7', fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '380px', background: '#fff', borderRadius: '20px', padding: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
-          <AltoraLogo style={{ width: '128px', height: '32px' }} />
-        </div>
-        <label htmlFor="login-email" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Email</label>
-        <input
-          id="login-email"
-          type="email"
-          required
-          autoComplete="email"
-          name="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
-        />
-        <label htmlFor="login-password" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#666', marginBottom: '6px' }}>Mot de passe</label>
-        <input
-          id="login-password"
-          type="password"
-          required
-          autoComplete="current-password"
-          name="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '16px', marginBottom: '16px', boxSizing: 'border-box' }}
-        />
-        {error && <p style={{ color: '#c0392b', fontSize: '13px', margin: '0 0 16px' }}>{error}</p>}
-        <button type="submit" disabled={loading} style={{ width: '100%', padding: '12px', borderRadius: '999px', border: 'none', background: '#4f46e5', color: '#fff', fontSize: '16px', fontWeight: 700, cursor: 'pointer', opacity: loading ? 0.6 : 1 }}>
-          {loading ? 'Connexion…' : 'Se connecter'}
+    <main style={{ maxWidth: 420, margin: '0 auto', padding: 24, fontFamily: 'Inter, system-ui, sans-serif' }}>
+      <h1 style={{ fontSize: 24, margin: '0 0 24px' }}>Connexion</h1>
+      <form onSubmit={handleSubmit}>
+        <label style={{ display: 'block', marginBottom: 16 }}>Email
+          <input type="email" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} style={{ display: 'block', width: '100%', padding: 12, fontSize: 16, boxSizing: 'border-box' }} />
+        </label>
+        <label style={{ display: 'block', marginBottom: 16 }}>Mot de passe
+          <input type="password" required autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} style={{ display: 'block', width: '100%', padding: 12, fontSize: 16, boxSizing: 'border-box' }} />
+        </label>
+        {error && <p style={{ color: '#b00', margin: '0 0 16px' }}>{error}</p>}
+        <button type="submit" disabled={busy} style={{ padding: '12px 16px', background: '#000', color: '#fff', border: 0 }}>
+          {busy ? 'Connexion…' : 'Se connecter'}
         </button>
-        <p style={{ fontSize: '13px', color: '#666', textAlign: 'center', marginTop: '16px' }}>
-          Pas de compte ? <Link href="/signup" style={{ color: '#4f46e5', fontWeight: 600 }}>Créer un compte</Link>
-        </p>
       </form>
+      <p style={{ marginTop: 24 }}>
+        <Link href="/recover">Mot de passe oublié ? Utiliser mon code de secours</Link>
+      </p>
+      <p>Pas encore d&apos;espace ? <Link href="/signup">Créer mon espace</Link></p>
     </main>
   );
 }

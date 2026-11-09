@@ -4,7 +4,7 @@ import authConfig from '@/auth.config';
 
 const { auth } = NextAuth(authConfig);
 
-const PUBLIC_PATHS = ['/login', '/signup', '/robots.txt'];
+const PUBLIC_PATHS = ['/login', '/signup', '/recover', '/robots.txt'];
 
 // The authenticated app was cut down to a single flow: upload a CV,
 // paste/link a job posting, generate the tailored CV + lettre — see
