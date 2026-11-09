@@ -127,19 +127,29 @@ export default function ProfileForm({
               <option value="alternance">Alternance</option>
               <option value="stage">Stage</option>
               <option value="cdi">CDI</option>
+              <option value="cdd">CDD</option>
             </select>
           </label>
-          <label>École ou organisme de formation
-            <input type="text" value={profile.school} onChange={e => set('school', e.target.value)} placeholder="Rocket School…" />
-          </label>
+          {['', 'alternance', 'stage'].includes(profile.soughtContract) && (
+            <label>École ou organisme de formation
+              <input type="text" value={profile.school} onChange={e => set('school', e.target.value)} placeholder="Rocket School…" />
+            </label>
+          )}
         </div>
         <div className="field-row">
-          <label>Début souhaité
-            <input type="text" value={profile.availability} onChange={e => set('availability', e.target.value)} placeholder="septembre 2026, immédiate…" />
+          <label>{profile.soughtContract === 'cdi' || profile.soughtContract === 'cdd' ? 'Disponibilité' : 'Début souhaité'}
+            <input
+              type="text"
+              value={profile.availability}
+              onChange={e => set('availability', e.target.value)}
+              placeholder={profile.soughtContract === 'cdi' || profile.soughtContract === 'cdd' ? 'immédiate, 1 mois de préavis…' : 'septembre 2026, immédiate…'}
+            />
           </label>
-          <label>Rythme d&apos;alternance
-            <input type="text" value={profile.rhythm} onChange={e => set('rhythm', e.target.value)} placeholder="4 jours entreprise / 1 jour école" />
-          </label>
+          {profile.soughtContract === 'alternance' && (
+            <label>Rythme d&apos;alternance
+              <input type="text" value={profile.rhythm} onChange={e => set('rhythm', e.target.value)} placeholder="4 jours entreprise / 1 jour école" />
+            </label>
+          )}
         </div>
       </fieldset>
 

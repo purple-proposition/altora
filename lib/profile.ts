@@ -14,7 +14,7 @@ export type UserProfile = {
   // Type de contrat visé. Pilote la vérification faite sur l'offre avant
   // génération : une offre en CDI n'est écartée que si la personne cherche
   // une alternance ou un stage.
-  soughtContract: '' | 'alternance' | 'stage' | 'cdi';
+  soughtContract: '' | 'alternance' | 'stage' | 'cdi' | 'cdd';
   school: string; // école ou organisme de formation actuel
   availability: string; // début souhaité, ex: "à partir d'octobre 2026", "immédiate"
   rhythm: string; // rythme de l'alternance, ex: "4j entreprise / 1j école"

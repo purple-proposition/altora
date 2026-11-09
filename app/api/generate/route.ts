@@ -24,6 +24,7 @@ function contractLabel(p: UserProfile): string {
   return p.soughtContract === 'alternance' ? 'Alternance'
     : p.soughtContract === 'stage' ? 'Stage'
     : p.soughtContract === 'cdi' ? 'CDI'
+    : p.soughtContract === 'cdd' ? 'CDD'
     : '';
 }
 // Résout les intitulés épicènes selon la civilité. L'ancien traitement se
@@ -50,6 +51,7 @@ function contractSuffix(p: UserProfile): string {
   return p.soughtContract === 'alternance' ? ' en alternance'
     : p.soughtContract === 'stage' ? ' en stage'
     : p.soughtContract === 'cdi' ? ' en CDI'
+    : p.soughtContract === 'cdd' ? ' en CDD'
     : '';
 }
 
@@ -656,12 +658,13 @@ export async function POST(req: NextRequest) {
       // s'ils sont renseignés. Un CDI n'a pas de rythme d'alternance, d'où le
       // filtrage plutôt qu'une concaténation systématique.
       const contractLabelFr = profile.soughtContract === 'cdi' ? 'CDI'
+        : profile.soughtContract === 'cdd' ? 'CDD'
         : profile.soughtContract === 'stage' ? 'Stage'
         : profile.soughtContract === 'alternance' ? 'Alternance'
         : '';
       const titleSuffix = [
         profile.availability,
-        profile.soughtContract === 'cdi' ? '' : profile.rhythm,
+        profile.soughtContract === 'alternance' ? profile.rhythm : '',
       ].filter(Boolean).map(v => ` · ${v}`).join('');
       const cvTitleExample = `[intitulé EXACT du poste dans la fiche]${contractLabelFr ? ` · ${contractLabelFr}` : ''}${titleSuffix}`;
 
