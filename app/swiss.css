@@ -1,0 +1,164 @@
+/* Feuille unique : style suisse. Une famille sans-serif, noir sur blanc,
+   alignement à gauche, filets fins, aucune ombre, aucun arrondi. */
+
+:root {
+  --ink: #000;
+  --paper: #fff;
+  --rule: #000;
+  --muted: #6b6b6b;
+  --error: #c00;
+  --sans: var(--font-sans), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --col: 640px;
+  --gap: 24px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p, ul, ol { margin: 0; }
+h1 { font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+a { color: var(--ink); }
+
+/* Page : une colonne, marges fixes */
+.page {
+  max-width: var(--col);
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+.page-title { margin-bottom: 40px; }
+
+/* Champs */
+label, .field-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+}
+input, textarea, select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 0;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  outline: none;
+}
+input:focus, textarea:focus, select:focus { border-bottom-width: 2px; padding-bottom: 11px; }
+textarea { resize: vertical; min-height: 160px; }
+.field-group { display: grid; gap: 16px; margin: 0 0 40px; padding: 0; border: 0; }
+.field-group legend { font-size: 14px; font-weight: 700; padding: 0; margin-bottom: 8px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
+.field-hint { display: block; font-size: 14px; font-weight: 400; color: var(--muted); margin-top: 8px; }
+.field-error { display: block; font-size: 14px; color: var(--error); margin-top: 8px; }
+.field-invalid { color: var(--error); }
+
+/* Boutons */
+button, .btn-primary, .btn-secondary, .btn-add-contact, .btn-remove-contact {
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 0;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+}
+.btn-primary:disabled { opacity: 0.3; cursor: default; }
+.btn-secondary, .btn-add-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+}
+.btn-remove-contact {
+  padding: 0;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  font-weight: 400;
+  font-size: 14px;
+  justify-self: start;
+}
+button:hover, .btn-primary:hover, .btn-secondary:hover, .btn-add-contact:hover { opacity: 0.7; }
+
+/* Feedback */
+.generate-error { color: var(--error); font-size: 14px; }
+
+/* Parcours CV / fiche de poste */
+.generate-view { max-width: var(--col); margin: 0 auto; padding: 48px 24px 96px; }
+.onboard-step { display: grid; gap: 24px; }
+.onboard-title { font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+.onboard-lead { font-size: 16px; color: var(--ink); }
+.onboard-card { display: grid; gap: 16px; }
+.cv-upload-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+.cv-filename-btn { font-size: 14px; }
+.generate-textarea { min-height: 240px; }
+.generate-actions { display: flex; justify-content: flex-start; margin-top: 8px; }
+.generate-list { padding-left: 20px; font-size: 14px; display: grid; gap: 6px; }
+.generate-list--muted { color: var(--muted); }
+.generate-subsection { display: grid; gap: 8px; margin-bottom: 24px; }
+.generate-pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.card-meta-tag { font-size: 14px; border: 1px solid var(--ink); padding: 4px 8px; }
+.generate-meta { font-size: 14px; color: var(--muted); }
+.generate-done-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 40px; }
+.generate-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.generate-email-block { font-size: 14px; white-space: pre-wrap; border-top: 1px solid var(--ink); padding-top: 16px; }
+
+/* Résultats */
+.dash-row, .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); margin-bottom: 40px; }
+.dash-tile, .dash-card { display: grid; gap: 12px; padding: 24px 0; border-top: 1px solid var(--ink); color: var(--ink); text-decoration: none; }
+.dash-tile-title { font-weight: 700; font-size: 16px; }
+.dash-tile-subtitle { font-size: 14px; color: var(--muted); }
+.dash-tile-icon { display: none; }
+.dash-tile-body { display: grid; gap: 8px; }
+.ats-score-value { display: flex; align-items: baseline; gap: 8px; }
+.ats-score-number { font-size: 56px; font-weight: 700; line-height: 1; }
+.ats-score-suffix { font-size: 16px; color: var(--muted); }
+
+/* Chargement */
+.modal-overlay { position: fixed; inset: 0; background: var(--paper); display: flex; align-items: center; justify-content: center; padding: 24px; }
+.modal { width: 100%; max-width: var(--col); }
+.generate-progress-wrap { display: grid; gap: 12px; }
+.generate-progress-label { display: flex; justify-content: space-between; font-size: 14px; }
+.generate-progress-track { height: 2px; background: #e5e5e5; }
+.generate-progress-fill { height: 2px; background: var(--ink); transition: width 0.2s ease-out; }
+
+/* Profil */
+.profile-form { display: grid; gap: 0; }
+.profile-exp-card { display: grid; gap: 16px; padding: 24px 0; border-top: 1px solid var(--ink); }
+.profile-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 16px; }
+
+/* Adaptation mobile */
+@media (max-width: 640px) {
+  h1, .onboard-title { font-size: 26px; }
+  .field-row, .dash-row, .dash-grid { grid-template-columns: 1fr; }
+  .page, .generate-view { padding: 32px 16px 72px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

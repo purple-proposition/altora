@@ -3,7 +3,6 @@ import Icon from '@/components/Icon';
 
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import SidebarCollapseToggle from '@/components/SidebarCollapseToggle';
 import CvUpload from '@/components/CvUpload';
 import ProfileForm from '@/components/ProfileForm';
 import type { UserProfile } from '@/lib/profile';
@@ -260,28 +259,13 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
   return (
     <>
-      <div className="topbar-sticky">
-        <div className="topbar-breadcrumb">
-          <SidebarCollapseToggle />
-          <span className="breadcrumb-item breadcrumb-item--active"><Icon name="file-text" />ATS Booster</span>
-        </div>
-      </div>
-
       <section className={`generate-view${step === 'done' ? ' generate-view--wide' : ''}`}>
 
         {step === 'welcome' && (
           <div className="onboard-step">
-            <h1 className="onboard-title">Bienvenue {firstName} 👋</h1>
+            <h1 className="onboard-title">Bonjour {firstName}</h1>
             <p className="onboard-lead">
-              Altora réécrit ton CV et ta lettre de motivation pour chaque offre à
-              laquelle tu postules, afin qu&apos;ils passent les filtres automatiques
-              des recruteurs et arrivent jusqu&apos;à un humain.
-            </p>
-            <p className="onboard-lead">
-              Pour commencer, importe ton CV actuel. Peu importe sa mise en forme :
-              il sert de base d&apos;informations, pas de modèle. L&apos;IA en extrait
-              tes expériences, ta formation et tes compétences, et tu pourras tout
-              relire juste après.
+              Importe ton CV. Tu vérifies ce qu’on en a extrait, puis tu colles une offre.
             </p>
 
             <div className="onboard-card">
@@ -334,31 +318,6 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
               mail de candidature est préparé aussi.
             </p>
 
-            <details className="onboard-details">
-              <summary>Pourquoi réécrire à chaque fois, et qu&apos;est-ce que ça change ?</summary>
-              <div className="onboard-details-body">
-                <p>
-                  Avant d&apos;être lue par un recruteur, une candidature passe presque
-                  toujours par un ATS (<em>Applicant Tracking System</em>), un logiciel
-                  qui extrait le texte du CV et le compare aux termes de l&apos;offre.
-                  Un CV mal structuré, sur deux colonnes ou truffé de jargon est écarté
-                  avant même d&apos;être vu, même quand le profil correspond.
-                </p>
-                <p>
-                  Concrètement, Altora reprend <strong>tes</strong> expériences et
-                  réorganise leur présentation : les compétences que l&apos;offre
-                  demande remontent, le vocabulaire s&apos;aligne sur celui de
-                  l&apos;annonce, et le CV tient sur une page en une seule colonne.
-                  La lettre, elle, ne paraphrase pas le CV : elle explique pourquoi ce
-                  poste, pourquoi cette entreprise, et ce que tu apportes.
-                </p>
-                <p>
-                  Rien n&apos;est inventé : le modèle s&apos;en tient strictement à ton
-                  profil. Zéro expérience ajoutée, zéro compétence que tu ne pourrais
-                  pas justifier en entretien.
-                </p>
-              </div>
-            </details>
 
             <div className="field-group">
               <span className="field-label">Fiche de poste</span>
