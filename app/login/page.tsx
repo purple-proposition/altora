@@ -34,18 +34,25 @@ function LoginPageContent() {
   }
 
   return (
-    <main className="auth-page">
-      <div className="auth-card">
-        <h1 className="auth-title">Connexion à Altora</h1>
-        <p className="auth-subtitle">Entre ton email et ton mot de passe.</p>
+    <main
+      className="flex min-h-screen items-center justify-center bg-white p-6 font-sans"
+      style={{
+        backgroundImage:
+          'repeating-linear-gradient(135deg, transparent 0 14px, rgba(0,0,0,0.035) 14px 15px)',
+      }}
+    >
+      <div className="w-full max-w-[400px] rounded-2xl bg-white p-8 shadow-sm ring-1 ring-neutral-200">
+        <h1 className="text-3xl font-bold tracking-tight text-neutral-950">Bon retour</h1>
+        <p className="mt-2 text-base text-neutral-500">Connecte-toi pour accéder à ton espace.</p>
 
-        <LoginForm busy={busy} error={error} onSubmit={handleSubmit} />
-
-        <Link className="auth-link" href="/recover">Mot de passe oublié ? Utiliser mon code de secours</Link>
-
-        <div className="auth-footer">
-          Pas encore de compte ? <Link href="/signup">Créer mon espace</Link>
+        <div className="mt-8">
+          <LoginForm busy={busy} error={error} onSubmit={handleSubmit} forgotHref="/recover" />
         </div>
+
+        <p className="mt-8 text-center text-base text-neutral-500">
+          Pas encore de compte ?{' '}
+          <Link href="/signup" className="font-medium text-neutral-950 underline underline-offset-4">Créer mon espace</Link>
+        </p>
       </div>
     </main>
   );
