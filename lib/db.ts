@@ -116,4 +116,13 @@ async function runSchema() {
     )
   `;
   await sql`CREATE INDEX IF NOT EXISTS generations_user_id_idx ON generations(user_id)`;
+  // One pending sign-in code per email: only its hash is stored, never the code.
+  await sql`
+    CREATE TABLE IF NOT EXISTS email_codes (
+      email TEXT PRIMARY KEY,
+      code_hash TEXT NOT NULL,
+      attempts INTEGER NOT NULL DEFAULT 0,
+      expires_at TIMESTAMPTZ NOT NULL
+    )
+  `;
 }

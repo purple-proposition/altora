@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { sql, ensureSchema } from './lib/db';
 import { rateLimit } from './lib/rateLimit';
 import { getInvite } from './lib/invites';
+import { consumeEmailCode } from './lib/otp';
 import authConfig from './auth.config';
 
 // A bcrypt hash of a random, unguessable value — used to pay the same
@@ -35,6 +36,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const valid = await bcrypt.compare(password, user?.password_hash || DUMMY_HASH);
         if (!user || !valid) return null;
 
+        return { id: String(user.id), email: user.email, name: user.name, school: user.school, promotion: user.promotion };
+      },
+    }),
+    // Public sign-up / sign-in: the user types their email, receives a
+    // one-time code by mail (see app/api/auth/otp/request), and enters it here.
+    // The account is created on first successful code; no password is set.
+    Credentials({
+      id: 'otp',
+      name: 'otp',
+      credentials: { email: { label: 'Email', type: 'email' }, code: { label: 'Code', type: 'text' } },
+      async authorize(credentials) {
+        const email = (credentials?.email as string || '').trim().toLowerCase();
+        const code = (credentials?.code as string || '').trim();
+        if (!email || !/^\d{6}$/.test(code)) return null;
+
+        if (!rateLimit(`otp-verify:${email}`, 10, 15 * 60_000)) return null;
+        if (!(await consumeEmailCode(email, code))) return null;
+
+        await ensureSchema();
+        const rows = await sql`SELECT id, email, name, school, promotion FROM users WHERE email = ${email}`;
+        let user = rows[0];
+        if (!user) {
+          const inserted = await sql`
+            INSERT INTO users (email, password_hash)
+            VALUES (${email}, ${DUMMY_HASH})
+            RETURNING id, email, name, school, promotion
+          `;
+          user = inserted[0];
+        }
         return { id: String(user.id), email: user.email, name: user.name, school: user.school, promotion: user.promotion };
       },
     }),
