@@ -295,9 +295,6 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
                 : "Voici ce que l’IA a extrait. Corrige ce qui est inexact et complète ce qui manque : tout ce qui est ici sert de matière première, et le modèle ne s’autorise jamais à inventer au-delà."}
             </p>
 
-            <div className="onboard-card">
-              <CvUpload initialFilename={cvName} onUploaded={handleCvUploaded} />
-            </div>
 
             <ProfileForm
               key={profile.name + profile.experiences.length}
