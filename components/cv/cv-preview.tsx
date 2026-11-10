@@ -46,15 +46,28 @@ export function CvPreview({ doc, identity, fill, textScale = 1 }: {
   return (
     <div ref={wrapRef} className="w-full">
       <div style={{ zoom: scale }}>
+        <div className="relative mx-auto" style={{ width: PAGE_W }}>
+          {/* Cadre de la page A4 : fond et bordure s'arrêtent à la hauteur réelle de la page. */}
+          <div
+            aria-hidden
+            className="absolute left-0 top-0 border border-neutral-300 bg-neutral-50"
+            style={{ width: PAGE_W, height: PAGE_H }}
+          />
         <article
-          className="relative mx-auto border border-neutral-300 bg-neutral-50 text-neutral-950"
+          className="relative text-neutral-950"
           style={{
             width: PAGE_W,
-            minHeight: PAGE_H,
             padding: MARGIN,
             fontFamily: 'Helvetica, Arial, sans-serif',
             fontSize: px(10),
             lineHeight: 1.33,
+            // Ce qui dépasse la page devient translucide et sort du cadre.
+            ...(overflow
+              ? {
+                  WebkitMaskImage: `linear-gradient(to bottom, #000 ${PAGE_H}px, rgba(0,0,0,0.3) ${PAGE_H}px)`,
+                  maskImage: `linear-gradient(to bottom, #000 ${PAGE_H}px, rgba(0,0,0,0.3) ${PAGE_H}px)`,
+                }
+              : {}),
           }}
         >
           <h2 style={{ fontSize: px(20), fontWeight: 700, lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{identity.name}</h2>
@@ -93,16 +106,19 @@ export function CvPreview({ doc, identity, fill, textScale = 1 }: {
           {doc.outils && <>{section('Outils')}<p style={{ margin: `0 0 ${px(4)}px` }}>{doc.outils}</p></>}
           {doc.langues && <>{section('Langues')}<p style={{ margin: `0 0 ${px(4)}px` }}>{doc.langues}</p></>}
 
+        </article>
           {overflow && (
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 border-t-2 border-dashed border-red-500 bg-red-500/10"
+              className="pointer-events-none absolute left-0 right-0 border-t-2 border-dashed border-red-500"
               style={{ top: PAGE_H }}
             >
-              <span className="absolute right-2 top-1 text-red-600" style={{ fontSize: 8 }}>Fin de la page A4</span>
+              <span className="absolute right-0 top-1 rounded bg-red-600 px-2 py-0.5 font-sans text-white" style={{ fontSize: 10 }}>
+                Fin de la page A4 · texte en trop estompé
+              </span>
             </div>
           )}
-        </article>
+        </div>
       </div>
     </div>
   );
