@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['pdfkit', '@napi-rs/canvas', 'pdfjs-dist'],
+  serverExternalPackages: ['@napi-rs/canvas', 'pdfjs-dist'],
   experimental: {
     // Every (tracker) route is dynamic (each calls auth()), and Next's
     // client-side Router Cache treats dynamic routes as stale immediately

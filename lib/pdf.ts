@@ -1,5 +1,9 @@
-import PDFDocument from 'pdfkit';
+import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import type { UserProfile } from '@/lib/profile';
+
+// Rendu en pdf-lib : les polices standard sont intégrées à la bibliothèque,
+// sans lecture de fichiers sur le disque. pdfkit lisait ses fichiers .afm avec
+// fs, ce qui fonctionnait sur Vercel mais plantait sur Cloudflare Workers.
 
 // Type du CV utilisé par le rendu : profil complet plus l'intitulé du poste.
 export type CVProfile = UserProfile & { title: string };
@@ -17,30 +21,54 @@ const MB = 50;
 const CW = PAGE_W - ML * 2; // 492 pt
 const TAB = 470;            // position de la tabulation droite (dates)
 const BULLET_INDENT = 18;   // retrait des puces (360 twips)
-const BLACK = '#000000';
+const BLACK = rgb(0, 0, 0);
 
 // Interligne « 1,15 » : Helvetica a un interligne simple d'environ 1,156 em.
 const lineGapFor = (size: number) => size * 0.17;
 
-export function generatePDF(doc_fn: (doc: InstanceType<typeof PDFDocument>) => void): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ size: 'A4', margin: 0 });
-    const chunks: Buffer[] = [];
-    doc.on('data', (c: Buffer) => chunks.push(c));
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.on('error', reject);
-    try {
-      doc_fn(doc);
-      doc.end();
-    } catch (e) {
-      reject(e);
-    }
-  });
+type FontName = 'Helvetica' | 'Helvetica-Bold';
+type Doc = { page: PDFPage; fonts: Record<FontName, PDFFont> };
+
+// Les polices standard n'encodent que le jeu WinAnsi (latin, accents français,
+// point médian, puce). Tout autre caractère est remplacé plutôt que de faire
+// échouer le rendu.
+function clean(text: string, font: PDFFont): string {
+  const map: Record<string, string> = { '\u2192': '->', '\u2190': '<-', '\u2009': ' ', '\u202f': ' ', '\u00a0': ' ', '\u2011': '-' };
+  let out = '';
+  for (const ch of (text ?? '').replace(/\r?\n/g, ' ')) {
+    const c = map[ch] ?? ch;
+    try { font.encodeText(c); out += c; } catch { /* caractère non encodable ignoré */ }
+  }
+  return out;
+}
+
+function wrap(text: string, font: PDFFont, size: number, width: number): string[] {
+  const lines: string[] = [];
+  let cur = '';
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    const test = cur ? `${cur} ${word}` : word;
+    if (font.widthOfTextAtSize(test, size) <= width || !cur) cur = test;
+    else { lines.push(cur); cur = word; }
+  }
+  if (cur) lines.push(cur);
+  return lines.length ? lines : [''];
+}
+
+export async function generatePDF(doc_fn: (doc: Doc) => void): Promise<Buffer> {
+  const pdf = await PDFDocument.create();
+  const fonts = {
+    'Helvetica': await pdf.embedFont(StandardFonts.Helvetica),
+    'Helvetica-Bold': await pdf.embedFont(StandardFonts.HelveticaBold),
+  };
+  const page = pdf.addPage([PAGE_W, PAGE_H]);
+  doc_fn({ page, fonts });
+  return Buffer.from(await pdf.save());
 }
 
 // Écrivain qui suit la hauteur utilisée. Ne crée jamais de page : si le contenu
 // dépasse, `overflow` passe à true et le rendu est refait plus petit.
-function writer(doc: InstanceType<typeof PDFDocument>, scale: number) {
+// y est compté depuis le haut, comme dans pdfkit ; pdf-lib compte depuis le bas.
+function writer(doc: Doc, scale: number) {
   const bottom = PAGE_H - MB;
   const state = { y: MT, overflow: false };
   const S = (n: number) => n * scale;
@@ -48,34 +76,41 @@ function writer(doc: InstanceType<typeof PDFDocument>, scale: number) {
   const place = (h: number) => {
     if (state.y + h > bottom) state.overflow = true;
   };
+  const draw = (text: string, x: number, size: number, font: PDFFont) => {
+    // Ligne de base : le haut de la ligne plus l'ascendante de la police.
+    const base = PAGE_H - state.y - font.heightAtSize(size, { descender: false });
+    doc.page.drawText(text, { x, y: base, size, font, color: BLACK });
+  };
 
   // Ligne unique ; `right` place un texte aligné à la tabulation droite.
-  function line(text: string, opts: { font: string; size: number; before?: number; after?: number; right?: string }) {
+  function line(text: string, opts: { font: FontName; size: number; before?: number; after?: number; right?: string }) {
     const size = S(opts.size);
+    const font = doc.fonts[opts.font];
     state.y += S(opts.before ?? 0);
     place(size * 1.2);
-    doc.font(opts.font).fontSize(size).fillColor(BLACK);
-    doc.text(text, ML, state.y, { lineBreak: false, width: CW });
+    draw(clean(text, font), ML, size, font);
     if (opts.right) {
-      doc.text(opts.right, ML, state.y, { lineBreak: false, width: TAB, align: 'right' });
+      const r = clean(opts.right, font);
+      draw(r, ML + TAB - font.widthOfTextAtSize(r, size), size, font);
     }
     state.y += size * 1.156 + S(opts.after ?? 0);
   }
 
   // Paragraphe avec retour à la ligne.
-  function para(text: string, opts: { font: string; size: number; after?: number; indent?: number; bullet?: boolean }) {
+  function para(text: string, opts: { font: FontName; size: number; after?: number; indent?: number; bullet?: boolean }) {
     const size = S(opts.size);
+    const font = doc.fonts[opts.font];
     const indent = opts.bullet ? BULLET_INDENT * scale : (opts.indent ?? 0) * scale;
     const x = ML + indent;
     const width = CW - indent;
-    doc.font(opts.font).fontSize(size).fillColor(BLACK);
-    const h = doc.heightOfString(text, { width, lineGap: lineGapFor(size) });
+    const lines = wrap(clean(text, font), font, size, width);
+    const lh = size * 1.156 + lineGapFor(size);
+    const h = lines.length * lh - lineGapFor(size);
     place(h);
-    if (opts.bullet) {
-      doc.font('Helvetica').text('•', ML, state.y, { lineBreak: false });
-    }
-    doc.text(text, x, state.y, { width, lineGap: lineGapFor(size), lineBreak: true });
-    state.y += h + S(opts.after ?? 0);
+    if (opts.bullet) draw('\u2022', ML, size, doc.fonts['Helvetica']);
+    const y0 = state.y;
+    lines.forEach((l, i) => { state.y = y0 + i * lh; draw(l, x, size, font); });
+    state.y = y0 + h + S(opts.after ?? 0);
   }
 
   return { state, line, para, S };
@@ -83,7 +118,7 @@ function writer(doc: InstanceType<typeof PDFDocument>, scale: number) {
 
 // ── CV ─────────────────────────────────────────────────────────────────────
 
-function renderCv(doc: InstanceType<typeof PDFDocument>, cv: CVProfile, scale: number): boolean {
+function renderCv(doc: Doc, cv: CVProfile, scale: number): boolean {
   const w = writer(doc, scale);
 
   // En-tête : nom, intitulé, coordonnées (mêmes tailles et espacements que le modèle).
@@ -150,7 +185,7 @@ export function contractSuffix(p: UserProfile): string {
     : '';
 }
 
-function renderLetter(doc: InstanceType<typeof PDFDocument>, profile: UserProfile, data: { company: string; poste: string; paragraphs: string[] }, scale: number): boolean {
+function renderLetter(doc: Doc, profile: UserProfile, data: { company: string; poste: string; paragraphs: string[] }, scale: number): boolean {
   const w = writer(doc, scale);
   const poste = data.poste.trim();
   const dePoste = /^[aeiouyéèêëàâîïôùûüh]/i.test(poste) ? "d'" : 'de ';
