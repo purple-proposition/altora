@@ -123,21 +123,21 @@ function renderCv(doc: Doc, cv: CVProfile, scale: number): { overflow: boolean; 
   const w = writer(doc, scale);
 
   // En-tête : nom, intitulé, coordonnées (mêmes tailles et espacements que le modèle).
-  w.line(cv.name, { font: 'Helvetica-Bold', size: 18, after: 4 });
-  w.line(cv.title, { font: 'Helvetica-Bold', size: 9, after: 4 });
+  w.line(cv.name, { font: 'Helvetica-Bold', size: 20, after: 4 });
+  w.line(cv.title, { font: 'Helvetica-Bold', size: 10, after: 4 });
   const contact = [cv.phone, cv.email, cv.linkedin, cv.portfolio, cv.city].filter(Boolean).join(' · ');
-  w.line(contact, { font: 'Helvetica', size: 8, after: 12 });
-  if (cv.profil) w.para(cv.profil, { font: 'Helvetica', size: 9, after: 4 });
+  w.line(contact, { font: 'Helvetica', size: 9, after: 12 });
+  if (cv.profil) w.para(cv.profil, { font: 'Helvetica', size: 10, after: 4 });
 
-  const section = (title: string) => w.line(title.toUpperCase(), { font: 'Helvetica-Bold', size: 9, before: 16, after: 6 });
+  const section = (title: string) => w.line(title.toUpperCase(), { font: 'Helvetica-Bold', size: 10, before: 16, after: 6 });
 
   if (cv.experiences.length) {
     section('Expériences');
     for (const exp of cv.experiences) {
-      w.line(exp.title, { font: 'Helvetica-Bold', size: 9, before: 8, right: exp.dates });
-      w.line(exp.company, { font: 'Helvetica', size: 9, after: 4 });
+      w.line(exp.title, { font: 'Helvetica-Bold', size: 10, before: 8, right: exp.dates });
+      w.line(exp.company, { font: 'Helvetica', size: 10, after: 4 });
       for (const b of exp.bullets) {
-        if (b.trim()) w.para(b, { font: 'Helvetica', size: 9, after: 2, bullet: true });
+        if (b.trim()) w.para(b, { font: 'Helvetica', size: 10, after: 2, bullet: true });
       }
     }
   }
@@ -145,39 +145,50 @@ function renderCv(doc: Doc, cv: CVProfile, scale: number): { overflow: boolean; 
   if (cv.formation.length) {
     section('Formation');
     for (const f of cv.formation) {
-      w.line(f.degree, { font: 'Helvetica-Bold', size: 9, before: 8, right: f.dates });
-      w.line(f.school, { font: 'Helvetica', size: 9, after: 4 });
+      w.line(f.degree, { font: 'Helvetica-Bold', size: 10, before: 8, right: f.dates });
+      w.line(f.school, { font: 'Helvetica', size: 10, after: 4 });
     }
   }
 
   if (cv.competences) {
     section('Compétences');
-    w.para(cv.competences, { font: 'Helvetica', size: 9, after: 4 });
+    w.para(cv.competences, { font: 'Helvetica', size: 10, after: 4 });
   }
   if (cv.outils) {
     section('Outils');
-    w.para(cv.outils, { font: 'Helvetica', size: 9, after: 4 });
+    w.para(cv.outils, { font: 'Helvetica', size: 10, after: 4 });
   }
   if (cv.langues) {
     section('Langues');
-    w.para(cv.langues, { font: 'Helvetica', size: 9, after: 4 });
+    w.para(cv.langues, { font: 'Helvetica', size: 10, after: 4 });
   }
 
   // Remplissage : hauteur utilisée rapportée à la hauteur utile de la page.
   return { overflow: w.state.overflow, fill: (w.state.y - MT) / (PAGE_H - MT - MB) };
 }
 
-// Taux de remplissage de la page à taille normale (1 = page pleine, au-delà
-// le CV déborde). Sert à signaler le défaut avant l'export, sans IA.
-export async function measureCvFill(cv: CVProfile): Promise<number> {
-  let fill = 0;
-  await generatePDF((doc) => { fill = renderCv(doc, cv, 1).fill; });
-  return fill;
+// Paliers de taille : 10 pt (modèle Word), puis 9,5 pt, puis 9 pt (CV de
+// référence). On garde la plus grande taille qui tient sur une page.
+export const CV_SCALES = [1, 0.95, 0.9] as const;
+
+// Choisit le palier et renvoie le remplissage de la page à ce palier
+// (1 = page pleine). Au-delà de 1 au plus petit palier, le CV déborde : c'est
+// le défaut signalé à l'écran. Aucun appel au modèle.
+export async function measureCvFill(cv: CVProfile): Promise<{ fill: number; scale: number }> {
+  let last = { fill: 0, scale: CV_SCALES[CV_SCALES.length - 1] as number };
+  for (const scale of CV_SCALES) {
+    let fill = 0;
+    await generatePDF((doc) => { fill = renderCv(doc, cv, scale).fill; });
+    last = { fill, scale };
+    if (fill <= 1) return last;
+  }
+  return last;
 }
 
-// Une seule page : on réduit les tailles par paliers si le contenu déborde.
+// Une seule page : plus grande taille qui tient ; si rien ne tient, ultime
+// réduction à 8,5 pt pour ne jamais couper le contenu (le défaut reste affiché).
 export async function buildCVPdf(cv: CVProfile): Promise<Buffer> {
-  for (const scale of [1.0, 0.92, 0.85]) {
+  for (const scale of [...CV_SCALES, 0.85]) {
     let overflow = false;
     const buf = await generatePDF((doc) => { overflow = renderCv(doc, cv, scale).overflow; });
     if (!overflow) return buf;
@@ -201,9 +212,9 @@ function renderLetter(doc: Doc, profile: UserProfile, data: { company: string; p
   const dePoste = /^[aeiouyéèêëàâîïôùûüh]/i.test(poste) ? "d'" : 'de ';
 
   // En-tête identique au CV : nom, coordonnées.
-  w.line(profile.name, { font: 'Helvetica-Bold', size: 18, after: 4 });
+  w.line(profile.name, { font: 'Helvetica-Bold', size: 20, after: 4 });
   const contact = [profile.phone, profile.email, profile.linkedin, profile.portfolio, profile.city].filter(Boolean).join(' · ');
-  w.line(contact, { font: 'Helvetica', size: 8, after: 24 });
+  w.line(contact, { font: 'Helvetica', size: 9, after: 24 });
 
   // Objet, en gras comme le titre du CV.
   w.line(`Objet : Candidature au poste ${dePoste}${poste}${contractSuffix(profile)}`, { font: 'Helvetica-Bold', size: 10, after: 10 });

@@ -101,6 +101,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   // Remplissage de la page A4 mesuré par le serveur avec le vrai rendu PDF
   // (1 = page pleine). Recalculé après chaque modification, sans IA.
   const [fill, setFill] = useState<number | null>(null);
+  const [textScale, setTextScale] = useState(1);
   useEffect(() => {
     if (!doc) return;
     let cancelled = false;
@@ -111,7 +112,11 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
         body: JSON.stringify({ kind: 'cv', cv: toExportCv(doc), check: true }),
       })
         .then(res => (res.ok ? res.json() : null))
-        .then(data => { if (!cancelled && data && typeof data.fill === 'number') setFill(data.fill); })
+        .then(data => {
+          if (cancelled || !data || typeof data.fill !== 'number') return;
+          setFill(data.fill);
+          if (typeof data.scale === 'number') setTextScale(data.scale);
+        })
         .catch(() => {});
     }, 600);
     return () => { cancelled = true; clearTimeout(timer); };
@@ -500,10 +505,10 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             {docStep === 'cv' && (
               <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-24 lg:self-start">
-                  <CvPreview doc={doc} fill={fill} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
+                  <CvPreview doc={doc} fill={fill} textScale={textScale} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
                 </div>
                 <div className="col-span-12 flex flex-col gap-6 lg:col-span-6">
-                  <CvFit doc={doc} fill={fill} onChange={setDoc} />
+                  <CvFit doc={doc} fill={fill} textScale={textScale} onChange={setDoc} />
                   <CvEditor doc={doc} onChange={setDoc} />
                 </div>
               </div>

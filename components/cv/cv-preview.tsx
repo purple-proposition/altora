@@ -12,11 +12,15 @@ const MARGIN = 42.52;
 // Aperçu du CV sous forme de vraie page A4, avec les mêmes tailles que le PDF.
 // Si le contenu dépasse la page, la partie en trop apparaît sous une ligne
 // « fin de page », sur fond rouge.
-export function CvPreview({ doc, identity, fill }: {
+export function CvPreview({ doc, identity, fill, textScale = 1 }: {
   doc: CvDoc;
   identity: { name: string; email: string; phone: string; city: string; linkedin: string; portfolio: string };
   fill?: number | null;
+  // Palier de taille retenu par le rendu PDF (1 = 10 pt, 0,95, 0,9 = 9 pt).
+  textScale?: number;
 }) {
+  const k = textScale;
+  const px = (n: number) => n * k;
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -36,7 +40,7 @@ export function CvPreview({ doc, identity, fill }: {
   const overflow = (fill ?? 0) > 1;
 
   const section = (title: string) => (
-    <h3 style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', margin: '16px 0 6px', lineHeight: 1.16 }}>{title}</h3>
+    <h3 style={{ fontSize: px(10), fontWeight: 700, textTransform: 'uppercase', margin: `${px(16)}px 0 ${px(6)}px`, lineHeight: 1.16 }}>{title}</h3>
   );
 
   return (
@@ -49,25 +53,25 @@ export function CvPreview({ doc, identity, fill }: {
             minHeight: PAGE_H,
             padding: MARGIN,
             fontFamily: 'Helvetica, Arial, sans-serif',
-            fontSize: 9,
+            fontSize: px(10),
             lineHeight: 1.33,
           }}
         >
-          <h2 style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.16, margin: '0 0 4px' }}>{identity.name}</h2>
-          {doc.title && <p style={{ fontWeight: 700, lineHeight: 1.16, margin: '0 0 4px' }}>{doc.title}</p>}
-          {contact && <p style={{ fontSize: 8, lineHeight: 1.16, margin: '0 0 12px' }}>{contact}</p>}
-          {doc.profil && <p style={{ margin: '0 0 4px' }}>{doc.profil}</p>}
+          <h2 style={{ fontSize: px(20), fontWeight: 700, lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{identity.name}</h2>
+          {doc.title && <p style={{ fontWeight: 700, lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{doc.title}</p>}
+          {contact && <p style={{ fontSize: px(9), lineHeight: 1.16, margin: `0 0 ${px(12)}px` }}>{contact}</p>}
+          {doc.profil && <p style={{ margin: `0 0 ${px(4)}px` }}>{doc.profil}</p>}
 
           {exps.length > 0 && section('Expériences')}
           {exps.map((e, i) => (
-            <div key={i} style={{ marginTop: 8 }}>
+            <div key={i} style={{ marginTop: px(8) }}>
               <div className="flex justify-between gap-4" style={{ fontWeight: 700, lineHeight: 1.16 }}>
                 <span>{e.title}</span>
                 <span style={{ fontWeight: 400 }} className="shrink-0">{e.dates}</span>
               </div>
-              <p style={{ lineHeight: 1.16, margin: '0 0 4px' }}>{e.company}</p>
+              <p style={{ lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{e.company}</p>
               {e.bullets.filter(b => !b.hidden && b.text.trim()).map((b, j) => (
-                <p key={j} className="relative" style={{ paddingLeft: 18, margin: '0 0 2px' }}>
+                <p key={j} className="relative" style={{ paddingLeft: px(18), margin: `0 0 ${px(2)}px` }}>
                   <span className="absolute left-0">•</span>{b.text}
                 </p>
               ))}
@@ -76,18 +80,18 @@ export function CvPreview({ doc, identity, fill }: {
 
           {formations.length > 0 && section('Formation')}
           {formations.map((f, i) => (
-            <div key={i} style={{ marginTop: 8 }}>
+            <div key={i} style={{ marginTop: px(8) }}>
               <div className="flex justify-between gap-4" style={{ fontWeight: 700, lineHeight: 1.16 }}>
                 <span>{f.degree}</span>
                 <span style={{ fontWeight: 400 }} className="shrink-0">{f.dates}</span>
               </div>
-              <p style={{ lineHeight: 1.16, margin: '0 0 4px' }}>{f.school}</p>
+              <p style={{ lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{f.school}</p>
             </div>
           ))}
 
-          {doc.competences && <>{section('Compétences')}<p style={{ margin: '0 0 4px' }}>{doc.competences}</p></>}
-          {doc.outils && <>{section('Outils')}<p style={{ margin: '0 0 4px' }}>{doc.outils}</p></>}
-          {doc.langues && <>{section('Langues')}<p style={{ margin: '0 0 4px' }}>{doc.langues}</p></>}
+          {doc.competences && <>{section('Compétences')}<p style={{ margin: `0 0 ${px(4)}px` }}>{doc.competences}</p></>}
+          {doc.outils && <>{section('Outils')}<p style={{ margin: `0 0 ${px(4)}px` }}>{doc.outils}</p></>}
+          {doc.langues && <>{section('Langues')}<p style={{ margin: `0 0 ${px(4)}px` }}>{doc.langues}</p></>}
 
           {overflow && (
             <div
