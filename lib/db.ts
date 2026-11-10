@@ -116,5 +116,10 @@ async function runSchema() {
     )
   `;
   await sql`CREATE INDEX IF NOT EXISTS generations_user_id_idx ON generations(user_id)`;
+  // Données éditables du résultat ; les PDF ne sont plus stockés à la génération.
+  await sql`ALTER TABLE generations ADD COLUMN IF NOT EXISTS cv_data JSONB`;
+  await sql`ALTER TABLE generations ADD COLUMN IF NOT EXISTS lettre_data JSONB`;
+  await sql`ALTER TABLE generations ALTER COLUMN cv_url DROP NOT NULL`;
+  await sql`ALTER TABLE generations ALTER COLUMN lettre_url DROP NOT NULL`;
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS recovery_hash TEXT`;
 }

@@ -89,6 +89,22 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   // Lettre éditable, et étape affichée : d'abord le CV, puis la lettre.
   const [letter, setLetter] = useState<LetterDoc | null>(null);
   const [docStep, setDocStep] = useState<'cv' | 'lettre'>('cv');
+  // Génération enregistrée côté serveur : les modifications y sont sauvées.
+  const [generationId, setGenerationId] = useState<string | null>(null);
+
+  // Sauvegarde automatique des modifications (une seconde après la dernière
+  // frappe). Aucun appel au modèle : seule la base est mise à jour.
+  useEffect(() => {
+    if (!generationId || !doc) return;
+    const timer = setTimeout(() => {
+      fetch(`/api/generations/${encodeURIComponent(generationId)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cvData: doc, lettreData: letter ?? undefined }),
+      }).catch(() => {});
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [doc, letter, generationId]);
   const [lettreUrl, setLettreUrl] = useState('');
   const [analysis, setAnalysis] = useState<Analysis>(EMPTY_ANALYSIS);
   const [modifications, setModifications] = useState('');
@@ -99,21 +115,27 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   // Une candidature déjà produite (dans cette session ou lors d'une visite
   // précédente) suffit à ne plus présenter l'écran comme le tout premier.
   const [everGenerated, setEverGenerated] = useState(hasGenerations);
+  // Vrai pendant la réouverture d'un résultat enregistré (rechargement de page).
+  const [restoring, setRestoring] = useState(Boolean(historyId));
 
   // Ouvrir une génération passée depuis le panneau de gauche restaure le
   // résultat tel quel depuis le stockage, sans rien régénérer.
   useEffect(() => {
     if (!historyId) return;
     let cancelled = false;
+    setRestoring(true);
     fetch(`/api/generations/${encodeURIComponent(historyId)}`)
       .then(res => (res.ok ? res.json() : null))
       .then(record => {
         if (cancelled || !record) return;
         setJobPosting(record.jobDescription || '');
-        setCvUrl(record.cvUrl);
-        setDoc(null);
-        setLetter(null);
-        setLettreUrl(record.lettreUrl);
+        setCvUrl(record.cvUrl || '');
+        // Une génération récente contient les données éditables : on rouvre
+        // l'éditeur tel qu'il a été laissé. Une ancienne n'a que ses PDF.
+        setDoc(record.cvData ? toCvDoc(record.cvData) : null);
+        setLetter(record.lettreData ? toLetterDoc(record.lettreData) : null);
+        setGenerationId(record.cvData ? record.id : null);
+        setLettreUrl(record.lettreUrl || '');
         setAnalysis({
           keywords: record.analysis?.keywords ?? [],
           adjustments: record.analysis?.adjustments ?? [],
@@ -127,7 +149,8 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
         setGeneratedAt(record.createdAt || null);
         setStep('done');
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setRestoring(false); });
     return () => { cancelled = true; };
   }, [historyId]);
 
@@ -231,10 +254,6 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
           if (data.step) setProgressStep(data.step);
 
           if (data.done) {
-            const toUrl = (b64: string) => {
-              const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
-              return URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
-            };
             const doneAnalysis: Analysis = {
               keywords: data.keywords ?? [],
               adjustments: data.adjustments ?? [],
@@ -242,11 +261,10 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
               atsScore: data.atsScore ?? 0,
               atsImprovements: data.atsImprovements ?? [],
             };
-            setCvUrl(toUrl(data.cv));
             if (data.cvData) setDoc(toCvDoc(data.cvData));
             if (data.lettreData) setLetter(toLetterDoc(data.lettreData));
             setDocStep('cv');
-            setLettreUrl(toUrl(data.lettre));
+            setGenerationId(data.generationId ?? null);
             setAnalysis(doneAnalysis);
             setCompany(data.company ?? '');
             setPoste(data.poste ?? '');
@@ -256,24 +274,11 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             setEverGenerated(true);
             setStep('done');
 
-            // Enregistré pour que le panneau de gauche puisse rouvrir ce
-            // résultat plus tard. Au mieux : un échec ici ne doit pas
-            // empêcher de voir et télécharger ce qui vient d'être produit.
-            fetch('/api/generations', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                company: data.company ?? '',
-                poste: data.poste ?? '',
-                jobDescription: jobPosting,
-                cv: data.cv,
-                lettre: data.lettre,
-                analysis: doneAnalysis,
-                email: data.email ?? null,
-              }),
-            })
-              .then(() => { window.dispatchEvent(new Event('altora-generations-changed')); })
-              .catch(() => {});
+            // Le serveur a déjà enregistré le résultat : on met son identifiant
+            // dans l'adresse, pour qu'un rechargement le rouvre sans régénérer.
+            if (data.generationId) {
+              window.history.replaceState(null, '', `/generate?historyId=${encodeURIComponent(data.generationId)}`);
+            }
           }
         }
       }
@@ -287,7 +292,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
     if (cvUrl && cvUrl.startsWith('blob:')) URL.revokeObjectURL(cvUrl);
     if (lettreUrl && lettreUrl.startsWith('blob:')) URL.revokeObjectURL(lettreUrl);
     setCvUrl(''); setLettreUrl('');
-    setDoc(null); setLetter(null); setDocStep('cv'); setExportError('');
+    setDoc(null); setLetter(null); setDocStep('cv'); setExportError(''); setGenerationId(null);
     setAnalysis(EMPTY_ANALYSIS);
     setModifications('');
     setCompany(''); setPoste('');
@@ -480,7 +485,11 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
           </div>
         )}
 
-        {step === 'done' && !doc && (
+        {step === 'done' && restoring && (
+          <p className="text-sm text-neutral-500">Chargement du résultat…</p>
+        )}
+
+        {step === 'done' && !doc && !restoring && (
           <div className="generate-dashboard">
             <div className="generate-done-header">
               <p className="generate-meta">

@@ -13,7 +13,8 @@ const MAX_JOB_POSTING_RESPONSE_BYTES = 2 * 1024 * 1024;
 // Shape the CV renderer/prompt work with — same as the stored profile, plus
 // the computed CV title (role + optional alternance/rythme suffix) that only
 // exists for the duration of one generation.
-import { buildCVPdf, buildLetterPdf, contractSuffix, type CVProfile } from '@/lib/pdf';
+import { contractSuffix, type CVProfile } from '@/lib/pdf';
+import { sql, ensureSchema } from '@/lib/db';
 
 // Le type de contrat visé apparaît dans le titre du CV, l'objet de la lettre
 // et celui de l'email. Il était écrit "alternance" en dur partout, ce qui
@@ -338,16 +339,13 @@ export async function POST(req: NextRequest) {
       // présume rien et on laisse passer.
       const rejectsPermanent = profile.soughtContract === 'alternance' || profile.soughtContract === 'stage';
       if (rejectsPermanent) {
-        const contractCheck = await client.messages.create({
-          model: 'claude-haiku-5-5',
-          thinking: { type: 'disabled' },
-          output_config: { effort: 'low' },
-          max_tokens: 10,
-          system: 'Réponds UNIQUEMENT par un mot, sans ponctuation : ALTERNANCE, STAGE, CDI, CDD, ou AUTRE si le type de contrat de cette offre est ambigu ou non précisé.',
-          messages: [{ role: 'user', content: jobText.slice(0, 4000) }],
-        });
-        const contractLabel = (contractCheck.content[0].type === 'text' ? contractCheck.content[0].text : '').trim().toUpperCase();
-        if (contractLabel === 'CDI' || contractLabel === 'CDD') {
+        // Lecture du type de contrat par mots-clés, sans appel au modèle : si
+        // la fiche parle d'alternance ou de stage, on laisse passer ; sinon,
+        // une mention explicite de CDI ou de CDD bloque la génération.
+        const head = jobText.slice(0, 6000);
+        const isWorkStudy = /alternan|apprenti|contrat de professionnalisation|\bstage\b|stagiaire|internship/i.test(head);
+        const isPermanent = /\bCDI\b|\bCDD\b|contrat à durée (in)?déterminée/i.test(head);
+        if (isPermanent && !isWorkStudy) {
           const cherche = profile.soughtContract === 'stage' ? 'un stage' : 'une alternance';
           await send({ error: `Cette offre a l'air d'être un CDI ou un CDD, alors que tu cherches ${cherche}. Change le type de contrat recherché dans ton profil si tu veux quand même postuler.` });
           return;
@@ -379,7 +377,7 @@ export async function POST(req: NextRequest) {
         ? `Le/la candidat·e est une femme : accorder au FÉMININ absolument partout.
 — Intitulés et formes épicènes (H/F, (e), (trice), point médian…) : "Chargé·e" → "Chargée", "Coordinateur·trice" → "Coordinatrice".
 — TOUS les adjectifs et participes qui la qualifient, y compris dans la formule de clôture, qui est l'endroit le plus souvent oublié : "je serais heureuse" (JAMAIS "heureux"), "je suis prête" (JAMAIS "prêt"), "convaincue", "motivée", "intéressée", "ravie", "disponible", "passionnée", "déterminée", "alignée", "persuadée", "curieuse", "rigoureuse", "sérieuse", "fière", "étudiante", "alternante", "candidate", "diplômée", "formée".
-— Relis la dernière phrase de chaque paragraphe et de l'email avant de répondre : c'est là que l'accord masculin réapparaît.`
+— Relis la dernière phrase de chaque paragraphe avant de répondre : c'est là que l'accord masculin réapparaît.`
         : profile.civility === 'M'
         ? `Le candidat est un homme : accorder au MASCULIN absolument partout.
 — Intitulés et formes épicènes (H/F, (e), (trice), point médian…) : "Chargé·e" → "Chargé", "Coordinateur·trice" → "Coordinateur".
@@ -387,7 +385,7 @@ export async function POST(req: NextRequest) {
         : "Civilité non précisée : résoudre par défaut toutes les formes épicènes vers le masculin (H/F, (e), (trice), point médian…), forme la plus neutre en l'absence d'information.";
 
       const availabilityLine = profile.availability?.trim()
-        ? `Disponibilité du candidat : "${profile.availability.trim()}". La mentionner UNE SEULE FOIS dans toute la lettre, uniquement dans paragraphs[4] (jamais avant). Dans l'email, la glisser naturellement dans le corps.`
+        ? `Disponibilité du candidat : "${profile.availability.trim()}". La mentionner UNE SEULE FOIS dans toute la lettre, uniquement dans paragraphs[4] (jamais avant).`
         : 'Aucune disponibilité renseignée par le candidat : ne pas en inventer une, rester sur la motivation et la contribution.';
 
       const experiencesForLetter = profile.experiences.slice(0, 2);
@@ -407,7 +405,7 @@ paragraphs[3] : PREUVE COMPLÉMENTAIRE — une deuxième expérience du profil d
       const systemPrompt = `Tu es un générateur expert de CV et lettres de motivation en français pour un·e candidat·e à l'emploi.
 
 MISSION
-Transformer une fiche de poste en CV + lettre + email de candidature : professionnels, ciblés, crédibles, ATS-friendly. Ne jamais inventer d'expérience, outil, diplôme, résultat ou affinité sectorielle — s'en tenir strictement au PROFIL DE BASE DU CANDIDAT fourni plus bas.
+Transformer une fiche de poste en CV + lettre de motivation : professionnels, ciblés, crédibles, ATS-friendly. Ne jamais inventer d'expérience, outil, diplôme, résultat ou affinité sectorielle — s'en tenir strictement au PROFIL DE BASE DU CANDIDAT fourni plus bas.
 
 PRINCIPES FONDAMENTAUX
 ${civilityLine}
@@ -547,18 +545,6 @@ Recruteur inconnu → "Bonjour,". Interlocuteur connu mais poste inconnu → ne 
 Résultat non confirmé → reformuler sans chiffre.
 Durée d'expérience → ne jamais écrire "depuis X ans", "depuis trois ans", "en X années" — jamais de calcul approximatif de durée. Utiliser uniquement l'ancrage par date, tel que fourni dans le profil de base.
 
-━━━ EMAIL ━━━
-
-"to" : email détecté dans la fiche, sinon "". Ne jamais inventer.
-Objet : si la fiche prescrit un format → l'utiliser exactement. Sinon : "Candidature au poste de [intitulé en minuscules]${contractSuffix(profile)}".
-Corps (5 lignes max) :
-1. "Bonjour [Prénom]," ou "Bonjour,"
-2. Candidature + poste${profile.availability ? ' + disponibilité' : ''}.
-3. 1 résultat ou compétence clé, 1 chiffre max.
-4. "Vous trouverez en pièce jointe mon CV et ma lettre de motivation."
-5. "Bien cordialement,\n${profile.name}"
-Jamais de reprise de la lettre. Jamais de mention de plateforme (LinkedIn, etc.).
-
 ━━━ MODE DE TRAVAIL ━━━
 
 Avant de générer : analyser les contraintes → identifier les sections concernées → appliquer les règles de contenu ou de forme → vérifier → corriger si nécessaire.
@@ -587,10 +573,6 @@ LETTRE
 ☐ Aucune répétition inutile des mêmes idées entre deux paragraphes
 ☐ Ton naturel — lire la première phrase : ne résume pas l'entreprise, ne commence pas par "je"
 
-EMAIL
-☐ Objet : intitulé du poste entièrement en minuscules après "Candidature au poste de"
-☐ Corps : 5 lignes max, pas de reprise de la lettre, pas de mention de plateforme
-
 ━━━ CONSIGNES PERSONNALISÉES DU CANDIDAT ━━━
 ${profile.customInstructions?.trim()
   ? `Ces règles viennent du candidat lui-même. Elles sont prioritaires sur tout le reste de ce prompt en cas de conflit — sauf si elles demandent d'inventer un fait non présent dans le profil de base :\n${profile.customInstructions.trim()}`
@@ -600,20 +582,18 @@ ${profile.customInstructions?.trim()
 
 JSON strict, sans markdown, sans backticks. Champ "poste" = intitulé du rôle uniquement, sans "en alternance".
 Ne jamais inclure dans "paragraphs" : "Bien cordialement,", signature, objet, date, coordonnées.
-Concision JSON : profil 3 phrases max · bullets 1 ligne (2 max) · paragraphes lettre 3-4 phrases (5 max) · keywords/adjustments/missing/atsImprovements 3-6 items, 1 phrase chacun.
+Concision JSON : profil 3 phrases max · bullets 1 ligne (2 max) · paragraphes lettre 3-4 phrases (5 max) · adjustments/missing/atsImprovements 3-6 items, 1 phrase chacun.
 ATS : mots-clés pertinents repris, compétences standard, verbes d'action, dates lisibles, terminologie France 2026.
 
 PROFIL DE BASE DU CANDIDAT
 ${JSON.stringify(profile)}`;
 
-      const emailObjetExample = `Candidature au poste de [intitulé]${contractSuffix(profile)}`;
-      const emailCorpsExample = `Bonjour [Prénom],\n\nJ'ai découvert votre offre pour le poste de [intitulé]${contractSuffix(profile)} et je vous adresse ma candidature${profile.availability ? ` pour une prise de poste ${profile.availability}` : ''}.\n\n[1 phrase : compétence clé ou résultat concret, 1 chiffre max]\n\nVous trouverez en pièce jointe mon CV et ma lettre de motivation.\n\nBien cordialement,\n${profile.name}`;
 
       const userPrompt = `Fiche de poste :
 ${jobText}
 
 ${modifications ? `Modifications demandées par le candidat (priorité absolue) :\n${modifications}\n\n` : ''}Retourne UNIQUEMENT un objet JSON valide (sans markdown, sans backticks) :
-{"cv":{"title":"${cvTitleExample}","profil":"...","experiences":[{"company":"...","title":"...","dates":"...","bullets":["..."]}],"formation":[{"school":"...","degree":"...","dates":"...","bullets":[]}],"competences":"...","outils":"..."},"lettre":{"company":"[nom de l'entreprise uniquement, sans article ni préposition, sans accents, prêt pour un nom de fichier — ex: Pachamama, JobEvents, ManoMano]","poste":"[intitulé du rôle uniquement, sans le mot Alternance et sans tirets séparateurs — ex: Marketing & Growth, Chargé de marketing digital]","paragraphs":["...","...","...","..."]},"email":{"to":"[adresse email détectée dans la fiche, ou vide]","objet":"${emailObjetExample}","corps":"${emailCorpsExample}"},"keywords":["..."],"adjustments":["..."],"missing":["..."],"atsScore":0,"atsImprovements":["..."]}`;
+{"cv":{"title":"${cvTitleExample}","profil":"...","experiences":[{"company":"...","title":"...","dates":"...","bullets":["..."]}],"formation":[{"school":"...","degree":"...","dates":"...","bullets":[]}],"competences":"...","outils":"..."},"lettre":{"company":"[nom de l'entreprise uniquement, sans article ni préposition, sans accents, prêt pour un nom de fichier — ex: Pachamama, JobEvents, ManoMano]","poste":"[intitulé du rôle uniquement, sans le mot Alternance et sans tirets séparateurs — ex: Marketing & Growth, Chargé de marketing digital]","paragraphs":["...","...","...","..."]},"adjustments":["..."],"missing":["..."],"atsScore":0,"atsImprovements":["..."]}`;
 
       // Fake ticker while Claude thinks
       let fakeP = 15;
@@ -632,6 +612,8 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       });
 
       clearInterval(ticker);
+      // Consommation réelle, visible avec wrangler tail.
+      console.log('generate usage', JSON.stringify(message.usage));
       await send({ progress: 78, step: 'Génération des PDFs…' });
 
       const raw = message.content[0].type === 'text' ? message.content[0].text : '';
@@ -806,26 +788,38 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
             corps: enforceGenderAgreement(sanitizeLetter([noEm(parsed.email.corps)])[0], profile.civility) }
         : { to: '', objet: '', corps: '' };
 
-      const [cvBuf, lettreBuf] = await Promise.all([buildCVPdf(cvData), buildLetterPdf(profile, lettreData)]);
-      await send({ progress: 95, step: 'Finalisation…' });
-
-      await send({
-        progress: 100,
-        done: true,
-        cv: cvBuf.toString('base64'),
-        lettre: lettreBuf.toString('base64'),
-        company: parsed.lettre.company ?? '',
-        poste: parsed.lettre.poste ?? '',
-        email: emailData,
-        keywords: parsed.keywords ?? [],
+      const analysis = {
         adjustments: parsed.adjustments ?? [],
         missing: parsed.missing ?? [],
         atsScore: parsed.atsScore ?? 0,
         atsImprovements: parsed.atsImprovements ?? [],
-        // Données éditables : le client les modifie puis les renvoie à /api/export
-        // pour obtenir les PDF, sans nouvel appel au modèle.
+      };
+      const lettreOut = { company: lettreData.company ?? '', poste: lettreData.poste ?? '', paragraphs: letterParagraphs };
+
+      // Le résultat est enregistré tout de suite : un rechargement de page le
+      // rouvre au lieu de relancer une génération. Les PDF ne sont produits
+      // qu'à l'export, à partir des données éditées.
+      const generationId = crypto.randomUUID();
+      await ensureSchema();
+      await sql`
+        INSERT INTO generations (id, user_id, company, poste, contract_type, job_description, cv_url, lettre_url, analysis, email, cv_data, lettre_data)
+        VALUES (
+          ${generationId}, ${session!.user!.id}, ${lettreOut.company}, ${lettreOut.poste}, ${profile.soughtContract || ''}, ${jobText.slice(0, 20000)},
+          NULL, NULL, ${JSON.stringify(analysis)}::jsonb, ${JSON.stringify(emailData)}::jsonb,
+          ${JSON.stringify(cvData)}::jsonb, ${JSON.stringify(lettreOut)}::jsonb
+        )
+      `;
+
+      await send({
+        progress: 100,
+        done: true,
+        generationId,
+        company: lettreOut.company,
+        poste: lettreOut.poste,
+        email: emailData,
+        ...analysis,
         cvData,
-        lettreData: { company: lettreData.company ?? '', poste: lettreData.poste ?? '', paragraphs: letterParagraphs },
+        lettreData: lettreOut,
       });
 
     } catch (e: unknown) {

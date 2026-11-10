@@ -16,11 +16,12 @@ export type CvDoc = {
 
 type RawCv = {
   title?: string; profil?: string; competences?: string; outils?: string; langues?: string;
-  experiences?: { company?: string; title?: string; dates?: string; bullets?: string[] }[];
-  formation?: { school?: string; degree?: string; dates?: string }[];
+  experiences?: { company?: string; title?: string; dates?: string; hidden?: boolean; bullets?: (string | { text?: string; hidden?: boolean })[] }[];
+  formation?: { school?: string; degree?: string; dates?: string; hidden?: boolean }[];
 };
 
-// Transforme la réponse de génération en modèle éditable.
+// Transforme la réponse de génération, ou un CV déjà édité et sauvegardé,
+// en modèle éditable (les éléments masqués le restent).
 export function toCvDoc(raw: RawCv): CvDoc {
   return {
     title: raw.title ?? '',
@@ -32,14 +33,14 @@ export function toCvDoc(raw: RawCv): CvDoc {
       company: e.company ?? '',
       title: e.title ?? '',
       dates: e.dates ?? '',
-      hidden: false,
-      bullets: (e.bullets ?? []).map(text => ({ text, hidden: false })),
+      hidden: !!e.hidden,
+      bullets: (e.bullets ?? []).map(b => (typeof b === 'string' ? { text: b, hidden: false } : { text: b.text ?? '', hidden: !!b.hidden })),
     })),
     formation: (raw.formation ?? []).map(f => ({
       school: f.school ?? '',
       degree: f.degree ?? '',
       dates: f.dates ?? '',
-      hidden: false,
+      hidden: !!f.hidden,
     })),
   };
 }
