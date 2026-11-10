@@ -1,5 +1,6 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import type { UserProfile } from '@/lib/profile';
+import { CV_TEXT_SCALE } from '@/components/cv/cv-doc';
 
 // Rendu en pdf-lib : les polices standard sont intégrées à la bibliothèque,
 // sans lecture de fichiers sur le disque. pdfkit lisait ses fichiers .afm avec
@@ -167,33 +168,20 @@ function renderCv(doc: Doc, cv: CVProfile, scale: number): { overflow: boolean; 
   return { overflow: w.state.overflow, fill: (w.state.y - MT) / (PAGE_H - MT - MB) };
 }
 
-// Paliers de taille : 10 pt (modèle Word), puis 9,5 pt, puis 9 pt (CV de
-// référence). On garde la plus grande taille qui tient sur une page.
-export const CV_SCALES = [1, 0.95, 0.9] as const;
+// Taille fixe (voir CV_TEXT_SCALE) : le CV ne se réduit pas automatiquement.
+const CV_SCALE = CV_TEXT_SCALE;
 
-// Choisit le palier et renvoie le remplissage de la page à ce palier
-// (1 = page pleine). Au-delà de 1 au plus petit palier, le CV déborde : c'est
-// le défaut signalé à l'écran. Aucun appel au modèle.
+// Remplissage de la page (1 = page pleine). Au-delà de 1, le CV déborde.
 export async function measureCvFill(cv: CVProfile): Promise<{ fill: number; scale: number }> {
-  let last = { fill: 0, scale: CV_SCALES[CV_SCALES.length - 1] as number };
-  for (const scale of CV_SCALES) {
-    let fill = 0;
-    await generatePDF((doc) => { fill = renderCv(doc, cv, scale).fill; });
-    last = { fill, scale };
-    if (fill <= 1) return last;
-  }
-  return last;
+  let fill = 0;
+  await generatePDF((doc) => { fill = renderCv(doc, cv, CV_SCALE).fill; });
+  return { fill, scale: CV_SCALE };
 }
 
-// Une seule page : plus grande taille qui tient ; si rien ne tient, ultime
-// réduction à 8,5 pt pour ne jamais couper le contenu (le défaut reste affiché).
+// Le CV n'est produit que s'il tient sur une page : sinon l'appelant doit
+// refuser l'export et proposer des corrections.
 export async function buildCVPdf(cv: CVProfile): Promise<Buffer> {
-  for (const scale of [...CV_SCALES, 0.85]) {
-    let overflow = false;
-    const buf = await generatePDF((doc) => { overflow = renderCv(doc, cv, scale).overflow; });
-    if (!overflow) return buf;
-  }
-  return generatePDF((doc) => { renderCv(doc, cv, 0.85); });
+  return generatePDF((doc) => { renderCv(doc, cv, CV_SCALE); });
 }
 
 // ── Lettre ─────────────────────────────────────────────────────────────────

@@ -1,3 +1,8 @@
+// Taille fixe du CV : 9,5 pt pour le texte courant, tous les autres éléments
+// s'en déduisent. Pas d'ajustement automatique : si le CV ne tient pas, il est
+// signalé et il faut corriger le contenu.
+export const CV_TEXT_SCALE = 0.95;
+
 // Modèle éditable du CV côté client. Chaque élément peut être masqué sans être
 // supprimé : le masquage ne concerne que l'aperçu et l'export.
 

@@ -55,6 +55,7 @@ function suggestionsFor(doc: CvDoc): Suggestion[] {
 // signalé avec les pistes de correction.
 export function CvFit({ doc, fill, textScale = 1, onChange }: { doc: CvDoc; fill: number | null; textScale?: number; onChange: (next: CvDoc) => void }) {
   const size = String(Math.round(textScale * 100) / 10).replace('.', ',');
+  void textScale;
   if (fill === null) return <p className="text-sm text-neutral-500">Vérification de la mise en page…</p>;
 
   const pct = Math.round(fill * 100);
@@ -73,7 +74,7 @@ export function CvFit({ doc, fill, textScale = 1, onChange }: { doc: CvDoc; fill
         <AlertTriangle size={16} />Le CV dépasse une page A4, même en 9 pt ({pct} %).
       </p>
       <p className="text-sm text-red-700">
-        À l&apos;export, le texte serait réduit pour tenir sur une page. Mieux vaut corriger le contenu :
+        L&apos;export est bloqué tant que le CV dépasse. Corrige le contenu :
       </p>
       <ul className="flex flex-col gap-3">
         {tips.map((t, i) => (

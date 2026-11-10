@@ -66,6 +66,11 @@ export async function POST(req: NextRequest) {
       // Mode vérification : renvoie le taux de remplissage de la page A4
       // (1 = page pleine, au-delà le CV déborde), sans produire de fichier.
       if (body.check) return NextResponse.json(await measureCvFill(cv));
+      // Pas d'export d'un CV qui déborde : on renvoie le défaut à corriger.
+      const { fill } = await measureCvFill(cv);
+      if (fill > 1) {
+        return NextResponse.json({ error: 'Le CV dépasse une page A4. Raccourcis-le avant de l\'exporter.', fill }, { status: 422 });
+      }
       const pdf = await buildCVPdf(cv);
       return new NextResponse(new Uint8Array(pdf), { headers: { 'Content-Type': 'application/pdf', 'Cache-Control': 'no-store' } });
     }

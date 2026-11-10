@@ -7,7 +7,7 @@ import CvUpload from '@/components/CvUpload';
 import { CvPreview } from '@/components/cv/cv-preview';
 import { CvEditor } from '@/components/cv/cv-editor';
 import { CvFit } from '@/components/cv/cv-fit';
-import { toCvDoc, toExportCv, type CvDoc } from '@/components/cv/cv-doc';
+import { toCvDoc, toExportCv, CV_TEXT_SCALE, type CvDoc } from '@/components/cv/cv-doc';
 import { LetterPreview } from '@/components/cv/letter-preview';
 import { LetterEditor } from '@/components/cv/letter-editor';
 import { toLetterDoc, toExportLetter, type LetterDoc } from '@/components/cv/letter-doc';
@@ -101,7 +101,8 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   // Remplissage de la page A4 mesuré par le serveur avec le vrai rendu PDF
   // (1 = page pleine). Recalculé après chaque modification, sans IA.
   const [fill, setFill] = useState<number | null>(null);
-  const [textScale, setTextScale] = useState(1);
+  // Taille fixe du CV (9,5 pt), jamais ajustée automatiquement.
+  const textScale = CV_TEXT_SCALE;
   useEffect(() => {
     if (!doc) return;
     let cancelled = false;
@@ -115,7 +116,6 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
         .then(data => {
           if (cancelled || !data || typeof data.fill !== 'number') return;
           setFill(data.fill);
-          if (typeof data.scale === 'number') setTextScale(data.scale);
         })
         .catch(() => {});
     }, 600);
@@ -532,7 +532,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             <div className="sticky bottom-0 z-10 -mx-6 flex flex-wrap items-center gap-3 border-t border-neutral-200 bg-neutral-50/95 px-6 py-4 backdrop-blur">
               {docStep === 'cv' ? (
                 <>
-                  <Button type="button" onClick={() => downloadPdf('cv', toExportCv(doc))}><Download size={16} />Télécharger le CV</Button>
+                  <Button type="button" onClick={() => downloadPdf('cv', toExportCv(doc))} disabled={fill !== null && fill > 1} title={fill !== null && fill > 1 ? 'Raccourcis le CV pour qu il tienne sur une page' : undefined}><Download size={16} />Télécharger le CV</Button>
                   {letter && <Button type="button" variant="outline" onClick={() => setDocStep('lettre')}>Passer à la lettre →</Button>}
                 </>
               ) : (
