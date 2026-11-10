@@ -1,74 +1,105 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import type { CvDoc } from '@/components/cv/cv-doc';
 
-// Aperçu du CV en HTML, mis à jour à chaque modification. Ne montre que les
-// éléments visibles, comme le PDF exporté.
-export function CvPreview({ doc, identity }: {
+// Dimensions de la page A4 en points, reprises du rendu PDF (lib/pdf.ts) :
+// 1 pt = 1 px ici, puis la page entière est mise à l'échelle de la colonne.
+const PAGE_W = 595.28;
+const PAGE_H = 841.89;
+const MARGIN = 42.52;
+
+// Aperçu du CV sous forme de vraie page A4, avec les mêmes tailles que le PDF.
+// Si le contenu dépasse la page, la partie en trop apparaît sous une ligne
+// « fin de page », sur fond rouge.
+export function CvPreview({ doc, identity, fill }: {
   doc: CvDoc;
   identity: { name: string; email: string; phone: string; city: string; linkedin: string; portfolio: string };
+  fill?: number | null;
 }) {
-  const contact = [identity.city, identity.phone, identity.email, identity.linkedin, identity.portfolio].filter(Boolean).join(' · ');
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const update = () => setScale(Math.min(1.2, el.clientWidth / PAGE_W));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const contact = [identity.phone, identity.email, identity.linkedin, identity.portfolio, identity.city].filter(Boolean).join(' · ');
   const exps = doc.experiences.filter(e => !e.hidden);
   const formations = doc.formation.filter(f => !f.hidden);
+  const overflow = (fill ?? 0) > 1;
+
+  const section = (title: string) => (
+    <h3 style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', margin: '16px 0 6px', lineHeight: 1.16 }}>{title}</h3>
+  );
 
   return (
-    <article className="mx-auto w-full max-w-[560px] bg-neutral-50 px-10 py-10 text-xs leading-relaxed text-neutral-900 ring-1 ring-neutral-200">
-      <header>
-        <h2 className="text-2xl font-bold leading-none tracking-tight">{identity.name}</h2>
-        {doc.title && <p className="mt-1 font-semibold">{doc.title}</p>}
-        {contact && <p className="mt-1 text-xs text-neutral-500">{contact}</p>}
-      </header>
+    <div ref={wrapRef} className="w-full">
+      <div style={{ zoom: scale }}>
+        <article
+          className="relative mx-auto border border-neutral-300 bg-neutral-50 text-neutral-950"
+          style={{
+            width: PAGE_W,
+            minHeight: PAGE_H,
+            padding: MARGIN,
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontSize: 9,
+            lineHeight: 1.33,
+          }}
+        >
+          <h2 style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.16, margin: '0 0 4px' }}>{identity.name}</h2>
+          {doc.title && <p style={{ fontWeight: 700, lineHeight: 1.16, margin: '0 0 4px' }}>{doc.title}</p>}
+          {contact && <p style={{ fontSize: 8, lineHeight: 1.16, margin: '0 0 12px' }}>{contact}</p>}
+          {doc.profil && <p style={{ margin: '0 0 4px' }}>{doc.profil}</p>}
 
-      {doc.profil && (
-        <section className="mt-5">
-          <h3 className="text-xs font-bold uppercase tracking-wider">Profil</h3>
-          <p className="mt-1">{doc.profil}</p>
-        </section>
-      )}
-
-      {exps.length > 0 && (
-        <section className="mt-5">
-          <h3 className="text-xs font-bold uppercase tracking-wider">Expériences</h3>
+          {exps.length > 0 && section('Expériences')}
           {exps.map((e, i) => (
-            <div key={i} className="mt-2">
-              <p className="font-semibold">{[e.title, e.company].filter(Boolean).join(' · ')} <span className="font-normal text-neutral-500">{e.dates}</span></p>
-              <ul className="mt-1 list-disc pl-5">
-                {e.bullets.filter(b => !b.hidden && b.text.trim()).map((b, j) => <li key={j}>{b.text}</li>)}
-              </ul>
+            <div key={i} style={{ marginTop: 8 }}>
+              <div className="flex justify-between gap-4" style={{ fontWeight: 700, lineHeight: 1.16 }}>
+                <span>{e.title}</span>
+                <span style={{ fontWeight: 400 }} className="shrink-0">{e.dates}</span>
+              </div>
+              <p style={{ lineHeight: 1.16, margin: '0 0 4px' }}>{e.company}</p>
+              {e.bullets.filter(b => !b.hidden && b.text.trim()).map((b, j) => (
+                <p key={j} className="relative" style={{ paddingLeft: 18, margin: '0 0 2px' }}>
+                  <span className="absolute left-0">•</span>{b.text}
+                </p>
+              ))}
             </div>
           ))}
-        </section>
-      )}
 
-      {formations.length > 0 && (
-        <section className="mt-5">
-          <h3 className="text-xs font-bold uppercase tracking-wider">Formation</h3>
+          {formations.length > 0 && section('Formation')}
           {formations.map((f, i) => (
-            <p key={i} className="mt-1">
-              <span className="font-semibold">{[f.degree, f.school].filter(Boolean).join(' · ')}</span>{' '}
-              <span className="text-neutral-500">{f.dates}</span>
-            </p>
+            <div key={i} style={{ marginTop: 8 }}>
+              <div className="flex justify-between gap-4" style={{ fontWeight: 700, lineHeight: 1.16 }}>
+                <span>{f.degree}</span>
+                <span style={{ fontWeight: 400 }} className="shrink-0">{f.dates}</span>
+              </div>
+              <p style={{ lineHeight: 1.16, margin: '0 0 4px' }}>{f.school}</p>
+            </div>
           ))}
-        </section>
-      )}
 
-      {doc.competences && (
-        <section className="mt-5">
-          <h3 className="text-xs font-bold uppercase tracking-wider">Compétences</h3>
-          <p className="mt-1">{doc.competences}</p>
-        </section>
-      )}
-      {doc.outils && (
-        <section className="mt-5">
-          <h3 className="text-xs font-bold uppercase tracking-wider">Outils</h3>
-          <p className="mt-1">{doc.outils}</p>
-        </section>
-      )}
-      {doc.langues && (
-        <section className="mt-5">
-          <h3 className="text-xs font-bold uppercase tracking-wider">Langues</h3>
-          <p className="mt-1">{doc.langues}</p>
-        </section>
-      )}
-    </article>
+          {doc.competences && <>{section('Compétences')}<p style={{ margin: '0 0 4px' }}>{doc.competences}</p></>}
+          {doc.outils && <>{section('Outils')}<p style={{ margin: '0 0 4px' }}>{doc.outils}</p></>}
+          {doc.langues && <>{section('Langues')}<p style={{ margin: '0 0 4px' }}>{doc.langues}</p></>}
+
+          {overflow && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 border-t-2 border-dashed border-red-500 bg-red-500/10"
+              style={{ top: PAGE_H }}
+            >
+              <span className="absolute right-2 top-1 text-red-600" style={{ fontSize: 8 }}>Fin de la page A4</span>
+            </div>
+          )}
+        </article>
+      </div>
+    </div>
   );
 }

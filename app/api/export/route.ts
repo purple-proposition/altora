@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { rateLimit } from '@/lib/rateLimit';
 import { getUserProfile, emptyProfile, type UserProfile } from '@/lib/profile';
-import { buildCVPdf, buildLetterPdf, type CVProfile } from '@/lib/pdf';
+import { buildCVPdf, buildLetterPdf, measureCvFill, type CVProfile } from '@/lib/pdf';
 
 export const runtime = 'nodejs';
 
@@ -18,12 +18,16 @@ const list = <T>(v: unknown, fn: (x: unknown) => T) => (Array.isArray(v) ? v.sli
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  if (!rateLimit(`export:${session.user.id}`, 60, 60 * 60_000)) {
-    return NextResponse.json({ error: 'Trop de exports, réessaie plus tard.' }, { status: 429 });
-  }
-
-  const body = await req.json().catch(() => null) as { kind?: string; cv?: unknown; lettre?: unknown } | null;
+  const body = await req.json().catch(() => null) as { kind?: string; cv?: unknown; lettre?: unknown; check?: boolean } | null;
   if (!body) return NextResponse.json({ error: 'Corps de requête invalide' }, { status: 400 });
+
+  // La vérification du remplissage tourne à chaque modification : quota à part.
+  const limited = body.check
+    ? !rateLimit(`cvcheck:${session.user.id}`, 1200, 60 * 60_000)
+    : !rateLimit(`export:${session.user.id}`, 60, 60 * 60_000);
+  if (limited) {
+    return NextResponse.json({ error: 'Trop de demandes, réessaie plus tard.' }, { status: 429 });
+  }
 
   // Identité et règles de civilité viennent toujours du profil enregistré,
   // jamais du corps de la requête.
@@ -59,6 +63,9 @@ export async function POST(req: NextRequest) {
           };
         }),
       };
+      // Mode vérification : renvoie le taux de remplissage de la page A4
+      // (1 = page pleine, au-delà le CV déborde), sans produire de fichier.
+      if (body.check) return NextResponse.json({ fill: await measureCvFill(cv) });
       const pdf = await buildCVPdf(cv);
       return new NextResponse(new Uint8Array(pdf), { headers: { 'Content-Type': 'application/pdf', 'Cache-Control': 'no-store' } });
     }

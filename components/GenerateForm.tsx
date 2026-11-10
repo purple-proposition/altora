@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import CvUpload from '@/components/CvUpload';
 import { CvPreview } from '@/components/cv/cv-preview';
 import { CvEditor } from '@/components/cv/cv-editor';
+import { CvFit } from '@/components/cv/cv-fit';
 import { toCvDoc, toExportCv, type CvDoc } from '@/components/cv/cv-doc';
 import { LetterPreview } from '@/components/cv/letter-preview';
 import { LetterEditor } from '@/components/cv/letter-editor';
@@ -97,6 +98,24 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   const [generationId, setGenerationId] = useState<string | null>(null);
   // Suggestions cochées comme traitées (affichage seulement).
   const [doneSuggestions, setDoneSuggestions] = useState<number[]>([]);
+  // Remplissage de la page A4 mesuré par le serveur avec le vrai rendu PDF
+  // (1 = page pleine). Recalculé après chaque modification, sans IA.
+  const [fill, setFill] = useState<number | null>(null);
+  useEffect(() => {
+    if (!doc) return;
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      fetch('/api/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kind: 'cv', cv: toExportCv(doc), check: true }),
+      })
+        .then(res => (res.ok ? res.json() : null))
+        .then(data => { if (!cancelled && data && typeof data.fill === 'number') setFill(data.fill); })
+        .catch(() => {});
+    }, 600);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [doc]);
 
   // Sauvegarde automatique des modifications (une seconde après la dernière
   // frappe). Aucun appel au modèle : seule la base est mise à jour.
@@ -481,9 +500,10 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             {docStep === 'cv' && (
               <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-24 lg:self-start">
-                  <CvPreview doc={doc} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
+                  <CvPreview doc={doc} fill={fill} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
                 </div>
                 <div className="col-span-12 flex flex-col gap-6 lg:col-span-6">
+                  <CvFit doc={doc} fill={fill} onChange={setDoc} />
                   <CvEditor doc={doc} onChange={setDoc} />
                 </div>
               </div>
