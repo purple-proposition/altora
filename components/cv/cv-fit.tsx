@@ -53,16 +53,14 @@ function suggestionsFor(doc: CvDoc): Suggestion[] {
 
 // Indicateur de remplissage de la page A4 et, en cas de dépassement, défaut
 // signalé avec les pistes de correction.
-export function CvFit({ doc, fill, textScale = 1, onChange }: { doc: CvDoc; fill: number | null; textScale?: number; onChange: (next: CvDoc) => void }) {
-  const size = String(Math.round(textScale * 100) / 10).replace('.', ',');
-  void textScale;
+export function CvFit({ doc, fill, onChange }: { doc: CvDoc; fill: number | null; onChange: (next: CvDoc) => void }) {
   if (fill === null) return <p className="text-sm text-neutral-500">Vérification de la mise en page…</p>;
 
   const pct = Math.round(fill * 100);
   if (fill <= 1) {
     return (
       <p className="flex items-center gap-2 text-sm text-neutral-700">
-        <CheckCircle2 size={16} className="text-neutral-900" />Tient sur une page A4 en {size} pt (remplie à {pct} %).
+        <CheckCircle2 size={16} className="text-neutral-900" />Tient sur une page A4 (remplie à {pct} %).
       </p>
     );
   }

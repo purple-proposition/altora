@@ -20,6 +20,7 @@ export const PAGE_H = 841.89;
 const ML = 42.52;
 const MT = 42.52;
 const MB = 42.52;
+const MR = 42.52;
 const CW = PAGE_W - ML * 2;
 const TAB = CW;             // dates alignées sur la marge de droite
 const BULLET_INDENT = 18;   // retrait des puces (360 twips)
@@ -120,68 +121,121 @@ function writer(doc: Doc, scale: number) {
 
 // ── CV ─────────────────────────────────────────────────────────────────────
 
-function renderCv(doc: Doc, cv: CVProfile, scale: number): { overflow: boolean; fill: number } {
-  const w = writer(doc, scale);
+// ── CV : mise en page reproduite à l'identique du CV de référence ───────────
+// Mesures relevées sur « CV - Jesse Sotomayor - GL Events.pdf » :
+// Helvetica / Helvetica-Bold, corps 9 pt, nom 18 pt, marges 15 mm, interligne
+// 12,4 pt, écarts entre blocs : 17 (titre → contenu), 14 (titre → entreprise),
+// 16,4 (entre puces), 27,4 (entre expériences), 38,4 (entre sections).
+const CV_NAME = 18;
+const CV_BODY = 9;
+const CV_LEAD = 12.4;
+const CV_TRACK = 0.6;          // interlettrage des titres de section
+const CV_DASH_INDENT = 10;     // les puces sont des tirets « – » en début de paragraphe
+const CV_TOP = MT + 0.718 * CV_NAME; // ligne de base du nom
+const CV_RIGHT = PAGE_W - MR;
 
-  // En-tête : nom, intitulé, coordonnées (mêmes tailles et espacements que le modèle).
-  w.line(cv.name, { font: 'Helvetica-Bold', size: 20, after: 4 });
-  w.line(cv.title, { font: 'Helvetica-Bold', size: 10, after: 4 });
-  const contact = [cv.phone, cv.email, cv.linkedin, cv.portfolio, cv.city].filter(Boolean).join(' · ');
-  w.line(contact, { font: 'Helvetica', size: 9, after: 12 });
-  if (cv.profil) w.para(cv.profil, { font: 'Helvetica', size: 10, after: 4 });
+function renderCv(doc: Doc, cv: CVProfile, _scale: number): { overflow: boolean; fill: number } {
+  const bottom = PAGE_H - MB;
+  let y = CV_TOP;             // ligne de base courante, comptée depuis le haut
+  let overflow = false;
+  const fonts = doc.fonts;
 
-  const section = (title: string) => w.line(title.toUpperCase(), { font: 'Helvetica-Bold', size: 10, before: 16, after: 6 });
+  // Interlettrage : chaque caractère est posé à la main (pdf-lib n'a pas d'option dédiée).
+  const put = (text: string, x: number, base: number, font: PDFFont, size: number, track = 0) => {
+    const t = clean(text, font);
+    if (!track) {
+      doc.page.drawText(t, { x, y: PAGE_H - base, size, font, color: BLACK });
+      return font.widthOfTextAtSize(t, size);
+    }
+    let cx = x;
+    for (const ch of t) {
+      doc.page.drawText(ch, { x: cx, y: PAGE_H - base, size, font, color: BLACK });
+      cx += font.widthOfTextAtSize(ch, size) + track;
+    }
+    return cx - x;
+  };
+  const check = () => { if (y > bottom) overflow = true; };
+
+  // Une ligne alignée à droite (dates) sur la ligne de base courante.
+  const right = (text: string, font: PDFFont, size: number) => {
+    const t = clean(text, font);
+    const w = font.widthOfTextAtSize(t, size);
+    put(t, CV_RIGHT - w, y, font, size);
+  };
+
+  // Paragraphe enroulé. Retourne la ligne de base de la dernière ligne.
+  const paragraph = (text: string, font: PDFFont, x: number, width: number) => {
+    const lines = wrap(clean(text, fonts['Helvetica']), fonts['Helvetica'], CV_BODY, width);
+    lines.forEach((l, i) => {
+      if (i > 0) y += CV_LEAD;
+      check();
+      put(l, x, y, font, CV_BODY);
+    });
+    return y;
+  };
+
+  // Nom, intitulé, coordonnées, profil.
+  put(cv.name, ML, y, fonts['Helvetica-Bold'], CV_NAME);
+  y += 17.54;
+  put(cv.title, ML, y, fonts['Helvetica-Bold'], CV_BODY);
+  y += 17.0;
+  const contact = [cv.phone, cv.email, cv.linkedin, cv.portfolio, cv.city].filter(Boolean).join('  ·  ');
+  put(contact, ML, y, fonts['Helvetica'], CV_BODY);
+  if (cv.profil) {
+    y += 21.0;
+    paragraph(cv.profil, fonts['Helvetica'], ML, CW);
+  }
+
+  // Titre de section : gras, interlettrage 0,6 pt, 38,4 pt sous le bloc précédent.
+  const section = (title: string, first = false) => {
+    if (!first) y += 38.4;
+    check();
+    put(title.toUpperCase(), ML, y, fonts['Helvetica-Bold'], CV_BODY, CV_TRACK);
+    y += 17.0;
+  };
 
   if (cv.experiences.length) {
     section('Expériences');
-    for (const exp of cv.experiences) {
-      w.line(exp.title, { font: 'Helvetica-Bold', size: 10, before: 8, right: exp.dates });
-      w.line(exp.company, { font: 'Helvetica', size: 10, after: 4 });
-      for (const b of exp.bullets) {
-        if (b.trim()) w.para(b, { font: 'Helvetica', size: 10, after: 2, bullet: true });
-      }
-    }
+    cv.experiences.forEach((exp, ei) => {
+      if (ei > 0) y += 27.4;
+      check();
+      put(exp.title, ML, y, fonts['Helvetica-Bold'], CV_BODY);
+      right(exp.dates, fonts['Helvetica'], CV_BODY);
+      y += 14.0;
+      put(exp.company, ML, y, fonts['Helvetica'], CV_BODY);
+      y += 17.0;
+      const bullets = exp.bullets.filter(b => b.trim());
+      bullets.forEach((b, bi) => {
+        if (bi > 0) y += 16.4;
+        const line = `– ${b}`;
+        paragraph(line, fonts['Helvetica'], ML + CV_DASH_INDENT, CW - CV_DASH_INDENT);
+      });
+    });
   }
 
   if (cv.formation.length) {
     section('Formation');
-    for (const f of cv.formation) {
-      w.line(f.degree, { font: 'Helvetica-Bold', size: 10, before: 8, right: f.dates });
-      w.line(f.school, { font: 'Helvetica', size: 10, after: 4 });
-    }
+    cv.formation.forEach((f, fi) => {
+      if (fi > 0) y += 23.4;
+      check();
+      put(f.degree, ML, y, fonts['Helvetica-Bold'], CV_BODY);
+      right(f.dates, fonts['Helvetica'], CV_BODY);
+      y += 14.0;
+      put(f.school, ML, y, fonts['Helvetica'], CV_BODY);
+    });
   }
 
-  if (cv.competences) {
-    section('Compétences');
-    w.para(cv.competences, { font: 'Helvetica', size: 10, after: 4 });
-  }
-  if (cv.outils) {
-    section('Outils');
-    w.para(cv.outils, { font: 'Helvetica', size: 10, after: 4 });
-  }
-  if (cv.langues) {
-    section('Langues');
-    w.para(cv.langues, { font: 'Helvetica', size: 10, after: 4 });
-  }
+  const textSection = (title: string, text: string) => {
+    section(title);
+    paragraph(text, fonts['Helvetica'], ML, CW);
+  };
+  if (cv.competences) textSection('Compétences', cv.competences);
+  if (cv.outils) textSection('Outils', cv.outils);
+  if (cv.langues) textSection('Langues', cv.langues);
 
-  // Remplissage : hauteur utilisée rapportée à la hauteur utile de la page.
-  return { overflow: w.state.overflow, fill: (w.state.y - MT) / (PAGE_H - MT - MB) };
-}
-
-// Taille fixe (voir CV_TEXT_SCALE) : le CV ne se réduit pas automatiquement.
-const CV_SCALE = CV_TEXT_SCALE;
-
-// Remplissage de la page (1 = page pleine). Au-delà de 1, le CV déborde.
-export async function measureCvFill(cv: CVProfile): Promise<{ fill: number; scale: number }> {
-  let fill = 0;
-  await generatePDF((doc) => { fill = renderCv(doc, cv, CV_SCALE).fill; });
-  return { fill, scale: CV_SCALE };
-}
-
-// Le CV n'est produit que s'il tient sur une page : sinon l'appelant doit
-// refuser l'export et proposer des corrections.
-export async function buildCVPdf(cv: CVProfile): Promise<Buffer> {
-  return generatePDF((doc) => { renderCv(doc, cv, CV_SCALE); });
+  check();
+  // Remplissage : position de la dernière ligne par rapport à la zone utile.
+  return { overflow, fill: (y - MT) / (bottom - MT) };
 }
 
 // ── Lettre ─────────────────────────────────────────────────────────────────
@@ -223,4 +277,16 @@ export async function buildLetterPdf(profile: UserProfile, data: { company: stri
     if (!overflow) return buf;
   }
   return generatePDF((doc) => { renderLetter(doc, profile, data, 0.85); });
+}
+
+// Le CV n'est produit que s'il tient sur une page : sinon l'appelant refuse
+// l'export et propose des corrections.
+export async function measureCvFill(cv: CVProfile): Promise<{ fill: number; scale: number }> {
+  let fill = 0;
+  await generatePDF((doc) => { fill = renderCv(doc, cv, 1).fill; });
+  return { fill, scale: 1 };
+}
+
+export async function buildCVPdf(cv: CVProfile): Promise<Buffer> {
+  return generatePDF((doc) => { renderCv(doc, cv, 1); });
 }

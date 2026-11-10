@@ -505,10 +505,10 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             {docStep === 'cv' && (
               <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-24 lg:self-start">
-                  <CvPreview doc={doc} fill={fill} textScale={textScale} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
+                  <CvPreview doc={doc} fill={fill} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
                 </div>
                 <div className="col-span-12 flex flex-col gap-6 lg:col-span-6">
-                  <CvFit doc={doc} fill={fill} textScale={textScale} onChange={setDoc} />
+                  <CvFit doc={doc} fill={fill} onChange={setDoc} />
                   <CvEditor doc={doc} onChange={setDoc} />
                 </div>
               </div>

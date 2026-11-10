@@ -3,24 +3,20 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CvDoc } from '@/components/cv/cv-doc';
 
-// Dimensions de la page A4 en points, reprises du rendu PDF (lib/pdf.ts) :
-// 1 pt = 1 px ici, puis la page entière est mise à l'échelle de la colonne.
+// Dimensions de la page A4 en points, et mesures du CV de référence (voir
+// lib/pdf.ts) : corps 9 pt, nom 18 pt, interligne 12,4 pt, marges 15 mm.
 const PAGE_W = 595.28;
 const PAGE_H = 841.89;
-const MARGIN = 42.52;
+const M = 42.52;
+const LEAD = 12.4;
 
-// Aperçu du CV sous forme de vraie page A4, avec les mêmes tailles que le PDF.
-// Si le contenu dépasse la page, la partie en trop apparaît sous une ligne
-// « fin de page », sur fond rouge.
-export function CvPreview({ doc, identity, fill, textScale = 1 }: {
+// Aperçu fidèle à la page A4 du PDF : mêmes tailles, mêmes écarts, mêmes tirets.
+// Le contenu qui dépasse la page devient translucide et sort du cadre.
+export function CvPreview({ doc, identity, fill }: {
   doc: CvDoc;
   identity: { name: string; email: string; phone: string; city: string; linkedin: string; portfolio: string };
   fill?: number | null;
-  // Palier de taille retenu par le rendu PDF (1 = 10 pt, 0,95, 0,9 = 9 pt).
-  textScale?: number;
 }) {
-  const k = textScale;
-  const px = (n: number) => n * k;
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -34,90 +30,83 @@ export function CvPreview({ doc, identity, fill, textScale = 1 }: {
     return () => ro.disconnect();
   }, []);
 
-  const contact = [identity.phone, identity.email, identity.linkedin, identity.portfolio, identity.city].filter(Boolean).join(' · ');
+  const contact = [identity.phone, identity.email, identity.linkedin, identity.portfolio, identity.city].filter(Boolean).join('  ·  ');
   const exps = doc.experiences.filter(e => !e.hidden);
   const formations = doc.formation.filter(f => !f.hidden);
   const overflow = (fill ?? 0) > 1;
 
+  const body: React.CSSProperties = { fontSize: 9, lineHeight: `${LEAD}px`, margin: 0 };
   const section = (title: string) => (
-    <h3 style={{ fontSize: px(10), fontWeight: 700, textTransform: 'uppercase', margin: `${px(16)}px 0 ${px(6)}px`, lineHeight: 1.16 }}>{title}</h3>
+    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.6px', lineHeight: `${LEAD}px`, marginTop: 24 }}>{title.toUpperCase()}</div>
   );
 
   return (
     <div ref={wrapRef} className="w-full">
       <div style={{ zoom: scale }}>
         <div className="relative mx-auto" style={{ width: PAGE_W }}>
-          {/* Cadre de la page A4 : fond et bordure s'arrêtent à la hauteur réelle de la page. */}
-          <div
-            aria-hidden
-            className="absolute left-0 top-0 border border-neutral-300 bg-neutral-50"
-            style={{ width: PAGE_W, height: PAGE_H }}
-          />
-        <article
-          className="relative text-neutral-950"
-          style={{
-            width: PAGE_W,
-            padding: MARGIN,
-            fontFamily: 'Helvetica, Arial, sans-serif',
-            fontSize: px(10),
-            lineHeight: 1.33,
-            // Ce qui dépasse la page devient translucide et sort du cadre.
-            ...(overflow
-              ? {
-                  WebkitMaskImage: `linear-gradient(to bottom, #000 ${PAGE_H}px, rgba(0,0,0,0.3) ${PAGE_H}px)`,
-                  maskImage: `linear-gradient(to bottom, #000 ${PAGE_H}px, rgba(0,0,0,0.3) ${PAGE_H}px)`,
-                }
-              : {}),
-          }}
-        >
-          <h2 style={{ fontSize: px(20), fontWeight: 700, lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{identity.name}</h2>
-          {doc.title && <p style={{ fontWeight: 700, lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{doc.title}</p>}
-          {contact && <p style={{ fontSize: px(9), lineHeight: 1.16, margin: `0 0 ${px(12)}px` }}>{contact}</p>}
-          {doc.profil && <p style={{ margin: `0 0 ${px(4)}px` }}>{doc.profil}</p>}
+          <div aria-hidden className="absolute left-0 top-0 border border-neutral-300 bg-white" style={{ width: PAGE_W, height: PAGE_H }} />
+          <article
+            className="relative text-neutral-950"
+            style={{
+              width: PAGE_W,
+              padding: M,
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              ...(overflow
+                ? {
+                    WebkitMaskImage: `linear-gradient(to bottom, #000 ${PAGE_H}px, rgba(0,0,0,0.3) ${PAGE_H}px)`,
+                    maskImage: `linear-gradient(to bottom, #000 ${PAGE_H}px, rgba(0,0,0,0.3) ${PAGE_H}px)`,
+                  }
+                : {}),
+            }}
+          >
+            <div style={{ fontSize: 18, fontWeight: 700, lineHeight: '22px' }}>{identity.name}</div>
+            {doc.title && <div style={{ ...body, fontWeight: 700, marginTop: 6 }}>{doc.title}</div>}
+            {contact && <div style={{ ...body, marginTop: 13 }}>{contact}</div>}
+            {doc.profil && <div style={{ ...body, marginTop: 21 }}>{doc.profil}</div>}
 
-          {exps.length > 0 && section('Expériences')}
-          {exps.map((e, i) => (
-            <div key={i} style={{ marginTop: px(8) }}>
-              <div className="flex justify-between gap-4" style={{ fontWeight: 700, lineHeight: 1.16 }}>
-                <span>{e.title}</span>
-                <span style={{ fontWeight: 400 }} className="shrink-0">{e.dates}</span>
+            {exps.length > 0 && section('Expériences')}
+            {exps.map((e, i) => (
+              <div key={i} style={{ marginTop: i === 0 ? 17 : 27.4 - LEAD }}>
+                <div className="flex justify-between gap-4" style={{ ...body, fontWeight: 700 }}>
+                  <span>{e.title}</span>
+                  <span className="shrink-0" style={{ fontWeight: 400 }}>{e.dates}</span>
+                </div>
+                <div style={{ ...body, marginTop: 14 - LEAD }}>{e.company}</div>
+                {e.bullets.filter(b => !b.hidden && b.text.trim()).map((b, j) => (
+                  <div key={j} style={{ ...body, paddingLeft: 10, marginTop: j === 0 ? 17 - LEAD : 4 }}>
+                    – {b.text}
+                  </div>
+                ))}
               </div>
-              <p style={{ lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{e.company}</p>
-              {e.bullets.filter(b => !b.hidden && b.text.trim()).map((b, j) => (
-                <p key={j} className="relative" style={{ paddingLeft: px(18), margin: `0 0 ${px(2)}px` }}>
-                  <span className="absolute left-0">•</span>{b.text}
-                </p>
-              ))}
-            </div>
-          ))}
+            ))}
 
-          {formations.length > 0 && section('Formation')}
-          {formations.map((f, i) => (
-            <div key={i} style={{ marginTop: px(8) }}>
-              <div className="flex justify-between gap-4" style={{ fontWeight: 700, lineHeight: 1.16 }}>
-                <span>{f.degree}</span>
-                <span style={{ fontWeight: 400 }} className="shrink-0">{f.dates}</span>
+            {formations.length > 0 && section('Formation')}
+            {formations.map((f, i) => (
+              <div key={i} style={{ marginTop: i === 0 ? 17 : 23.4 - LEAD }}>
+                <div className="flex justify-between gap-4" style={{ ...body, fontWeight: 700 }}>
+                  <span>{f.degree}</span>
+                  <span className="shrink-0" style={{ fontWeight: 400 }}>{f.dates}</span>
+                </div>
+                <div style={{ ...body, marginTop: 14 - LEAD }}>{f.school}</div>
               </div>
-              <p style={{ lineHeight: 1.16, margin: `0 0 ${px(4)}px` }}>{f.school}</p>
-            </div>
-          ))}
+            ))}
 
-          {doc.competences && <>{section('Compétences')}<p style={{ margin: `0 0 ${px(4)}px` }}>{doc.competences}</p></>}
-          {doc.outils && <>{section('Outils')}<p style={{ margin: `0 0 ${px(4)}px` }}>{doc.outils}</p></>}
-          {doc.langues && <>{section('Langues')}<p style={{ margin: `0 0 ${px(4)}px` }}>{doc.langues}</p></>}
+            {doc.competences && <>{section('Compétences')}<div style={{ ...body, marginTop: 17 - LEAD }}>{doc.competences}</div></>}
+            {doc.outils && <>{section('Outils')}<div style={{ ...body, marginTop: 17 - LEAD }}>{doc.outils}</div></>}
+            {doc.langues && <>{section('Langues')}<div style={{ ...body, marginTop: 17 - LEAD }}>{doc.langues}</div></>}
 
-        </article>
-          {overflow && (
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-0 right-0 border-t-2 border-dashed border-red-500"
-              style={{ top: PAGE_H }}
-            >
-              <span className="absolute right-0 top-1 rounded bg-red-600 px-2 py-0.5 font-sans text-white" style={{ fontSize: 10 }}>
-                Fin de la page A4 · texte en trop estompé
-              </span>
-            </div>
-          )}
+            {overflow && (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute left-0 right-0 border-t-2 border-dashed border-red-500"
+                style={{ top: PAGE_H }}
+              >
+                <span className="absolute right-0 top-1 rounded bg-red-600 px-2 py-0.5 font-sans text-white" style={{ fontSize: 10 }}>
+                  Fin de la page A4 · texte en trop estompé
+                </span>
+              </div>
+            )}
+          </article>
         </div>
       </div>
     </div>
