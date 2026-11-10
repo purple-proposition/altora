@@ -275,6 +275,54 @@ function makeStream() {
 
 // ── Route ────────────────────────────────────────────────────────────────────
 
+// Schéma de la réponse de génération (sortie structurée).
+const str = { type: 'string' } as const;
+const strList = { type: 'array', items: str } as const;
+const GENERATION_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['cv', 'lettre', 'adjustments', 'missing', 'atsScore', 'atsImprovements'],
+  properties: {
+    cv: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['title', 'profil', 'experiences', 'formation', 'competences', 'outils'],
+      properties: {
+        title: str,
+        profil: str,
+        experiences: {
+          type: 'array',
+          items: {
+            type: 'object', additionalProperties: false,
+            required: ['company', 'title', 'dates', 'bullets'],
+            properties: { company: str, title: str, dates: str, bullets: strList },
+          },
+        },
+        formation: {
+          type: 'array',
+          items: {
+            type: 'object', additionalProperties: false,
+            required: ['school', 'degree', 'dates', 'bullets'],
+            properties: { school: str, degree: str, dates: str, bullets: strList },
+          },
+        },
+        competences: str,
+        outils: str,
+      },
+    },
+    lettre: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['company', 'poste', 'paragraphs'],
+      properties: { company: str, poste: str, paragraphs: strList },
+    },
+    adjustments: strList,
+    missing: strList,
+    atsScore: { type: 'integer' },
+    atsImprovements: strList,
+  },
+};
+
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -602,21 +650,43 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         await send({ progress: fakeP, step: 'Rédaction du CV et de la lettre de motivation…' });
       }, 1200);
 
-      const message = await client.messages.create({
+      const baseParams = {
         model: 'claude-haiku-5-5',
-        thinking: { type: 'disabled' },
-        output_config: { effort: 'low' },
-        max_tokens: 6000,
-        system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
-        messages: [{ role: 'user', content: userPrompt }],
-      });
+        thinking: { type: 'disabled' as const },
+        max_tokens: 8000,
+        system: [{ type: 'text' as const, text: systemPrompt, cache_control: { type: 'ephemeral' as const } }],
+        messages: [{ role: 'user' as const, content: userPrompt }],
+      };
+      // Sortie structurée : l'API garantit un JSON conforme au schéma, ce qui
+      // supprime les « réponses invalides » (JSON tronqué ou mal formé). Si le
+      // modèle la refuse, on retombe sur la sortie texte avec réparation.
+      let message;
+      try {
+        message = await client.messages.create({
+          ...baseParams,
+          output_config: { effort: 'low', format: { type: 'json_schema', schema: GENERATION_SCHEMA } },
+        });
+      } catch (err) {
+        if (!(err instanceof Anthropic.BadRequestError)) throw err;
+        console.error('structured output rejected, retrying as text:', err.message);
+        message = await client.messages.create({ ...baseParams, output_config: { effort: 'low' } });
+      }
 
       clearInterval(ticker);
       // Consommation réelle, visible avec wrangler tail.
       console.log('generate usage', JSON.stringify(message.usage));
       await send({ progress: 78, step: 'Génération des PDFs…' });
 
-      const raw = message.content[0].type === 'text' ? message.content[0].text : '';
+      // Tous les blocs texte, pas seulement le premier.
+      const raw = message.content.map(b => (b.type === 'text' ? b.text : '')).join('');
+      if (message.stop_reason === 'max_tokens') {
+        console.error('generate truncated', JSON.stringify(message.usage));
+        await send({ error: 'La réponse a été coupée avant la fin. Réessaie, ou raccourcis la fiche de poste.' }); return;
+      }
+      if (message.stop_reason === 'refusal') {
+        console.error('generate refusal', JSON.stringify(message.stop_details));
+        await send({ error: 'La génération a été refusée pour cette fiche. Vérifie son contenu et réessaie.' }); return;
+      }
       let parsed: {
         cv: Partial<CVProfile>;
         lettre: { company: string; poste: string; paragraphs: string[] };
@@ -649,7 +719,8 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       }
 
       try { parsed = JSON.parse(repairJSON(raw)); }
-      catch {
+      catch (err) {
+        console.error('generate parse failed', message.stop_reason, String(err), raw.slice(0, 500));
         await send({ error: 'Réponse invalide de Claude, réessaie' }); return;
       }
 
