@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import type { LetterDoc } from '@/components/cv/letter-doc';
 
-const areaClass = 'mt-2 block w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-base text-neutral-900 outline-none focus:border-neutral-900';
+const areaClass = 'mt-2 block w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-3 text-base text-neutral-900 outline-none focus:border-neutral-900';
 
 // Éditeur de la lettre : objet, puis chaque paragraphe modifiable.
 export function LetterEditor({ doc, onChange }: { doc: LetterDoc; onChange: (next: LetterDoc) => void }) {

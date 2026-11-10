@@ -11,6 +11,10 @@ import { LetterPreview } from '@/components/cv/letter-preview';
 import { LetterEditor } from '@/components/cv/letter-editor';
 import { toLetterDoc, toExportLetter, type LetterDoc } from '@/components/cv/letter-doc';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/cn';
+import { FlowSteps } from '@/components/flow-steps';
+import { Check, Download } from 'lucide-react';
 import ProfileForm from '@/components/ProfileForm';
 import type { UserProfile } from '@/lib/profile';
 
@@ -91,6 +95,8 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
   const [docStep, setDocStep] = useState<'cv' | 'lettre'>('cv');
   // Génération enregistrée côté serveur : les modifications y sont sauvées.
   const [generationId, setGenerationId] = useState<string | null>(null);
+  // Suggestions cochées comme traitées (affichage seulement).
+  const [doneSuggestions, setDoneSuggestions] = useState<number[]>([]);
 
   // Sauvegarde automatique des modifications (une seconde après la dernière
   // frappe). Aucun appel au modèle : seule la base est mise à jour.
@@ -292,7 +298,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
     if (cvUrl && cvUrl.startsWith('blob:')) URL.revokeObjectURL(cvUrl);
     if (lettreUrl && lettreUrl.startsWith('blob:')) URL.revokeObjectURL(lettreUrl);
     setCvUrl(''); setLettreUrl('');
-    setDoc(null); setLetter(null); setDocStep('cv'); setExportError(''); setGenerationId(null);
+    setDoc(null); setLetter(null); setDocStep('cv'); setExportError(''); setGenerationId(null); setDoneSuggestions([]);
     setAnalysis(EMPTY_ANALYSIS);
     setModifications('');
     setCompany(''); setPoste('');
@@ -311,40 +317,42 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
   return (
     <>
-      <section className={`generate-view${step === 'done' ? ' generate-view--wide' : ''}`}>
+      <section className={cn('mx-auto w-full px-6 pb-24 pt-10', step === 'done' ? 'max-w-[1200px]' : 'max-w-2xl')}>
+        <div className="mb-10">
+          <FlowSteps current={step === 'welcome' ? 0 : step === 'verify' ? 1 : step === 'offer' ? 2 : 3} />
+        </div>
 
         {step === 'welcome' && (
-          <div className="onboard-step">
-            <h1 className="onboard-title">Bonjour {firstName}</h1>
-            <p className="onboard-lead">
-              Importe ton CV. Tu vérifies ce qu’on en a extrait, puis tu colles une offre.
-            </p>
-
-            <div className="onboard-card">
-              <CvUpload initialFilename={cvName} onUploaded={handleCvUploaded} />
-              <p className="field-hint">PDF, DOC ou DOCX, 10 Mo maximum.</p>
+          <div className="flex flex-col gap-8">
+            <div>
+              <h1 className="text-4xl font-bold leading-none tracking-tight text-neutral-950">{firstName ? `Bonjour ${firstName}` : 'Bienvenue'}</h1>
+              <p className="mt-3 text-base text-neutral-500">Importe ton CV. Altora en extrait ton parcours, tu le vérifies, puis tu colles une offre.</p>
             </div>
-
-            {extracting && <p className="field-hint">Lecture de ton CV en cours…</p>}
+            <div className="rounded-2xl border border-neutral-200 p-6">
+              <CvUpload initialFilename={cvName} onUploaded={handleCvUploaded} />
+            </div>
+            {extracting && <p className="text-sm text-neutral-500">Lecture de ton CV en cours…</p>}
+            {cvReady && !extracting && (
+              <Button type="button" variant="outline" className="self-start" onClick={() => setStep('verify')}>Continuer avec ce CV →</Button>
+            )}
           </div>
         )}
 
         {step === 'verify' && (
-          <div className="onboard-step">
-            <h1 className="onboard-title">
-              {profileReady && wantsProfile ? 'Mon profil' : 'Vérifie ce qu’on a lu dans ton CV'}
-            </h1>
-            <p className="onboard-lead">
-              {profileReady && wantsProfile
-                ? 'Ces informations servent de base à chaque CV et lettre générés. Plus elles sont complètes et exactes, meilleur est le résultat.'
-                : "Voici ce que l’IA a extrait. Corrige ce qui est inexact et complète ce qui manque : tout ce qui est ici sert de matière première, et le modèle ne s’autorise jamais à inventer au-delà."}
-            </p>
-
-
-            <button type="button" className="self-start text-sm text-neutral-700 underline underline-offset-4 hover:text-neutral-950" onClick={() => setStep('welcome')}>
-              Réimporter un autre CV
-            </button>
-
+          <div className="flex flex-col gap-8">
+            <div>
+              <h1 className="text-4xl font-bold leading-none tracking-tight text-neutral-950">
+                {profileReady && wantsProfile ? 'Mon profil' : 'Vérifie ton profil'}
+              </h1>
+              <p className="mt-3 text-base text-neutral-500">
+                {profileReady && wantsProfile
+                  ? 'Ces informations servent de base à chaque CV et lettre. Plus elles sont exactes, meilleur est le résultat.'
+                  : 'Voici ce qui a été lu dans ton CV. Corrige ce qui est inexact et complète ce qui manque : rien ne sera inventé au-delà.'}
+              </p>
+              <button type="button" className="mt-3 text-sm text-neutral-700 underline underline-offset-4 hover:text-neutral-950" onClick={() => setStep('welcome')}>
+                Importer un autre CV
+              </button>
+            </div>
             <ProfileForm
               key={profile.name + profile.experiences.length}
               initialProfile={profile}
@@ -359,96 +367,123 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
         )}
 
         {step === 'offer' && (
-          <div className="onboard-step">
-            <h1 className="onboard-title">
-              {everGenerated ? 'Une autre candidature' : 'Ta première offre'}
-            </h1>
-            <p className="onboard-lead">
-              Colle l&apos;offre qui t&apos;intéresse, ou simplement son lien. L&apos;IA
-              en extrait l&apos;intitulé du poste, l&apos;entreprise, les compétences
-              attendues et les mots-clés, puis réécrit ton CV et ta lettre pour cette
-              offre précise. Si une adresse de contact figure dans l&apos;annonce, le
-              mail de candidature est préparé aussi.
-            </p>
-
-
-            <div className="field-group">
-              <span className="field-label">Fiche de poste</span>
-              <textarea className="min-h-60 w-full rounded-lg border border-neutral-300 bg-white p-3.5 text-base text-neutral-900 placeholder:text-neutral-400 outline-none focus-visible:border-neutral-900"
-                placeholder="Colle la fiche de poste ou son lien…"
+          <div className="flex flex-col gap-8">
+            <div>
+              <h1 className="text-4xl font-bold leading-none tracking-tight text-neutral-950">{everGenerated ? 'Une nouvelle offre' : 'Ta première offre'}</h1>
+              <p className="mt-3 text-base text-neutral-500">Colle le texte de l&apos;offre ou son lien. Altora adapte ton CV et ta lettre à cette offre précise.</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="job-posting">Fiche de poste</Label>
+              <textarea
+                id="job-posting"
+                className="min-h-72 w-full rounded-lg border border-neutral-300 bg-neutral-50 p-4 text-base text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-neutral-900"
+                placeholder="Colle la fiche de poste ou son lien (https://…)"
                 value={jobPosting}
                 onChange={(e) => setJobPosting(e.target.value)}
               />
+              <p className="text-sm text-neutral-500">Si le lien ne s&apos;ouvre pas (site protégé), colle le texte à la place.</p>
             </div>
-
-            {error && <div className="generate-error">{error}</div>}
-
-            <div className="generate-actions">
-              <Button
-                type="button"
-                onClick={handleGenerate}
-                disabled={!jobPosting.trim() || !cvReady}
-                title={!cvReady ? "Importe d'abord ton CV" : undefined}
-              >
-                Générer mon CV et ma lettre →</Button>
+            {error && <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+            <div className="flex flex-wrap items-center gap-3">
+              <Button type="button" onClick={handleGenerate} disabled={!jobPosting.trim() || !cvReady}>
+                Générer mon CV et ma lettre →
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setStep('verify')}>Modifier mon profil</Button>
+              {!cvReady && <span className="text-sm text-neutral-500">Importe d&apos;abord ton CV.</span>}
             </div>
           </div>
         )}
 
         {step === 'loading' && (
-          <div className="modal-overlay visible" role="dialog" aria-modal="true" aria-label="Génération en cours">
-            <div className="modal generate-loading-modal">
-              <div className="generate-progress-wrap">
-                <div className="generate-progress-label">
-                  <span>{progressStep}</span>
-                  <span>{progress}%</span>
-                </div>
-                <div className="generate-progress-track">
-                  <div className="generate-progress-fill" style={{ width: `${progress}%` }} />
-                </div>
+          <div className="flex flex-col gap-6 rounded-2xl border border-neutral-200 p-8" role="status" aria-live="polite">
+            <div>
+              <h1 className="text-2xl font-bold leading-none tracking-tight text-neutral-950">Génération en cours</h1>
+              <p className="mt-2 text-sm text-neutral-500">Environ 20 à 40 secondes. Ne ferme pas la page.</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-neutral-700">{progressStep}</span>
+                <span className="font-medium tabular-nums text-neutral-950">{progress} %</span>
+              </div>
+              <div className="h-1 w-full overflow-hidden bg-neutral-200">
+                <div className="h-full bg-neutral-900 transition-[width] duration-300" style={{ width: `${progress}%` }} />
               </div>
             </div>
           </div>
         )}
 
         {step === 'done' && doc && (
-          <div className="flex flex-col gap-8">
-            <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-12 md:col-span-4 rounded-2xl border border-neutral-200 p-6">
-                <p className="text-sm text-neutral-500">Compatibilité avec l&apos;offre</p>
-                <p className="mt-1 text-5xl font-bold tracking-tight">{analysis.atsScore} %</p>
+          <div className="flex flex-col gap-10">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h1 className="text-4xl font-bold leading-none tracking-tight text-neutral-950">{[poste, company].filter(Boolean).join(' · ') || 'Ta candidature'}</h1>
+                <p className="mt-2 text-sm text-neutral-500">Tes modifications sont enregistrées automatiquement.</p>
               </div>
-              <div className="col-span-12 md:col-span-4 rounded-2xl border border-neutral-200 p-6">
-                <p className="text-sm font-semibold">Modifications faites</p>
-                <ul className="mt-2 list-disc pl-5 text-sm">
-                  {analysis.adjustments.map((a, i) => <li key={i}>{a}</li>)}
+              <Button type="button" variant="outline" onClick={startNewApplication}>Nouvelle offre</Button>
+            </div>
+
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-12 flex flex-col gap-4 rounded-2xl border border-neutral-200 p-6 md:col-span-4">
+                <p className="text-sm font-medium text-neutral-500">Compatibilité avec l&apos;offre</p>
+                <p className="text-[56px] leading-none font-bold tabular-nums tracking-tight text-neutral-950">{analysis.atsScore}<span className="text-2xl text-neutral-400"> %</span></p>
+                <div className="h-1 w-full overflow-hidden bg-neutral-200">
+                  <div className="h-full bg-neutral-900" style={{ width: `${Math.min(100, Math.max(0, analysis.atsScore))}%` }} />
+                </div>
+              </div>
+              <div className="col-span-12 rounded-2xl border border-neutral-200 p-6 md:col-span-4">
+                <p className="text-sm font-semibold text-neutral-950">Modifications faites</p>
+                <ul className="mt-3 flex flex-col gap-2 text-sm text-neutral-700">
+                  {analysis.adjustments.map((a, i) => (
+                    <li key={i} className="flex gap-2"><Check size={16} className="mt-1 shrink-0 text-neutral-900" />{a}</li>
+                  ))}
                 </ul>
               </div>
-              <div className="col-span-12 md:col-span-4 rounded-2xl border border-neutral-200 p-6">
-                <p className="text-sm font-semibold">Suggestions restantes</p>
-                <p className="text-xs text-neutral-500">Facultatif : à traiter seulement si tu le souhaites.</p>
-                <ul className="mt-2 list-disc pl-5 text-sm">
-                  {[...analysis.missing, ...analysis.atsImprovements].map((s, i) => <li key={i}>{s}</li>)}
+              <div className="col-span-12 rounded-2xl border border-neutral-200 p-6 md:col-span-4">
+                <p className="text-sm font-semibold text-neutral-950">Suggestions restantes</p>
+                <p className="mt-1 text-xs text-neutral-500">Facultatif. Coche ce que tu as traité.</p>
+                <ul className="mt-3 flex flex-col gap-2 text-sm">
+                  {[...analysis.missing, ...analysis.atsImprovements].map((s, i) => (
+                    <li key={i}>
+                      <label className="flex cursor-pointer gap-2">
+                        <input
+                          type="checkbox"
+                          className="mt-1 size-4 shrink-0 accent-neutral-900"
+                          checked={doneSuggestions.includes(i)}
+                          onChange={() => setDoneSuggestions(d => (d.includes(i) ? d.filter(x => x !== i) : [...d, i]))}
+                        />
+                        <span className={doneSuggestions.includes(i) ? 'text-neutral-400 line-through' : 'text-neutral-700'}>{s}</span>
+                      </label>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
 
-            <div className="flex gap-2 text-sm">
-              <span className={docStep === 'cv' ? 'font-semibold text-neutral-950' : 'text-neutral-500'}>1. CV</span>
-              <span className="text-neutral-400">/</span>
-              <span className={docStep === 'lettre' ? 'font-semibold text-neutral-950' : 'text-neutral-500'}>2. Lettre</span>
+            <div className="inline-flex self-start rounded-lg bg-neutral-100 p-1" role="tablist">
+              {(['cv', 'lettre'] as const).map(k => (
+                <button
+                  key={k}
+                  type="button"
+                  role="tab"
+                  aria-selected={docStep === k}
+                  disabled={k === 'lettre' && !letter}
+                  onClick={() => setDocStep(k)}
+                  className={cn(
+                    'h-9 rounded-lg px-4 text-sm font-medium transition-colors disabled:opacity-40',
+                    docStep === k ? 'bg-neutral-50 text-neutral-950' : 'text-neutral-600 hover:text-neutral-950',
+                  )}
+                >
+                  {k === 'cv' ? '1. CV' : '2. Lettre de motivation'}
+                </button>
+              ))}
             </div>
 
             {docStep === 'cv' && (
               <div className="grid grid-cols-12 gap-6">
-                <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-6 lg:self-start">
+                <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-24 lg:self-start">
                   <CvPreview doc={doc} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
                 </div>
-                <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-sm text-neutral-500">Modifie à droite, l&apos;aperçu se met à jour.</p>
-                    <Button type="button" onClick={() => setDocStep('lettre')} disabled={!letter}>Passer à la lettre →</Button>
-                  </div>
+                <div className="col-span-12 flex flex-col gap-6 lg:col-span-6">
                   <CvEditor doc={doc} onChange={setDoc} />
                 </div>
               </div>
@@ -456,31 +491,33 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
             {docStep === 'lettre' && letter && (
               <div className="grid grid-cols-12 gap-6">
-                <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-6 lg:self-start">
+                <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-24 lg:self-start">
                   <LetterPreview
                     doc={letter}
                     identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }}
                     contractSuffix={({ alternance: ' en alternance', stage: ' en stage', cdi: ' en CDI', cdd: ' en CDD' } as Record<string, string>)[profile.soughtContract] ?? ''}
                   />
                 </div>
-                <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-sm text-neutral-500">Modifie à droite, la lettre se met à jour.</p>
-                    <Button type="button" variant="outline" onClick={() => setDocStep('cv')}>← Retour au CV</Button>
-                  </div>
+                <div className="col-span-12 flex flex-col gap-6 lg:col-span-6">
                   <LetterEditor doc={letter} onChange={setLetter} />
                 </div>
               </div>
             )}
 
-            {exportError && <p className="text-sm text-red-600">{exportError}</p>}
-
-            <div className="flex flex-wrap gap-3">
-              <Button type="button" onClick={() => downloadPdf('cv', toExportCv(doc))}>Télécharger le CV</Button>
-              {letter && (
-                <Button type="button" onClick={() => downloadPdf('lettre_de_motivation', toExportLetter(letter))}>Télécharger la lettre</Button>
+            <div className="sticky bottom-0 z-10 -mx-6 flex flex-wrap items-center gap-3 border-t border-neutral-200 bg-neutral-50/95 px-6 py-4 backdrop-blur">
+              {docStep === 'cv' ? (
+                <>
+                  <Button type="button" onClick={() => downloadPdf('cv', toExportCv(doc))}><Download size={16} />Télécharger le CV</Button>
+                  {letter && <Button type="button" variant="outline" onClick={() => setDocStep('lettre')}>Passer à la lettre →</Button>}
+                </>
+              ) : (
+                <>
+                  {letter && <Button type="button" onClick={() => downloadPdf('lettre_de_motivation', toExportLetter(letter))}><Download size={16} />Télécharger la lettre</Button>}
+                  <Button type="button" variant="outline" onClick={() => downloadPdf('cv', toExportCv(doc))}>Télécharger le CV</Button>
+                  <Button type="button" variant="outline" onClick={() => setDocStep('cv')}>← Retour au CV</Button>
+                </>
               )}
-              <Button type="button" variant="outline" onClick={startNewApplication}>Postuler à une autre annonce</Button>
+              {exportError && <span className="text-sm text-red-600">{exportError}</span>}
             </div>
           </div>
         )}
@@ -588,7 +625,7 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             <div className="dash-card">
               <div className="field-group">
                 <span className="field-label">Modifications à apporter</span>
-                <textarea className="min-h-32 w-full rounded-lg border border-neutral-300 bg-white p-3.5 text-base text-neutral-900 placeholder:text-neutral-400 outline-none focus-visible:border-neutral-900"
+                <textarea className="min-h-32 w-full rounded-lg border border-neutral-300 bg-neutral-50 p-4 text-base text-neutral-900 placeholder:text-neutral-400 outline-none focus-visible:border-neutral-900"
                   placeholder="Ex. : Renforcer le bullet CRM, raccourcir l'accroche, mettre davantage en avant le SEO, reformuler le 2e paragraphe de la lettre…"
                   value={modifications}
                   onChange={(e) => setModifications(e.target.value)}

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { CvDoc } from '@/components/cv/cv-doc';
 
-const areaClass = 'mt-2 block w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-base text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-neutral-900';
+const areaClass = 'mt-2 block w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-3 text-base text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-neutral-900';
 
 // Champ étiqueté, utilisé partout dans le panneau d'édition.
 function Text({ label, value, onChange, multiline = false }: {
@@ -35,7 +35,7 @@ function VisibilityToggle({ hidden, onToggle, label }: { hidden: boolean; onTogg
       onClick={onToggle}
       aria-label={hidden ? `Afficher ${label}` : `Masquer ${label}`}
       className={cn(
-        'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium',
+        'inline-flex h-8 shrink-0 items-center gap-2 rounded-lg border px-3 text-xs font-medium',
         hidden ? 'border-neutral-300 text-neutral-500' : 'border-neutral-300 text-neutral-900 hover:bg-neutral-100',
       )}
     >
@@ -70,7 +70,7 @@ export function CvEditor({ doc, onChange }: { doc: CvDoc; onChange: (next: CvDoc
       <section className="flex flex-col gap-4">
         <h3 className="text-sm font-semibold text-neutral-900">Expériences</h3>
         {doc.experiences.map((exp, i) => (
-          <div key={i} className={cn('flex flex-col gap-3 rounded-xl border border-neutral-200 p-4', exp.hidden && 'opacity-60')}>
+          <div key={i} className={cn('flex flex-col gap-3 rounded-2xl border border-neutral-200 p-4', exp.hidden && 'opacity-60')}>
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm font-medium text-neutral-700">{exp.title || exp.company || `Expérience ${i + 1}`}</span>
               <VisibilityToggle hidden={exp.hidden} onToggle={() => updateExp(i, { hidden: !exp.hidden })} label="cette expérience" />
@@ -94,7 +94,7 @@ export function CvEditor({ doc, onChange }: { doc: CvDoc; onChange: (next: CvDoc
       <section className="flex flex-col gap-4">
         <h3 className="text-sm font-semibold text-neutral-900">Formation</h3>
         {doc.formation.map((f, i) => (
-          <div key={i} className={cn('flex flex-col gap-3 rounded-xl border border-neutral-200 p-4', f.hidden && 'opacity-60')}>
+          <div key={i} className={cn('flex flex-col gap-3 rounded-2xl border border-neutral-200 p-4', f.hidden && 'opacity-60')}>
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm font-medium text-neutral-700">{f.degree || f.school || `Formation ${i + 1}`}</span>
               <VisibilityToggle hidden={f.hidden} onToggle={() => updateFormation(i, { hidden: !f.hidden })} label="cette formation" />

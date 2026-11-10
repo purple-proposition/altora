@@ -11,9 +11,9 @@ export function CvPreview({ doc, identity }: {
   const formations = doc.formation.filter(f => !f.hidden);
 
   return (
-    <article className="mx-auto w-full max-w-[560px] bg-white px-10 py-10 text-[13px] leading-relaxed text-neutral-900 shadow-sm ring-1 ring-neutral-200">
+    <article className="mx-auto w-full max-w-[560px] bg-neutral-50 px-10 py-10 text-xs leading-relaxed text-neutral-900 ring-1 ring-neutral-200">
       <header>
-        <h2 className="text-2xl font-bold tracking-tight">{identity.name}</h2>
+        <h2 className="text-2xl font-bold leading-none tracking-tight">{identity.name}</h2>
         {doc.title && <p className="mt-1 font-semibold">{doc.title}</p>}
         {contact && <p className="mt-1 text-xs text-neutral-500">{contact}</p>}
       </header>

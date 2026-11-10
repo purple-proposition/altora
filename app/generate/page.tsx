@@ -2,6 +2,7 @@ import { auth } from '@/auth';
 import { getUserCv, sql, ensureSchema } from '@/lib/db';
 import { getUserProfile, emptyProfile, isProfileComplete } from '@/lib/profile';
 import GenerateForm from '@/components/GenerateForm';
+import { AppHeader } from '@/components/app-header';
 
 export default async function GeneratePage() {
   const session = await auth();
@@ -32,6 +33,8 @@ export default async function GeneratePage() {
   }
 
   return (
+    <>
+    <AppHeader />
     <GenerateForm
       firstName={firstName}
       hasCv={Boolean(cvFilename)}
@@ -40,5 +43,6 @@ export default async function GeneratePage() {
       profileReady={profileReady}
       hasGenerations={hasGenerations}
     />
+    </>
   );
 }
