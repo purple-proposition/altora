@@ -233,3 +233,6 @@ button:hover, .btn-primary:hover, .btn-secondary:hover, .btn-add-contact:hover {
 .auth-link:hover, .auth-footer a:hover { text-decoration: underline; }
 
 }
+
+/* Vue résultat : grille desktop 12 colonnes, gouttières de 24 px */
+.generate-view--wide { max-width: 1200px; }

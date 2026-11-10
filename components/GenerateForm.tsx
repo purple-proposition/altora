@@ -408,18 +408,18 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
 
         {step === 'done' && doc && (
           <div className="flex flex-col gap-8">
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-xl border border-neutral-200 p-5">
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-12 md:col-span-4 rounded-2xl border border-neutral-200 p-6">
                 <p className="text-sm text-neutral-500">Compatibilité avec l&apos;offre</p>
                 <p className="mt-1 text-5xl font-bold tracking-tight">{analysis.atsScore} %</p>
               </div>
-              <div className="rounded-xl border border-neutral-200 p-5">
+              <div className="col-span-12 md:col-span-4 rounded-2xl border border-neutral-200 p-6">
                 <p className="text-sm font-semibold">Modifications faites</p>
                 <ul className="mt-2 list-disc pl-5 text-sm">
                   {analysis.adjustments.map((a, i) => <li key={i}>{a}</li>)}
                 </ul>
               </div>
-              <div className="rounded-xl border border-neutral-200 p-5">
+              <div className="col-span-12 md:col-span-4 rounded-2xl border border-neutral-200 p-6">
                 <p className="text-sm font-semibold">Suggestions restantes</p>
                 <p className="text-xs text-neutral-500">Facultatif : à traiter seulement si tu le souhaites.</p>
                 <ul className="mt-2 list-disc pl-5 text-sm">
@@ -435,11 +435,11 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             </div>
 
             {docStep === 'cv' && (
-              <div className="grid gap-8 lg:grid-cols-2">
-                <div className="lg:sticky lg:top-6 lg:self-start">
+              <div className="grid grid-cols-12 gap-6">
+                <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-6 lg:self-start">
                   <CvPreview doc={doc} identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }} />
                 </div>
-                <div className="flex flex-col gap-6">
+                <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <p className="text-sm text-neutral-500">Modifie à droite, l&apos;aperçu se met à jour.</p>
                     <Button type="button" onClick={() => setDocStep('lettre')} disabled={!letter}>Passer à la lettre →</Button>
@@ -450,15 +450,15 @@ function GenerateInner({ firstName, hasCv, cvFilename, profile: initialProfile, 
             )}
 
             {docStep === 'lettre' && letter && (
-              <div className="grid gap-8 lg:grid-cols-2">
-                <div className="lg:sticky lg:top-6 lg:self-start">
+              <div className="grid grid-cols-12 gap-6">
+                <div className="col-span-12 lg:col-span-6 lg:sticky lg:top-6 lg:self-start">
                   <LetterPreview
                     doc={letter}
                     identity={{ name: profile.name, email: profile.email, phone: profile.phone, city: profile.city, linkedin: profile.linkedin, portfolio: profile.portfolio }}
                     contractSuffix={({ alternance: ' en alternance', stage: ' en stage', cdi: ' en CDI', cdd: ' en CDD' } as Record<string, string>)[profile.soughtContract] ?? ''}
                   />
                 </div>
-                <div className="flex flex-col gap-6">
+                <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <p className="text-sm text-neutral-500">Modifie à droite, la lettre se met à jour.</p>
                     <Button type="button" variant="outline" onClick={() => setDocStep('cv')}>← Retour au CV</Button>
