@@ -602,11 +602,29 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
         await send({ progress: fakeP, step: 'Rédaction du CV et de la lettre de motivation…' });
       }, 1200);
 
+      // Sortie structurée : l'API garantit un JSON conforme à ce schéma, au
+      // lieu de compter sur le modèle pour respecter le format demandé.
+      const str = { type: 'string' };
+      const strList = { type: 'array', items: str };
+      const obj = (properties: Record<string, unknown>) => ({
+        type: 'object', properties, required: Object.keys(properties), additionalProperties: false,
+      });
+      const outputSchema = obj({
+        cv: obj({
+          title: str, profil: str,
+          experiences: { type: 'array', items: obj({ company: str, title: str, dates: str, bullets: strList }) },
+          formation: { type: 'array', items: obj({ school: str, degree: str, dates: str, bullets: strList }) },
+          competences: str, outils: str,
+        }),
+        lettre: obj({ company: str, poste: str, paragraphs: strList }),
+        adjustments: strList, missing: strList, atsScore: { type: 'integer' }, atsImprovements: strList,
+      });
+
       const message = await client.messages.create({
         model: 'claude-haiku-5-5',
         thinking: { type: 'disabled' },
-        output_config: { effort: 'low' },
-        max_tokens: 6000,
+        output_config: { effort: 'low', format: { type: 'json_schema', schema: outputSchema } },
+        max_tokens: 12000,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: userPrompt }],
       });
@@ -616,7 +634,12 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       console.log('generate usage', JSON.stringify(message.usage));
       await send({ progress: 78, step: 'Génération des PDFs…' });
 
-      const raw = message.content[0].type === 'text' ? message.content[0].text : '';
+      // Tous les blocs texte, pas seulement le premier.
+      const raw = message.content.map(b => (b.type === 'text' ? b.text : '')).join('');
+      if (message.stop_reason === 'max_tokens') {
+        console.error('generate truncated', JSON.stringify(message.usage));
+        await send({ error: 'La réponse a été coupée avant la fin. Réessaie, ou raccourcis la fiche de poste.' }); return;
+      }
       let parsed: {
         cv: Partial<CVProfile>;
         lettre: { company: string; poste: string; paragraphs: string[] };
@@ -649,7 +672,8 @@ ${modifications ? `Modifications demandées par le candidat (priorité absolue) 
       }
 
       try { parsed = JSON.parse(repairJSON(raw)); }
-      catch {
+      catch (e) {
+        console.error('generate invalid JSON', message.stop_reason, e instanceof Error ? e.message : e, raw.slice(0, 500));
         await send({ error: 'Réponse invalide de Claude, réessaie' }); return;
       }
 
